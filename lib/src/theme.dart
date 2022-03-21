@@ -40,43 +40,6 @@ class AppTheme {
     );
   }
 
-  // static ThemeData getDarkTheme() {
-  //   final colorScheme = AppColor.getDarkColors();
-  //   return ThemeData.from(
-  //     textTheme: _getTextTheme(),
-  //     colorScheme: ColorScheme(
-  //       brightness: Brightness.dark,
-  //       primary: colorScheme.primary,
-  //       onPrimary: colorScheme.onPrimary,
-  //       primaryContainer: colorScheme.primaryContainer,
-  //       onPrimaryContainer: colorScheme.onPrimaryContainer,
-  //       secondary: colorScheme.secondary,
-  //       onSecondary: colorScheme.onSecondary,
-  //       secondaryContainer: colorScheme.secondaryContainer,
-  //       onSecondaryContainer: colorScheme.onSecondaryContainer,
-  //       tertiary: colorScheme.tertiary,
-  //       onTertiary: colorScheme.onTertiary,
-  //       tertiaryContainer: colorScheme.onTertiaryContainer,
-  //       onTertiaryContainer: colorScheme.onTertiaryContainer,
-  //       error: colorScheme.error,
-  //       onError: colorScheme.onError,
-  //       errorContainer: colorScheme.errorContainer,
-  //       onErrorContainer: colorScheme.onErrorContainer,
-  //       background: colorScheme.background,
-  //       onBackground: colorScheme.onBackground,
-  //       surface: colorScheme.surface,
-  //       onSurface: colorScheme.onSurface,
-  //       surfaceVariant: colorScheme.surfaceVariant,
-  //       onSurfaceVariant: colorScheme.onSurfaceVariant,
-  //       outline: colorScheme.outline,
-  //       shadow: colorScheme.shadow,
-  //       inverseSurface: colorScheme.inverseSurface,
-  //       onInverseSurface: colorScheme.onInverseSurface,
-  //       inversePrimary: colorScheme.inversePrimary,
-  //     ),
-  //   );
-  // }
-
   static TextTheme _getTextTheme() {
     return TextTheme(
       headline1: GoogleFonts.lato(
