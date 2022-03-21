@@ -8,8 +8,10 @@ class LandingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Cycle To Work'),
+    return const Scaffold(
+      body: Center(
+        child: Text('Welcome Cycle To Work'),
+      ),
     );
   }
 }

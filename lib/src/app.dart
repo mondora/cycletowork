@@ -10,14 +10,15 @@ class CycleToWorkApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      restorationScopeId: 'app',
+      restorationScopeId: 'cycletowork_app',
+      debugShowCheckedModeBanner: false,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('en', ''), // English, no country code
+        Locale('it', ''), // English, no country code
       ],
       title: 'Cycle To Work',
       theme: AppTheme.getLightTheme(),
