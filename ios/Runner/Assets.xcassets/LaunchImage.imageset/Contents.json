@@ -9,10 +9,21 @@
       "appearances" : [
         {
           "appearance" : "luminosity",
+          "value" : "light"
+        }
+      ],
+      "filename" : "SPLASH PAGE@1x-1.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
           "value" : "dark"
         }
       ],
-      "filename" : "LaunchImageDark.png",
+      "filename" : "SPLASH PAGE@1x.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -25,10 +36,21 @@
       "appearances" : [
         {
           "appearance" : "luminosity",
+          "value" : "light"
+        }
+      ],
+      "filename" : "SPLASH PAGE@2x-1.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
           "value" : "dark"
         }
       ],
-      "filename" : "LaunchImageDark@2x.png",
+      "filename" : "SPLASH PAGE@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
@@ -41,10 +63,21 @@
       "appearances" : [
         {
           "appearance" : "luminosity",
+          "value" : "light"
+        }
+      ],
+      "filename" : "SPLASH PAGE@3x-1.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
           "value" : "dark"
         }
       ],
-      "filename" : "LaunchImageDark@3x.png",
+      "filename" : "SPLASH PAGE@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
