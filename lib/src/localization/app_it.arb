@@ -1,0 +1,9 @@
+{
+    "iHaveAlreadyAnAccount": "Ho già un account",
+    "login": "Accedi",
+    "createANewAccount": "Crea un nuovo account",
+    "signupWithFacebook": "Iscriviti con Facebook",
+    "signupWithGoogle": "Iscriviti con Google",
+    "signupWithApple": "Iscriviti con Apple",
+    "signupWithEmail": "Iscriviti con l’indirizzo email"
+}
