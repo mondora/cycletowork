@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 class AppGpsIcon extends StatelessWidget {
   final GpsStatus gpsStatus;
   final GestureTapCallback? onPressed;
+  final bool visible;
   const AppGpsIcon({
     Key? key,
     required this.gpsStatus,
     this.onPressed,
+    required this.visible,
   }) : super(key: key);
 
   @override
@@ -18,6 +20,10 @@ class AppGpsIcon extends StatelessWidget {
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final warrningColor = colorSchemeExtension.warrning;
     final successColor = colorSchemeExtension.success;
+
+    if (!visible) {
+      return Container();
+    }
 
     if (gpsStatus == GpsStatus.granted) {
       return IconButton(

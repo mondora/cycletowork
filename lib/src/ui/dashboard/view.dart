@@ -26,6 +26,7 @@ class DashboardView extends StatelessWidget {
             print('try again to set location');
           },
           gpsStatus: GpsStatus.turnOff,
+          visible: true,
         ),
         actions: [
           AppAvatar(
@@ -33,6 +34,7 @@ class DashboardView extends StatelessWidget {
                 AppData.user != null ? AppData.user!.userType : UserType.other,
             onPressed: () {},
             loading: false,
+            visible: true,
           ),
           const SizedBox(
             width: 10.0,
@@ -48,57 +50,11 @@ class DashboardView extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          HomeView(),
+          // HomeView(),
           // ClassificationView(),
           // ActivityView(),
-          // ProfileView(),
+          ProfileView(),
 
-          // Container(
-          //   height: 200,
-          //   color: Colors.red,
-          //   child: Text('body'),
-          // ),
-          // Column(
-          //   children: [
-          //     if (activityListItems.isNotEmpty)
-          //       ActivityList(
-          //         activityListItems: activityListItems,
-          //       ),
-          //     SlidingUpPanel(
-          //       maxHeight: 168.0,
-          //       minHeight: 30.0,
-          //       boxShadow: const [
-          //         BoxShadow(
-          //           offset: Offset(0.0, 2.0),
-          //           blurRadius: 1.0,
-          //         ),
-          //       ],
-          //       slideDirection: SlideDirection.DOWN,
-          //       panelBuilder: (sc) => Column(
-          //         children: <Widget>[
-          //           SummeryCard(
-          //             co2: '1,3 Kg',
-          //             distant: '155 Km',
-          //             avarageSpeed: '20 km/h',
-          //           ),
-          //           Row(
-          //             mainAxisAlignment: MainAxisAlignment.center,
-          //             children: const <Widget>[
-          //               Icon(
-          //                 Icons.drag_handle,
-          //                 color: Colors.grey,
-          //               )
-          //             ],
-          //           ),
-          //         ],
-          //       ),
-          //       borderRadius: const BorderRadius.only(
-          //         bottomLeft: Radius.circular(10.0),
-          //         bottomRight: Radius.circular(10.0),
-          //       ),
-          //     ),
-          //   ],
-          // ),
           Positioned(
             bottom: 0.0,
             right: 0,

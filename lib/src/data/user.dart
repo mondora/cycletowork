@@ -6,6 +6,14 @@ enum UserType {
 
 class User {
   final UserType userType;
+  final String email;
   String? imageUrl;
-  User({required this.userType});
+  String? displayName;
+
+  User({
+    required this.userType,
+    required this.email,
+    this.imageUrl,
+    this.displayName,
+  });
 }

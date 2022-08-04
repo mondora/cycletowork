@@ -60,7 +60,13 @@ class LandingViewModel extends ChangeNotifier {
 
   void loginEmail(String email, String password, String? name) async {
     debugPrint('login');
-    AppData.user = User(userType: UserType.other);
+    AppData.user = User(
+      userType: UserType.other,
+      email: 'claudia.rossi@aria.it',
+      displayName: 'Claudia Rossi',
+      imageUrl:
+          null, // 'https://lh3.googleusercontent.com/ogw/AOh-ky0d1LLWqZxcF0Tik6VqijGavwOmRza931h8nnm5bg',
+    );
     _status = LandingViewModelStatus.home;
     notifyListeners();
     // _status = LandingViewModelStatus.loading;

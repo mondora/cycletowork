@@ -7,21 +7,32 @@ class AppAvatar extends StatelessWidget {
   final String? userImageUrl;
   final bool loading;
   final GestureTapCallback? onPressed;
-  final size = 60.0;
-  final smallSize = 40.0;
-  final avatarUserRadius = 20.0;
-  final avatarEditionRadius = 17.0;
-  final progressStrokeWidth = 3.0;
+  final double size;
+  final double smallSize;
+  final double avatarUserRadius;
+  final double avatarEditionRadius;
+  final double progressStrokeWidth;
+  final bool visible;
   const AppAvatar({
     Key? key,
     required this.userType,
     this.loading = false,
     this.userImageUrl,
     required this.onPressed,
+    this.size = 60.0,
+    this.smallSize = 40.0,
+    this.avatarUserRadius = 20.0,
+    this.avatarEditionRadius = 17.0,
+    this.progressStrokeWidth = 3.0,
+    required this.visible,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    if (!visible) {
+      return Container();
+    }
+
     if (userType == UserType.other) {
       return IconButton(
         iconSize: smallSize,
