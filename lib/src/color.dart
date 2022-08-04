@@ -3,67 +3,86 @@ import 'dart:convert';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 
+// 100% — FF
+// 95% — F2
+// 90% — E6
+
+// 85% — D9
+
+// 80% — CC
+// 75% — BF
+// 70% — B3
+// 65% — A6
+// 60% — 99
+// 55% — 8C
+// 50% — 80
+// 45% — 73
+// 40% — 66
+// 35% — 59
+// 30% — 4D
+// 25% — 40
+// 20% — 33
+// 15% — 26
+// 10% — 1A
+// 5% — 0D
+// 0% — 00
 class AppColor {
   static const String _lightColorSchemeKey = 'lightColorScheme';
-  static get primary => 0xFF009A91;
-  static get onPrimary => 0xFFFFFFFF;
-  static get primaryContainer => 0xFFB2DDDF;
-  static get onPrimaryContainer => 0xFF004150;
-  static get secondary => 0xFFC715AC;
-  static get onSecondary => 0xFFFFFFFF;
-  static get secondaryContainer => 0xFFE99FDE;
-  static get onSecondaryContainer => 0xFF990F84;
-  static get tertiary => 0xFF6200EE;
-  static get onTertiary => 0xFF6200EE;
-  static get tertiaryContainer => 0xFF6200EE;
-  static get onTertiaryContainer => 0xFF6200EE;
-  static get error => 0xFFF44336;
-  static get onError => 0xFFFFFFFF;
-  static get errorContainer => 0xFFE31B0C;
-  static get onErrorContainer => 0xFFF88078;
-  static get background => 0xFFFFFFFF;
-  static get onBackground => 0xFF323232;
-  static get surface => 0xFFFFFFFF;
-  static get onSurface => 0xFF323232;
-  static get surfaceVariant => 0xFF6200EE;
-  static get onSurfaceVariant => 0xFF6200EE;
-  static get outline => 0xFF6200EE;
-  static get shadow => 0xFF6200EE;
-  static get inverseSurface => 0xFF6200EE;
-  static get onInverseSurface => 0xFF6200EE;
-  static get inversePrimary => 0xFF6200EE;
+  static get lightPrimary => 0xFFFFDA03;
+  static get lightOnPrimary => 0xFFFFFFFF;
+  static get lightPrimaryContainer => 0xFFFFF34F;
+  static get lightOnPrimaryContainer => 0xFFFFC803;
+  static get lightSecondary => 0xFF006AA7;
+  static get lightOnSecondary => 0xFFFFFFFF;
+  static get lightSecondaryContainer => 0xFFB2CFDF;
+  static get lightOnSecondaryContainer => 0xFF003350;
+  static get lightError => 0xFFF44336;
+  static get lightOnError => 0xFFFFFFFF;
+  static get lightErrorContainer => 0xFFE31B0C;
+  static get lightOnErrorContainer => 0xFFF88078;
+  static get lightBackground => 0xFFFFFFFF;
+  static get lightOnBackground => 0xFF000000;
+  static get lightSurface => 0xFFFFFFFF;
+  static get lightOnSurface => 0xFF000000;
+  static get lightText => 0xFF000000;
+  static get lightTextPrimary => 0xD9000000;
+  static get lightTextSecondary => 0x99000000;
+  static get lightTextDisabled => 0x66000000;
+  static get lightSuccess => 0xFF4CAF50;
+  static get lightWarrning => 0xFFED6C02;
+  static get lightAction => 0x8C000000;
+  static get lightInfo => 0xFF2196F3;
+  static get lightActionSelected => 0x1A000000;
 
   static Future initial() async {
     final remoteConfig = FirebaseRemoteConfig.instance;
     await remoteConfig.setDefaults(<String, dynamic>{
       _lightColorSchemeKey: jsonEncode({
-        'primary': primary,
-        'onPrimary': onPrimary,
-        'primaryContainer': primaryContainer,
-        'onPrimaryContainer': onPrimaryContainer,
-        'secondary': secondary,
-        'onSecondary': onSecondary,
-        'secondaryContainer': secondaryContainer,
-        'onSecondaryContainer': onSecondaryContainer,
-        'tertiary': tertiary,
-        'onTertiary': onTertiary,
-        'tertiaryContainer': tertiaryContainer,
-        'onTertiaryContainer': onTertiaryContainer,
-        'error': error,
-        'onError': onError,
-        'errorContainer': errorContainer,
-        'onErrorContainer': onErrorContainer,
-        'background': background,
-        'onBackground': onBackground,
-        'surface': surface,
-        'onSurface': onSurface,
-        'surfaceVariant': surfaceVariant,
-        'onSurfaceVariant': onSurfaceVariant,
-        'outline': outline,
-        'shadow': shadow,
-        'inverseSurface': inverseSurface,
-        'onInverseSurface': onInverseSurface,
-        'inversePrimary': inversePrimary,
+        'primary': lightPrimary,
+        'onPrimary': lightOnPrimary,
+        'primaryContainer': lightPrimaryContainer,
+        'onPrimaryContainer': lightOnPrimaryContainer,
+        'secondary': lightSecondary,
+        'onSecondary': lightOnSecondary,
+        'secondaryContainer': lightSecondaryContainer,
+        'onSecondaryContainer': lightOnSecondaryContainer,
+        'error': lightError,
+        'onError': lightOnError,
+        'errorContainer': lightErrorContainer,
+        'onErrorContainer': lightOnErrorContainer,
+        'background': lightBackground,
+        'onBackground': lightOnBackground,
+        'surface': lightSurface,
+        'onSurface': lightOnSurface,
+        'text': lightText,
+        'textPrimary': lightTextPrimary,
+        'textSecondary': lightTextSecondary,
+        'textDisabled': lightTextDisabled,
+        'success': lightSuccess,
+        'warrning': lightWarrning,
+        'action': lightAction,
+        'info': lightInfo,
+        'actionSelected': lightActionSelected,
       })
     });
 
@@ -97,10 +116,6 @@ class LightColors {
   final Color onSecondary;
   final Color secondaryContainer;
   final Color onSecondaryContainer;
-  final Color tertiary;
-  final Color onTertiary;
-  final Color tertiaryContainer;
-  final Color onTertiaryContainer;
   final Color error;
   final Color onError;
   final Color errorContainer;
@@ -109,13 +124,15 @@ class LightColors {
   final Color onBackground;
   final Color surface;
   final Color onSurface;
-  final Color surfaceVariant;
-  final Color onSurfaceVariant;
-  final Color outline;
-  final Color shadow;
-  final Color inverseSurface;
-  final Color onInverseSurface;
-  final Color inversePrimary;
+  final Color text;
+  final Color textPrimary;
+  final Color textSecondary;
+  final Color textDisabled;
+  final Color success;
+  final Color warrning;
+  final Color action;
+  final Color info;
+  final Color actionSelected;
 
   LightColors({
     required this.primary,
@@ -126,10 +143,6 @@ class LightColors {
     required this.onSecondary,
     required this.secondaryContainer,
     required this.onSecondaryContainer,
-    required this.tertiary,
-    required this.onTertiary,
-    required this.tertiaryContainer,
-    required this.onTertiaryContainer,
     required this.error,
     required this.onError,
     required this.errorContainer,
@@ -138,117 +151,51 @@ class LightColors {
     required this.onBackground,
     required this.surface,
     required this.onSurface,
-    required this.surfaceVariant,
-    required this.onSurfaceVariant,
-    required this.outline,
-    required this.shadow,
-    required this.inverseSurface,
-    required this.onInverseSurface,
-    required this.inversePrimary,
+    required this.text,
+    required this.textPrimary,
+    required this.textSecondary,
+    required this.textDisabled,
+    required this.success,
+    required this.warrning,
+    required this.action,
+    required this.info,
+    required this.actionSelected,
   });
 
   LightColors.fromJson(Map<String, dynamic> json)
-      : primary = Color(json['primary'] ?? AppColor.primary),
-        onPrimary = Color(json['onPrimary'] ?? AppColor.onPrimary),
+      : primary = Color(json['primary'] ?? AppColor.lightPrimary),
+        onPrimary = Color(json['onPrimary'] ?? AppColor.lightOnPrimary),
         primaryContainer =
-            Color(json['primaryContainer'] ?? AppColor.primaryContainer),
-        onPrimaryContainer =
-            Color(json['onPrimaryContainer'] ?? AppColor.onPrimaryContainer),
-        secondary = Color(json['secondary'] ?? AppColor.secondary),
-        onSecondary = Color(json['onSecondary'] ?? AppColor.onSecondary),
-        secondaryContainer =
-            Color(json['secondaryContainer'] ?? AppColor.secondaryContainer),
+            Color(json['primaryContainer'] ?? AppColor.lightPrimaryContainer),
+        onPrimaryContainer = Color(
+            json['onPrimaryContainer'] ?? AppColor.lightOnPrimaryContainer),
+        secondary = Color(json['secondary'] ?? AppColor.lightSecondary),
+        onSecondary = Color(json['onSecondary'] ?? AppColor.lightOnSecondary),
+        secondaryContainer = Color(
+            json['secondaryContainer'] ?? AppColor.lightSecondaryContainer),
         onSecondaryContainer = Color(
-            json['onSecondaryContainer'] ?? AppColor.onSecondaryContainer),
-        tertiary = Color(json['tertiary'] ?? AppColor.tertiary),
-        onTertiary = Color(json['onTertiary'] ?? AppColor.onTertiary),
-        tertiaryContainer =
-            Color(json['tertiaryContainer'] ?? AppColor.tertiaryContainer),
-        onTertiaryContainer =
-            Color(json['onTertiaryContainer'] ?? AppColor.onTertiaryContainer),
-        error = Color(json['error'] ?? AppColor.error),
-        onError = Color(json['onError'] ?? AppColor.onError),
+            json['onSecondaryContainer'] ?? AppColor.lightOnSecondaryContainer),
+        error = Color(json['error'] ?? AppColor.lightError),
+        onError = Color(json['onError'] ?? AppColor.lightOnError),
         errorContainer =
-            Color(json['errorContainer'] ?? AppColor.errorContainer),
+            Color(json['errorContainer'] ?? AppColor.lightErrorContainer),
         onErrorContainer =
-            Color(json['onErrorContainer'] ?? AppColor.onErrorContainer),
-        background = Color(json['background'] ?? AppColor.background),
-        onBackground = Color(json['onBackground'] ?? AppColor.onBackground),
-        surface = Color(json['surface'] ?? AppColor.surface),
-        onSurface = Color(json['onSurface'] ?? AppColor.onSurface),
-        surfaceVariant =
-            Color(json['surfaceVariant'] ?? AppColor.surfaceVariant),
-        onSurfaceVariant =
-            Color(json['onSurfaceVariant'] ?? AppColor.onSurfaceVariant),
-        outline = Color(json['outline'] ?? AppColor.outline),
-        shadow = Color(json['shadow'] ?? AppColor.shadow),
-        inverseSurface =
-            Color(json['inverseSurface'] ?? AppColor.inverseSurface),
-        onInverseSurface =
-            Color(json['onInverseSurface'] ?? AppColor.onInverseSurface),
-        inversePrimary =
-            Color(json['inversePrimary'] ?? AppColor.inversePrimary);
-
-  // LightColors.fromJson(Map<String, dynamic> json)
-  //     : primary = Color(json['primary'] ?? AppColor.primary),
-  //       onPrimary = Color(json['onPrimary'] ?? AppColor.onPrimary),
-  //       primaryContainer = Color(json['primaryContainer']
-  //           ? json['primaryContainer']
-  //           : AppColor.primaryContainer),
-  //       onPrimaryContainer = Color(json['onPrimaryContainer']
-  //           ? json['onPrimaryContainer']
-  //           : AppColor.onPrimaryContainer),
-  //       secondary =
-  //           Color(json['secondary'] ? json['secondary'] : AppColor.secondary),
-  //       onSecondary = Color(
-  //           json['onSecondary'] ? json['onSecondary'] : AppColor.onSecondary),
-  //       secondaryContainer = Color(json['secondaryContainer']
-  //           ? json['secondaryContainer']
-  //           : AppColor.secondaryContainer),
-  //       onSecondaryContainer = Color(json['onSecondaryContainer']
-  //           ? json['onSecondaryContainer']
-  //           : AppColor.onSecondaryContainer),
-  //       tertiary =
-  //           Color(json['tertiary'] ? json['tertiary'] : AppColor.tertiary),
-  //       onTertiary = Color(
-  //           json['onTertiary'] ? json['onTertiary'] : AppColor.onTertiary),
-  //       tertiaryContainer = Color(json['tertiaryContainer']
-  //           ? json['tertiaryContainer']
-  //           : AppColor.tertiaryContainer),
-  //       onTertiaryContainer = Color(json['onTertiaryContainer']
-  //           ? json['onTertiaryContainer']
-  //           : AppColor.onTertiaryContainer),
-  //       error = Color(json['error'] ? json['error'] : AppColor.error),
-  //       onError = Color(json['onError'] ? json['onError'] : AppColor.onError),
-  //       errorContainer = Color(json['errorContainer']
-  //           ? json['errorContainer']
-  //           : AppColor.errorContainer),
-  //       onErrorContainer = Color(json['onErrorContainer']
-  //           ? json['onErrorContainer']
-  //           : AppColor.onErrorContainer),
-  //       background = Color(
-  //           json['background'] ? json['background'] : AppColor.background),
-  //       onBackground = Color(json['onBackground']
-  //           ? json['onBackground']
-  //           : AppColor.onBackground),
-  //       surface = Color(json['surface'] ? json['surface'] : AppColor.surface),
-  //       onSurface =
-  //           Color(json['onSurface'] ? json['onSurface'] : AppColor.onSurface),
-  //       surfaceVariant = Color(json['surfaceVariant']
-  //           ? json['surfaceVariant']
-  //           : AppColor.surfaceVariant),
-  //       onSurfaceVariant = Color(json['onSurfaceVariant']
-  //           ? json['onSurfaceVariant']
-  //           : AppColor.onSurfaceVariant),
-  //       outline = Color(json['outline'] ? json['outline'] : AppColor.outline),
-  //       shadow = Color(json['shadow'] ? json['shadow'] : AppColor.shadow),
-  //       inverseSurface = Color(json['inverseSurface']
-  //           ? json['inverseSurface']
-  //           : AppColor.inverseSurface),
-  //       onInverseSurface = Color(json['onInverseSurface']
-  //           ? json['onInverseSurface']
-  //           : AppColor.onInverseSurface),
-  //       inversePrimary = Color(json['inversePrimary']
-  //           ? json['inversePrimary']
-  //           : AppColor.inversePrimary);
+            Color(json['onErrorContainer'] ?? AppColor.lightOnErrorContainer),
+        background = Color(json['background'] ?? AppColor.lightBackground),
+        onBackground =
+            Color(json['onBackground'] ?? AppColor.lightOnBackground),
+        surface = Color(json['surface'] ?? AppColor.lightSurface),
+        onSurface = Color(json['onSurface'] ?? AppColor.lightOnSurface),
+        text = Color(json['text'] ?? AppColor.lightText),
+        textPrimary = Color(json['textPrimary'] ?? AppColor.lightTextPrimary),
+        textSecondary =
+            Color(json['textSecondary'] ?? AppColor.lightTextSecondary),
+        textDisabled =
+            Color(json['textDisabled'] ?? AppColor.lightTextDisabled),
+        success = Color(json['success'] ?? AppColor.lightSuccess),
+        warrning = Color(json['warrning'] ?? AppColor.lightWarrning),
+        action = Color(json['action'] ?? AppColor.lightAction),
+        info = Color(json['info'] ?? AppColor.lightInfo),
+        actionSelected =
+            Color(json['actionSelected'] ?? AppColor.lightActionSelected);
 }
