@@ -7,6 +7,7 @@ import 'package:cycletowork/src/ui/home/view.dart';
 import 'package:cycletowork/src/ui/dashboard/widget/avatar.dart';
 import 'package:cycletowork/src/ui/dashboard/widget/bottom_nav_bar.dart';
 import 'package:cycletowork/src/ui/dashboard/widget/drawer.dart';
+import 'package:cycletowork/src/ui/information/view.dart';
 import 'package:cycletowork/src/ui/profile/view.dart';
 import 'package:cycletowork/src/ui/settings/view.dart';
 import 'package:cycletowork/src/utility/gps_status.dart';
@@ -52,11 +53,12 @@ class DashboardView extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // HomeView(),
+          HomeView(),
           // ClassificationView(),
           // ActivityView(),
           // ProfileView(),
-          SettingsView(),
+          // SettingsView(),
+          // InformationView(),
 
           Positioned(
             bottom: 0.0,
