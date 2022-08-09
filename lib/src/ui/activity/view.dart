@@ -16,55 +16,55 @@ class ActivityView extends StatelessWidget {
     var textTheme = Theme.of(context).textTheme;
 
     List<UserActivity> userActivity = [
-      // UserActivity(
-      //   averageSpeed: 15.0,
-      //   co2: 0.2,
-      //   distant: 9.5,
-      //   timestamp: (DateTime.now().millisecondsSinceEpoch),
-      //   map: Image.asset('assets/images/test.png'),
-      // ),
-      // UserActivity(
-      //   averageSpeed: 15.0,
-      //   co2: 0.2,
-      //   distant: 9.5,
-      //   timestamp: (DateTime.now().millisecondsSinceEpoch),
-      //   map: Image.asset('assets/images/test.png'),
-      // ),
-      // UserActivity(
-      //   averageSpeed: 15.0,
-      //   co2: 0.2,
-      //   distant: 9.5,
-      //   timestamp: (DateTime.now().millisecondsSinceEpoch),
-      //   map: Image.asset('assets/images/test.png'),
-      // ),
-      // UserActivity(
-      //   averageSpeed: 15.0,
-      //   co2: 0.2,
-      //   distant: 9.5,
-      //   timestamp: (DateTime.now().millisecondsSinceEpoch),
-      //   map: Image.asset('assets/images/test.png'),
-      // ),
-      // UserActivity(
-      //   averageSpeed: 15.0,
-      //   co2: 0.2,
-      //   distant: 9.5,
-      //   timestamp: (DateTime.now().millisecondsSinceEpoch),
-      //   map: Image.asset('assets/images/test.png'),
-      // ),
-      // UserActivity(
-      //   averageSpeed: 15.0,
-      //   co2: 0.2,
-      //   distant: 9.5,
-      //   timestamp: (DateTime.now().millisecondsSinceEpoch),
-      //   map: Image.asset('assets/images/test.png'),
-      // ),
-      // UserActivity(
-      //   averageSpeed: 15.0,
-      //   co2: 0.2,
-      //   distant: 9.5,
-      //   timestamp: (DateTime.now().millisecondsSinceEpoch),
-      //   map: Image.asset('assets/images/test.png'),
-      // ),
+      UserActivity(
+        averageSpeed: 15.0,
+        co2: 0.2,
+        distant: 9.5,
+        timestamp: (DateTime.now().millisecondsSinceEpoch),
+        map: Image.asset('assets/images/test.png'),
+      ),
+      UserActivity(
+        averageSpeed: 15.0,
+        co2: 0.2,
+        distant: 9.5,
+        timestamp: (DateTime.now().millisecondsSinceEpoch),
+        map: Image.asset('assets/images/test.png'),
+      ),
+      UserActivity(
+        averageSpeed: 15.0,
+        co2: 0.2,
+        distant: 9.5,
+        timestamp: (DateTime.now().millisecondsSinceEpoch),
+        map: Image.asset('assets/images/test.png'),
+      ),
+      UserActivity(
+        averageSpeed: 15.0,
+        co2: 0.2,
+        distant: 9.5,
+        timestamp: (DateTime.now().millisecondsSinceEpoch),
+        map: Image.asset('assets/images/test.png'),
+      ),
+      UserActivity(
+        averageSpeed: 15.0,
+        co2: 0.2,
+        distant: 9.5,
+        timestamp: (DateTime.now().millisecondsSinceEpoch),
+        map: Image.asset('assets/images/test.png'),
+      ),
+      UserActivity(
+        averageSpeed: 15.0,
+        co2: 0.2,
+        distant: 9.5,
+        timestamp: (DateTime.now().millisecondsSinceEpoch),
+        map: Image.asset('assets/images/test.png'),
+      ),
+      UserActivity(
+        averageSpeed: 15.0,
+        co2: 0.2,
+        distant: 9.5,
+        timestamp: (DateTime.now().millisecondsSinceEpoch),
+        map: Image.asset('assets/images/test.png'),
+      ),
     ];
 
     return Scaffold(
@@ -72,6 +72,7 @@ class ActivityView extends StatelessWidget {
       appBar: AppBar(
         // elevation: 2,
         toolbarHeight: 112.0,
+        centerTitle: true,
         title: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -175,13 +176,14 @@ class ActivityView extends StatelessWidget {
               chartData: [
                 ChartData(0, 0.4),
                 ChartData(1, 0.2),
-                ChartData(2, 0.4),
-                ChartData(3, 0.3),
-                ChartData(4, 0),
-                ChartData(5, 0),
-                ChartData(6, 0.7),
+                // ChartData(2, 0.4),
+                // ChartData(3, 0.3),
+
+                // ChartData(4, 0),
+                // ChartData(5, 0),
+                // ChartData(6, 0.7),
               ],
-              scaleType: ChartScaleType.week,
+              scaleType: ChartScaleType.month,
             ),
             SizedBox(
               height: 20.0,

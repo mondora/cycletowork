@@ -51,7 +51,7 @@ class Chart extends StatelessWidget {
             return "L";
 
           case ChartScaleType.month:
-            return (value! + 1).toStringAsFixed(0);
+            return 'S ${(value! + 1).toStringAsFixed(0)}';
 
           case ChartScaleType.year:
             if (value == 0) {
@@ -114,7 +114,7 @@ class Chart extends StatelessWidget {
             desiredTickCount: scaleType == ChartScaleType.week
                 ? 7
                 : scaleType == ChartScaleType.month
-                    ? dayOfMonth
+                    ? 4 // (dayOfMonth / 7).toInt()
                     : 12,
           ),
           tickFormatterSpec: formatterY,

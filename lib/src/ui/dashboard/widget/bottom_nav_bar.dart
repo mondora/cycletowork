@@ -10,10 +10,12 @@ enum AppBottomNavBarOption {
 class AppBottomNavBar extends StatelessWidget {
   final AppBottomNavBarOption? bottomNavBarOption;
   final void Function(AppBottomNavBarOption) onPressed;
+  final bool floatActionButtonEnabled;
   const AppBottomNavBar({
     Key? key,
     required this.bottomNavBarOption,
     required this.onPressed,
+    required this.floatActionButtonEnabled,
   }) : super(key: key);
 
   @override
@@ -66,7 +68,7 @@ class AppBottomNavBar extends StatelessWidget {
             bottom: 20.0,
           ),
           child: FloatingActionButton(
-            onPressed: () {},
+            onPressed: floatActionButtonEnabled ? () {} : null,
             child: Text(
               'IN SELLA!',
               textAlign: TextAlign.center,

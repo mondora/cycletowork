@@ -1,5 +1,5 @@
 import 'package:cycletowork/src/theme.dart';
-import 'package:cycletowork/src/utility/gps_status.dart';
+import 'package:cycletowork/src/utility/gps.dart';
 import 'package:flutter/material.dart';
 
 class AppGpsIcon extends StatelessWidget {

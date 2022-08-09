@@ -26,6 +26,8 @@ if (flutterMinSdkVersion == null) {
     flutterMinSdkVersion = '21'
 }
 
+def mapsApiKey = localProperties.getProperty('MAPS_API_KEY')
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
@@ -53,6 +55,10 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+    }
+
+    defaultConfig {
+        manifestPlaceholders = [mapsApiKey: mapsApiKey, applicationName:"Cycle2Work"]
     }
 
     buildTypes {

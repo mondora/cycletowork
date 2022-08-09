@@ -17,13 +17,9 @@ class SummeryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
-    final textSecondaryColor = colorSchemeExtension.textSecondary;
     final infoColor = colorSchemeExtension.info;
 
     return Column(
-      // mainAxisSize: MainAxisSize.min,
-      // crossAxisAlignment: CrossAxisAlignment.start,
-      // mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const SizedBox(
           height: 15,

@@ -64,6 +64,7 @@ class LoginView extends StatelessWidget {
                         textUpperCase: true,
                         type: ButtonType.secondary,
                         maxWidth: 95,
+                        radius: 8.0,
                       ),
                     ),
                     Container(
@@ -83,6 +84,7 @@ class LoginView extends StatelessWidget {
                         title: AppLocalizations.of(context)!.signupWithFacebook,
                         textUpperCase: true,
                         type: ButtonType.facebookLogin,
+                        radius: 8.0,
                       ),
                     ),
                     Container(
@@ -95,6 +97,7 @@ class LoginView extends StatelessWidget {
                         title: AppLocalizations.of(context)!.signupWithGoogle,
                         textUpperCase: true,
                         type: ButtonType.googleLogin,
+                        radius: 8.0,
                       ),
                     ),
                     Container(
@@ -107,6 +110,7 @@ class LoginView extends StatelessWidget {
                         title: AppLocalizations.of(context)!.signupWithApple,
                         textUpperCase: true,
                         type: ButtonType.appleLogin,
+                        radius: 8.0,
                       ),
                     ),
                     Container(
@@ -130,6 +134,7 @@ class LoginView extends StatelessWidget {
                         title: AppLocalizations.of(context)!.signupWithEmail,
                         textUpperCase: true,
                         type: ButtonType.emailLogin,
+                        radius: 8.0,
                       ),
                     ),
                     const SizedBox(

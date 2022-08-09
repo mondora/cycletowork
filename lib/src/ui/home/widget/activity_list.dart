@@ -12,9 +12,11 @@ class ActivityList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorSchemeExtension =
-        Theme.of(context).extension<ColorSchemeExtension>()!;
-    final textSecondaryColor = colorSchemeExtension.textSecondary;
+    // final colorSchemeExtension =
+    //     Theme.of(context).extension<ColorSchemeExtension>()!;
+    // final textSecondaryColor = colorSchemeExtension.textSecondary;
+
+    final textSecondaryColor = Colors.grey;
 
     return Container(
       color: Theme.of(context).colorScheme.background,
@@ -55,10 +57,11 @@ class ActivityList extends StatelessWidget {
             margin: EdgeInsets.only(
               right: 24.0,
               left: 24.0,
-              top: 10.0,
+              top: 27.0,
             ),
-            child: Divider(
-              thickness: 1,
+            child: Container(
+              height: 1,
+              color: Color.fromRGBO(0, 0, 0, 0.12),
             ),
           ),
         ],

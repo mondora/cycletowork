@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/utility/location_data.dart' as locationData;
 import 'package:location/location.dart';
 
 enum GpsStatus {
@@ -33,6 +34,26 @@ class Gps {
       }
     } catch (e) {
       return GpsStatus.turnOff;
+    }
+  }
+
+  static Future<locationData.LocationData?> getCurrentPosition() async {
+    try {
+      var location = Location();
+      var result = await location.getLocation();
+      return locationData.LocationData(
+        latitude: result.latitude,
+        longitude: result.longitude,
+        accuracy: result.accuracy,
+        altitude: result.altitude,
+        speed: result.speed,
+        speedAccuracy: result.speedAccuracy,
+        heading: result.heading,
+        time: result.time,
+        isMock: result.isMock,
+      );
+    } catch (e) {
+      return null;
     }
   }
 }
