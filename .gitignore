@@ -45,5 +45,5 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /lib/firebase_options.dart
-ios/Flutter/Debug.xcconfig
-ios/Flutter/Release.xcconfig
+/ios/Flutter/Debug.xcconfig
+/ios/Flutter/Release.xcconfig
