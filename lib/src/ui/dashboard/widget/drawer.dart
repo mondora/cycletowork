@@ -1,15 +1,6 @@
+import 'package:cycletowork/src/ui/dashboard/ui_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-enum AppMenuOption {
-  home,
-  classification,
-  activity,
-  profile,
-  settings,
-  information,
-  logout,
-}
 
 class AppDrawer extends StatelessWidget {
   final AppMenuOption menuOption;

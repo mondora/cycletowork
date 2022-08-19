@@ -54,7 +54,7 @@ class AppColor {
   static get lightInfo => 0xFF2196F3;
   static get lightActionSelected => 0x1A000000;
 
-  static Future initial() async {
+  static Future initialize() async {
     final remoteConfig = FirebaseRemoteConfig.instance;
     await remoteConfig.setDefaults(<String, dynamic>{
       _lightColorSchemeKey: jsonEncode({

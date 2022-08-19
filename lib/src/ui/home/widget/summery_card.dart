@@ -4,13 +4,13 @@ import 'package:flutter_svg/svg.dart';
 
 class SummeryCard extends StatelessWidget {
   final String co2;
-  final String distant;
-  final String avarageSpeed;
+  final String distance;
+  final String averageSpeed;
   const SummeryCard({
     Key? key,
     required this.co2,
-    required this.distant,
-    required this.avarageSpeed,
+    required this.distance,
+    required this.averageSpeed,
   }) : super(key: key);
 
   @override
@@ -55,7 +55,7 @@ class SummeryCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                distant,
+                distance,
                 style: Theme.of(context).textTheme.headline5,
               ),
               const SizedBox(
@@ -71,7 +71,7 @@ class SummeryCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    avarageSpeed,
+                    averageSpeed,
                     style: Theme.of(context).textTheme.headline5,
                   ),
                   Text(

@@ -16,55 +16,55 @@ class ActivityView extends StatelessWidget {
     var textTheme = Theme.of(context).textTheme;
 
     List<UserActivity> userActivity = [
-      UserActivity(
-        averageSpeed: 15.0,
-        co2: 0.2,
-        distant: 9.5,
-        timestamp: (DateTime.now().millisecondsSinceEpoch),
-        map: Image.asset('assets/images/test.png'),
-      ),
-      UserActivity(
-        averageSpeed: 15.0,
-        co2: 0.2,
-        distant: 9.5,
-        timestamp: (DateTime.now().millisecondsSinceEpoch),
-        map: Image.asset('assets/images/test.png'),
-      ),
-      UserActivity(
-        averageSpeed: 15.0,
-        co2: 0.2,
-        distant: 9.5,
-        timestamp: (DateTime.now().millisecondsSinceEpoch),
-        map: Image.asset('assets/images/test.png'),
-      ),
-      UserActivity(
-        averageSpeed: 15.0,
-        co2: 0.2,
-        distant: 9.5,
-        timestamp: (DateTime.now().millisecondsSinceEpoch),
-        map: Image.asset('assets/images/test.png'),
-      ),
-      UserActivity(
-        averageSpeed: 15.0,
-        co2: 0.2,
-        distant: 9.5,
-        timestamp: (DateTime.now().millisecondsSinceEpoch),
-        map: Image.asset('assets/images/test.png'),
-      ),
-      UserActivity(
-        averageSpeed: 15.0,
-        co2: 0.2,
-        distant: 9.5,
-        timestamp: (DateTime.now().millisecondsSinceEpoch),
-        map: Image.asset('assets/images/test.png'),
-      ),
-      UserActivity(
-        averageSpeed: 15.0,
-        co2: 0.2,
-        distant: 9.5,
-        timestamp: (DateTime.now().millisecondsSinceEpoch),
-        map: Image.asset('assets/images/test.png'),
-      ),
+      // UserActivity(
+      //   averageSpeed: 15.0,
+      //   co2: 0.2,
+      //   distant: 9.5,
+      //   timestamp: (DateTime.now().millisecondsSinceEpoch),
+      //   map: Image.asset('assets/images/test.png'),
+      // ),
+      // UserActivity(
+      //   averageSpeed: 15.0,
+      //   co2: 0.2,
+      //   distant: 9.5,
+      //   timestamp: (DateTime.now().millisecondsSinceEpoch),
+      //   map: Image.asset('assets/images/test.png'),
+      // ),
+      // UserActivity(
+      //   averageSpeed: 15.0,
+      //   co2: 0.2,
+      //   distant: 9.5,
+      //   timestamp: (DateTime.now().millisecondsSinceEpoch),
+      //   map: Image.asset('assets/images/test.png'),
+      // ),
+      // UserActivity(
+      //   averageSpeed: 15.0,
+      //   co2: 0.2,
+      //   distant: 9.5,
+      //   timestamp: (DateTime.now().millisecondsSinceEpoch),
+      //   map: Image.asset('assets/images/test.png'),
+      // ),
+      // UserActivity(
+      //   averageSpeed: 15.0,
+      //   co2: 0.2,
+      //   distant: 9.5,
+      //   timestamp: (DateTime.now().millisecondsSinceEpoch),
+      //   map: Image.asset('assets/images/test.png'),
+      // ),
+      // UserActivity(
+      //   averageSpeed: 15.0,
+      //   co2: 0.2,
+      //   distant: 9.5,
+      //   timestamp: (DateTime.now().millisecondsSinceEpoch),
+      //   map: Image.asset('assets/images/test.png'),
+      // ),
+      // UserActivity(
+      //   averageSpeed: 15.0,
+      //   co2: 0.2,
+      //   distant: 9.5,
+      //   timestamp: (DateTime.now().millisecondsSinceEpoch),
+      //   map: Image.asset('assets/images/test.png'),
+      // ),
     ];
 
     return Scaffold(
@@ -85,9 +85,7 @@ class ActivityView extends StatelessWidget {
               height: 20,
             ),
             InputChip(
-              onSelected: (bool value) {
-                print('ciao');
-              },
+              onSelected: (bool value) {},
               // selected: true,
               // isEnabled: false,
               side: ChipTheme.of(context).shape!.side.copyWith(

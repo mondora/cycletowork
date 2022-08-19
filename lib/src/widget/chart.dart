@@ -6,12 +6,15 @@ import 'package:charts_flutter/flutter.dart' as charts;
 enum ChartType {
   co2,
   distant,
+  speed,
+  altitude,
 }
 
 enum ChartScaleType {
   week,
   month,
   year,
+  time,
 }
 
 class Chart extends StatelessWidget {
@@ -21,7 +24,7 @@ class Chart extends StatelessWidget {
   final List<ChartData> chartData;
   const Chart({
     Key? key,
-    this.height = 120,
+    this.height = 130,
     required this.type,
     required this.chartData,
     required this.scaleType,
@@ -81,12 +84,57 @@ class Chart extends StatelessWidget {
             }
 
             return "L";
+
+          case ChartScaleType.time:
+            return value.toString();
         }
       },
     );
 
     var date = DateTime.now();
     var dayOfMonth = DateTime(date.year, date.month + 1, 0).day;
+
+    if (type == ChartType.speed || type == ChartType.altitude) {
+      return SizedBox(
+        height: height,
+        child: charts.TimeSeriesChart(
+          _getChatTimeSeriesList(context, chartData, type),
+          animate: true,
+          defaultRenderer: charts.LineRendererConfig(
+            includePoints: true,
+            includeArea: true,
+            includeLine: true,
+            roundEndCaps: true,
+            stacked: true,
+          ),
+          primaryMeasureAxis: charts.NumericAxisSpec(
+            tickProviderSpec: charts.BasicNumericTickProviderSpec(
+              desiredMinTickCount: 3,
+              dataIsInWholeNumbers: false,
+            ),
+            viewport: type == ChartType.speed
+                ? charts.NumericExtents(0, 100)
+                : charts.NumericExtents(0, 1000),
+          ),
+          //   domainAxis: charts.NumericAxisSpec(
+          //   tickProviderSpec: charts.BasicNumericTickProviderSpec(
+          //     desiredTickCount: scaleType == ChartScaleType.week
+          //         ? 7
+          //         : scaleType == ChartScaleType.month
+          //             ? 4 // (dayOfMonth / 7).toInt()
+          //             : 12,
+          //   ),
+          //   tickFormatterSpec: formatterY,
+          // ),
+          customSeriesRenderers: [
+            charts.PointRendererConfig(
+              customRendererId: 'customPoint',
+            ),
+          ],
+          dateTimeFactory: const charts.LocalDateTimeFactory(),
+        ),
+      );
+    }
 
     return SizedBox(
       height: height,
@@ -124,7 +172,10 @@ class Chart extends StatelessWidget {
   }
 
   List<charts.Series<dynamic, num>> _getChatSeriesList(
-      BuildContext context, List<ChartData> chartData, ChartType type) {
+    BuildContext context,
+    List<ChartData> chartData,
+    ChartType type,
+  ) {
     var secondaryColor = Theme.of(context).colorScheme.secondary;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
@@ -134,7 +185,34 @@ class Chart extends StatelessWidget {
 
     return [
       charts.Series<ChartData, int>(
-        id: 'Sales',
+        id: 'chart$type',
+        colorFn: (_, __) => charts.Color(
+          r: color.red,
+          g: color.green,
+          b: color.blue,
+        ),
+        domainFn: (ChartData sales, _) => sales.x,
+        measureFn: (ChartData sales, _) => sales.y,
+        data: chartData,
+      ),
+    ];
+  }
+
+  List<charts.Series<dynamic, DateTime>> _getChatTimeSeriesList(
+    BuildContext context,
+    List<ChartData> chartData,
+    ChartType type,
+  ) {
+    var secondaryColor = Theme.of(context).colorScheme.secondary;
+    final colorSchemeExtension =
+        Theme.of(context).extension<ColorSchemeExtension>()!;
+    final successColor = colorSchemeExtension.success;
+
+    final color = type == ChartType.speed ? secondaryColor : successColor;
+
+    return [
+      charts.Series<ChartData, DateTime>(
+        id: 'chart$type',
         colorFn: (_, __) => charts.Color(
           r: color.red,
           g: color.green,

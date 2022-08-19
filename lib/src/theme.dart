@@ -110,6 +110,7 @@ class AppTheme {
           textSecondary: colorScheme.textSecondary,
           info: colorScheme.info,
           textDisabled: colorScheme.textDisabled,
+          textPrimary: colorScheme.text,
         ),
       },
     );
@@ -245,6 +246,7 @@ class ColorSchemeExtension extends ThemeExtension<ColorSchemeExtension> {
   final Color textSecondary;
   final Color info;
   final Color textDisabled;
+  final Color textPrimary;
 
   const ColorSchemeExtension({
     required this.warrning,
@@ -253,6 +255,7 @@ class ColorSchemeExtension extends ThemeExtension<ColorSchemeExtension> {
     required this.textSecondary,
     required this.info,
     required this.textDisabled,
+    required this.textPrimary,
   });
 
   @override
@@ -263,6 +266,7 @@ class ColorSchemeExtension extends ThemeExtension<ColorSchemeExtension> {
     Color? textSecondary,
     Color? info,
     Color? textDisabled,
+    Color? textPrimary,
   }) =>
       ColorSchemeExtension(
         warrning: warrning ?? this.warrning,
@@ -271,6 +275,7 @@ class ColorSchemeExtension extends ThemeExtension<ColorSchemeExtension> {
         textSecondary: textSecondary ?? this.textSecondary,
         info: info ?? this.info,
         textDisabled: textDisabled ?? this.textDisabled,
+        textPrimary: textPrimary ?? this.textPrimary,
       );
 
   @override
@@ -289,6 +294,7 @@ class ColorSchemeExtension extends ThemeExtension<ColorSchemeExtension> {
       info: Color.lerp(info, other.info, t) ?? info,
       textDisabled:
           Color.lerp(textDisabled, other.textDisabled, t) ?? textDisabled,
+      textPrimary: Color.lerp(textPrimary, other.textPrimary, t) ?? textPrimary,
     );
   }
 }

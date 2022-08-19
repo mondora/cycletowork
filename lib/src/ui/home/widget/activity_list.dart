@@ -44,9 +44,9 @@ class ActivityList extends StatelessWidget {
               itemBuilder: (context, index) {
                 var activity = userActivity[index];
                 var date =
-                    DateTime.fromMillisecondsSinceEpoch(activity.timestamp);
+                    DateTime.fromMillisecondsSinceEpoch(activity.startTime!);
                 return _ActivityCard(
-                    map: activity.map,
+                    // map: activity.map,
                     co2: '${activity.co2} Kg CO2',
                     date: '25 aprile 2022 alle ore  08:25',
                     more: '19,5 Km | velocità media 15 km/h');
@@ -71,13 +71,13 @@ class ActivityList extends StatelessWidget {
 }
 
 class _ActivityCard extends StatelessWidget {
-  final Widget map;
+  // final Widget map;
   final String co2;
   final String date;
   final String more;
   const _ActivityCard({
     Key? key,
-    required this.map,
+    // required this.map,
     required this.co2,
     required this.date,
     required this.more,
@@ -107,7 +107,7 @@ class _ActivityCard extends StatelessWidget {
                 SizedBox(
                   height: 57,
                   width: 57,
-                  child: map,
+                  // child: map,
                 ),
                 Container(
                   margin: EdgeInsets.only(left: 20.0),

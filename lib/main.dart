@@ -1,7 +1,9 @@
 import 'package:cycletowork/src/app.dart';
 import 'package:cycletowork/src/color.dart';
+import 'package:cycletowork/src/utility/gps.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'firebase_options.dart';
@@ -12,7 +14,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await AppColor.initial();
+  await AppColor.initialize();
+  await Gps.initialize();
+  await dotenv.load(fileName: '.env');
 
   runApp(const CycleToWorkApp());
 }

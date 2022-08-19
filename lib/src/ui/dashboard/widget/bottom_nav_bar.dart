@@ -1,21 +1,18 @@
+import 'package:cycletowork/src/ui/dashboard/ui_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-enum AppBottomNavBarOption {
-  home,
-  activity,
-  classification,
-}
-
 class AppBottomNavBar extends StatelessWidget {
   final AppBottomNavBarOption? bottomNavBarOption;
-  final void Function(AppBottomNavBarOption) onPressed;
+  final void Function(AppBottomNavBarOption) onChange;
+  final GestureTapCallback? onPressed;
   final bool floatActionButtonEnabled;
   const AppBottomNavBar({
     Key? key,
     required this.bottomNavBarOption,
-    required this.onPressed,
+    required this.onChange,
     required this.floatActionButtonEnabled,
+    required this.onPressed,
   }) : super(key: key);
 
   @override
@@ -52,7 +49,7 @@ class AppBottomNavBar extends StatelessWidget {
                     selected: bottomNavBarOption == item,
                     icon: _ItemInfo(item).icon,
                     onPressed: () {
-                      onPressed(item);
+                      onChange(item);
                     },
                   ),
               ],
@@ -68,7 +65,7 @@ class AppBottomNavBar extends StatelessWidget {
             bottom: 20.0,
           ),
           child: FloatingActionButton(
-            onPressed: floatActionButtonEnabled ? () {} : null,
+            onPressed: floatActionButtonEnabled ? onPressed : null,
             child: Text(
               'IN SELLA!',
               textAlign: TextAlign.center,
