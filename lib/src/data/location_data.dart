@@ -96,44 +96,45 @@ class LocationData {
     ).toDouble();
   }
 
-  // static LocationData getCentralGeoCoordinate(
-  //   List<LocationData> geoCoordinates,
-  // ) {
-  //   if (geoCoordinates.length == 1) {
-  //     return geoCoordinates.first;
-  //   }
+  static LocationData getCentralGeoCoordinate(
+    List<LocationData> geoCoordinates,
+  ) {
+    if (geoCoordinates.length == 1) {
+      return geoCoordinates.first;
+    }
 
-  //   double x = 0;
-  //   double y = 0;
-  //   double z = 0;
+    double x = 0;
+    double y = 0;
+    double z = 0;
 
-  //   for (var geoCoordinate in geoCoordinates) {
-  //     var latitude = geoCoordinate.latitude * pi / 180;
-  //     var longitude = geoCoordinate.longitude * pi / 180;
+    for (var geoCoordinate in geoCoordinates) {
+      var latitude = geoCoordinate.latitude * pi / 180;
+      var longitude = geoCoordinate.longitude * pi / 180;
 
-  //     x += cos(latitude) * cos(longitude);
-  //     y += cos(latitude) * sin(longitude);
-  //     z += sin(latitude);
-  //   }
+      x += cos(latitude) * cos(longitude);
+      y += cos(latitude) * sin(longitude);
+      z += sin(latitude);
+    }
 
-  //   var total = geoCoordinates.length;
+    var total = geoCoordinates.length;
 
-  //   x = x / total;
-  //   y = y / total;
-  //   z = z / total;
+    x = x / total;
+    y = y / total;
+    z = z / total;
 
-  //   var centralLongitude = atan2(y, x);
-  //   var centralSquareRoot = sqrt(x * x + y * y);
-  //   var centralLatitude = atan2(z, centralSquareRoot);
+    var centralLongitude = atan2(y, x);
+    var centralSquareRoot = sqrt(x * x + y * y);
+    var centralLatitude = atan2(z, centralSquareRoot);
 
-  //   return LocationData(
-  //     latitude: centralLatitude * 180 / pi,
-  //     longitude: centralLongitude * 180 / pi,
-  //     accuracy: 0,
-  //     altitude: 0,
-  //     speed: 0,
-  //     speedAccuracy: 0,
-  //     time: DateTime.now().toLocal().millisecondsSinceEpoch,
-  //   );
-  // }
+    return LocationData(
+      latitude: centralLatitude * 180 / pi,
+      longitude: centralLongitude * 180 / pi,
+      accuracy: 0,
+      altitude: 0,
+      speed: 0,
+      speedAccuracy: 0,
+      time: DateTime.now().toLocal().millisecondsSinceEpoch,
+      bearing: 0,
+    );
+  }
 }

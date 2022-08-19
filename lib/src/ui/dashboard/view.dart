@@ -27,6 +27,7 @@ class DashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final landingModel = Provider.of<LandingViewModel>(context);
+    final colorScheme = Theme.of(context).colorScheme;
     var dismissKey = UniqueKey();
 
     var tabs = const [
@@ -81,7 +82,10 @@ class DashboardView extends StatelessWidget {
             return StopTrackingView(
               listTrackingPosition: viewModel.listTrackingPosition,
               trackingUserActivity: viewModel.trackingUserActivity!,
-              saveTracking: viewModel.saveTracking,
+              saveTracking: () => viewModel.saveTracking(
+                primaryColor: colorScheme.primary,
+                secondaryColor: colorScheme.secondary,
+              ),
               removeTracking: viewModel.removeTracking,
               isDetailsPage: false,
             );

@@ -58,11 +58,6 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
       _mapKey.currentState?.setPath(
         widget.listTrackingPosition,
       );
-      // await _mapKey.currentState?.changeCamera(
-      //   currentPosition.latitude!,
-      //   currentPosition.longitude!,
-      //   zoom: 20,
-      // );
 
       _mapKey.currentState?.setMarker(
         currentPosition.latitude,
@@ -76,6 +71,8 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
       );
     });
 
+    var listTrackingPosition = widget.listTrackingPosition;
+    listTrackingPosition.add(currentPosition);
     return Scaffold(
       body: Column(
         children: [
@@ -84,7 +81,7 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
             child: AppMap(
               key: _mapKey,
               type: AppMapType.dynamic,
-              listTrackingPosition: widget.listTrackingPosition,
+              listTrackingPosition: listTrackingPosition,
               isChallenge: isChallenge,
               initialLatitude: currentPosition.latitude,
               initialLongitude: currentPosition.longitude,

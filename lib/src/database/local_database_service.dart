@@ -30,6 +30,32 @@ class LocalDatabaseService implements AppService {
         item: element.toJson(),
       );
     }
+
+    final sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.setDouble(
+      UserActivitySummery.averageSpeedKey,
+      userActivitySummery.averageSpeed,
+    );
+    await sharedPreferences.setDouble(
+      UserActivitySummery.maxSpeedKey,
+      userActivitySummery.maxSpeed,
+    );
+    await sharedPreferences.setInt(
+      UserActivitySummery.calorieKey,
+      userActivitySummery.calorie,
+    );
+    await sharedPreferences.setDouble(
+      UserActivitySummery.co2Key,
+      userActivitySummery.co2,
+    );
+    await sharedPreferences.setDouble(
+      UserActivitySummery.distanceKey,
+      userActivitySummery.distance,
+    );
+    await sharedPreferences.setInt(
+      UserActivitySummery.stepsKey,
+      userActivitySummery.steps,
+    );
   }
 
   @override

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/repository_service_locator.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
@@ -7,6 +9,7 @@ import 'package:cycletowork/src/service/remote_service.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 import 'package:cycletowork/src/utility/gps.dart';
 import 'package:cycletowork/src/utility/logger.dart';
+import 'package:cycletowork/src/utility/tracking_drawing.dart';
 import 'package:flutter/material.dart';
 
 class DashboardServiceLocator implements RepositoryServiceLocator {
@@ -139,6 +142,16 @@ class DashboardRepository {
       longitude1: startPosition.longitude,
       latitude2: stopPosition.latitude,
       longitude2: stopPosition.longitude,
+    );
+  }
+
+  Future<Uint8List> getMapImageData(
+    List<LocationData> listTrackingPosition,
+    Color backgroundColor,
+  ) async {
+    return await TrackingDrawing.getTrackingDrawing(
+      listTrackingPosition: listTrackingPosition,
+      backgroundColor: backgroundColor,
     );
   }
 }

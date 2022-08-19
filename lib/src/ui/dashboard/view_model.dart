@@ -138,20 +138,29 @@ class DashboardViewModel extends ChangeNotifier {
     });
   }
 
-  void saveTracking() async {
+  void saveTracking({
+    required Color primaryColor,
+    required Color secondaryColor,
+  }) async {
     _uiState.loading = true;
     notifyListeners();
     try {
       var userActivity = _trackingUserActivity!;
+      // userActivity.imageData = await _repository.getMapImageData(
+      //   _listTrackingPosition,
+      //   userActivity.isChallenge == 1 ? secondaryColor : primaryColor,
+      // );
       var oldUserActivitySummery = _uiState.userActivitySummery!;
       var userActivitySummery = UserActivitySummery(
         co2: oldUserActivitySummery.co2 + (userActivity.co2 ?? 0),
         distance:
             oldUserActivitySummery.distance + (userActivity.distance ?? 0),
-        averageSpeed: oldUserActivitySummery.averageSpeed +
-            (userActivity.averageSpeed ?? 0),
+        averageSpeed: (oldUserActivitySummery.averageSpeed +
+                (userActivity.averageSpeed ?? 0)) /
+            2,
         maxSpeed:
-            oldUserActivitySummery.maxSpeed + (userActivity.maxSpeed ?? 0),
+            (oldUserActivitySummery.maxSpeed + (userActivity.maxSpeed ?? 0)) /
+                2,
         calorie: oldUserActivitySummery.calorie + (userActivity.calorie ?? 0),
         steps: oldUserActivitySummery.steps + (userActivity.steps ?? 0),
       );
@@ -258,8 +267,8 @@ class DashboardViewModel extends ChangeNotifier {
     await _locationSubscription?.cancel();
 
     _locationSubscription = null;
-    // _stopTrackingDate = DateTime.now().toLocal();
-    //TODO  userActivity
+    _trackingUserActivity!.stopTime =
+        DateTime.now().toLocal().millisecondsSinceEpoch;
     _uiState.dashboardPageOption = DashboardPageOption.stopTracking;
     notifyListeners();
   }

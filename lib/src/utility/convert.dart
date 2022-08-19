@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
+import 'dart:ui';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -58,6 +59,11 @@ extension StaticMapControllerExtensions on StaticMapController {
     File file = File(join(documentDirectory.path, 'share.png'));
     await file.writeAsBytes(response.bodyBytes);
     return file.path;
+  }
+
+  Future<Uint8List> getUint8List() async {
+    var response = await http.get(this.url);
+    return response.bodyBytes;
   }
 }
 
