@@ -410,13 +410,13 @@ class ViewModel extends ChangeNotifier {
   _getUserActivityChartData() {
     List<ChartData> listCo2ChartData = [];
     List<ChartData> listDistanceChartData = [];
+    var listUserActivity = _uiState.listUserActivityFiltered;
+
     if (_uiState.userActivityFilteredChartScaleType == ChartScaleType.week) {
-      var listUserActivity = _uiState.listUserActivityFiltered;
       for (var offsetDay = 0; offsetDay < 7; offsetDay++) {
         var startDate = DateTime.now().getDateOfThisWeek(offsetDay: offsetDay);
-        var endDate = offsetDay == 6
-            ? DateTime.now()
-            : DateTime.now().getDateOfThisWeek(offsetDay: offsetDay + 1);
+        var endDate =
+            DateTime.now().getDateOfThisWeek(offsetDay: offsetDay + 1);
 
         var userActivitySelected = listUserActivity.where(
           (userActivity) =>
@@ -440,6 +440,94 @@ class ViewModel extends ChangeNotifier {
           listDistanceChartData.add(
             ChartData(
               offsetDay,
+              (userActivitySelected.map((e) => e.distance).reduce(
+                            (a, b) => a! + b!,
+                          ) ??
+                      0)
+                  .meterToKm(),
+            ),
+          );
+        }
+      }
+    }
+
+    if (_uiState.userActivityFilteredChartScaleType == ChartScaleType.month) {
+      for (var offsetDay = 0; offsetDay < 4; offsetDay++) {
+        var dateNow = DateTime.now();
+        var beginningNextMonth = (dateNow.month < 12)
+            ? DateTime(dateNow.year, dateNow.month + 1, 1)
+            : DateTime(dateNow.year + 1, 1, 1);
+
+        var startDate =
+            DateTime(dateNow.year, dateNow.month, (1 + (offsetDay * 7)));
+        var endDate = offsetDay == 3
+            ? DateTime(dateNow.year, beginningNextMonth.month, 1)
+            : DateTime(dateNow.year, dateNow.month, (8 + (offsetDay * 7)));
+
+        var userActivitySelected = listUserActivity.where(
+          (userActivity) =>
+              userActivity.stopTime! >= startDate.millisecondsSinceEpoch &&
+              userActivity.stopTime! < endDate.millisecondsSinceEpoch,
+        );
+        if (userActivitySelected.isEmpty) {
+          listCo2ChartData.add(ChartData(offsetDay, 0));
+          listDistanceChartData.add(ChartData(offsetDay, 0));
+        } else {
+          listCo2ChartData.add(
+            ChartData(
+              offsetDay,
+              (userActivitySelected.map((e) => e.co2).reduce(
+                            (a, b) => a! + b!,
+                          ) ??
+                      0)
+                  .gramToKg(),
+            ),
+          );
+          listDistanceChartData.add(
+            ChartData(
+              offsetDay,
+              (userActivitySelected.map((e) => e.distance).reduce(
+                            (a, b) => a! + b!,
+                          ) ??
+                      0)
+                  .meterToKm(),
+            ),
+          );
+        }
+      }
+    }
+
+    if (_uiState.userActivityFilteredChartScaleType == ChartScaleType.year) {
+      for (var offsetMonth = 0; offsetMonth < 12; offsetMonth++) {
+        var dateNow = DateTime.now();
+
+        var startDate = DateTime(dateNow.year, (1 + offsetMonth), 1);
+        var endDate = offsetMonth == 11
+            ? DateTime(dateNow.year + 1, 1, 1)
+            : DateTime(dateNow.year, (1 + (offsetMonth + 1)), 1);
+
+        var userActivitySelected = listUserActivity.where(
+          (userActivity) =>
+              userActivity.stopTime! >= startDate.millisecondsSinceEpoch &&
+              userActivity.stopTime! < endDate.millisecondsSinceEpoch,
+        );
+        if (userActivitySelected.isEmpty) {
+          listCo2ChartData.add(ChartData(offsetMonth, 0));
+          listDistanceChartData.add(ChartData(offsetMonth, 0));
+        } else {
+          listCo2ChartData.add(
+            ChartData(
+              offsetMonth,
+              (userActivitySelected.map((e) => e.co2).reduce(
+                            (a, b) => a! + b!,
+                          ) ??
+                      0)
+                  .gramToKg(),
+            ),
+          );
+          listDistanceChartData.add(
+            ChartData(
+              offsetMonth,
               (userActivitySelected.map((e) => e.distance).reduce(
                             (a, b) => a! + b!,
                           ) ??

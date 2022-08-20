@@ -1,5 +1,3 @@
-import 'package:cycletowork/src/data/chart_data.dart';
-import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/activity/widget/activity_list.dart';
 import 'package:cycletowork/src/ui/dashboard/view_model.dart';
