@@ -10,9 +10,10 @@ import 'package:cycletowork/src/utility/convert.dart';
 import 'package:cycletowork/src/utility/gps.dart';
 import 'package:cycletowork/src/utility/logger.dart';
 import 'package:cycletowork/src/utility/tracking_drawing.dart';
+import 'package:cycletowork/src/widget/chart.dart';
 import 'package:flutter/material.dart';
 
-class DashboardServiceLocator implements RepositoryServiceLocator {
+class ServiceLocator implements RepositoryServiceLocator {
   @override
   LocalDatabaseService getLocalData() {
     return LocalDatabaseService();
@@ -24,16 +25,16 @@ class DashboardServiceLocator implements RepositoryServiceLocator {
   }
 }
 
-class DashboardRepository {
+class Repository {
   late final RemoteService _remoteService;
   late final LocalDatabaseService _localDatabase;
 
   final gpsGranted = GpsStatus.granted;
 
-  DashboardRepository() {
-    var dashboardServiceLocator = DashboardServiceLocator();
-    _localDatabase = dashboardServiceLocator.getLocalData();
-    _remoteService = dashboardServiceLocator.getRemoteData();
+  Repository() {
+    var serviceLocator = ServiceLocator();
+    _localDatabase = serviceLocator.getLocalData();
+    _remoteService = serviceLocator.getRemoteData();
   }
 
   Future<bool> isOpenNewChallenge() async {
@@ -52,6 +53,28 @@ class DashboardRepository {
       return await _localDatabase.getListUserActivity(
         page: page,
         pageSize: pageSize,
+      );
+    } catch (e) {
+      Logger.error(e);
+      return [];
+    }
+  }
+
+  Future<List<UserActivity>> getListUserActivityFiltered(
+    int page,
+    int pageSize,
+    bool justChallenges,
+    ChartScaleType chartScaleType,
+  ) async {
+    try {
+      return await _localDatabase.getListUserActivity(
+        page: page,
+        pageSize: pageSize,
+        justChallenges: justChallenges,
+        thisWeek: chartScaleType == ChartScaleType.week,
+        thisMonth: chartScaleType == ChartScaleType.month,
+        thisYear: chartScaleType == ChartScaleType.year,
+        timeFilter: true,
       );
     } catch (e) {
       Logger.error(e);

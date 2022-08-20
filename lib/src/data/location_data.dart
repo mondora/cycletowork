@@ -27,7 +27,7 @@ class LocationData {
     required this.bearing,
   });
 
-  LocationData.fromMap(Map<String, dynamic> map)
+  LocationData.fromMap(Map<dynamic, dynamic> map)
       : locationDataId = map['locationDataId'],
         userActivityId = map['userActivityId'],
         latitude = map['latitude'],

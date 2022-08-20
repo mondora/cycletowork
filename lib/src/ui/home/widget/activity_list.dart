@@ -7,9 +7,12 @@ import 'package:intl/intl.dart';
 
 class ActivityList extends StatelessWidget {
   final List<UserActivity> userActivity;
+  final Function(UserActivity) onUserActivityClick;
+
   const ActivityList({
     Key? key,
     required this.userActivity,
+    required this.onUserActivityClick,
   }) : super(key: key);
 
   @override
@@ -78,6 +81,7 @@ class ActivityList extends StatelessWidget {
                   date: dateString,
                   more: moreString,
                   isChallenge: isChallenge,
+                  onTap: () => onUserActivityClick(activity),
                 );
               },
             ),
@@ -105,6 +109,8 @@ class _ActivityCard extends StatelessWidget {
   final String date;
   final String more;
   final bool isChallenge;
+  final Function() onTap;
+
   const _ActivityCard({
     Key? key,
     required this.map,
@@ -112,6 +118,7 @@ class _ActivityCard extends StatelessWidget {
     required this.date,
     required this.more,
     required this.isChallenge,
+    required this.onTap,
   }) : super(key: key);
 
   @override
@@ -198,7 +205,7 @@ class _ActivityCard extends StatelessWidget {
               ],
             ),
           ),
-          onTap: () {},
+          onTap: onTap,
         ),
       ),
     );

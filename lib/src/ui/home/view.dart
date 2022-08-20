@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/ui/details_tracking/view.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 import 'package:flutter/material.dart';
 import 'package:cycletowork/src/ui/dashboard/view_model.dart';
@@ -26,7 +27,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final dashboardModel = Provider.of<DashboardViewModel>(context);
+    final dashboardModel = Provider.of<ViewModel>(context);
     final initialLatitude = dashboardModel.uiState.currentPosition != null
         ? dashboardModel.uiState.currentPosition!.latitude
         : dashboardModel.initialLatitude;
@@ -92,6 +93,15 @@ class _HomeViewState extends State<HomeView> {
             if (dashboardModel.uiState.listUserActivity.isNotEmpty)
               ActivityList(
                 userActivity: dashboardModel.uiState.listUserActivity,
+                onUserActivityClick: (userActivity) async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => DetailsTrackingView(
+                        userActivity: userActivity,
+                      ),
+                    ),
+                  );
+                },
               ),
             SlidingUpPanel(
               maxHeight: 168.0,

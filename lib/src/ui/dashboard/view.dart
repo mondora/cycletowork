@@ -39,9 +39,9 @@ class DashboardView extends StatelessWidget {
       InformationView(),
     ];
 
-    return ChangeNotifierProvider<DashboardViewModel>(
-      create: (_) => DashboardViewModel.instance(),
-      child: Consumer<DashboardViewModel>(
+    return ChangeNotifierProvider<ViewModel>(
+      create: (_) => ViewModel.instance(),
+      child: Consumer<ViewModel>(
         builder: (context, viewModel, child) {
           if (viewModel.uiState.dashboardPageOption ==
               DashboardPageOption.startCounter) {
@@ -87,7 +87,6 @@ class DashboardView extends StatelessWidget {
                 secondaryColor: colorScheme.secondary,
               ),
               removeTracking: viewModel.removeTracking,
-              isDetailsPage: false,
             );
           }
 

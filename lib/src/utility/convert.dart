@@ -28,6 +28,18 @@ extension AppDateTime on DateTime {
       return '';
     }
   }
+
+  DateTime getDateOfThisWeek({int offsetDay = 0}) {
+    var currentDay = weekday;
+    var firstDayOfWeek = subtract(
+      Duration(days: currentDay - 1 - offsetDay),
+    );
+    return DateTime(
+      firstDayOfWeek.year,
+      firstDayOfWeek.month,
+      firstDayOfWeek.day,
+    );
+  }
 }
 
 extension DurationExtensions on Duration {

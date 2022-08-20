@@ -3,6 +3,7 @@ import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user_activity_summery.dart';
 import 'package:cycletowork/src/database/local_database.dart';
+import 'package:cycletowork/src/utility/convert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalDatabaseService implements AppService {
@@ -62,11 +63,55 @@ class LocalDatabaseService implements AppService {
   Future<List<UserActivity>> getListUserActivity({
     int page = 0,
     int pageSize = 50,
+    bool justChallenges = false,
+    bool orderByStopTimeDesc = true,
+    bool timeFilter = false,
+    bool thisWeek = true,
+    bool thisMonth = false,
+    bool thisYear = false,
   }) async {
+    String? orderBy;
+    String? whereCondition;
+    List<dynamic> whereArgs = [];
+    if (orderByStopTimeDesc) {
+      orderBy = 'stopTime DESC';
+    }
+
+    if (justChallenges) {
+      whereCondition =
+          '''${whereCondition != null ? '$whereCondition  AND ' : ''}
+          isChallenge = ?''';
+      whereArgs.add(1);
+    }
+
+    if (timeFilter) {
+      if (justChallenges) {
+        whereCondition =
+            '''${whereCondition != null ? '$whereCondition  AND ' : ''}
+            startTime >= ?''';
+        var now = DateTime.now();
+        if (thisWeek) {
+          var dateThisWeek = DateTime.now().getDateOfThisWeek();
+          whereArgs.add(dateThisWeek.millisecondsSinceEpoch);
+        }
+        if (thisMonth) {
+          var dateThisMonth = DateTime(now.year, now.month, 1);
+          whereArgs.add(dateThisMonth.millisecondsSinceEpoch);
+        }
+        if (thisYear) {
+          var dateThisYear = DateTime(now.year, 1, 1);
+          whereArgs.add(dateThisYear.millisecondsSinceEpoch);
+        }
+      }
+    }
+
     var result = await _localDatabase.getData(
       tableName: UserActivity.tableName,
       limit: pageSize,
       offset: page * pageSize,
+      orderBy: orderBy,
+      whereCondition: whereCondition,
+      whereArgs: whereArgs,
     );
     return result.map((json) => UserActivity.fromMap(json)).toList();
   }
@@ -105,5 +150,17 @@ class LocalDatabaseService implements AppService {
   @override
   Future<bool> isChallengeActivity() async {
     return false;
+  }
+
+  @override
+  Future<List<LocationData>> getListLocationDataForActivity(
+    String userActivityId,
+  ) async {
+    var result = await _localDatabase.getData(
+      tableName: LocationData.tableName,
+      whereCondition: 'userActivityId = ?',
+      whereArgs: [userActivityId],
+    );
+    return result.map((json) => LocationData.fromMap(json)).toList();
   }
 }

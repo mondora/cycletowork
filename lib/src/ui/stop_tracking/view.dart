@@ -22,7 +22,6 @@ enum TrackingOption {
 class StopTrackingView extends StatefulWidget {
   final List<LocationData> listTrackingPosition;
   final UserActivity trackingUserActivity;
-  final bool isDetailsPage;
   final GestureTapCancelCallback? saveTracking;
   final GestureTapCancelCallback? removeTracking;
 
@@ -32,7 +31,6 @@ class StopTrackingView extends StatefulWidget {
     required this.trackingUserActivity,
     required this.saveTracking,
     required this.removeTracking,
-    required this.isDetailsPage,
   }) : super(key: key);
 
   @override
@@ -98,18 +96,6 @@ class _StopTrackingViewState extends State<StopTrackingView> {
         widget.trackingUserActivity.isChallenge == 1 ? true : false;
 
     return Scaffold(
-      appBar: widget.isDetailsPage
-          ? AppBar(
-              actions: [
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.more_vert,
-                  ),
-                ),
-              ],
-            )
-          : null,
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(
@@ -348,67 +334,65 @@ class _StopTrackingViewState extends State<StopTrackingView> {
           ],
         ),
       ),
-      bottomNavigationBar: !widget.isDetailsPage
-          ? Container(
-              height: 84.0,
-              decoration: BoxDecoration(
-                color: colorScheme.background,
-                boxShadow: const [
-                  BoxShadow(
-                    blurRadius: 2.0,
-                    spreadRadius: 0.0,
-                    offset: Offset(2.0, 2.0), // shadow direction: bottom right
+      bottomNavigationBar: Container(
+        height: 84.0,
+        decoration: BoxDecoration(
+          color: colorScheme.background,
+          boxShadow: const [
+            BoxShadow(
+              blurRadius: 2.0,
+              spreadRadius: 0.0,
+              offset: Offset(2.0, 2.0), // shadow direction: bottom right
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            SizedBox(
+              height: 50.0,
+              child: FittedBox(
+                child: FloatingActionButton.extended(
+                  extendedPadding: const EdgeInsets.all(13.0),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
                   ),
-                ],
+                  backgroundColor: colorSchemeExtension.success,
+                  onPressed: widget.saveTracking,
+                  label: Text(
+                    'Salva'.toUpperCase(),
+                  ),
+                  icon: const Icon(
+                    Icons.save,
+                  ),
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  SizedBox(
-                    height: 50.0,
-                    child: FittedBox(
-                      child: FloatingActionButton.extended(
-                        extendedPadding: const EdgeInsets.all(13.0),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                        ),
-                        backgroundColor: colorSchemeExtension.success,
-                        onPressed: widget.saveTracking,
-                        label: Text(
-                          'Salva'.toUpperCase(),
-                        ),
-                        icon: const Icon(
-                          Icons.save,
-                        ),
-                      ),
-                    ),
+            ),
+            const SizedBox(
+              width: 20.0,
+            ),
+            SizedBox(
+              height: 50.0,
+              child: FittedBox(
+                child: FloatingActionButton.extended(
+                  extendedPadding: const EdgeInsets.all(13.0),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
                   ),
-                  const SizedBox(
-                    width: 20.0,
+                  backgroundColor: colorScheme.error,
+                  onPressed: widget.removeTracking,
+                  label: const Icon(
+                    Icons.delete_forever,
                   ),
-                  SizedBox(
-                    height: 50.0,
-                    child: FittedBox(
-                      child: FloatingActionButton.extended(
-                        extendedPadding: const EdgeInsets.all(13.0),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                        ),
-                        backgroundColor: colorScheme.error,
-                        onPressed: widget.removeTracking,
-                        label: const Icon(
-                          Icons.delete_forever,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 24.0,
-                  ),
-                ],
+                ),
               ),
-            )
-          : null,
+            ),
+            const SizedBox(
+              width: 24.0,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -486,7 +470,6 @@ class _Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
-    var colorScheme = Theme.of(context).colorScheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     return SizedBox(
@@ -529,7 +512,7 @@ class _Item extends StatelessWidget {
               ],
             ),
           ),
-          Divider(
+          const Divider(
             height: 2,
             thickness: 2,
           )

@@ -19,4 +19,8 @@ abstract class AppService {
   });
 
   Future<UserActivitySummery> getUserActivitySummery();
+
+  Future<List<LocationData>> getListLocationDataForActivity(
+    String userActivityId,
+  );
 }

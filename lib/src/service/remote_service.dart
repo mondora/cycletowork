@@ -40,4 +40,12 @@ class RemoteService implements AppService {
     // TODO: implement isChallengeActivity
     throw UnimplementedError();
   }
+
+  @override
+  Future<List<LocationData>> getListLocationDataForActivity(
+    String userActivityId,
+  ) async {
+    // TODO: implement getListLocationDataForActivity
+    throw UnimplementedError();
+  }
 }
