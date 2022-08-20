@@ -11,7 +11,7 @@ import 'package:cycletowork/src/ui/dashboard/widget/bottom_nav_bar.dart';
 import 'package:cycletowork/src/ui/dashboard/widget/drawer.dart';
 import 'package:cycletowork/src/ui/information/view.dart';
 import 'package:cycletowork/src/ui/landing/view_model.dart';
-import 'package:cycletowork/src/ui/mapTracking/view.dart';
+import 'package:cycletowork/src/ui/map_tracking/view.dart';
 import 'package:cycletowork/src/ui/pause_tracking/view.dart';
 import 'package:cycletowork/src/ui/profile/view.dart';
 import 'package:cycletowork/src/ui/settings/view.dart';
@@ -95,6 +95,7 @@ class DashboardView extends StatelessWidget {
             return ShowMapTracking(
               listTrackingPosition: viewModel.listTrackingPosition,
               trackingUserActivity: viewModel.trackingUserActivity!,
+              currentPosition: viewModel.uiState.currentPosition!,
               pauseTracking: viewModel.pauseTracking,
               hiddenMap: viewModel.hiddenMap,
             );

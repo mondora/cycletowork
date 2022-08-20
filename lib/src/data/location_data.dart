@@ -72,6 +72,25 @@ class LocationData {
     );
   ''';
 
+  static double calculateMaxDistanceFromCenterInMeter({
+    required List<LocationData> listPosition,
+    required double centerPositonLatitude,
+    required double centerPositonLongitude,
+  }) {
+    double maxDistance = 0;
+    for (var position in listPosition) {
+      var distance = LocationData.calculateDistanceInMeter(
+        latitude1: centerPositonLatitude,
+        longitude1: centerPositonLongitude,
+        latitude2: position.latitude,
+        longitude2: position.longitude,
+      ).abs();
+
+      maxDistance = maxDistance < distance ? distance : maxDistance;
+    }
+    return maxDistance * 2;
+  }
+
   static double calculateDistanceInMeter({
     required double latitude1,
     required double longitude1,

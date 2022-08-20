@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 
 class ShowMapTracking extends StatefulWidget {
   final List<LocationData> listTrackingPosition;
+  final LocationData currentPosition;
   final UserActivity trackingUserActivity;
   final GestureTapCancelCallback? pauseTracking;
   final GestureTapCancelCallback? hiddenMap;
@@ -19,6 +20,7 @@ class ShowMapTracking extends StatefulWidget {
     Key? key,
     required this.listTrackingPosition,
     required this.trackingUserActivity,
+    required this.currentPosition,
     this.pauseTracking,
     this.hiddenMap,
   }) : super(key: key);
@@ -29,17 +31,27 @@ class ShowMapTracking extends StatefulWidget {
 
 class _ShowMapTrackingState extends State<ShowMapTracking> {
   final GlobalKey<AppMapState> _mapKey = GlobalKey();
+  Timer? _timer;
   int pathCounter = 0;
+  LocationData? lastCurrentPosition;
 
   @override
   void dispose() {
     _mapKey.currentState?.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var currentPosition = widget.listTrackingPosition.last;
+    print('render ShowMapTracking *****');
+
+    var currentPosition = widget.currentPosition;
     var firstPosition = widget.listTrackingPosition.first;
     var lastPosition = widget.listTrackingPosition.last;
     final trackingCo2 = (widget.trackingUserActivity.co2 ?? 0).gramToKg();
@@ -53,10 +65,13 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
       '##0.00',
       appLocale.languageCode,
     );
+    var listTrackingPosition =
+        widget.listTrackingPosition.map((e) => e).toList();
+    listTrackingPosition.add(currentPosition);
 
-    Timer(const Duration(milliseconds: 1000), () async {
+    Timer(const Duration(seconds: 1), () async {
       _mapKey.currentState?.setPath(
-        widget.listTrackingPosition,
+        listTrackingPosition,
       );
 
       _mapKey.currentState?.setMarker(
@@ -69,10 +84,37 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
         lastPosition.latitude,
         lastPosition.longitude,
       );
+
+      _timer = Timer.periodic(
+        const Duration(seconds: 1),
+        (Timer timer) {
+          var currentPosition = widget.currentPosition;
+
+          if (lastCurrentPosition != null) {
+            var distance = LocationData.calculateDistanceInMeter(
+              latitude1: lastCurrentPosition!.latitude,
+              longitude1: lastCurrentPosition!.longitude,
+              latitude2: currentPosition.latitude,
+              longitude2: currentPosition.longitude,
+            );
+            if (distance > 3) {
+              _mapKey.currentState?.addPath(
+                lastCurrentPosition!,
+                currentPosition,
+              );
+              _mapKey.currentState?.setMarker(
+                currentPosition.latitude,
+                currentPosition.longitude,
+              );
+              lastCurrentPosition = currentPosition;
+            }
+          } else {
+            lastCurrentPosition = currentPosition;
+          }
+        },
+      );
     });
 
-    var listTrackingPosition = widget.listTrackingPosition;
-    listTrackingPosition.add(currentPosition);
     return Scaffold(
       body: Column(
         children: [

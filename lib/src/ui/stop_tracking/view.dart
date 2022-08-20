@@ -168,6 +168,7 @@ class _StopTrackingViewState extends State<StopTrackingView> {
                 type: AppMapType.static,
                 fit: BoxFit.fitWidth,
                 isChallenge: isChallenge,
+                height: 327.0,
               ),
             ),
             const SizedBox(

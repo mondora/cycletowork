@@ -62,7 +62,7 @@ class LocalDatabaseService implements AppService {
   @override
   Future<List<UserActivity>> getListUserActivity({
     int page = 0,
-    int pageSize = 50,
+    int pageSize = 100,
     bool justChallenges = false,
     bool orderByStopTimeDesc = true,
     bool timeFilter = false,

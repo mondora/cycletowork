@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -27,6 +28,8 @@ class AppMap extends StatefulWidget {
   final List<LocationData> listTrackingPosition;
   final bool isChallenge;
   final BoxFit fit;
+  final double? width;
+  final double? height;
 
   const AppMap({
     Key? key,
@@ -39,6 +42,8 @@ class AppMap extends StatefulWidget {
     required this.listTrackingPosition,
     this.isChallenge = false,
     this.fit = BoxFit.fill,
+    this.height,
+    this.width,
   }) : super(key: key);
 
   @override
@@ -80,44 +85,15 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
     double longitudeDestination,
   ) async {
     final GoogleMapController controller = await _controller.future;
-    LatLngBounds bounds;
-
-    if (latitudeSource > latitudeDestination &&
-        longitudeSource > longitudeDestination) {
-      bounds = LatLngBounds(
-        southwest: LatLng(
-          latitudeDestination,
-          longitudeDestination,
-        ),
-        northeast: LatLng(
-          latitudeSource,
-          longitudeSource,
-        ),
-      );
-    } else if (longitudeSource > longitudeDestination) {
-      bounds = LatLngBounds(
-          southwest: LatLng(latitudeSource, longitudeDestination),
-          northeast: LatLng(latitudeDestination, longitudeSource));
-    } else if (latitudeSource > latitudeDestination) {
-      bounds = LatLngBounds(
-          southwest: LatLng(latitudeDestination, longitudeSource),
-          northeast: LatLng(latitudeSource, longitudeDestination));
-    } else {
-      bounds = LatLngBounds(
-        southwest: LatLng(
-          latitudeSource,
-          longitudeSource,
-        ),
-        northeast: LatLng(
-          latitudeDestination,
-          longitudeDestination,
-        ),
-      );
-    }
+    LatLngBounds bounds = getBounds(
+      latitudeSource,
+      longitudeSource,
+      latitudeDestination,
+      longitudeDestination,
+    );
 
     var camera = CameraUpdate.newLatLngBounds(bounds, 70);
     await controller.animateCamera(camera);
-    // setMarker(latitude, longitude);
   }
 
   void setMarker(double latitude, double longitude) {
@@ -145,7 +121,6 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
   setPath(
     List<LocationData> listLocationData,
   ) {
-    print(listLocationData);
     var colorScheme = Theme.of(context).colorScheme;
     _polyline = [];
     var polylineCenter = Polyline(
@@ -167,6 +142,50 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
             (location) => LatLng(location.latitude, location.longitude),
           )
           .toList(),
+      width: 10,
+      color: Colors.black,
+    );
+    setState(() {
+      _polyline.add(polylineBorder);
+      _polyline.add(polylineCenter);
+    });
+  }
+
+  addPath(
+    LocationData lastLocationData,
+    LocationData currentLocationData,
+  ) {
+    var colorScheme = Theme.of(context).colorScheme;
+    var now = DateTime.now();
+    var polylineCenter = Polyline(
+      polylineId: PolylineId('polylineCenter_${now.millisecondsSinceEpoch}'),
+      visible: true,
+      points: [
+        LatLng(
+          lastLocationData.latitude,
+          lastLocationData.longitude,
+        ),
+        LatLng(
+          currentLocationData.latitude,
+          currentLocationData.longitude,
+        ),
+      ],
+      width: 5,
+      color: widget.isChallenge ? colorScheme.secondary : colorScheme.primary,
+    );
+    var polylineBorder = Polyline(
+      polylineId: PolylineId('polylineBorder_${now.millisecondsSinceEpoch}'),
+      visible: true,
+      points: [
+        LatLng(
+          lastLocationData.latitude,
+          lastLocationData.longitude,
+        ),
+        LatLng(
+          currentLocationData.latitude,
+          currentLocationData.longitude,
+        ),
+      ],
       width: 10,
       color: Colors.black,
     );
@@ -255,19 +274,25 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
 
-    var listPath =
-        getPathForStaticMapFromLocationData(widget.listTrackingPosition);
     if (widget.type == AppMapType.static) {
+      var listLocation = widget.listTrackingPosition;
+      var centerPositon = LocationData.getCentralGeoCoordinate(listLocation);
+      var listPath = getPathForStaticMapFromLocationData(listLocation);
+
       _staticController = static_map.StaticMapController(
         googleApiKey: dotenv.env['GOOGLE_MAP_STATIC_API_KEY']!,
-        width: MediaQuery.of(context).size.width.toInt(),
-        height: MediaQuery.of(context).size.height.toInt(),
+        width: widget.width != null
+            ? widget.width!.toInt()
+            : MediaQuery.of(context).size.width.toInt(),
+        height: widget.height != null
+            ? widget.height!.toInt()
+            : MediaQuery.of(context).size.height.toInt(),
         format: static_map.MapImageFormat.png32,
-        zoom: listPath.isEmpty ? 16 : null,
-        // visible: const [
-        //   staticMap.GeocodedLocation.address('Santa Monica Pier'),
-        // ],
-        // styles: retroMapStyle,
+        center: static_map.GeocodedLocation.latLng(
+          centerPositon.latitude,
+          centerPositon.longitude,
+        ),
+        zoom: listPath.isEmpty ? widget.zoom.toInt() : null,
         paths: listPath.length > 1
             ? <static_map.Path>[
                 static_map.Path(
@@ -344,9 +369,47 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
         .toList();
   }
 
-  int getZoomLevel() {
-    // LatLngBounds.fromList()
-    // LatLngBounds(southwest: southwest, northeast: northeast)
-    return 14;
+  getBounds(
+    double latitude1,
+    double longitude1,
+    double latitude2,
+    double longitude2,
+  ) {
+    LatLngBounds bounds;
+    if (latitude1 > latitude2 && longitude1 > longitude2) {
+      bounds = LatLngBounds(
+        southwest: LatLng(
+          latitude2,
+          longitude2,
+        ),
+        northeast: LatLng(
+          latitude1,
+          longitude1,
+        ),
+      );
+    } else if (longitude1 > longitude2) {
+      bounds = LatLngBounds(
+        southwest: LatLng(latitude1, longitude2),
+        northeast: LatLng(latitude2, longitude1),
+      );
+    } else if (latitude1 > latitude2) {
+      bounds = LatLngBounds(
+        southwest: LatLng(latitude2, longitude1),
+        northeast: LatLng(latitude1, longitude2),
+      );
+    } else {
+      bounds = LatLngBounds(
+        southwest: LatLng(
+          latitude1,
+          longitude1,
+        ),
+        northeast: LatLng(
+          latitude2,
+          longitude2,
+        ),
+      );
+    }
+
+    return bounds;
   }
 }
