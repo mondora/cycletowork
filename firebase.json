@@ -1,0 +1,15 @@
+{
+    "functions": {
+        "ignore": [
+            "node_modules",
+            ".git",
+            "firebase-debug.log",
+            "firebase-debug.*.log"
+        ],
+        "source": "functions"
+    },
+    "firestore": {
+        "rules": "./firestore/firestore.rules",
+        "indexes": "./firestore/firestore.indexes.json"
+    }
+}

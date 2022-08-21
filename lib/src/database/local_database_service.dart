@@ -1,4 +1,5 @@
 import 'package:cycletowork/src/data/app_service.dart';
+import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user_activity_summery.dart';
@@ -162,5 +163,11 @@ class LocalDatabaseService implements AppService {
       whereArgs: [userActivityId],
     );
     return result.map((json) => LocationData.fromMap(json)).toList();
+  }
+
+  @override
+  Future<User> getUserInfo(String uid) {
+    // TODO: implement getUserInfo
+    throw UnimplementedError();
   }
 }

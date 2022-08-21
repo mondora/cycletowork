@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class UserAuth {
   static bool isAdmin = false;
-  static Stream<bool> isAuthenticated() {
+  static Stream<bool> isAuthenticatedStateChanges() {
     return FirebaseAuth.instance
         .authStateChanges()
         .where((currentUser) => currentUser != null)
@@ -43,22 +43,6 @@ class UserAuth {
       await FirebaseAuth.instance.signOut();
     } catch (e) {
       return;
-    }
-  }
-
-  static Future<String?> getToken() async {
-    var user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      return await _getToken(user);
-    } else {
-      await UserAuth.isAuthenticated().first;
-      user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        return await _getToken(user);
-      } else {
-        await logout();
-        return null;
-      }
     }
   }
 

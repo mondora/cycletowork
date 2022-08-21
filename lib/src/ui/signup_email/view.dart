@@ -11,7 +11,7 @@ class SignupEmailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final landingModel = Provider.of<LandingViewModel>(context);
+    final landingModel = Provider.of<ViewModel>(context);
     final onBackgroundColor = Theme.of(context).colorScheme.onBackground;
     var formKey = GlobalKey<FormState>();
     var nameController = TextEditingController();

@@ -1,119 +1,127 @@
-import 'dart:async';
-
-import 'package:cycletowork/src/data/app_data.dart';
-import 'package:cycletowork/src/data/user.dart';
+import 'package:cycletowork/src/ui/landing/repository.dart';
+import 'package:cycletowork/src/ui/landing/ui_state.dart';
+import 'package:cycletowork/src/utility/logger.dart';
 import 'package:flutter/material.dart';
 
-import '../../utility/user_auth.dart';
+//   void loginEmail(String email, String password, String? name) async {
+//     debugPrint('login');
+//     // AppData.user = User(
+//     //   userType: UserType.other,
+//     //   email: 'claudia.rossi@aria.it',
+//     //   displayName: 'Claudia Rossi',
+//     //   imageUrl:
+//     //       null, // 'https://lh3.googleusercontent.com/ogw/AOh-ky0d1LLWqZxcF0Tik6VqijGavwOmRza931h8nnm5bg',
+//     // );
+//     // _status = LandingViewModelStatus.home;
+//     // notifyListeners();
 
-enum LandingViewModelStatus {
-  loading,
-  logout,
-  login,
-  signup,
-  home,
-  error,
-}
+//     // _status = LandingViewModelStatus.loading;
+//     // notifyListeners();
+//     // try {
+//     //   var result = await UserAuth.loginEmail(email, password);
+//     //   if (result ?? false) {
+//     //     _status = LandingViewModelStatus.login;
+//     //     notifyListeners();
+//     //     return;
+//     //   } else {
+//     //     _status = LandingViewModelStatus.logout;
+//     //     notifyListeners();
+//     //     return;
+//     //   }
+//     // } catch (e) {
+//     //   _errorMessage = e.toString();
+//     //   _status = LandingViewModelStatus.error;
+//     //   notifyListeners();
+//     //   return;
+//     // }
+//   }
 
-class LandingViewModel extends ChangeNotifier {
-  LandingViewModelStatus _status = LandingViewModelStatus.loading;
-  String _errorMessage = "";
+class ViewModel extends ChangeNotifier {
+  final _repository = Repository();
 
-  String get errorMessage => _errorMessage;
+  final _uiState = UiState();
+  UiState get uiState => _uiState;
 
-  LandingViewModelStatus get status => _status;
+  ViewModel() : this.instance();
 
-  LandingViewModel() : this.instance();
-
-  LandingViewModel.instance() {
+  ViewModel.instance() {
     getter();
   }
 
-  void getter() async {
-    _status = LandingViewModelStatus.loading;
+  getter() async {
+    _uiState.pageOption = PageOption.loading;
     notifyListeners();
     try {
-      UserAuth.isAuthenticated().listen((isAuthenticated) async {
+      await _repository.getUserInfo('uid');
+      var isAuthenticated = await _repository.isAuthenticated();
+      if (isAuthenticated) {
+        _uiState.pageOption = PageOption.home;
+        notifyListeners();
+      } else {
+        _uiState.pageOption = PageOption.logout;
+        notifyListeners();
+      }
+      _repository.isAuthenticatedStateChanges().listen((isAuthenticated) async {
         if (isAuthenticated) {
-          _status = LandingViewModelStatus.login;
-          notifyListeners();
-          return;
+          if (_uiState.pageOption != PageOption.home) {
+            _uiState.pageOption = PageOption.home;
+            notifyListeners();
+            return;
+          }
         } else {
-          _status = LandingViewModelStatus.logout;
+          _uiState.pageOption = PageOption.logout;
           notifyListeners();
           return;
-        }
-      });
-      Timer(const Duration(seconds: 3), () {
-        if (_status == LandingViewModelStatus.loading) {
-          _status = LandingViewModelStatus.logout;
-          notifyListeners();
         }
       });
     } catch (e) {
-      _errorMessage = e.toString();
-      _status = LandingViewModelStatus.logout;
-      notifyListeners();
-      return;
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
     }
   }
 
-  void loginEmail(String email, String password, String? name) async {
+  void loginEmail(
+    String email,
+    String password,
+    String? name,
+  ) async {
     debugPrint('login');
-    AppData.user = User(
-      userType: UserType.other,
-      email: 'claudia.rossi@aria.it',
-      displayName: 'Claudia Rossi',
-      imageUrl:
-          null, // 'https://lh3.googleusercontent.com/ogw/AOh-ky0d1LLWqZxcF0Tik6VqijGavwOmRza931h8nnm5bg',
-    );
-    _status = LandingViewModelStatus.home;
-    notifyListeners();
-    // _status = LandingViewModelStatus.loading;
-    // notifyListeners();
-    // try {
-    //   var result = await UserAuth.loginEmail(email, password);
-    //   if (result ?? false) {
-    //     _status = LandingViewModelStatus.login;
-    //     notifyListeners();
-    //     return;
-    //   } else {
-    //     _status = LandingViewModelStatus.logout;
-    //     notifyListeners();
-    //     return;
-    //   }
-    // } catch (e) {
-    //   _errorMessage = e.toString();
-    //   _status = LandingViewModelStatus.error;
-    //   notifyListeners();
-    //   return;
-    // }
   }
 
-  void signupEmail() async {
+  signupEmail() async {
     debugPrint('signupEmail');
-    _status = LandingViewModelStatus.signup;
+    _uiState.pageOption = PageOption.loading;
     notifyListeners();
-    return;
+    try {} catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+    } finally {
+      _uiState.pageOption = PageOption.signup;
+      notifyListeners();
+    }
   }
 
   void logout() async {
     debugPrint('logout');
-    _status = LandingViewModelStatus.loading;
+    _uiState.pageOption = PageOption.loading;
     notifyListeners();
     try {
-      await UserAuth.logout();
+      await _repository.logout();
     } catch (e) {
-      _errorMessage = e.toString();
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+    } finally {
+      _uiState.pageOption = PageOption.logout;
+      notifyListeners();
     }
-    _status = LandingViewModelStatus.logout;
-    notifyListeners();
-    return;
   }
 
   void clearError() {
-    _status = LandingViewModelStatus.logout;
-    _errorMessage = '';
+    _uiState.error = false;
+    _uiState.errorMessage = '';
     notifyListeners();
   }
 }

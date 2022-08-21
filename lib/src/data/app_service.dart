@@ -1,4 +1,5 @@
 import 'package:cycletowork/src/data/location_data.dart';
+import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/data/user_activity_summery.dart';
 
@@ -23,4 +24,6 @@ abstract class AppService {
   Future<List<LocationData>> getListLocationDataForActivity(
     String userActivityId,
   );
+
+  Future<User> getUserInfo(String uid);
 }

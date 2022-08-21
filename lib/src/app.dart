@@ -40,23 +40,6 @@ class _CycleToWorkAppState extends State<CycleToWorkApp> {
       theme: AppTheme.getLightTheme(),
       // darkTheme: ThemeData.dark(),
       home: const LandingView(),
-      // onGenerateRoute: (RouteSettings routeSettings) {
-      //   return MaterialPageRoute<void>(
-      //     settings: routeSettings,
-      //     builder: (BuildContext context) {
-      //       switch (routeSettings.name) {
-      //         case LandingView.routeName:
-      //           return const LandingView();
-
-      //         case SignupView.routeName:
-      //           return const SignupView();
-
-      //         default:
-      //           return const LandingView();
-      //       }
-      //     },
-      //   );
-      // },
     );
   }
 }

@@ -1,7 +1,9 @@
 import 'package:cycletowork/src/data/app_service.dart';
 import 'package:cycletowork/src/data/location_data.dart';
+import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/data/user_activity_summery.dart';
+import 'package:cycletowork/src/service/remote.dart';
 
 class RemoteService implements AppService {
   @override
@@ -47,5 +49,12 @@ class RemoteService implements AppService {
   ) async {
     // TODO: implement getListLocationDataForActivity
     throw UnimplementedError();
+  }
+
+  @override
+  Future<User> getUserInfo(String uid) async {
+    var result = await Remote.callFirebaseFunctions('helloWorld', null);
+    print(result);
+    return User(userType: UserType.other, email: 'email');
   }
 }

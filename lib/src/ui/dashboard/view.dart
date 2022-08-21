@@ -10,7 +10,8 @@ import 'package:cycletowork/src/ui/dashboard/widget/avatar.dart';
 import 'package:cycletowork/src/ui/dashboard/widget/bottom_nav_bar.dart';
 import 'package:cycletowork/src/ui/dashboard/widget/drawer.dart';
 import 'package:cycletowork/src/ui/information/view.dart';
-import 'package:cycletowork/src/ui/landing/view_model.dart';
+import 'package:cycletowork/src/ui/landing/view_model.dart'
+    as landing_view_model;
 import 'package:cycletowork/src/ui/map_tracking/view.dart';
 import 'package:cycletowork/src/ui/pause_tracking/view.dart';
 import 'package:cycletowork/src/ui/profile/view.dart';
@@ -26,7 +27,7 @@ class DashboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final landingModel = Provider.of<LandingViewModel>(context);
+    final landingModel = Provider.of<landing_view_model.ViewModel>(context);
     final colorScheme = Theme.of(context).colorScheme;
     var dismissKey = UniqueKey();
 

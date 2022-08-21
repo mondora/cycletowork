@@ -1,4 +1,5 @@
 import 'package:cycletowork/src/ui/dashboard/view.dart';
+import 'package:cycletowork/src/ui/landing/ui_state.dart';
 import 'package:cycletowork/src/ui/landing/view_model.dart';
 import 'package:cycletowork/src/ui/login/view.dart';
 import 'package:cycletowork/src/ui/signup_email/view.dart';
@@ -12,21 +13,22 @@ class LandingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<LandingViewModel>(
-      create: (_) => LandingViewModel.instance(),
-      child: Consumer<LandingViewModel>(
+    return ChangeNotifierProvider<ViewModel>(
+      create: (_) => ViewModel.instance(),
+      child: Consumer<ViewModel>(
         builder: (context, viewModel, child) {
-          if (viewModel.status == LandingViewModelStatus.logout) {
+          if (viewModel.uiState.pageOption == PageOption.loading) {
+            return const LoginView(loading: true);
+          }
+
+          if (viewModel.uiState.pageOption == PageOption.logout) {
             return const LoginView();
           }
-          if (viewModel.status == LandingViewModelStatus.home) {
+          if (viewModel.uiState.pageOption == PageOption.home) {
             return const DashboardView();
           }
-          if (viewModel.status == LandingViewModelStatus.signup) {
+          if (viewModel.uiState.pageOption == PageOption.signup) {
             return const SignupEmailView();
-          }
-          if (viewModel.status == LandingViewModelStatus.loading) {
-            return const LoginView(loading: true);
           }
 
           return const LoginView();

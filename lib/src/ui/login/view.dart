@@ -16,7 +16,7 @@ class LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final landingModel = Provider.of<LandingViewModel>(context);
+    final landingModel = Provider.of<ViewModel>(context);
     // final secondaryColor = Theme.of(context).colorScheme.secondary;
 
     return Scaffold(
