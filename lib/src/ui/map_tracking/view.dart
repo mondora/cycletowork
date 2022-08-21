@@ -49,8 +49,6 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
 
   @override
   Widget build(BuildContext context) {
-    print('render ShowMapTracking *****');
-
     var currentPosition = widget.currentPosition;
     var firstPosition = widget.listTrackingPosition.first;
     var lastPosition = widget.listTrackingPosition.last;
