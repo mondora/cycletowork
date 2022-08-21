@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cycletowork/src/ui/details_tracking/view.dart';
 import 'package:cycletowork/src/utility/convert.dart';
+import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:cycletowork/src/ui/dashboard/view_model.dart';
 import 'package:cycletowork/src/ui/home/widget/activity_list.dart';
@@ -20,10 +21,12 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final GlobalKey<AppMapState> _mapKey = GlobalKey();
+  final ScrollController _controller = ScrollController();
 
   @override
   void dispose() {
     _mapKey.currentState?.dispose();
+    _controller.removeListener(_loadMoreUserActivity);
     super.dispose();
   }
 
@@ -31,6 +34,19 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _initCamera());
+    _controller.addListener(_loadMoreUserActivity);
+  }
+
+  _loadMoreUserActivity() {
+    if (_controller.position.maxScrollExtent == _controller.position.pixels) {
+      final dashboardModel = Provider.of<ViewModel>(
+        context,
+        listen: false,
+      );
+      dashboardModel.getListUserActivity(
+        nextPage: true,
+      );
+    }
   }
 
   _initCamera() async {
@@ -117,17 +133,34 @@ class _HomeViewState extends State<HomeView> {
         Column(
           children: [
             if (dashboardModel.uiState.listUserActivity.isNotEmpty)
-              ActivityList(
-                userActivity: dashboardModel.uiState.listUserActivity,
-                onUserActivityClick: (userActivity) async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => DetailsTrackingView(
-                        userActivity: userActivity,
-                      ),
+              SizedBox(
+                height: 115.0,
+                child: ListView(
+                  controller: _controller,
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    ActivityList(
+                      userActivity: dashboardModel.uiState.listUserActivity,
+                      onUserActivityClick: (userActivity) async {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => DetailsTrackingView(
+                              userActivity: userActivity,
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
+                    if (dashboardModel.uiState.loading)
+                      Container(
+                        color: Theme.of(context).colorScheme.background,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: const Center(
+                          child: AppProgressIndicator(),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             SlidingUpPanel(
               maxHeight: 168.0,

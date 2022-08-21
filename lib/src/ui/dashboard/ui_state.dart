@@ -44,12 +44,28 @@ class UiState {
   int userActivityFilteredPageSize = 50;
   List<UserActivity> listUserActivity = [];
   List<UserActivity> listUserActivityFiltered = [];
-  List<ChartData> userActivtyCo2ChartData = [];
-  List<ChartData> userActivtyDistanceChartData = [];
+  UserActivityChartData userActivityChartData = UserActivityChartData();
   UserActivitySummery? userActivitySummery;
   LocationData? currentPosition;
   DashboardPageOption dashboardPageOption = DashboardPageOption.home;
   AppBottomNavBarOption? appBottomNavBarOption = AppBottomNavBarOption.home;
   AppMenuOption appMenuOption = AppMenuOption.home;
   GpsStatus gpsStatus = GpsStatus.turnOff;
+}
+
+class UserActivityChartData {
+  List<ChartData> listCo2ChartData = [];
+  List<ChartData> listDistanceChartData = [];
+
+  UserActivityChartData();
+
+  factory UserActivityChartData.instance(
+    List<ChartData> listCo2ChartData,
+    List<ChartData> listDistanceChartData,
+  ) {
+    var userActivityChartData = UserActivityChartData();
+    userActivityChartData.listCo2ChartData = listCo2ChartData;
+    userActivityChartData.listDistanceChartData = listDistanceChartData;
+    return userActivityChartData;
+  }
 }

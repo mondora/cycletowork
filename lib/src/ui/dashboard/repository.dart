@@ -1,11 +1,13 @@
 import 'dart:typed_data';
 
+import 'package:cycletowork/src/data/chart_data.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/repository_service_locator.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/data/user_activity_summery.dart';
 import 'package:cycletowork/src/database/local_database_service.dart';
 import 'package:cycletowork/src/service/remote_service.dart';
+import 'package:cycletowork/src/ui/dashboard/ui_state.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 import 'package:cycletowork/src/utility/gps.dart';
 import 'package:cycletowork/src/utility/logger.dart';
@@ -175,6 +177,145 @@ class Repository {
     return await TrackingDrawing.getTrackingDrawing(
       listTrackingPosition: listTrackingPosition,
       backgroundColor: backgroundColor,
+    );
+  }
+
+  UserActivityChartData getUserActivityChartData(Map args) {
+    List<UserActivity> listUserActivity = args['listUserActivity'];
+    ChartScaleType chartScaleType = args['chartScaleType'];
+    List<ChartData> listCo2ChartData = [];
+    List<ChartData> listDistanceChartData = [];
+
+    if (chartScaleType == ChartScaleType.week) {
+      for (var offsetDay = 0; offsetDay < 7; offsetDay++) {
+        var startDate = DateTime.now().getDateOfThisWeek(offsetDay: offsetDay);
+        var endDate =
+            DateTime.now().getDateOfThisWeek(offsetDay: offsetDay + 1);
+
+        var userActivitySelected = listUserActivity.where(
+          (userActivity) =>
+              userActivity.stopTime! >= startDate.millisecondsSinceEpoch &&
+              userActivity.stopTime! < endDate.millisecondsSinceEpoch,
+        );
+        if (userActivitySelected.isEmpty) {
+          listCo2ChartData.add(ChartData(offsetDay, 0));
+          listDistanceChartData.add(ChartData(offsetDay, 0));
+        } else {
+          listCo2ChartData.add(
+            ChartData(
+              offsetDay,
+              (userActivitySelected.map((e) => e.co2).reduce(
+                            (a, b) => a! + b!,
+                          ) ??
+                      0)
+                  .gramToKg(),
+            ),
+          );
+          listDistanceChartData.add(
+            ChartData(
+              offsetDay,
+              (userActivitySelected.map((e) => e.distance).reduce(
+                            (a, b) => a! + b!,
+                          ) ??
+                      0)
+                  .meterToKm(),
+            ),
+          );
+        }
+      }
+    }
+
+    if (chartScaleType == ChartScaleType.month) {
+      for (var offsetDay = 0; offsetDay < 4; offsetDay++) {
+        var dateNow = DateTime.now();
+        var beginningNextMonth = (dateNow.month < 12)
+            ? DateTime(dateNow.year, dateNow.month + 1, 1)
+            : DateTime(dateNow.year + 1, 1, 1);
+
+        var startDate =
+            DateTime(dateNow.year, dateNow.month, (1 + (offsetDay * 7)));
+        var endDate = offsetDay == 3
+            ? DateTime(dateNow.year, beginningNextMonth.month, 1)
+            : DateTime(dateNow.year, dateNow.month, (8 + (offsetDay * 7)));
+
+        var userActivitySelected = listUserActivity.where(
+          (userActivity) =>
+              userActivity.stopTime! >= startDate.millisecondsSinceEpoch &&
+              userActivity.stopTime! < endDate.millisecondsSinceEpoch,
+        );
+        if (userActivitySelected.isEmpty) {
+          listCo2ChartData.add(ChartData(offsetDay, 0));
+          listDistanceChartData.add(ChartData(offsetDay, 0));
+        } else {
+          listCo2ChartData.add(
+            ChartData(
+              offsetDay,
+              (userActivitySelected.map((e) => e.co2).reduce(
+                            (a, b) => a! + b!,
+                          ) ??
+                      0)
+                  .gramToKg(),
+            ),
+          );
+          listDistanceChartData.add(
+            ChartData(
+              offsetDay,
+              (userActivitySelected.map((e) => e.distance).reduce(
+                            (a, b) => a! + b!,
+                          ) ??
+                      0)
+                  .meterToKm(),
+            ),
+          );
+        }
+      }
+    }
+
+    if (chartScaleType == ChartScaleType.year) {
+      for (var offsetMonth = 0; offsetMonth < 12; offsetMonth++) {
+        var dateNow = DateTime.now();
+
+        var startDate = DateTime(dateNow.year, (1 + offsetMonth), 1);
+        var endDate = offsetMonth == 11
+            ? DateTime(dateNow.year + 1, 1, 1)
+            : DateTime(dateNow.year, (1 + (offsetMonth + 1)), 1);
+
+        var userActivitySelected = listUserActivity.where(
+          (userActivity) =>
+              userActivity.stopTime! >= startDate.millisecondsSinceEpoch &&
+              userActivity.stopTime! < endDate.millisecondsSinceEpoch,
+        );
+        if (userActivitySelected.isEmpty) {
+          listCo2ChartData.add(ChartData(offsetMonth, 0));
+          listDistanceChartData.add(ChartData(offsetMonth, 0));
+        } else {
+          listCo2ChartData.add(
+            ChartData(
+              offsetMonth,
+              (userActivitySelected.map((e) => e.co2).reduce(
+                            (a, b) => a! + b!,
+                          ) ??
+                      0)
+                  .gramToKg(),
+            ),
+          );
+          listDistanceChartData.add(
+            ChartData(
+              offsetMonth,
+              (userActivitySelected.map((e) => e.distance).reduce(
+                            (a, b) => a! + b!,
+                          ) ??
+                      0)
+                  .meterToKm(),
+            ),
+          );
+        }
+      }
+    }
+
+    return UserActivityChartData.instance(
+      listCo2ChartData,
+      listDistanceChartData,
     );
   }
 }

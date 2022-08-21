@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cycletowork/src/data/chart_data.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/data/user_activity_summery.dart';
@@ -9,6 +8,7 @@ import 'package:cycletowork/src/ui/dashboard/ui_state.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 import 'package:cycletowork/src/utility/logger.dart';
 import 'package:cycletowork/src/widget/chart.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
@@ -50,11 +50,8 @@ class ViewModel extends ChangeNotifier {
     try {
       _uiState.userActivitySummery = await _repository.getUserActivitySummery();
       notifyListeners();
-      _uiState.listUserActivity = await _repository.getListUserActivity(
-        _uiState.userActivityPage,
-        _uiState.userActivityPageSize,
-      );
-      await _getUserActivityFiltered();
+      await getListUserActivity();
+      await getListUserActivityFilterd();
       notifyListeners();
       _uiState.currentPosition = await _getCurrentLocation();
       _isChallengeActivity = await _repository.isChallengeActivity();
@@ -173,11 +170,8 @@ class ViewModel extends ChangeNotifier {
         _listTrackingPosition,
       );
       _uiState.userActivitySummery = userActivitySummery;
-      _uiState.listUserActivity = await _repository.getListUserActivity(
-        _uiState.userActivityPage,
-        _uiState.userActivityPageSize,
-      );
-      await _getUserActivityFiltered();
+      await getListUserActivity();
+      await getListUserActivityFilterd();
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
@@ -189,28 +183,89 @@ class ViewModel extends ChangeNotifier {
     }
   }
 
-  Future getUserActivityFilterd({
-    bool? justChallenges,
-    ChartScaleType? chartScaleType,
+  Future<void> getListUserActivity({
+    bool? nextPage,
   }) async {
-    if (justChallenges != null) {
-      _uiState.userActivityFilteredJustChallenges = justChallenges;
-    }
-
-    if (chartScaleType != null) {
-      _uiState.userActivityFilteredChartScaleType = chartScaleType;
+    if (nextPage == true) {
+      _uiState.userActivityPage++;
     }
 
     _uiState.loading = true;
     notifyListeners();
     try {
-      await _getUserActivityFiltered();
+      var result = await _repository.getListUserActivity(
+        _uiState.userActivityPage,
+        _uiState.userActivityPageSize,
+      );
+      if (nextPage == true) {
+        if (result.isNotEmpty) {
+          _uiState.listUserActivity.addAll(result);
+        } else {
+          _uiState.userActivityPage--;
+        }
+      } else {
+        _uiState.listUserActivity = result;
+      }
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
       Logger.error(e);
     } finally {
-      _uiState.dashboardPageOption = DashboardPageOption.home;
+      _uiState.loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getListUserActivityFilterd({
+    bool? justChallenges,
+    ChartScaleType? chartScaleType,
+    bool? nextPage,
+  }) async {
+    if (justChallenges != null) {
+      _uiState.userActivityFilteredJustChallenges = justChallenges;
+      _uiState.userActivityFilteredPage = 0;
+    }
+
+    if (chartScaleType != null) {
+      _uiState.userActivityFilteredChartScaleType = chartScaleType;
+      _uiState.userActivityFilteredPage = 0;
+    }
+
+    if (nextPage == true) {
+      _uiState.userActivityFilteredPage++;
+    }
+
+    _uiState.loading = true;
+    notifyListeners();
+    try {
+      var result = await _repository.getListUserActivityFiltered(
+        _uiState.userActivityFilteredPage,
+        _uiState.userActivityFilteredPageSize,
+        _uiState.userActivityFilteredJustChallenges,
+        _uiState.userActivityFilteredChartScaleType,
+      );
+      if (nextPage == true) {
+        if (result.isNotEmpty) {
+          _uiState.listUserActivityFiltered.addAll(result);
+        } else {
+          _uiState.userActivityFilteredPage--;
+        }
+      } else {
+        _uiState.listUserActivityFiltered = result;
+      }
+      var args = {
+        'listUserActivity': _uiState.listUserActivityFiltered,
+        'chartScaleType': _uiState.userActivityFilteredChartScaleType,
+      };
+      _uiState.userActivityChartData = await compute(
+        _repository.getUserActivityChartData,
+        args,
+      );
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+    } finally {
       _uiState.loading = false;
       notifyListeners();
     }
@@ -405,151 +460,5 @@ class ViewModel extends ChangeNotifier {
     _trackingUserActivity!.averageSpeed =
         _listTrackingPosition.map((e) => e.speed).reduce((a, b) => a + b) /
             _listTrackingPosition.length;
-  }
-
-  _getUserActivityChartData() {
-    List<ChartData> listCo2ChartData = [];
-    List<ChartData> listDistanceChartData = [];
-    var listUserActivity = _uiState.listUserActivityFiltered;
-
-    if (_uiState.userActivityFilteredChartScaleType == ChartScaleType.week) {
-      for (var offsetDay = 0; offsetDay < 7; offsetDay++) {
-        var startDate = DateTime.now().getDateOfThisWeek(offsetDay: offsetDay);
-        var endDate =
-            DateTime.now().getDateOfThisWeek(offsetDay: offsetDay + 1);
-
-        var userActivitySelected = listUserActivity.where(
-          (userActivity) =>
-              userActivity.stopTime! >= startDate.millisecondsSinceEpoch &&
-              userActivity.stopTime! < endDate.millisecondsSinceEpoch,
-        );
-        if (userActivitySelected.isEmpty) {
-          listCo2ChartData.add(ChartData(offsetDay, 0));
-          listDistanceChartData.add(ChartData(offsetDay, 0));
-        } else {
-          listCo2ChartData.add(
-            ChartData(
-              offsetDay,
-              (userActivitySelected.map((e) => e.co2).reduce(
-                            (a, b) => a! + b!,
-                          ) ??
-                      0)
-                  .gramToKg(),
-            ),
-          );
-          listDistanceChartData.add(
-            ChartData(
-              offsetDay,
-              (userActivitySelected.map((e) => e.distance).reduce(
-                            (a, b) => a! + b!,
-                          ) ??
-                      0)
-                  .meterToKm(),
-            ),
-          );
-        }
-      }
-    }
-
-    if (_uiState.userActivityFilteredChartScaleType == ChartScaleType.month) {
-      for (var offsetDay = 0; offsetDay < 4; offsetDay++) {
-        var dateNow = DateTime.now();
-        var beginningNextMonth = (dateNow.month < 12)
-            ? DateTime(dateNow.year, dateNow.month + 1, 1)
-            : DateTime(dateNow.year + 1, 1, 1);
-
-        var startDate =
-            DateTime(dateNow.year, dateNow.month, (1 + (offsetDay * 7)));
-        var endDate = offsetDay == 3
-            ? DateTime(dateNow.year, beginningNextMonth.month, 1)
-            : DateTime(dateNow.year, dateNow.month, (8 + (offsetDay * 7)));
-
-        var userActivitySelected = listUserActivity.where(
-          (userActivity) =>
-              userActivity.stopTime! >= startDate.millisecondsSinceEpoch &&
-              userActivity.stopTime! < endDate.millisecondsSinceEpoch,
-        );
-        if (userActivitySelected.isEmpty) {
-          listCo2ChartData.add(ChartData(offsetDay, 0));
-          listDistanceChartData.add(ChartData(offsetDay, 0));
-        } else {
-          listCo2ChartData.add(
-            ChartData(
-              offsetDay,
-              (userActivitySelected.map((e) => e.co2).reduce(
-                            (a, b) => a! + b!,
-                          ) ??
-                      0)
-                  .gramToKg(),
-            ),
-          );
-          listDistanceChartData.add(
-            ChartData(
-              offsetDay,
-              (userActivitySelected.map((e) => e.distance).reduce(
-                            (a, b) => a! + b!,
-                          ) ??
-                      0)
-                  .meterToKm(),
-            ),
-          );
-        }
-      }
-    }
-
-    if (_uiState.userActivityFilteredChartScaleType == ChartScaleType.year) {
-      for (var offsetMonth = 0; offsetMonth < 12; offsetMonth++) {
-        var dateNow = DateTime.now();
-
-        var startDate = DateTime(dateNow.year, (1 + offsetMonth), 1);
-        var endDate = offsetMonth == 11
-            ? DateTime(dateNow.year + 1, 1, 1)
-            : DateTime(dateNow.year, (1 + (offsetMonth + 1)), 1);
-
-        var userActivitySelected = listUserActivity.where(
-          (userActivity) =>
-              userActivity.stopTime! >= startDate.millisecondsSinceEpoch &&
-              userActivity.stopTime! < endDate.millisecondsSinceEpoch,
-        );
-        if (userActivitySelected.isEmpty) {
-          listCo2ChartData.add(ChartData(offsetMonth, 0));
-          listDistanceChartData.add(ChartData(offsetMonth, 0));
-        } else {
-          listCo2ChartData.add(
-            ChartData(
-              offsetMonth,
-              (userActivitySelected.map((e) => e.co2).reduce(
-                            (a, b) => a! + b!,
-                          ) ??
-                      0)
-                  .gramToKg(),
-            ),
-          );
-          listDistanceChartData.add(
-            ChartData(
-              offsetMonth,
-              (userActivitySelected.map((e) => e.distance).reduce(
-                            (a, b) => a! + b!,
-                          ) ??
-                      0)
-                  .meterToKm(),
-            ),
-          );
-        }
-      }
-    }
-    _uiState.userActivtyCo2ChartData = listCo2ChartData;
-    _uiState.userActivtyDistanceChartData = listDistanceChartData;
-  }
-
-  _getUserActivityFiltered() async {
-    _uiState.listUserActivityFiltered =
-        await _repository.getListUserActivityFiltered(
-      _uiState.userActivityFilteredPage,
-      _uiState.userActivityFilteredPageSize,
-      _uiState.userActivityFilteredJustChallenges,
-      _uiState.userActivityFilteredChartScaleType,
-    );
-    _getUserActivityChartData();
   }
 }

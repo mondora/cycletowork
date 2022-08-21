@@ -50,6 +50,8 @@ class ActivityList extends StatelessWidget {
             margin: const EdgeInsets.only(left: 24.0, top: 8.0),
             height: 65,
             child: ListView.builder(
+              physics: const ScrollPhysics(),
+              shrinkWrap: true,
               scrollDirection: Axis.horizontal,
               itemCount: userActivity.length,
               itemBuilder: (context, index) {

@@ -3,11 +3,43 @@ import 'package:cycletowork/src/ui/activity/widget/activity_list.dart';
 import 'package:cycletowork/src/ui/dashboard/view_model.dart';
 import 'package:cycletowork/src/ui/details_tracking/view.dart';
 import 'package:cycletowork/src/widget/chart.dart';
+import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ActivityView extends StatelessWidget {
+class ActivityView extends StatefulWidget {
   const ActivityView({Key? key}) : super(key: key);
+
+  @override
+  State<ActivityView> createState() => _ActivityViewState();
+}
+
+class _ActivityViewState extends State<ActivityView> {
+  final ScrollController _controller = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_loadMoreUserActivity);
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_loadMoreUserActivity);
+    super.dispose();
+  }
+
+  _loadMoreUserActivity() {
+    if (_controller.position.maxScrollExtent == _controller.position.pixels) {
+      final dashboardModel = Provider.of<ViewModel>(
+        context,
+        listen: false,
+      );
+      dashboardModel.getListUserActivityFilterd(
+        nextPage: true,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +58,9 @@ class ActivityView extends StatelessWidget {
         dashboardModel.uiState.userActivityFilteredChartScaleType;
 
     var userActivtyCo2ChartData =
-        dashboardModel.uiState.userActivtyCo2ChartData;
+        dashboardModel.uiState.userActivityChartData.listCo2ChartData;
     var userActivtyDistanceChartData =
-        dashboardModel.uiState.userActivtyDistanceChartData;
+        dashboardModel.uiState.userActivityChartData.listDistanceChartData;
 
     return Scaffold(
       backgroundColor: colorScheme.background,
@@ -48,7 +80,7 @@ class ActivityView extends StatelessWidget {
             ),
             InputChip(
               onSelected: (bool value) async {
-                await dashboardModel.getUserActivityFilterd(
+                await dashboardModel.getListUserActivityFilterd(
                   justChallenges: value,
                 );
               },
@@ -70,6 +102,7 @@ class ActivityView extends StatelessWidget {
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 24.0),
         child: ListView(
+          controller: _controller,
           children: [
             const SizedBox(
               height: 30,
@@ -89,7 +122,7 @@ class ActivityView extends StatelessWidget {
                   InputChip(
                     onSelected: (bool value) async {
                       if (value) {
-                        await dashboardModel.getUserActivityFilterd(
+                        await dashboardModel.getListUserActivityFilterd(
                           chartScaleType: ChartScaleType.week,
                         );
                       }
@@ -111,7 +144,7 @@ class ActivityView extends StatelessWidget {
                   InputChip(
                     onSelected: (bool value) async {
                       if (value) {
-                        await dashboardModel.getUserActivityFilterd(
+                        await dashboardModel.getListUserActivityFilterd(
                           chartScaleType: ChartScaleType.month,
                         );
                       }
@@ -133,7 +166,7 @@ class ActivityView extends StatelessWidget {
                   InputChip(
                     onSelected: (bool value) async {
                       if (value) {
-                        await dashboardModel.getUserActivityFilterd(
+                        await dashboardModel.getListUserActivityFilterd(
                           chartScaleType: ChartScaleType.year,
                         );
                       }
@@ -187,26 +220,22 @@ class ActivityView extends StatelessWidget {
               height: 20.0,
             ),
             if (listUserActivity.isNotEmpty)
-              Container(
-                margin: const EdgeInsets.only(bottom: 90.0),
-                child: ActivityList(
-                  userActivity: listUserActivity,
-                  onUserActivityClick: (userActivity) async {
-                    await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => DetailsTrackingView(
-                          userActivity: userActivity,
-                        ),
+              ActivityList(
+                userActivity: listUserActivity,
+                onUserActivityClick: (userActivity) async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => DetailsTrackingView(
+                        userActivity: userActivity,
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             if (listUserActivity.isEmpty)
               Container(
                 height: 115.0,
                 padding: const EdgeInsets.only(left: 34.0, right: 27.0),
-                margin: const EdgeInsets.only(bottom: 90.0),
                 color: Colors.grey[200],
                 child: Center(
                   child: Text(
@@ -218,6 +247,16 @@ class ActivityView extends StatelessWidget {
                   ),
                 ),
               ),
+            if (dashboardModel.uiState.loading)
+              const Padding(
+                padding: EdgeInsets.only(top: 20),
+                child: Center(
+                  child: AppProgressIndicator(),
+                ),
+              ),
+            const SizedBox(
+              height: 90.0,
+            ),
           ],
         ),
       ),
