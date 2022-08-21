@@ -133,7 +133,8 @@ class _HomeViewState extends State<HomeView> {
         Column(
           children: [
             if (dashboardModel.uiState.listUserActivity.isNotEmpty)
-              SizedBox(
+              Container(
+                color: Theme.of(context).colorScheme.background,
                 height: 115.0,
                 child: ListView(
                   controller: _controller,
