@@ -10,7 +10,9 @@ const UserType = {
 
 const permissionDeniedMessage = 'permission-denied';
 
-const setAdminUserErrorMessage = 'admin-user-error';
+const badRequestDeniedMessage = 'invalid-argument';
+
+const unknownErrorMessage = 'unknown';
 
 class Constant {
     static get appRegion() {
@@ -25,8 +27,12 @@ class Constant {
         return permissionDeniedMessage;
     }
 
-    static get setAdminUserErrorMessage() {
-        return setAdminUserErrorMessage;
+    static get badRequestDeniedMessage() {
+        return badRequestDeniedMessage;
+    }
+
+    static get unknownErrorMessage() {
+        return unknownErrorMessage;
     }
 
     static get UserType() {

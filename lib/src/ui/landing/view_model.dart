@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/ui/landing/repository.dart';
 import 'package:cycletowork/src/ui/landing/ui_state.dart';
 import 'package:cycletowork/src/utility/logger.dart';
@@ -52,9 +53,10 @@ class ViewModel extends ChangeNotifier {
     _uiState.pageOption = PageOption.loading;
     notifyListeners();
     try {
-      await _repository.getUserInfo('uid');
       var isAuthenticated = await _repository.isAuthenticated();
       if (isAuthenticated) {
+        await _repository.saveDeviceToken();
+        // AppData.user = await _repository.getUserInfo();
         _uiState.pageOption = PageOption.home;
         notifyListeners();
       } else {
@@ -63,6 +65,7 @@ class ViewModel extends ChangeNotifier {
       }
       _repository.isAuthenticatedStateChanges().listen((isAuthenticated) async {
         if (isAuthenticated) {
+          await _repository.saveDeviceToken();
           if (_uiState.pageOption != PageOption.home) {
             _uiState.pageOption = PageOption.home;
             notifyListeners();
@@ -78,6 +81,23 @@ class ViewModel extends ChangeNotifier {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
       Logger.error(e);
+      _uiState.pageOption = PageOption.logout;
+      notifyListeners();
+    }
+  }
+
+  void loginGoogleSignIn() async {
+    debugPrint('loginGoogleSignIn');
+    _uiState.pageOption = PageOption.loading;
+    notifyListeners();
+    try {
+      await _repository.loginGoogleSignIn();
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+      _uiState.pageOption = PageOption.logout;
+      notifyListeners();
     }
   }
 
@@ -86,7 +106,7 @@ class ViewModel extends ChangeNotifier {
     String password,
     String? name,
   ) async {
-    debugPrint('login');
+    debugPrint('loginEmail');
   }
 
   signupEmail() async {

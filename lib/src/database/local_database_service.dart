@@ -166,8 +166,31 @@ class LocalDatabaseService implements AppService {
   }
 
   @override
-  Future<User> getUserInfo(String uid) {
+  Future<User> getUserInfo() {
     // TODO: implement getUserInfo
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> saveDeviceToken(String deviceToken) async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.setString(
+      User.deviceTokensKey,
+      deviceToken,
+    );
+  }
+
+  @override
+  Future<String?> getDeviceToken() async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    return sharedPreferences.getString(
+      User.deviceTokensKey,
+    );
+  }
+
+  @override
+  Future<List<String>> getDeviceTokens() {
+    // TODO: implement getDeviceTokens
     throw UnimplementedError();
   }
 }

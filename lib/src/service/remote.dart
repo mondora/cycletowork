@@ -15,7 +15,8 @@ class Remote {
         timeout: _timeout,
       ),
     );
-    final results = await callable.call(arg?.toMap());
+
+    final results = await callable.call(arg);
     return results.data;
   }
 }

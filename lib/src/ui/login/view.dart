@@ -92,7 +92,7 @@ class LoginView extends StatelessWidget {
                       ),
                       child: AppButton(
                         loading: loading,
-                        onPressed: () {},
+                        onPressed: landingModel.loginGoogleSignIn,
                         title: AppLocalizations.of(context)!.signupWithGoogle,
                         textUpperCase: true,
                         type: ButtonType.googleLogin,

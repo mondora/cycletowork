@@ -25,5 +25,11 @@ abstract class AppService {
     String userActivityId,
   );
 
-  Future<User> getUserInfo(String uid);
+  Future<User> getUserInfo();
+
+  Future<void> saveDeviceToken(String deviceToken);
+
+  Future<List<String>> getDeviceTokens();
+
+  Future<String?> getDeviceToken();
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class UserAuth {
   static bool isAdmin = false;
+  static final GoogleSignIn _googleSignIn = GoogleSignIn();
+
   static Stream<bool> isAuthenticatedStateChanges() {
     return FirebaseAuth.instance
         .authStateChanges()
@@ -20,6 +23,18 @@ class UserAuth {
       }
       return false;
     });
+  }
+
+  static Future<void> loginGoogleSignIn() async {
+    final GoogleSignInAccount googleSignInAccount =
+        (await _googleSignIn.signIn())!;
+    final GoogleSignInAuthentication googleSignInAuthentication =
+        await googleSignInAccount.authentication;
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken,
+    );
+    await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   static Future<bool?> loginEmail(String email, String password) async {
@@ -41,6 +56,7 @@ class UserAuth {
   static Future logout() async {
     try {
       await FirebaseAuth.instance.signOut();
+      await _googleSignIn.signOut();
     } catch (e) {
       return;
     }

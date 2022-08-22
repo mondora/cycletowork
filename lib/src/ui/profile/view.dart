@@ -14,7 +14,7 @@ class ProfileView extends StatelessWidget {
     var colorScheme = Theme.of(context).colorScheme;
     var textTheme = Theme.of(context).textTheme;
     final actionColor = colorSchemeExtension.action;
-    final userImageUrl = AppData.user != null ? AppData.user!.imageUrl : null;
+    final userImageUrl = AppData.user != null ? AppData.user!.photoURL : null;
     final displayName = AppData.user != null ? AppData.user!.displayName : null;
     final email = AppData.user != null ? AppData.user!.email : null;
 

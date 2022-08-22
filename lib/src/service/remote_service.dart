@@ -52,9 +52,26 @@ class RemoteService implements AppService {
   }
 
   @override
-  Future<User> getUserInfo(String uid) async {
-    var result = await Remote.callFirebaseFunctions('helloWorld', null);
-    print(result);
-    return User(userType: UserType.other, email: 'email');
+  Future<User> getUserInfo() async {
+    // TODO: implement getListLocationDataForActivity
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getDeviceToken() {
+    // TODO: implement getDeviceToken
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> saveDeviceToken(String deviceToken) async {
+    var arg = {'deviceToken': deviceToken};
+    await Remote.callFirebaseFunctions('saveDeviceToken', arg);
+  }
+
+  @override
+  Future<List<String>> getDeviceTokens() {
+    // TODO: implement getDeviceTokens
+    throw UnimplementedError();
   }
 }

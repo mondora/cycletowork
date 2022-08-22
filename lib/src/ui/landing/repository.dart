@@ -2,6 +2,7 @@ import 'package:cycletowork/src/data/repository_service_locator.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/database/local_database_service.dart';
 import 'package:cycletowork/src/service/remote_service.dart';
+import 'package:cycletowork/src/utility/notification.dart';
 import 'package:cycletowork/src/utility/user_auth.dart';
 
 class ServiceLocator implements RepositoryServiceLocator {
@@ -38,7 +39,23 @@ class Repository {
     return false;
   }
 
-  Future<User> getUserInfo(String uid) async {
-    return await _remoteService.getUserInfo(uid);
+  Future<User> getUserInfo() async {
+    var user = await _remoteService.getUserInfo();
+    //TODO Save local
+    return user;
+  }
+
+  Future<void> loginGoogleSignIn() async {
+    await UserAuth.loginGoogleSignIn();
+  }
+
+  Future<void> saveDeviceToken() async {
+    var deviceToken = await AppNotification.getToken();
+    var localDeviceToken = await _localDatabase.getDeviceToken();
+
+    if (deviceToken != null && deviceToken != localDeviceToken) {
+      await _remoteService.saveDeviceToken(deviceToken);
+      await _localDatabase.saveDeviceToken(deviceToken);
+    }
   }
 }

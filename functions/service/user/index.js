@@ -8,13 +8,30 @@ const createUser = async (user) => {
         userType: Constant.UserType.Other,
         email: user.email,
         displayName: user.displayName,
+        uid: uid,
+        emailVerified: user.emailVerified,
+        photoURL: user.photoURL,
+        createUserDate: Date.now(),
+        deviceTokens: [],
     };
+
     await admin.auth().setCustomUserClaims(uid, { admin: false });
     await admin
         .firestore()
         .collection(Constant.usersCollectionName)
         .doc(uid)
         .set(data, { merge: false });
+};
+
+const saveDeviceToken = async (uid, deviceToken) => {
+    const data = {
+        deviceTokens: admin.firestore.FieldValue.arrayUnion(...[deviceToken]),
+    };
+    await admin
+        .firestore()
+        .collection(Constant.usersCollectionName)
+        .doc(uid)
+        .update(data, { merge: true });
 };
 
 const deleteUser = async (user) => {
@@ -36,4 +53,4 @@ const setAdminUser = async (uid) => {
         .set(data, { merge: true });
 };
 
-module.exports = { createUser, deleteUser, setAdminUser };
+module.exports = { createUser, deleteUser, setAdminUser, saveDeviceToken };
