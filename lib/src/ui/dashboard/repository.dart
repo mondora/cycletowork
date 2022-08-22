@@ -172,11 +172,9 @@ class Repository {
 
   Future<Uint8List> getMapImageData(
     List<LocationData> listTrackingPosition,
-    Color backgroundColor,
   ) async {
     return await TrackingDrawing.getTrackingDrawing(
       listTrackingPosition: listTrackingPosition,
-      backgroundColor: backgroundColor,
     );
   }
 

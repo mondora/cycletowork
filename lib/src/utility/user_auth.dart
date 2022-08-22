@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class UserAuth {
   static bool isAdmin = false;
-  static final GoogleSignIn _googleSignIn = GoogleSignIn();
+  static final GoogleSignIn _googleSignIn = GoogleSignIn(
+    clientId: dotenv.env['IOS_FIREBASE_CLIENT_ID']!,
+    serverClientId: dotenv.env['IOS_FIREBASE_SERVER_CLIENT_ID']!,
+  );
 
   static Stream<bool> isAuthenticatedStateChanges() {
     return FirebaseAuth.instance

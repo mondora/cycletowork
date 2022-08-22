@@ -55,28 +55,29 @@ class ViewModel extends ChangeNotifier {
     try {
       var isAuthenticated = await _repository.isAuthenticated();
       if (isAuthenticated) {
-        await _repository.saveDeviceToken();
-        // AppData.user = await _repository.getUserInfo();
+        await _getInitialInfo();
         _uiState.pageOption = PageOption.home;
         notifyListeners();
       } else {
         _uiState.pageOption = PageOption.logout;
         notifyListeners();
-      }
-      _repository.isAuthenticatedStateChanges().listen((isAuthenticated) async {
-        if (isAuthenticated) {
-          await _repository.saveDeviceToken();
-          if (_uiState.pageOption != PageOption.home) {
-            _uiState.pageOption = PageOption.home;
+        _repository
+            .isAuthenticatedStateChanges()
+            .listen((isAuthenticated) async {
+          if (isAuthenticated) {
+            if (_uiState.pageOption != PageOption.home) {
+              await _getInitialInfo();
+              _uiState.pageOption = PageOption.home;
+              notifyListeners();
+              return;
+            }
+          } else {
+            _uiState.pageOption = PageOption.logout;
             notifyListeners();
             return;
           }
-        } else {
-          _uiState.pageOption = PageOption.logout;
-          notifyListeners();
-          return;
-        }
-      });
+        });
+      }
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
@@ -143,5 +144,10 @@ class ViewModel extends ChangeNotifier {
     _uiState.error = false;
     _uiState.errorMessage = '';
     notifyListeners();
+  }
+
+  Future<void> _getInitialInfo() async {
+    await _repository.saveDeviceToken();
+    AppData.user = await _repository.getUserInfo();
   }
 }

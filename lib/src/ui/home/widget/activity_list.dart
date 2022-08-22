@@ -4,6 +4,7 @@ import 'package:cycletowork/src/utility/convert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ActivityList extends StatelessWidget {
   final List<UserActivity> userActivity;
@@ -17,6 +18,7 @@ class ActivityList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final textSecondaryColor = colorSchemeExtension.textSecondary;
@@ -31,7 +33,7 @@ class ActivityList extends StatelessWidget {
     );
 
     return Container(
-      color: Theme.of(context).colorScheme.background,
+      color: colorScheme.background,
       height: 115.0,
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -46,60 +48,150 @@ class ActivityList extends StatelessWidget {
                   ),
             ),
           ),
-          Container(
-            margin: const EdgeInsets.only(left: 24.0, top: 8.0),
-            height: 65,
-            child: ListView.builder(
-              physics: const ScrollPhysics(),
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemCount: userActivity.length,
-              itemBuilder: (context, index) {
-                var activity = userActivity[index];
-                var date = DateTime.fromMillisecondsSinceEpoch(
-                  activity.stopTime!,
-                );
-                var dateString = '${DateFormat(
-                  'dd MMMM yyyy',
-                  appLocale.languageCode,
-                ).format(date)} alle ore ${DateFormat(
-                  'HH:mm',
-                  appLocale.languageCode,
-                ).format(date)}';
-                var co2String =
-                    '${numberFormat.format(activity.co2!.gramToKg())} Kg CO2';
-                var moreString =
-                    '${numberFormat.format(activity.distance!.meterToKm())} Km | velocità media ${numberFormatInt.format(activity.averageSpeed!.meterPerSecondToKmPerHour())} km/h';
-                var map = activity.imageData != null
-                    ? Image.memory(
-                        activity.imageData!,
-                        fit: BoxFit.cover,
-                      )
-                    : null;
-                var isChallenge = activity.isChallenge == 1;
-                return _ActivityCard(
-                  map: map,
-                  co2: co2String,
-                  date: dateString,
-                  more: moreString,
-                  isChallenge: isChallenge,
-                  onTap: () => onUserActivityClick(activity),
-                );
-              },
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(
-              right: 24.0,
-              left: 24.0,
-              top: 27.0,
-            ),
-            child: Container(
-              height: 1,
-              color: const Color.fromRGBO(0, 0, 0, 0.12),
-            ),
-          ),
+          userActivity.isNotEmpty
+              ? Container(
+                  margin: const EdgeInsets.only(left: 24.0, top: 8.0),
+                  height: 65,
+                  child: ListView.builder(
+                    physics: const ScrollPhysics(),
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: userActivity.length,
+                    itemBuilder: (context, index) {
+                      var activity = userActivity[index];
+                      var date = DateTime.fromMillisecondsSinceEpoch(
+                        activity.stopTime!,
+                      );
+                      var dateString = '${DateFormat(
+                        'dd MMMM yyyy',
+                        appLocale.languageCode,
+                      ).format(date)} alle ore ${DateFormat(
+                        'HH:mm',
+                        appLocale.languageCode,
+                      ).format(date)}';
+                      var co2String =
+                          '${numberFormat.format(activity.co2!.gramToKg())} Kg CO\u2082';
+                      var moreString =
+                          '${numberFormat.format(activity.distance!.meterToKm())} Km | velocità media ${numberFormatInt.format(activity.averageSpeed!.meterPerSecondToKmPerHour())} km/h';
+                      var map = activity.imageData != null
+                          ? Image.memory(
+                              activity.imageData!,
+                              fit: BoxFit.cover,
+                            )
+                          : null;
+                      var isChallenge = activity.isChallenge == 1;
+                      return _ActivityCard(
+                        map: map,
+                        co2: co2String,
+                        date: dateString,
+                        more: moreString,
+                        isChallenge: isChallenge,
+                        onTap: () => onUserActivityClick(activity),
+                      );
+                    },
+                  ),
+                )
+              : Container(
+                  margin: const EdgeInsets.only(left: 24.0, top: 8.0),
+                  height: 65,
+                  child: ListView(
+                    physics: const ScrollPhysics(),
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      Shimmer.fromColors(
+                        baseColor: Colors.grey.withOpacity(0.60),
+                        highlightColor: Colors.white,
+                        direction: ShimmerDirection.ltr,
+                        child: const _EmptyActivityCard(),
+                      ),
+                      Shimmer.fromColors(
+                        baseColor: Colors.grey.withOpacity(0.70),
+                        highlightColor: Colors.white,
+                        direction: ShimmerDirection.ltr,
+                        child: const _EmptyActivityCard(),
+                      ),
+                    ],
+                  ),
+                ),
         ],
+      ),
+    );
+  }
+}
+
+class _EmptyActivityCard extends StatelessWidget {
+  const _EmptyActivityCard({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 300,
+      margin: const EdgeInsets.only(right: 0.0),
+      child: Container(
+        padding: const EdgeInsets.all(5),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              height: 57,
+              width: 57,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(left: 10.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 100.0,
+                    height: 7.0,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                    width: 200.0,
+                    height: 7.0,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                    width: 200.0,
+                    height: 7.0,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -111,7 +203,7 @@ class _ActivityCard extends StatelessWidget {
   final String date;
   final String more;
   final bool isChallenge;
-  final Function() onTap;
+  final Function()? onTap;
 
   const _ActivityCard({
     Key? key,
@@ -154,6 +246,7 @@ class _ActivityCard extends StatelessWidget {
                           : Image.asset(
                               'assets/images/${isChallenge ? 'challenge_' : ''}map_tracking.png',
                             ).image,
+                      fit: BoxFit.cover,
                     ),
                     borderRadius: const BorderRadius.all(
                       Radius.circular(10),

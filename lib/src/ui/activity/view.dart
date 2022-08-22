@@ -189,7 +189,7 @@ class _ActivityViewState extends State<ActivityView> {
               height: 25.0,
             ),
             Text(
-              'Risparmio di Co2 (Kg)',
+              'Risparmio di CO\u2082(Kg)',
               style: textTheme.caption,
             ),
             Chart(

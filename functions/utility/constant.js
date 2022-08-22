@@ -14,6 +14,8 @@ const badRequestDeniedMessage = 'invalid-argument';
 
 const unknownErrorMessage = 'unknown';
 
+const userNotFoundError = 'user-not-found';
+
 class Constant {
     static get appRegion() {
         return appRegion;
@@ -37,6 +39,10 @@ class Constant {
 
     static get UserType() {
         return UserType;
+    }
+
+    static get userNotFoundError() {
+        return userNotFoundError;
     }
 }
 

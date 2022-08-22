@@ -118,10 +118,7 @@ class _HomeViewState extends State<HomeView> {
       fit: StackFit.expand,
       children: [
         Container(
-          margin: EdgeInsets.only(
-            top:
-                dashboardModel.uiState.listUserActivity.isNotEmpty ? 100.0 : 20,
-          ),
+          margin: const EdgeInsets.only(top: 100.0),
           child: AppMap(
             type: AppMapType.dynamic,
             key: _mapKey,
@@ -132,37 +129,36 @@ class _HomeViewState extends State<HomeView> {
         ),
         Column(
           children: [
-            if (dashboardModel.uiState.listUserActivity.isNotEmpty)
-              Container(
-                color: Theme.of(context).colorScheme.background,
-                height: 115.0,
-                child: ListView(
-                  controller: _controller,
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    ActivityList(
-                      userActivity: dashboardModel.uiState.listUserActivity,
-                      onUserActivityClick: (userActivity) async {
-                        await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => DetailsTrackingView(
-                              userActivity: userActivity,
-                            ),
+            Container(
+              color: Theme.of(context).colorScheme.background,
+              height: 115.0,
+              child: ListView(
+                controller: _controller,
+                scrollDirection: Axis.horizontal,
+                children: [
+                  ActivityList(
+                    userActivity: dashboardModel.uiState.listUserActivity,
+                    onUserActivityClick: (userActivity) async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => DetailsTrackingView(
+                            userActivity: userActivity,
                           ),
-                        );
-                      },
-                    ),
-                    if (dashboardModel.uiState.loading)
-                      Container(
-                        color: Theme.of(context).colorScheme.background,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: const Center(
-                          child: AppProgressIndicator(),
                         ),
+                      );
+                    },
+                  ),
+                  if (dashboardModel.uiState.loading)
+                    Container(
+                      color: Theme.of(context).colorScheme.background,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: const Center(
+                        child: AppProgressIndicator(),
                       ),
-                  ],
-                ),
+                    ),
+                ],
               ),
+            ),
             SlidingUpPanel(
               maxHeight: 168.0,
               minHeight: 30.0,
@@ -172,11 +168,22 @@ class _HomeViewState extends State<HomeView> {
                 BoxShadow(
                   offset: Offset(0.0, 2.0),
                   blurRadius: 1.0,
+                  color: Color.fromRGBO(0, 0, 0, 0.25),
                 ),
               ],
               slideDirection: SlideDirection.DOWN,
               panelBuilder: (sc) => Column(
                 children: <Widget>[
+                  Container(
+                    margin: const EdgeInsets.only(
+                      right: 24.0,
+                      left: 24.0,
+                    ),
+                    child: Container(
+                      height: 1,
+                      color: const Color.fromRGBO(0, 0, 0, 0.12),
+                    ),
+                  ),
                   SummeryCard(
                     co2: '${numberFormat.format(co2)} Kg',
                     distance: '${numberFormat.format(distance)} Km',
@@ -188,7 +195,7 @@ class _HomeViewState extends State<HomeView> {
                       Icon(
                         Icons.drag_handle,
                         color: Colors.grey,
-                      )
+                      ),
                     ],
                   ),
                 ],

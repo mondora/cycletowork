@@ -108,13 +108,13 @@ class Chart extends StatelessWidget {
             stacked: true,
           ),
           primaryMeasureAxis: charts.NumericAxisSpec(
-            tickProviderSpec: charts.BasicNumericTickProviderSpec(
+            tickProviderSpec: const charts.BasicNumericTickProviderSpec(
               desiredMinTickCount: 3,
               dataIsInWholeNumbers: false,
             ),
             viewport: type == ChartType.speed
-                ? charts.NumericExtents(0, 100)
-                : charts.NumericExtents(0, 1000),
+                ? const charts.NumericExtents(0, 60)
+                : const charts.NumericExtents(0, 1000),
           ),
           //   domainAxis: charts.NumericAxisSpec(
           //   tickProviderSpec: charts.BasicNumericTickProviderSpec(
@@ -155,7 +155,7 @@ class Chart extends StatelessWidget {
           ),
           viewport: type == ChartType.co2
               ? const charts.NumericExtents(0.0, 1.0)
-              : const charts.NumericExtents(0, 100),
+              : const charts.NumericExtents(0, 60),
         ),
         domainAxis: charts.NumericAxisSpec(
           tickProviderSpec: charts.BasicNumericTickProviderSpec(

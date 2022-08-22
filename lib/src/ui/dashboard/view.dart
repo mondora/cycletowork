@@ -83,10 +83,7 @@ class DashboardView extends StatelessWidget {
             return StopTrackingView(
               listTrackingPosition: viewModel.listTrackingPosition,
               trackingUserActivity: viewModel.trackingUserActivity!,
-              saveTracking: () => viewModel.saveTracking(
-                primaryColor: colorScheme.primary,
-                secondaryColor: colorScheme.secondary,
-              ),
+              saveTracking: viewModel.saveTracking,
               removeTracking: viewModel.removeTracking,
             );
           }
@@ -114,6 +111,8 @@ class DashboardView extends StatelessWidget {
               ),
               actions: [
                 AppAvatar(
+                  userImageUrl:
+                      AppData.user != null ? AppData.user!.photoURL : null,
                   userType: AppData.user != null
                       ? AppData.user!.userType
                       : UserType.other,

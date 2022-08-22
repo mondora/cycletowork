@@ -49,6 +49,8 @@ class DetailsTrackingView extends StatelessWidget {
           final trackingSteps = userActivity.steps ?? 0;
           final trackingDistanceInKm = (userActivity.distance ?? 0).meterToKm();
           final isChallenge = userActivity.isChallenge == 1 ? true : false;
+          final listLocationData = viewModel.uiState.listLocationData;
+          final imageData = userActivity.imageData;
 
           return Scaffold(
             appBar: AppBar(
@@ -113,7 +115,7 @@ class DetailsTrackingView extends StatelessWidget {
                           width: 10,
                         ),
                         Text(
-                          'Kg CO2',
+                          'Kg CO\u2082',
                           style: textTheme.headline4!.copyWith(
                             color: colorScheme.onSecondary,
                             fontWeight: FontWeight.w400,
@@ -127,21 +129,27 @@ class DetailsTrackingView extends StatelessWidget {
                   ),
                   SizedBox(
                     height: 327.0,
-                    child: viewModel.uiState.listLocationData.isNotEmpty
+                    child: listLocationData.isNotEmpty && imageData == null
                         ? AppMap(
                             key: _mapKey,
-                            listTrackingPosition:
-                                viewModel.uiState.listLocationData,
+                            listTrackingPosition: listLocationData,
                             type: AppMapType.static,
                             fit: BoxFit.fitWidth,
                             isChallenge: isChallenge,
                             height: 327.0,
                           )
-                        : Container(
-                            color: userActivity.isChallenge == 1
-                                ? colorScheme.secondary.withOpacity(0.75)
-                                : colorScheme.primary.withOpacity(0.30),
-                          ),
+                        : imageData != null
+                            ? Image.memory(
+                                imageData,
+                                fit: BoxFit.fill,
+                                height: 327.0,
+                                width: 327.0,
+                              )
+                            : Container(
+                                color: userActivity.isChallenge == 1
+                                    ? colorScheme.secondary.withOpacity(0.75)
+                                    : colorScheme.primary.withOpacity(0.30),
+                              ),
                   ),
                   const SizedBox(
                     height: 20.0,
@@ -271,7 +279,7 @@ class DetailsTrackingView extends StatelessWidget {
                   ),
                   Chart(
                     type: ChartType.speed,
-                    chartData: viewModel.uiState.listLocationData
+                    chartData: listLocationData
                         .map(
                           (position) => ChartData(
                             DateTime.fromMillisecondsSinceEpoch(
@@ -292,7 +300,7 @@ class DetailsTrackingView extends StatelessWidget {
                   ),
                   Chart(
                     type: ChartType.altitude,
-                    chartData: viewModel.uiState.listLocationData
+                    chartData: listLocationData
                         .map(
                           (position) => ChartData(
                             DateTime.fromMillisecondsSinceEpoch(

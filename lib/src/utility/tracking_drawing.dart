@@ -10,32 +10,16 @@ import 'package:google_static_maps_controller/google_static_maps_controller.dart
 class TrackingDrawing {
   static Future<Uint8List> getTrackingDrawing({
     required List<LocationData> listTrackingPosition,
-    required Color backgroundColor,
-    width = 57,
-    height = 57,
+    width = 320,
+    height = 320,
   }) async {
     var listPath = _getPathForStaticMapFromLocationData(listTrackingPosition);
-    var retroMapStyle = [
-      MapStyle(
-        element: StyleElement.geometry,
-        rules: [
-          StyleRule.color(backgroundColor),
-        ],
-      ),
-      const MapStyle(
-        element: StyleElement.labels,
-        rules: [
-          StyleRule.visibility(VisibilityRule.off),
-        ],
-      ),
-    ];
 
     var _staticController = StaticMapController(
       googleApiKey: dotenv.env['GOOGLE_MAP_STATIC_API_KEY']!,
       width: width,
       height: height,
       format: MapImageFormat.png32,
-      styles: retroMapStyle,
       paths: listPath.length > 1
           ? <Path>[
               Path(
@@ -47,14 +31,16 @@ class TrackingDrawing {
           : [],
       markers: listPath.isNotEmpty
           ? <Marker>[
-              Marker(
-                size: MarkerSize.tiny,
+              Marker.custom(
+                anchor: MarkerAnchor.center,
+                icon: 'https://i.ibb.co/58rHbHb/start-position.png',
                 locations: [
                   listPath.first,
                 ],
               ),
-              Marker(
-                size: MarkerSize.tiny,
+              Marker.custom(
+                anchor: MarkerAnchor.center,
+                icon: 'https://i.ibb.co/d45s3yj/end-position.png',
                 locations: [
                   listPath.last,
                 ],

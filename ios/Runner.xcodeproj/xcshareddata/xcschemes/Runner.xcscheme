@@ -65,6 +65,11 @@
             value = "$(MAPS_API_KEY)"
             isEnabled = "YES">
          </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "REVERSED_CLIENT_ID"
+            value = "$(REVERSED_CLIENT_ID)"
+            isEnabled = "YES">
+         </EnvironmentVariable>
       </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction

@@ -63,9 +63,10 @@ class SummeryCard extends StatelessWidget {
               ),
               const VerticalDivider(
                 thickness: 1.0,
+                width: 1.0,
               ),
               const SizedBox(
-                width: 40,
+                width: 23,
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,7 +80,7 @@ class SummeryCard extends StatelessWidget {
                     style: Theme.of(context).textTheme.caption,
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),

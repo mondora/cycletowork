@@ -148,7 +148,7 @@ class _StopTrackingViewState extends State<StopTrackingView> {
                     width: 10,
                   ),
                   Text(
-                    'Kg CO2',
+                    'Kg CO\u2082',
                     style: textTheme.headline4!.copyWith(
                       color: colorScheme.onSecondary,
                       fontWeight: FontWeight.w400,

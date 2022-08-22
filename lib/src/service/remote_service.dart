@@ -53,8 +53,8 @@ class RemoteService implements AppService {
 
   @override
   Future<User> getUserInfo() async {
-    // TODO: implement getListLocationDataForActivity
-    throw UnimplementedError();
+    var map = await Remote.callFirebaseFunctions('getUserInfo', null);
+    return User.fromMap(map);
   }
 
   @override

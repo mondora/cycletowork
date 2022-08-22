@@ -40,9 +40,7 @@ class Repository {
   }
 
   Future<User> getUserInfo() async {
-    var user = await _remoteService.getUserInfo();
-    //TODO Save local
-    return user;
+    return await _remoteService.getUserInfo();
   }
 
   Future<void> loginGoogleSignIn() async {

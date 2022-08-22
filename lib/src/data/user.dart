@@ -33,7 +33,10 @@ class User {
 
   User.fromMap(Map<String, dynamic> map)
       : uid = map['uid'],
-        userType = map['userType'],
+        userType = UserType.values.firstWhere(
+          (element) =>
+              element.name.toLowerCase() == map['userType'].toLowerCase(),
+        ),
         email = map['email'],
         photoURL = map['photoURL'],
         displayName = map['displayName'],

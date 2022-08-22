@@ -44,7 +44,7 @@ class ActivityList extends StatelessWidget {
           appLocale.languageCode,
         ).format(date)}';
         var co2String =
-            '${numberFormat.format(activity.co2!.gramToKg())} Kg CO2';
+            '${numberFormat.format(activity.co2!.gramToKg())} Kg CO\u2082';
         var moreString =
             '${numberFormat.format(activity.distance!.meterToKm())} Km | velocità media ${numberFormatInt.format(activity.averageSpeed!.meterPerSecondToKmPerHour())} km/h';
         var map = activity.imageData != null
@@ -113,6 +113,7 @@ class _ActivityCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
+                      margin: const EdgeInsets.only(left: 10.0),
                       height: 93,
                       width: 93,
                       decoration: BoxDecoration(
@@ -122,6 +123,7 @@ class _ActivityCard extends StatelessWidget {
                               : Image.asset(
                                   'assets/images/${isChallenge ? 'challenge_' : ''}map_tracking.png',
                                 ).image,
+                          fit: BoxFit.cover,
                         ),
                         borderRadius: const BorderRadius.all(
                           Radius.circular(10),
@@ -129,7 +131,7 @@ class _ActivityCard extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(left: 21.0),
+                      margin: const EdgeInsets.only(left: 15.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,7 +165,7 @@ class _ActivityCard extends StatelessWidget {
                             style: Theme.of(context).textTheme.caption,
                           ),
                           SizedBox(
-                            width: 210,
+                            width: 205,
                             child: Text(
                               more,
                               overflow: TextOverflow.ellipsis,

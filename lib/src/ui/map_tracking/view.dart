@@ -8,6 +8,7 @@ import 'package:cycletowork/src/widget/map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ShowMapTracking extends StatefulWidget {
   final List<LocationData> listTrackingPosition;
@@ -114,106 +115,127 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
     });
 
     return Scaffold(
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            flex: 2,
-            child: AppMap(
-              key: _mapKey,
-              type: AppMapType.dynamic,
-              listTrackingPosition: listTrackingPosition,
-              isChallenge: isChallenge,
-              initialLatitude: currentPosition.latitude,
-              initialLongitude: currentPosition.longitude,
+          SlidingUpPanel(
+            backdropColor: Theme.of(context).colorScheme.background,
+            maxHeight: 268.0,
+            minHeight: 155.0,
+            parallaxEnabled: true,
+            parallaxOffset: 0.2,
+            defaultPanelState: PanelState.OPEN,
+            color: Theme.of(context).colorScheme.background,
+            panelBuilder: (sc) => Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const <Widget>[
+                    Icon(
+                      Icons.drag_handle,
+                      color: Colors.grey,
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                _Co2Tracking(
+                  co2: numberFormat.format(trackingCo2),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const Divider(
+                  height: 1.0,
+                ),
+                const SizedBox(
+                  height: 17,
+                ),
+              ],
+            ),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(10.0),
+              topRight: Radius.circular(10.0),
+            ),
+            body: Container(
+              margin: const EdgeInsets.only(bottom: 120.0),
+              child: AppMap(
+                key: _mapKey,
+                type: AppMapType.dynamic,
+                listTrackingPosition: listTrackingPosition,
+                isChallenge: isChallenge,
+                initialLatitude: currentPosition.latitude,
+                initialLongitude: currentPosition.longitude,
+              ),
             ),
           ),
-          Expanded(
-            flex: 1,
+          Align(
+            alignment: Alignment.bottomCenter,
             child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              color: Theme.of(context).colorScheme.background,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 20.0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  _Co2Tracking(
-                    co2: numberFormat.format(trackingCo2),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Divider(
-                    height: 1.0,
-                  ),
-                  const SizedBox(
-                    height: 17,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      SizedBox(
-                        height: 80.0,
-                        width: 80.0,
-                        child: FittedBox(
-                          child: FloatingActionButton(
-                            onPressed: widget.pauseTracking,
-                            child: Icon(
-                              Icons.pause,
-                              color: colorSchemeExtension.textPrimary,
-                              size: 26.0,
-                            ),
-                          ),
+                  SizedBox(
+                    height: 80.0,
+                    width: 80.0,
+                    child: FittedBox(
+                      child: FloatingActionButton(
+                        onPressed: widget.pauseTracking,
+                        child: Icon(
+                          Icons.pause,
+                          color: colorSchemeExtension.textPrimary,
+                          size: 26.0,
                         ),
                       ),
-                      const SizedBox(
-                        width: 35.0,
-                      ),
-                      SizedBox(
-                        height: 60.0,
-                        width: 60.0,
-                        child: FittedBox(
-                          child: FloatingActionButton(
-                            onPressed: widget.hiddenMap,
-                            child: Stack(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: SvgPicture.asset(
-                                    'assets/icons/map.svg',
-                                    height: 32.0,
-                                    width: 27.0,
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: RotationTransition(
-                                    turns:
-                                        const AlwaysStoppedAnimation(45 / 360),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: colorSchemeExtension.textPrimary,
-                                        borderRadius: const BorderRadius.all(
-                                          Radius.circular(8),
-                                        ),
-                                      ),
-                                      height: 5.0,
-                                      width: 47.0,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 35.0,
+                  ),
+                  SizedBox(
+                    height: 60.0,
+                    width: 60.0,
+                    child: FittedBox(
+                      child: FloatingActionButton(
+                        onPressed: widget.hiddenMap,
+                        child: Stack(
+                          children: [
+                            Align(
+                              alignment: Alignment.center,
+                              child: SvgPicture.asset(
+                                'assets/icons/map.svg',
+                                height: 32.0,
+                                width: 27.0,
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.center,
+                              child: RotationTransition(
+                                turns: const AlwaysStoppedAnimation(45 / 360),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: colorSchemeExtension.textPrimary,
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(8),
                                     ),
                                   ),
+                                  height: 5.0,
+                                  width: 47.0,
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
-                      const SizedBox(
-                        width: 28.0,
-                      ),
-                    ],
+                    ),
                   ),
                   const SizedBox(
-                    height: 20,
+                    width: 28.0,
                   ),
                 ],
               ),
@@ -242,7 +264,7 @@ class _Co2Tracking extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          'CO2'.toUpperCase(),
+          'CO\u2082'.toUpperCase(),
           style: textTheme.caption!.apply(
             color: colorSchemeExtension.textSecondary,
           ),

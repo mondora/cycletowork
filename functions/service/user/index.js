@@ -53,4 +53,24 @@ const setAdminUser = async (uid) => {
         .set(data, { merge: true });
 };
 
-module.exports = { createUser, deleteUser, setAdminUser, saveDeviceToken };
+const getUserInfo = async (uid) => {
+    const userInfo = await admin
+        .firestore()
+        .collection(Constant.usersCollectionName)
+        .doc(uid)
+        .get();
+
+    if (userInfo.exists) {
+        return userInfo.data();
+    } else {
+        throw new Error(Conatast.userNotFoundError);
+    }
+};
+
+module.exports = {
+    createUser,
+    deleteUser,
+    setAdminUser,
+    saveDeviceToken,
+    getUserInfo,
+};

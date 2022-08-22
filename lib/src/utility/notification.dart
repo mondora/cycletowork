@@ -37,6 +37,7 @@ class AppNotification {
       'Cycle2Work Notifications',
       description: 'This channel is used for all notifications for this app.',
       importance: Importance.high,
+      // showBadge: false,
     );
 
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -74,8 +75,6 @@ class AppNotification {
             channel.id,
             channel.name,
             channelDescription: channel.description,
-            // TODO add a proper drawable resource to android, for now using
-            //      one that already exists in example app.
             icon: 'ic_notification',
           ),
         ),

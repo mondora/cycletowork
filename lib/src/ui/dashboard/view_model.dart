@@ -138,18 +138,14 @@ class ViewModel extends ChangeNotifier {
     });
   }
 
-  void saveTracking({
-    required Color primaryColor,
-    required Color secondaryColor,
-  }) async {
+  void saveTracking() async {
     _uiState.loading = true;
     notifyListeners();
     try {
       var userActivity = _trackingUserActivity!;
-      // userActivity.imageData = await _repository.getMapImageData(
-      //   _listTrackingPosition,
-      //   userActivity.isChallenge == 1 ? secondaryColor : primaryColor,
-      // );
+      userActivity.imageData = await _repository.getMapImageData(
+        _listTrackingPosition,
+      );
       var oldUserActivitySummery = _uiState.userActivitySummery!;
       var userActivitySummery = UserActivitySummery(
         co2: oldUserActivitySummery.co2 + (userActivity.co2 ?? 0),

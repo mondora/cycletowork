@@ -1,127 +1,9 @@
-import 'dart:async';
-
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:cycletowork/src/utility/convert.dart';
-
-// class TrackingView2 extends StatefulWidget {
-//   final int trackingDurationInSeconds;
-//   const TrackingView2({
-//     Key? key,
-//     required this.trackingDurationInSeconds,
-//   }) : super(key: key);
-
-//   @override
-//   State<TrackingView2> createState() => _TrackingViewState2();
-// }
-
-// class _TrackingViewState2 extends State<TrackingView2> {
-//   String time = '00:00:00';
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     // _startTimer();
-//   }
-
-//   // _startTimer() {
-//   //   Timer.periodic(
-//   //     const Duration(seconds: 1),
-//   //     (Timer timer) {
-//   //       var nowDate = DateTime.now().toLocal();
-//   //       var duration = nowDate.difference(
-//   //         widget.startTrackingDate,
-//   //       );
-//   //       setState(() {
-//   //         time = duration.toHoursMinutesSeconds();
-//   //       });
-//   //     },
-//   //   );
-//   // }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final colorSchemeExtension =
-//         Theme.of(context).extension<ColorSchemeExtension>()!;
-//     return Scaffold(
-//       body: Container(
-//         margin: const EdgeInsets.only(
-//           right: 24.0,
-//           left: 24.0,
-//           top: 30.0,
-//         ),
-//         child: ListView(
-//           physics: const ScrollPhysics(),
-//           shrinkWrap: true,
-//           children: [
-//             _TimeTracking(
-//               time: time,
-//             ),
-//             const _Divider(),
-//             _Co2Tracking(
-//               co2: '0,00',
-//             ),
-//             const _Divider(),
-//             _DistanceTracking(
-//               distance: '0,00',
-//             ),
-//             const _Divider(),
-//             _SpeedTracking(
-//               avarageSpeed: '0,00',
-//               speed: '0,00',
-//             ),
-//             const _Divider(),
-//             const SizedBox(
-//               height: 15,
-//             ),
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.end,
-//               children: [
-//                 SizedBox(
-//                   height: 80.0,
-//                   width: 80.0,
-//                   child: FittedBox(
-//                     child: FloatingActionButton(
-//                       onPressed: () {},
-//                       child: Icon(
-//                         Icons.pause,
-//                         color: colorSchemeExtension.textPrimary,
-//                         size: 26.0,
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 const SizedBox(
-//                   width: 35.0,
-//                 ),
-//                 SizedBox(
-//                   height: 60.0,
-//                   width: 60.0,
-//                   child: FittedBox(
-//                     child: FloatingActionButton(
-//                       onPressed: () {},
-//                       child: SvgPicture.asset(
-//                         'assets/icons/map.svg',
-//                         height: 32.0,
-//                         width: 27.0,
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 const SizedBox(
-//                   width: 28.0,
-//                 ),
-//               ],
-//             )
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class TrackingView extends StatelessWidget {
   final UserActivity trackingUserActivity;
@@ -303,7 +185,7 @@ class _Co2Tracking extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'CO2'.toUpperCase(),
+          'CO\u2082'.toUpperCase(),
           style: textTheme.caption!.apply(
             color: colorSchemeExtension.textSecondary,
           ),

@@ -176,47 +176,9 @@ class _SummeryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return Container(
-    //   color: Colors.black,
-    //   height: 120,
-    //   child: Row(
-    //     crossAxisAlignment: CrossAxisAlignment.stretch,
-    //     mainAxisSize: MainAxisSize.max,
-    //     children: [
-    //       Container(
-    //         color: Colors.blue,
-    //         child: Column(
-    //           children: [
-    //             Text('data'),
-    //           ],
-    //         ),
-    //       ),
-    //       Container(
-    //         color: Colors.red,
-    //         child: Column(
-    //           children: [
-    //             Text('data'),
-    //           ],
-    //         ),
-    //       ),
-    //       Container(
-    //         color: Colors.green,
-    //         child: Column(
-    //           children: [
-    //             Text('data'),
-    //           ],
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // );
-
     return Column(
-      // crossAxisAlignment: CrossAxisAlignment.start,
-      // mainAxisSize: MainAxisSize.min,
-      // mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        SizedBox(
+        const SizedBox(
           height: 10.0,
         ),
         _TimeTracking(
@@ -232,12 +194,12 @@ class _SummeryCard extends StatelessWidget {
           distance: distant,
         ),
         Container(
-          margin: EdgeInsets.only(
+          margin: const EdgeInsets.only(
             top: 12.0,
             right: 24.0,
             left: 24.0,
           ),
-          child: Divider(
+          child: const Divider(
             height: 1,
           ),
         ),
@@ -278,7 +240,7 @@ class _TimeTracking extends StatelessWidget {
         const SizedBox(
           width: 18.0,
         ),
-        Container(
+        SizedBox(
           width: 135.0,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -325,7 +287,7 @@ class _Co2Tracking extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(
-                'CO2'.toUpperCase(),
+                'CO\u2082'.toUpperCase(),
                 style: textTheme.caption!.apply(
                   color: colorSchemeExtension.textSecondary,
                 ),
@@ -363,37 +325,6 @@ class _Co2Tracking extends StatelessWidget {
       ],
     );
   }
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.center,
-  //     children: [
-  //       Text(
-  //         'CO2'.toUpperCase(),
-  //         style: textTheme.caption!.apply(
-  //           color: colorSchemeExtension.textSecondary,
-  //         ),
-  //       ),
-  //       const SizedBox(
-  //         width: 18.0,
-  //       ),
-  //       Text(
-  //         co2,
-  //         style: textTheme.headline6!.copyWith(
-  //           color: colorSchemeExtension.info,
-  //           fontWeight: FontWeight.w500,
-  //         ),
-  //       ),
-  //       const SizedBox(
-  //         width: 18.0,
-  //       ),
-  //       Text(
-  //         'Kg',
-  //         style: textTheme.caption!.apply(
-  //           color: colorSchemeExtension.textSecondary,
-  //         ),
-  //       )
-  //     ],
-  //   );
-  // }
 }
 
 class _DistanceTracking extends StatelessWidget {
@@ -428,7 +359,7 @@ class _DistanceTracking extends StatelessWidget {
         const SizedBox(
           width: 18.0,
         ),
-        Container(
+        SizedBox(
           width: 135.0,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -452,29 +383,6 @@ class _DistanceTracking extends StatelessWidget {
       ],
     );
   }
-  //   return Column(
-  //     children: [
-  //       Text(
-  //         'DISTANZA'.toUpperCase(),
-  //         style: textTheme.caption!.apply(
-  //           color: colorSchemeExtension.textSecondary,
-  //         ),
-  //       ),
-  //       Text(
-  //         distance,
-  //         style: textTheme.headline2!.copyWith(
-  //           fontWeight: FontWeight.w700,
-  //         ),
-  //       ),
-  //       Text(
-  //         'km',
-  //         style: textTheme.caption!.apply(
-  //           color: colorSchemeExtension.textSecondary,
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
 }
 
 class _SpeedTracking extends StatelessWidget {
@@ -536,50 +444,4 @@ class _SpeedTracking extends StatelessWidget {
       ],
     );
   }
-  // return Row(
-  //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //   children: [
-  //     Column(
-  //       children: [
-  //         Text(
-  //           'VELOCITÀ'.toUpperCase(),
-  //           style: textTheme.caption!.apply(
-  //             color: colorSchemeExtension.textSecondary,
-  //           ),
-  //         ),
-  //         Text(
-  //           speed,
-  //           style: textTheme.headline4,
-  //         ),
-  //         Text(
-  //           'km/h',
-  //           style: textTheme.caption!.apply(
-  //             color: colorSchemeExtension.textSecondary,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //     Column(
-  //       children: [
-  //         Text(
-  //           'VELOCITÀ MEDIA'.toUpperCase(),
-  //           style: textTheme.caption!.apply(
-  //             color: colorSchemeExtension.textSecondary,
-  //           ),
-  //         ),
-  //         Text(
-  //           avarageSpeed,
-  //           style: textTheme.headline4,
-  //         ),
-  //         Text(
-  //           'km/h',
-  //           style: textTheme.caption!.apply(
-  //             color: colorSchemeExtension.textSecondary,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   ],
-  // );
-  // }
 }

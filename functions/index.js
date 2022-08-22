@@ -6,6 +6,7 @@ const {
     deleteUser,
     setAdminUser,
     saveDeviceToken,
+    getUserInfo,
 } = require('./service/user');
 
 admin.initializeApp();
@@ -76,3 +77,32 @@ exports.saveDeviceToken = functions
             );
         }
     });
+
+exports.getUserInfo = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            try {
+                return await getUserInfo(uid);
+            } catch (error) {
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+// exports.scheduledFunctionCrontab = functions
+//     .region(Constant.appRegion)
+//     .pubsub.schedule('1 0 * * *')
+//     .timeZone('Europe/Berlin')
+//     .onRun((context) => {
+//         console.log('This will be run every day at 00:01 Europe/Berlin!');
+//         return null;
+//     });
