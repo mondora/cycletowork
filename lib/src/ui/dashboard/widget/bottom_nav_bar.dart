@@ -57,25 +57,44 @@ class AppBottomNavBar extends StatelessWidget {
           ),
         ),
         Container(
-          width: 55.0,
-          height: 55.0,
+          width: 50.0,
+          height: 50.0,
           margin: const EdgeInsets.only(
             right: 20.0,
             left: 20.0,
             bottom: 20.0,
           ),
-          child: FloatingActionButton(
-            onPressed: floatActionButtonEnabled ? onPressed : null,
-            child: Text(
-              'IN SELLA!',
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              style: Theme.of(context).textTheme.caption!.copyWith(
-                    fontWeight: FontWeight.w900,
-                    fontStyle: FontStyle.italic,
-                  ),
+          child: FittedBox(
+            child: FloatingActionButton(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(15.0),
+                ),
+              ),
+              onPressed: floatActionButtonEnabled ? onPressed : null,
+              child: Text(
+                'IN SELLA!',
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                style: Theme.of(context).textTheme.caption!.copyWith(
+                      fontWeight: FontWeight.w900,
+                      fontStyle: FontStyle.italic,
+                    ),
+              ),
             ),
           ),
+          // child: FloatingActionButton(
+          //   onPressed: floatActionButtonEnabled ? onPressed : null,
+          //   child: Text(
+          //     'IN SELLA!',
+          //     textAlign: TextAlign.center,
+          //     maxLines: 2,
+          //     style: Theme.of(context).textTheme.caption!.copyWith(
+          //           fontWeight: FontWeight.w900,
+          //           fontStyle: FontStyle.italic,
+          //         ),
+          //   ),
+          // ),
         ),
       ],
     );

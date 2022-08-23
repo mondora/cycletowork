@@ -117,55 +117,62 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
     return Scaffold(
       body: Stack(
         children: [
-          SlidingUpPanel(
-            backdropColor: Theme.of(context).colorScheme.background,
-            maxHeight: 268.0,
-            minHeight: 155.0,
-            parallaxEnabled: true,
-            parallaxOffset: 0.2,
-            defaultPanelState: PanelState.OPEN,
-            color: Theme.of(context).colorScheme.background,
-            panelBuilder: (sc) => Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const <Widget>[
-                    Icon(
-                      Icons.drag_handle,
-                      color: Colors.grey,
-                    )
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                _Co2Tracking(
-                  co2: numberFormat.format(trackingCo2),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Divider(
-                  height: 1.0,
-                ),
-                const SizedBox(
-                  height: 17,
-                ),
-              ],
-            ),
+          Material(
+            elevation: 4,
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(10.0),
-              topRight: Radius.circular(10.0),
+              bottomLeft: Radius.circular(10.0),
+              bottomRight: Radius.circular(10.0),
             ),
-            body: Container(
-              margin: const EdgeInsets.only(bottom: 120.0),
-              child: AppMap(
-                key: _mapKey,
-                type: AppMapType.dynamic,
-                listTrackingPosition: listTrackingPosition,
-                isChallenge: isChallenge,
-                initialLatitude: currentPosition.latitude,
-                initialLongitude: currentPosition.longitude,
+            child: SlidingUpPanel(
+              backdropColor: Theme.of(context).colorScheme.background,
+              maxHeight: 268.0,
+              minHeight: 155.0,
+              parallaxEnabled: true,
+              parallaxOffset: 0.2,
+              defaultPanelState: PanelState.OPEN,
+              color: Theme.of(context).colorScheme.background,
+              panelBuilder: (sc) => Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const <Widget>[
+                      Icon(
+                        Icons.drag_handle,
+                        color: Colors.grey,
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  _Co2Tracking(
+                    co2: numberFormat.format(trackingCo2),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Divider(
+                    height: 1.0,
+                  ),
+                  const SizedBox(
+                    height: 17,
+                  ),
+                ],
+              ),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(10.0),
+                topRight: Radius.circular(10.0),
+              ),
+              body: Container(
+                margin: const EdgeInsets.only(bottom: 120.0),
+                child: AppMap(
+                  key: _mapKey,
+                  type: AppMapType.dynamic,
+                  listTrackingPosition: listTrackingPosition,
+                  isChallenge: isChallenge,
+                  initialLatitude: currentPosition.latitude,
+                  initialLongitude: currentPosition.longitude,
+                ),
               ),
             ),
           ),

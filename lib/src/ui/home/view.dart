@@ -159,50 +159,51 @@ class _HomeViewState extends State<HomeView> {
                 ],
               ),
             ),
-            SlidingUpPanel(
-              maxHeight: 168.0,
-              minHeight: 30.0,
-              defaultPanelState: PanelState.OPEN,
-              color: Theme.of(context).colorScheme.background,
-              boxShadow: const [
-                BoxShadow(
-                  offset: Offset(0.0, 2.0),
-                  blurRadius: 1.0,
-                  color: Color.fromRGBO(0, 0, 0, 0.25),
-                ),
-              ],
-              slideDirection: SlideDirection.DOWN,
-              panelBuilder: (sc) => Column(
-                children: <Widget>[
-                  Container(
-                    margin: const EdgeInsets.only(
-                      right: 24.0,
-                      left: 24.0,
-                    ),
-                    child: Container(
-                      height: 1,
-                      color: const Color.fromRGBO(0, 0, 0, 0.12),
-                    ),
-                  ),
-                  SummeryCard(
-                    co2: '${numberFormat.format(co2)} Kg',
-                    distance: '${numberFormat.format(distance)} Km',
-                    averageSpeed: '${numberFormat.format(averageSpeed)} km/h',
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const <Widget>[
-                      Icon(
-                        Icons.drag_handle,
-                        color: Colors.grey,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+            Material(
+              elevation: 4,
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(10.0),
                 bottomRight: Radius.circular(10.0),
+              ),
+              child: SlidingUpPanel(
+                maxHeight: 168.0,
+                minHeight: 30.0,
+                defaultPanelState: PanelState.OPEN,
+                color: Theme.of(context).colorScheme.background,
+                boxShadow: const [],
+                slideDirection: SlideDirection.DOWN,
+                panelBuilder: (sc) => Column(
+                  children: <Widget>[
+                    Container(
+                      margin: const EdgeInsets.only(
+                        right: 24.0,
+                        left: 24.0,
+                      ),
+                      child: Container(
+                        height: 1,
+                        color: const Color.fromRGBO(0, 0, 0, 0.12),
+                      ),
+                    ),
+                    SummeryCard(
+                      co2: '${numberFormat.format(co2)} Kg',
+                      distance: '${numberFormat.format(distance)} Km',
+                      averageSpeed: '${numberFormat.format(averageSpeed)} km/h',
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const <Widget>[
+                        Icon(
+                          Icons.drag_handle,
+                          color: Colors.grey,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(10.0),
+                  bottomRight: Radius.circular(10.0),
+                ),
               ),
             ),
           ],

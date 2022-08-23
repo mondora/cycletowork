@@ -65,12 +65,16 @@ class _ActivityViewState extends State<ActivityView> {
     return Scaffold(
       backgroundColor: colorScheme.background,
       appBar: AppBar(
+        elevation: 4,
         toolbarHeight: 112.0,
         centerTitle: true,
         title: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const SizedBox(
+              height: 10,
+            ),
             Text(
               'Attività',
               style: textTheme.headline5,

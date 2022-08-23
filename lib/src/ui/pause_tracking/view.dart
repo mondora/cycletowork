@@ -45,45 +45,52 @@ class PauseTrackingView extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          SlidingUpPanel(
-            backdropColor: Theme.of(context).colorScheme.background,
-            maxHeight: 268.0,
-            minHeight: 155.0,
-            parallaxEnabled: true,
-            parallaxOffset: 0.2,
-            defaultPanelState: PanelState.OPEN,
-            color: Theme.of(context).colorScheme.background,
-            panelBuilder: (sc) => Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const <Widget>[
-                    Icon(
-                      Icons.drag_handle,
-                      color: Colors.grey,
-                    )
-                  ],
-                ),
-                _SummeryCard(
-                  time: Duration(
-                    seconds: trackingDurationInSeconds,
-                  ).toHoursMinutesSeconds(),
-                  co2: numberFormat.format(trackingCo2),
-                  distant: numberFormat.format(trackingDistanceInKm),
-                  avarageSpeed: numberFormat.format(trackingAvarageSpeed),
-                ),
-              ],
-            ),
+          Material(
+            elevation: 4,
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(10.0),
-              topRight: Radius.circular(10.0),
+              bottomLeft: Radius.circular(10.0),
+              bottomRight: Radius.circular(10.0),
             ),
-            body: Container(
-              margin: const EdgeInsets.only(bottom: 120.0),
-              child: AppMap(
-                type: AppMapType.static,
-                listTrackingPosition: listTrackingPosition,
-                isChallenge: isChallenge,
+            child: SlidingUpPanel(
+              backdropColor: Theme.of(context).colorScheme.background,
+              maxHeight: 268.0,
+              minHeight: 155.0,
+              parallaxEnabled: true,
+              parallaxOffset: 0.2,
+              defaultPanelState: PanelState.OPEN,
+              color: Theme.of(context).colorScheme.background,
+              panelBuilder: (sc) => Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const <Widget>[
+                      Icon(
+                        Icons.drag_handle,
+                        color: Colors.grey,
+                      )
+                    ],
+                  ),
+                  _SummeryCard(
+                    time: Duration(
+                      seconds: trackingDurationInSeconds,
+                    ).toHoursMinutesSeconds(),
+                    co2: numberFormat.format(trackingCo2),
+                    distant: numberFormat.format(trackingDistanceInKm),
+                    avarageSpeed: numberFormat.format(trackingAvarageSpeed),
+                  ),
+                ],
+              ),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(10.0),
+                topRight: Radius.circular(10.0),
+              ),
+              body: Container(
+                margin: const EdgeInsets.only(bottom: 120.0),
+                child: AppMap(
+                  type: AppMapType.static,
+                  listTrackingPosition: listTrackingPosition,
+                  isChallenge: isChallenge,
+                ),
               ),
             ),
           ),

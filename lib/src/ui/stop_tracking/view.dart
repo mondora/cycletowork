@@ -335,62 +335,69 @@ class _StopTrackingViewState extends State<StopTrackingView> {
           ],
         ),
       ),
-      bottomNavigationBar: Container(
-        height: 84.0,
-        decoration: BoxDecoration(
-          color: colorScheme.background,
-          boxShadow: const <BoxShadow>[
-            BoxShadow(
-              blurRadius: 8.0,
-              color: Color.fromRGBO(0, 0, 0, 0.25),
-            )
-          ],
+      bottomNavigationBar: Material(
+        elevation: 4,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(10.0),
+          bottomRight: Radius.circular(10.0),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            SizedBox(
-              height: 50.0,
-              child: FittedBox(
-                child: FloatingActionButton.extended(
-                  extendedPadding: const EdgeInsets.all(13.0),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                  ),
-                  backgroundColor: colorSchemeExtension.success,
-                  onPressed: widget.saveTracking,
-                  label: Text(
-                    'Salva'.toUpperCase(),
-                  ),
-                  icon: const Icon(
-                    Icons.save,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 20.0,
-            ),
-            SizedBox(
-              height: 50.0,
-              child: FittedBox(
-                child: FloatingActionButton.extended(
-                  extendedPadding: const EdgeInsets.all(13.0),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                  ),
-                  backgroundColor: colorScheme.error,
-                  onPressed: widget.removeTracking,
-                  label: const Icon(
-                    Icons.delete_forever,
+        child: Container(
+          height: 84.0,
+          decoration: BoxDecoration(
+            color: colorScheme.background,
+            boxShadow: const <BoxShadow>[
+              BoxShadow(
+                blurRadius: 8.0,
+                color: Color.fromRGBO(0, 0, 0, 0.25),
+              )
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              SizedBox(
+                height: 50.0,
+                child: FittedBox(
+                  child: FloatingActionButton.extended(
+                    extendedPadding: const EdgeInsets.all(13.0),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                    ),
+                    backgroundColor: colorSchemeExtension.success,
+                    onPressed: widget.saveTracking,
+                    label: Text(
+                      'Salva'.toUpperCase(),
+                    ),
+                    icon: const Icon(
+                      Icons.save,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(
-              width: 24.0,
-            ),
-          ],
+              const SizedBox(
+                width: 20.0,
+              ),
+              SizedBox(
+                height: 50.0,
+                child: FittedBox(
+                  child: FloatingActionButton.extended(
+                    extendedPadding: const EdgeInsets.all(13.0),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                    ),
+                    backgroundColor: colorScheme.error,
+                    onPressed: widget.removeTracking,
+                    label: const Icon(
+                      Icons.delete_forever,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 24.0,
+              ),
+            ],
+          ),
         ),
       ),
     );
