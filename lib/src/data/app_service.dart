@@ -1,11 +1,11 @@
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
-import 'package:cycletowork/src/data/user_activity_summery.dart';
+import 'package:cycletowork/src/data/user_activity_summary.dart';
 
 abstract class AppService {
   Future saveUserActivity(
-    UserActivitySummery userActivitySummery,
+    UserActivitySummary userActivitySummary,
     UserActivity userActivity,
     List<LocationData> listLocationData,
   );
@@ -19,7 +19,7 @@ abstract class AppService {
     int pageSize = 50,
   });
 
-  Future<UserActivitySummery> getUserActivitySummery();
+  Future<UserActivitySummary> getUserActivitySummary();
 
   Future<List<LocationData>> getListLocationDataForActivity(
     String userActivityId,

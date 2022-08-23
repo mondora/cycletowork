@@ -97,11 +97,11 @@ class _HomeViewState extends State<HomeView> {
     );
 
     final co2 =
-        (dashboardModel.uiState.userActivitySummery?.co2 ?? 0).gramToKg();
+        (dashboardModel.uiState.userActivitySummary?.co2 ?? 0).gramToKg();
     final distance =
-        (dashboardModel.uiState.userActivitySummery?.distance ?? 0).meterToKm();
+        (dashboardModel.uiState.userActivitySummary?.distance ?? 0).meterToKm();
     final averageSpeed =
-        (dashboardModel.uiState.userActivitySummery?.averageSpeed ?? 0)
+        (dashboardModel.uiState.userActivitySummary?.averageSpeed ?? 0)
             .meterPerSecondToKmPerHour();
 
     if (dashboardModel.uiState.currentPosition != null) {

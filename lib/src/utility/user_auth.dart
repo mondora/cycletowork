@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -5,10 +7,11 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class UserAuth {
   static bool isAdmin = false;
-  static final GoogleSignIn _googleSignIn = GoogleSignIn(
+  static final GoogleSignIn _googleSignInForIos = GoogleSignIn(
     clientId: dotenv.env['IOS_FIREBASE_CLIENT_ID']!,
     serverClientId: dotenv.env['IOS_FIREBASE_SERVER_CLIENT_ID']!,
   );
+  static final GoogleSignIn _googleSignInForAndroid = GoogleSignIn();
 
   static Stream<bool> isAuthenticatedStateChanges() {
     return FirebaseAuth.instance
@@ -30,8 +33,9 @@ class UserAuth {
   }
 
   static Future<void> loginGoogleSignIn() async {
-    final GoogleSignInAccount googleSignInAccount =
-        (await _googleSignIn.signIn())!;
+    final GoogleSignInAccount googleSignInAccount = Platform.isAndroid
+        ? (await _googleSignInForAndroid.signIn())!
+        : (await _googleSignInForIos.signIn())!;
     final GoogleSignInAuthentication googleSignInAuthentication =
         await googleSignInAccount.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(
@@ -60,7 +64,10 @@ class UserAuth {
   static Future logout() async {
     try {
       await FirebaseAuth.instance.signOut();
-      await _googleSignIn.signOut();
+      if (Platform.isAndroid) {
+      } else {
+        await _googleSignInForIos.signOut();
+      }
     } catch (e) {
       return;
     }

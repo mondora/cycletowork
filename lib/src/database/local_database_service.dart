@@ -2,7 +2,7 @@ import 'package:cycletowork/src/data/app_service.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/data/location_data.dart';
-import 'package:cycletowork/src/data/user_activity_summery.dart';
+import 'package:cycletowork/src/data/user_activity_summary.dart';
 import 'package:cycletowork/src/database/local_database.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,7 +17,7 @@ class LocalDatabaseService implements AppService {
 
   @override
   Future saveUserActivity(
-    UserActivitySummery userActivitySummery,
+    UserActivitySummary userActivitySummary,
     UserActivity userActivity,
     List<LocationData> listLocationData,
   ) async {
@@ -35,28 +35,28 @@ class LocalDatabaseService implements AppService {
 
     final sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.setDouble(
-      UserActivitySummery.averageSpeedKey,
-      userActivitySummery.averageSpeed,
+      UserActivitySummary.averageSpeedKey,
+      userActivitySummary.averageSpeed,
     );
     await sharedPreferences.setDouble(
-      UserActivitySummery.maxSpeedKey,
-      userActivitySummery.maxSpeed,
+      UserActivitySummary.maxSpeedKey,
+      userActivitySummary.maxSpeed,
     );
     await sharedPreferences.setInt(
-      UserActivitySummery.calorieKey,
-      userActivitySummery.calorie,
+      UserActivitySummary.calorieKey,
+      userActivitySummary.calorie,
     );
     await sharedPreferences.setDouble(
-      UserActivitySummery.co2Key,
-      userActivitySummery.co2,
+      UserActivitySummary.co2Key,
+      userActivitySummary.co2,
     );
     await sharedPreferences.setDouble(
-      UserActivitySummery.distanceKey,
-      userActivitySummery.distance,
+      UserActivitySummary.distanceKey,
+      userActivitySummary.distance,
     );
     await sharedPreferences.setInt(
-      UserActivitySummery.stepsKey,
-      userActivitySummery.steps,
+      UserActivitySummary.stepsKey,
+      userActivitySummary.steps,
     );
   }
 
@@ -118,27 +118,27 @@ class LocalDatabaseService implements AppService {
   }
 
   @override
-  Future<UserActivitySummery> getUserActivitySummery() async {
+  Future<UserActivitySummary> getUserActivitySummary() async {
     final sharedPreferences = await SharedPreferences.getInstance();
     var averageSpeed = sharedPreferences.getDouble(
-      UserActivitySummery.averageSpeedKey,
+      UserActivitySummary.averageSpeedKey,
     );
     var maxSpeed = sharedPreferences.getDouble(
-      UserActivitySummery.maxSpeedKey,
+      UserActivitySummary.maxSpeedKey,
     );
     var calorie = sharedPreferences.getInt(
-      UserActivitySummery.calorieKey,
+      UserActivitySummary.calorieKey,
     );
     var co2 = sharedPreferences.getDouble(
-      UserActivitySummery.co2Key,
+      UserActivitySummary.co2Key,
     );
     var distance = sharedPreferences.getDouble(
-      UserActivitySummery.distanceKey,
+      UserActivitySummary.distanceKey,
     );
     var steps = sharedPreferences.getInt(
-      UserActivitySummery.stepsKey,
+      UserActivitySummary.stepsKey,
     );
-    return UserActivitySummery(
+    return UserActivitySummary(
       averageSpeed: averageSpeed ?? 0,
       maxSpeed: maxSpeed ?? 0,
       calorie: calorie ?? 0,

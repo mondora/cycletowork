@@ -4,7 +4,7 @@ import 'package:cycletowork/src/data/chart_data.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/repository_service_locator.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
-import 'package:cycletowork/src/data/user_activity_summery.dart';
+import 'package:cycletowork/src/data/user_activity_summary.dart';
 import 'package:cycletowork/src/database/local_database_service.dart';
 import 'package:cycletowork/src/service/remote_service.dart';
 import 'package:cycletowork/src/ui/dashboard/ui_state.dart';
@@ -84,9 +84,9 @@ class Repository {
     }
   }
 
-  Future<UserActivitySummery?> getUserActivitySummery() async {
+  Future<UserActivitySummary?> getUserActivitySummary() async {
     try {
-      return await _localDatabase.getUserActivitySummery();
+      return await _localDatabase.getUserActivitySummary();
     } catch (e) {
       Logger.error(e);
       return null;
@@ -94,18 +94,18 @@ class Repository {
   }
 
   Future<bool> saveUserActivity(
-    UserActivitySummery userActivitySummery,
+    UserActivitySummary userActivitySummary,
     UserActivity userActivity,
     List<LocationData> listLocationData,
   ) async {
     try {
       await _localDatabase.saveUserActivity(
-        userActivitySummery,
+        userActivitySummary,
         userActivity,
         listLocationData,
       );
       await _remoteService.saveUserActivity(
-        userActivitySummery,
+        userActivitySummary,
         userActivity,
         listLocationData,
       );

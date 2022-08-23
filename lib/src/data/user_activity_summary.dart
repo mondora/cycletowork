@@ -1,4 +1,4 @@
-class UserActivitySummery {
+class UserActivitySummary {
   double co2;
   double distance;
   double averageSpeed;
@@ -6,7 +6,7 @@ class UserActivitySummery {
   int calorie;
   int steps;
 
-  UserActivitySummery({
+  UserActivitySummary({
     required this.co2,
     required this.distance,
     required this.averageSpeed,
@@ -15,7 +15,7 @@ class UserActivitySummery {
     required this.steps,
   });
 
-  UserActivitySummery.fromMap(Map<String, dynamic> map)
+  UserActivitySummary.fromMap(Map<String, dynamic> map)
       : co2 = map['co2'],
         distance = map['distance'],
         averageSpeed = map['averageSpeed'],
@@ -32,10 +32,10 @@ class UserActivitySummery {
         'steps': steps,
       };
 
-  static String get co2Key => 'UserActivitySummery_co2';
-  static String get distanceKey => 'UserActivitySummery_distance';
-  static String get averageSpeedKey => 'UserActivitySummery_averageSpeed';
-  static String get maxSpeedKey => 'UserActivitySummery_maxSpeed';
-  static String get calorieKey => 'UserActivitySummery_calorie';
-  static String get stepsKey => 'UserActivitySummery_steps';
+  static String get co2Key => 'UserActivitySummary_co2';
+  static String get distanceKey => 'UserActivitySummary_distance';
+  static String get averageSpeedKey => 'UserActivitySummary_averageSpeed';
+  static String get maxSpeedKey => 'UserActivitySummary_maxSpeed';
+  static String get calorieKey => 'UserActivitySummary_calorie';
+  static String get stepsKey => 'UserActivitySummary_steps';
 }

@@ -339,12 +339,11 @@ class _StopTrackingViewState extends State<StopTrackingView> {
         height: 84.0,
         decoration: BoxDecoration(
           color: colorScheme.background,
-          boxShadow: const [
+          boxShadow: const <BoxShadow>[
             BoxShadow(
-              blurRadius: 2.0,
-              spreadRadius: 0.0,
-              offset: Offset(2.0, 2.0), // shadow direction: bottom right
-            ),
+              blurRadius: 8.0,
+              color: Color.fromRGBO(0, 0, 0, 0.25),
+            )
           ],
         ),
         child: Row(

@@ -1,7 +1,7 @@
 import 'package:cycletowork/src/data/chart_data.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
-import 'package:cycletowork/src/data/user_activity_summery.dart';
+import 'package:cycletowork/src/data/user_activity_summary.dart';
 import 'package:cycletowork/src/utility/gps.dart';
 import 'package:cycletowork/src/widget/chart.dart';
 
@@ -45,7 +45,7 @@ class UiState {
   List<UserActivity> listUserActivity = [];
   List<UserActivity> listUserActivityFiltered = [];
   UserActivityChartData userActivityChartData = UserActivityChartData();
-  UserActivitySummery? userActivitySummery;
+  UserActivitySummary? userActivitySummary;
   LocationData? currentPosition;
   DashboardPageOption dashboardPageOption = DashboardPageOption.home;
   AppBottomNavBarOption? appBottomNavBarOption = AppBottomNavBarOption.home;

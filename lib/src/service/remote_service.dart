@@ -2,7 +2,7 @@ import 'package:cycletowork/src/data/app_service.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
-import 'package:cycletowork/src/data/user_activity_summery.dart';
+import 'package:cycletowork/src/data/user_activity_summary.dart';
 import 'package:cycletowork/src/service/remote.dart';
 
 class RemoteService implements AppService {
@@ -14,12 +14,19 @@ class RemoteService implements AppService {
 
   @override
   Future saveUserActivity(
-    UserActivitySummery userActivitySummery,
+    UserActivitySummary userActivitySummary,
     UserActivity userActivity,
     List<LocationData> listLocationData,
   ) async {
-    // TODO: implement getListUserActivity
-    throw UnimplementedError();
+    if (userActivity.isChallenge == 1) {
+    } else {
+      userActivity.imageData = null;
+      var arg = {
+        'userActivitySummary': userActivitySummary.toJson(),
+        'userActivity': userActivity.toJson(),
+      };
+      await Remote.callFirebaseFunctions('saveUserActivity', arg);
+    }
   }
 
   @override
@@ -32,8 +39,8 @@ class RemoteService implements AppService {
   }
 
   @override
-  Future<UserActivitySummery> getUserActivitySummery() async {
-    // TODO: implement getUserActivitySummery
+  Future<UserActivitySummary> getUserActivitySummary() async {
+    // TODO: implement getUserActivitySummary
     throw UnimplementedError();
   }
 

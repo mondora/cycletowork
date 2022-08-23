@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
-import 'package:cycletowork/src/data/user_activity_summery.dart';
+import 'package:cycletowork/src/data/user_activity_summary.dart';
 import 'package:cycletowork/src/ui/dashboard/repository.dart';
 import 'package:cycletowork/src/ui/dashboard/ui_state.dart';
 import 'package:cycletowork/src/utility/convert.dart';
@@ -11,7 +11,6 @@ import 'package:cycletowork/src/widget/chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
-import 'package:flutter/material.dart';
 
 class ViewModel extends ChangeNotifier {
   final initialLatitude = 45.50315189900018;
@@ -48,7 +47,7 @@ class ViewModel extends ChangeNotifier {
     _uiState.loading = true;
     notifyListeners();
     try {
-      _uiState.userActivitySummery = await _repository.getUserActivitySummery();
+      _uiState.userActivitySummary = await _repository.getUserActivitySummary();
       notifyListeners();
       await getListUserActivity();
       await getListUserActivityFilterd();
@@ -146,26 +145,26 @@ class ViewModel extends ChangeNotifier {
       userActivity.imageData = await _repository.getMapImageData(
         _listTrackingPosition,
       );
-      var oldUserActivitySummery = _uiState.userActivitySummery!;
-      var userActivitySummery = UserActivitySummery(
-        co2: oldUserActivitySummery.co2 + (userActivity.co2 ?? 0),
+      var oldUserActivitySummary = _uiState.userActivitySummary!;
+      var userActivitySummary = UserActivitySummary(
+        co2: oldUserActivitySummary.co2 + (userActivity.co2 ?? 0),
         distance:
-            oldUserActivitySummery.distance + (userActivity.distance ?? 0),
-        averageSpeed: (oldUserActivitySummery.averageSpeed +
+            oldUserActivitySummary.distance + (userActivity.distance ?? 0),
+        averageSpeed: (oldUserActivitySummary.averageSpeed +
                 (userActivity.averageSpeed ?? 0)) /
             2,
         maxSpeed:
-            (oldUserActivitySummery.maxSpeed + (userActivity.maxSpeed ?? 0)) /
+            (oldUserActivitySummary.maxSpeed + (userActivity.maxSpeed ?? 0)) /
                 2,
-        calorie: oldUserActivitySummery.calorie + (userActivity.calorie ?? 0),
-        steps: oldUserActivitySummery.steps + (userActivity.steps ?? 0),
+        calorie: oldUserActivitySummary.calorie + (userActivity.calorie ?? 0),
+        steps: oldUserActivitySummary.steps + (userActivity.steps ?? 0),
       );
       await _repository.saveUserActivity(
-        userActivitySummery,
+        userActivitySummary,
         userActivity,
         _listTrackingPosition,
       );
-      _uiState.userActivitySummery = userActivitySummery;
+      _uiState.userActivitySummary = userActivitySummary;
       await getListUserActivity();
       await getListUserActivityFilterd();
     } catch (e) {
