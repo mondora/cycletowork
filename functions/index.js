@@ -8,6 +8,7 @@ const {
     saveDeviceToken,
     getUserInfo,
 } = require('./service/user');
+const { saveUserActivity } = require('./service/activity');
 
 admin.initializeApp();
 
@@ -86,6 +87,33 @@ exports.getUserInfo = functions
         if (uid) {
             try {
                 return await getUserInfo(uid);
+            } catch (error) {
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.saveUserActivity = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+        const userActivitySummary = data.userActivitySummary;
+        const userActivity = data.userActivity;
+        if (uid) {
+            if (!userActivitySummary || !userActivity) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+            try {
+                await saveUserActivity(uid, userActivity, userActivitySummary);
+                return true;
             } catch (error) {
                 throw new functions.https.HttpsError(
                     Constant.unknownErrorMessage

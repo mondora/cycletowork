@@ -2,6 +2,12 @@ const appRegion = ['europe-west3'];
 
 const usersCollectionName = 'users';
 
+const userActivityCollectionName = 'userActivity';
+
+const userActivitySummaryCollectionName = 'userActivitySummary';
+
+const dataList = 'dataList';
+
 const UserType = {
     Other: 'other',
     Mondora: 'mondora',
@@ -43,6 +49,18 @@ class Constant {
 
     static get userNotFoundError() {
         return userNotFoundError;
+    }
+
+    static get userActivitySummaryCollectionName() {
+        return userActivitySummaryCollectionName;
+    }
+
+    static get userActivityCollectionName() {
+        return userActivityCollectionName;
+    }
+
+    static get dataList() {
+        return dataList;
     }
 }
 
