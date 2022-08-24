@@ -32,4 +32,6 @@ abstract class AppService {
   Future<List<String>> getDeviceTokens();
 
   Future<String?> getDeviceToken();
+
+  Future<void> updateUserName(String name);
 }

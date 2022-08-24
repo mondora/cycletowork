@@ -1,10 +1,12 @@
 import 'package:cycletowork/src/ui/landing/view_model.dart';
+import 'package:cycletowork/src/ui/login_email/view.dart';
 import 'package:cycletowork/src/ui/signup/view.dart';
 import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:cycletowork/src/widget/button.dart';
 
 class LoginView extends StatelessWidget {
@@ -17,7 +19,7 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final landingModel = Provider.of<ViewModel>(context);
-    // final secondaryColor = Theme.of(context).colorScheme.secondary;
+    var isIos = defaultTargetPlatform == TargetPlatform.iOS;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
@@ -57,7 +59,13 @@ class LoginView extends StatelessWidget {
                       child: AppButton(
                         loading: loading,
                         onPressed: () {
-                          landingModel.loginEmail("email", "password", "name");
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => LoginEmailView(
+                                landingModel: landingModel,
+                              ),
+                            ),
+                          );
                         },
                         title: AppLocalizations.of(context)!.login,
                         textUpperCase: true,
@@ -99,19 +107,21 @@ class LoginView extends StatelessWidget {
                         radius: 8.0,
                       ),
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(
-                        top: 14.0,
-                      ),
-                      child: AppButton(
-                        loading: loading,
-                        onPressed: () {},
-                        title: AppLocalizations.of(context)!.signupWithApple,
-                        textUpperCase: true,
-                        type: ButtonType.appleLogin,
-                        radius: 8.0,
-                      ),
-                    ),
+                    isIos
+                        ? Container(
+                            margin: const EdgeInsets.only(
+                              top: 14.0,
+                            ),
+                            child: AppButton(
+                              loading: loading,
+                              onPressed: () {},
+                              title: 'Accedi con Apple',
+                              textUpperCase: true,
+                              type: ButtonType.appleLogin,
+                              radius: 8.0,
+                            ),
+                          )
+                        : Container(),
                     Container(
                       margin: const EdgeInsets.only(
                         top: 14.0,
@@ -119,14 +129,11 @@ class LoginView extends StatelessWidget {
                       child: AppButton(
                         loading: loading,
                         onPressed: () {
-                          // landingModel.signupEmail();
-                          // Navigator.pushNamed(
-                          //   context,
-                          //   SignupView.routeName,
-                          // );
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => SignupView(),
+                              builder: (context) => SignupView(
+                                landingModel: landingModel,
+                              ),
                             ),
                           );
                         },

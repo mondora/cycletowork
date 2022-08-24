@@ -81,4 +81,10 @@ class RemoteService implements AppService {
     // TODO: implement getDeviceTokens
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> updateUserName(String name) async {
+    var arg = {'displayName': name};
+    await Remote.callFirebaseFunctions('updateUserInfo', arg);
+  }
 }

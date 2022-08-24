@@ -45,6 +45,23 @@ class UserAuth {
     await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
+  static Future<bool?> signupEmail(String email, String password) async {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } on FirebaseAuthException catch (e) {
+      throw (e.code);
+      // if (e.code == 'weak-password') {
+      //   throw ('The password provided is too weak.');
+      // } else if (e.code == 'email-already-in-use') {
+      //   throw ('The account already exists for that email.');
+      // }
+    }
+    return true;
+  }
+
   static Future<bool?> loginEmail(String email, String password) async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -52,11 +69,12 @@ class UserAuth {
         password: password,
       );
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        throw ('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        throw ('Wrong password provided for that user.');
-      }
+      // if (e.code == 'user-not-found') {
+      //   throw ('No user found for that email.');
+      // } else if (e.code == 'wrong-password') {
+      //   throw ('Wrong password provided for that user.');
+      // }
+      throw (e.code);
     }
     return true;
   }

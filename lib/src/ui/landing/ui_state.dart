@@ -2,7 +2,6 @@ enum PageOption {
   loading,
   logout,
   login,
-  signup,
   home,
 }
 

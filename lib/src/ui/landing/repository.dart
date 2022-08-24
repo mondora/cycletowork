@@ -56,4 +56,15 @@ class Repository {
       await _localDatabase.saveDeviceToken(deviceToken);
     }
   }
+
+  Future<void> signupEmail(String email, String password, String? name) async {
+    var result = await UserAuth.signupEmail(email, password);
+    if (result == true && name != null && name != '') {
+      _remoteService.updateUserName(name);
+    }
+  }
+
+  Future<void> loginEmail(String email, String password) async {
+    await UserAuth.loginEmail(email, password);
+  }
 }

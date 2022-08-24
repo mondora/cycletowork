@@ -86,23 +86,21 @@ class LocalDatabaseService implements AppService {
     }
 
     if (timeFilter) {
-      if (justChallenges) {
-        whereCondition =
-            '''${whereCondition != null ? '$whereCondition  AND ' : ''}
+      whereCondition =
+          '''${whereCondition != null ? '$whereCondition  AND ' : ''}
             startTime >= ?''';
-        var now = DateTime.now();
-        if (thisWeek) {
-          var dateThisWeek = DateTime.now().getDateOfThisWeek();
-          whereArgs.add(dateThisWeek.millisecondsSinceEpoch);
-        }
-        if (thisMonth) {
-          var dateThisMonth = DateTime(now.year, now.month, 1);
-          whereArgs.add(dateThisMonth.millisecondsSinceEpoch);
-        }
-        if (thisYear) {
-          var dateThisYear = DateTime(now.year, 1, 1);
-          whereArgs.add(dateThisYear.millisecondsSinceEpoch);
-        }
+      var now = DateTime.now();
+      if (thisWeek) {
+        var dateThisWeek = DateTime.now().getDateOfThisWeek();
+        whereArgs.add(dateThisWeek.millisecondsSinceEpoch);
+      }
+      if (thisMonth) {
+        var dateThisMonth = DateTime(now.year, now.month, 1);
+        whereArgs.add(dateThisMonth.millisecondsSinceEpoch);
+      }
+      if (thisYear) {
+        var dateThisYear = DateTime(now.year, 1, 1);
+        whereArgs.add(dateThisYear.millisecondsSinceEpoch);
       }
     }
 
@@ -191,6 +189,12 @@ class LocalDatabaseService implements AppService {
   @override
   Future<List<String>> getDeviceTokens() {
     // TODO: implement getDeviceTokens
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateUserName(String name) {
+    // TODO: implement updateUserName
     throw UnimplementedError();
   }
 }

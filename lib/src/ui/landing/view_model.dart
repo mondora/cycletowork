@@ -1,47 +1,18 @@
+import 'dart:async';
+
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/ui/landing/repository.dart';
 import 'package:cycletowork/src/ui/landing/ui_state.dart';
 import 'package:cycletowork/src/utility/logger.dart';
 import 'package:flutter/material.dart';
 
-//   void loginEmail(String email, String password, String? name) async {
-//     debugPrint('login');
-//     // AppData.user = User(
-//     //   userType: UserType.other,
-//     //   email: 'claudia.rossi@aria.it',
-//     //   displayName: 'Claudia Rossi',
-//     //   imageUrl:
-//     //       null, // 'https://lh3.googleusercontent.com/ogw/AOh-ky0d1LLWqZxcF0Tik6VqijGavwOmRza931h8nnm5bg',
-//     // );
-//     // _status = LandingViewModelStatus.home;
-//     // notifyListeners();
-
-//     // _status = LandingViewModelStatus.loading;
-//     // notifyListeners();
-//     // try {
-//     //   var result = await UserAuth.loginEmail(email, password);
-//     //   if (result ?? false) {
-//     //     _status = LandingViewModelStatus.login;
-//     //     notifyListeners();
-//     //     return;
-//     //   } else {
-//     //     _status = LandingViewModelStatus.logout;
-//     //     notifyListeners();
-//     //     return;
-//     //   }
-//     // } catch (e) {
-//     //   _errorMessage = e.toString();
-//     //   _status = LandingViewModelStatus.error;
-//     //   notifyListeners();
-//     //   return;
-//     // }
-//   }
-
 class ViewModel extends ChangeNotifier {
   final _repository = Repository();
 
   final _uiState = UiState();
   UiState get uiState => _uiState;
+
+  String? displayName;
 
   ViewModel() : this.instance();
 
@@ -66,10 +37,12 @@ class ViewModel extends ChangeNotifier {
             .listen((isAuthenticated) async {
           if (isAuthenticated) {
             if (_uiState.pageOption != PageOption.home) {
-              await _getInitialInfo();
-              _uiState.pageOption = PageOption.home;
-              notifyListeners();
-              return;
+              Timer(const Duration(seconds: 2), () async {
+                await _getInitialInfo();
+                _uiState.pageOption = PageOption.home;
+                notifyListeners();
+                return;
+              });
             }
           } else {
             _uiState.pageOption = PageOption.logout;
@@ -102,24 +75,33 @@ class ViewModel extends ChangeNotifier {
     }
   }
 
-  void loginEmail(
-    String email,
-    String password,
-    String? name,
-  ) async {
+  void loginEmail(String email, String password) async {
     debugPrint('loginEmail');
-  }
-
-  signupEmail() async {
-    debugPrint('signupEmail');
     _uiState.pageOption = PageOption.loading;
     notifyListeners();
-    try {} catch (e) {
+    try {
+      await _repository.loginEmail(email, password);
+    } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
       Logger.error(e);
-    } finally {
-      _uiState.pageOption = PageOption.signup;
+      _uiState.pageOption = PageOption.logout;
+      notifyListeners();
+    }
+  }
+
+  void signupEmail(String email, String password, String? name) async {
+    debugPrint('signupEmail');
+    _uiState.pageOption = PageOption.loading;
+    notifyListeners();
+    try {
+      await _repository.signupEmail(email, password, name);
+      displayName = name;
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+      _uiState.pageOption = PageOption.logout;
       notifyListeners();
     }
   }
@@ -149,5 +131,8 @@ class ViewModel extends ChangeNotifier {
   Future<void> _getInitialInfo() async {
     await _repository.saveDeviceToken();
     AppData.user = await _repository.getUserInfo();
+    if (displayName != null && displayName != '') {
+      AppData.user!.displayName = displayName;
+    }
   }
 }

@@ -48,3 +48,6 @@ app.*.map.json
 /ios/Flutter/Debug.xcconfig
 /ios/Flutter/Release.xcconfig
 .env
+android/app/google-services.json
+ios/firebase_app_id_file.json
+ios/Runner/GoogleService-Info.plist

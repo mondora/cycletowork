@@ -1,22 +1,19 @@
 import 'package:cycletowork/src/widget/button.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:cycletowork/src/ui/landing/view_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SignupView extends StatelessWidget {
-  static const routeName = '/signup';
-  // final LandingViewModel landingModel;
+  final ViewModel landingModel;
   const SignupView({
     Key? key,
-    // required this.landingModel,
+    required this.landingModel,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // final landingModel = Provider.of<LandingViewModel>(context, listen: false);
     final onBackgroundColor = Theme.of(context).colorScheme.onBackground;
     var formKey = GlobalKey<FormState>();
     var nameController = TextEditingController();
@@ -43,6 +40,7 @@ class SignupView extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 24.0),
           child: ListView(
+            physics: const ScrollPhysics(),
             children: [
               Container(
                 margin: const EdgeInsets.only(top: 30.0),
@@ -191,12 +189,14 @@ class SignupView extends StatelessWidget {
                       var email = emailController.text;
                       var password = passwordController.text;
                       var name = nameController.text;
-                      // landingModel.loginEmail(email, password, name);
+                      landingModel.signupEmail(email, password, name);
+                      Navigator.pop(context);
                     }
                   },
                   type: ButtonType.secondary,
                   maxWidth: 95,
                   horizontalMargin: 0.0,
+                  radius: 8.0,
                 ),
               ),
             ],
