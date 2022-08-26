@@ -6,6 +6,10 @@ const userActivityCollectionName = 'userActivity';
 
 const userActivitySummaryCollectionName = 'userActivitySummary';
 
+const challengeCollectionName = 'challenges';
+
+const surveyCollectionName = 'surveys';
+
 const dataList = 'dataList';
 
 const UserType = {
@@ -61,6 +65,14 @@ class Constant {
 
     static get dataList() {
         return dataList;
+    }
+
+    static get challengeCollectionName() {
+        return challengeCollectionName;
+    }
+
+    static get surveyCollectionName() {
+        return surveyCollectionName;
     }
 }
 

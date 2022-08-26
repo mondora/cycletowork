@@ -15,7 +15,11 @@ const createUser = async (user) => {
         deviceTokens: [],
     };
 
-    await admin.auth().setCustomUserClaims(uid, { admin: false });
+    await admin.auth().setCustomUserClaims(uid, {
+        admin: false,
+        verified: false,
+    });
+
     await admin
         .firestore()
         .collection(Constant.usersCollectionName)
@@ -43,16 +47,6 @@ const deleteUser = async (user) => {
         .delete();
 };
 
-const setAdminUser = async (uid) => {
-    const data = { admin: true };
-    await admin.auth().setCustomUserClaims(uid, { admin: true });
-    await admin
-        .firestore()
-        .collection(Constant.usersCollectionName)
-        .doc(uid)
-        .set(data, { merge: true });
-};
-
 const getUserInfo = async (uid) => {
     const userInfo = await admin
         .firestore()
@@ -67,10 +61,18 @@ const getUserInfo = async (uid) => {
     }
 };
 
+const updateUserInfo = async (uid, data) => {
+    await admin
+        .firestore()
+        .collection(Constant.usersCollectionName)
+        .doc(uid)
+        .update(data, { merge: true });
+};
+
 module.exports = {
     createUser,
     deleteUser,
-    setAdminUser,
     saveDeviceToken,
     getUserInfo,
+    updateUserInfo,
 };
