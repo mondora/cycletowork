@@ -6,9 +6,9 @@ enum UserType {
 
 class User {
   final String uid;
-  final UserType userType;
-  final bool admin;
   final String email;
+  UserType userType;
+  bool admin;
   bool verified;
   String? photoURL;
   bool? emailVerified;

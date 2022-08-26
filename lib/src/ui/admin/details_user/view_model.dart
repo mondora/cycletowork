@@ -52,7 +52,7 @@ class ViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       await _repository.setAdminUser(_user.uid);
-      _uiState.userInfo!.verified = true;
+      _uiState.userInfo!.admin = true;
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
