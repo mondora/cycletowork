@@ -15,6 +15,9 @@ const {
     verifyUserAdmin,
 } = require('./service/admin/user');
 const { saveUserActivity } = require('./service/activity');
+const { sendNotification } = require('./service/notification');
+const { loggerError, loggerLog, loggerDebug } = require('./utility/logger');
+const { getString } = require('./localization');
 
 admin.initializeApp();
 
@@ -47,6 +50,14 @@ exports.saveDeviceToken = functions
                 await saveDeviceToken(uid, deviceToken);
                 return true;
             } catch (error) {
+                loggerError(
+                    'saveDeviceToken Error, UID:',
+                    uid,
+                    'deviceToken:',
+                    deviceToken,
+                    'error:',
+                    error
+                );
                 throw new functions.https.HttpsError(
                     Constant.unknownErrorMessage
                 );
@@ -67,12 +78,7 @@ exports.getUserInfo = functions
             try {
                 return await getUserInfo(uid);
             } catch (error) {
-                functions.logger.log(
-                    'getUserInfo Error, UID:',
-                    uid,
-                    'error:',
-                    error
-                );
+                loggerError('getUserInfo Error, UID:', uid, 'error:', error);
                 throw new functions.https.HttpsError(
                     Constant.unknownErrorMessage
                 );
@@ -100,6 +106,16 @@ exports.saveUserActivity = functions
                 await saveUserActivity(uid, userActivity, userActivitySummary);
                 return true;
             } catch (error) {
+                loggerError(
+                    'saveUserActivity Error, UID:',
+                    uid,
+                    'userActivity:',
+                    userActivity,
+                    'userActivitySummary:',
+                    userActivitySummary,
+                    'error:',
+                    error
+                );
                 throw new functions.https.HttpsError(
                     Constant.unknownErrorMessage
                 );
@@ -122,15 +138,18 @@ exports.updateUserInfo = functions
                 );
             }
             try {
-                functions.logger.log(
-                    'updateUserInfo, UID:',
-                    uid,
-                    'data:',
-                    data
-                );
+                loggerLog('updateUserInfo, UID:', uid, 'data:', data);
                 await updateUserInfo(uid, data);
                 return true;
             } catch (error) {
+                loggerError(
+                    'updateUserInfo Error, UID:',
+                    uid,
+                    'data:',
+                    data,
+                    'error:',
+                    error
+                );
                 throw new functions.https.HttpsError(
                     Constant.unknownErrorMessage
                 );
@@ -159,7 +178,7 @@ exports.getListUserAdmin = functions
             const nextPageToken = data.pagination.nextPageToken;
 
             try {
-                functions.logger.log(
+                loggerLog(
                     'getListUserAdmin, UID:',
                     uid,
                     'pageSize:',
@@ -175,7 +194,7 @@ exports.getListUserAdmin = functions
                     data.filter
                 );
             } catch (error) {
-                functions.logger.error(
+                loggerError(
                     'getListUserAdmin Error, UID:',
                     uid,
                     'error:',
@@ -203,12 +222,7 @@ exports.getUserInfoAdmin = functions
                 Constant.permissionDeniedMessage
             );
         }
-        functions.logger.log(
-            'getUserInfoAdmin UID:',
-            uid,
-            'Admin UID:',
-            adminUid
-        );
+        loggerLog('getUserInfoAdmin UID:', uid, 'Admin UID:', adminUid);
         const isAdmin = await checkAdminUser(adminUid);
         if (!isAdmin) {
             throw new functions.https.HttpsError(
@@ -225,12 +239,7 @@ exports.getUserInfoAdmin = functions
         try {
             return await getUserInfo(uid);
         } catch (error) {
-            functions.logger.error(
-                'getUserInfoAdmin Error, UID:',
-                uid,
-                'error:',
-                error
-            );
+            loggerError('getUserInfoAdmin Error, UID:', uid, 'error:', error);
             throw new functions.https.HttpsError(Constant.unknownErrorMessage);
         }
     });
@@ -246,7 +255,7 @@ exports.setAdminUser = functions
                 Constant.permissionDeniedMessage
             );
         }
-        functions.logger.log('setAdminUser UID:', uid, 'Admin UID:', adminUid);
+        loggerLog('setAdminUser UID:', uid, 'Admin UID:', adminUid);
         const isAdmin = await checkAdminUser(adminUid);
         if (!isAdmin) {
             throw new functions.https.HttpsError(
@@ -262,14 +271,24 @@ exports.setAdminUser = functions
 
         try {
             await setAdminUser(uid);
+
+            const user = await getUserInfo(uid);
+            if (user && user.deviceTokens && user.deviceTokens.length) {
+                const language = user.language;
+                const congratulation = getString(language, 'congratulation');
+                const title = `${congratulation} ${
+                    user.displayName ? user.displayName : ''
+                }`;
+                const description = getString(
+                    language,
+                    'you_have_become_admin'
+                );
+                await sendNotification(user.deviceTokens, title, description);
+            }
+
             return true;
         } catch (error) {
-            functions.logger.error(
-                'setAdminUser Error, UID:',
-                uid,
-                'error:',
-                error
-            );
+            loggerError('setAdminUser Error, UID:', uid, 'error:', error);
             throw new functions.https.HttpsError(Constant.unknownErrorMessage);
         }
     });
@@ -285,12 +304,7 @@ exports.verifyUserAdmin = functions
                 Constant.permissionDeniedMessage
             );
         }
-        functions.logger.log(
-            'verifyUserAdmin UID:',
-            uid,
-            'Admin UID:',
-            adminUid
-        );
+        loggerLog('verifyUserAdmin UID:', uid, 'Admin UID:', adminUid);
         const isAdmin = await checkAdminUser(adminUid);
         if (!isAdmin) {
             throw new functions.https.HttpsError(
@@ -306,14 +320,24 @@ exports.verifyUserAdmin = functions
 
         try {
             await verifyUserAdmin(uid);
+
+            const user = await getUserInfo(uid);
+            if (user && user.deviceTokens && user.deviceTokens.length) {
+                const language = user.language;
+                const congratulation = getString(language, 'congratulation');
+                const title = `${congratulation} ${
+                    user.displayName ? user.displayName : ''
+                }`;
+                const description = getString(
+                    language,
+                    'you_have_been_verified'
+                );
+                await sendNotification(user.deviceTokens, title, description);
+            }
+
             return true;
         } catch (error) {
-            functions.logger.error(
-                'verifyUserAdmin Error, UID:',
-                uid,
-                'error:',
-                error
-            );
+            loggerError('verifyUserAdmin Error, UID:', uid, 'error:', error);
             throw new functions.https.HttpsError(Constant.unknownErrorMessage);
         }
     });
