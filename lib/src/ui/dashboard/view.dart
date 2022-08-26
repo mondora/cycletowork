@@ -28,7 +28,6 @@ class DashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final landingModel = Provider.of<landing_view_model.ViewModel>(context);
-    final colorScheme = Theme.of(context).colorScheme;
     var dismissKey = UniqueKey();
 
     var tabs = const [

@@ -13,6 +13,8 @@ class AppAvatar extends StatelessWidget {
   final double avatarEditionRadius;
   final double progressStrokeWidth;
   final bool visible;
+  final bool isAdmin;
+
   const AppAvatar({
     Key? key,
     required this.userType,
@@ -25,6 +27,7 @@ class AppAvatar extends StatelessWidget {
     this.avatarEditionRadius = 17.0,
     this.progressStrokeWidth = 3.0,
     required this.visible,
+    this.isAdmin = false,
   }) : super(key: key);
 
   @override
@@ -33,7 +36,7 @@ class AppAvatar extends StatelessWidget {
       return Container();
     }
 
-    if (userType == UserType.other) {
+    if (userType == UserType.other || isAdmin) {
       return IconButton(
         iconSize: smallSize,
         icon: _getUserIcon(
@@ -95,7 +98,7 @@ class AppAvatar extends StatelessWidget {
               userImageUrl != null ? NetworkImage(userImageUrl) : null,
           child: userImageUrl == null
               ? Icon(
-                  Icons.person,
+                  isAdmin ? Icons.admin_panel_settings : Icons.person,
                   color: actionColor,
                 )
               : Container(),

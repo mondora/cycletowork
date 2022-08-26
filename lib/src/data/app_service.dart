@@ -35,3 +35,17 @@ abstract class AppService {
 
   Future<void> updateUserName(String name);
 }
+
+abstract class AppAdminService {
+  Future<ListUser> getListUserAdmin(
+    int pageSize,
+    String? nextPageToken,
+    String? emailFilter,
+  );
+
+  Future<User> getUserInfoAdmin(String uid);
+
+  Future<bool> verifyUserAdmin(String uid);
+
+  Future<bool> setAdminUser(String uid);
+}

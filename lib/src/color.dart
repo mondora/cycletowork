@@ -54,37 +54,38 @@ class AppColor {
   static get lightInfo => 0xFF2196F3;
   static get lightActionSelected => 0x1A000000;
 
+  static final colorMap = {
+    'primary': lightPrimary,
+    'onPrimary': lightOnPrimary,
+    'primaryContainer': lightPrimaryContainer,
+    'onPrimaryContainer': lightOnPrimaryContainer,
+    'secondary': lightSecondary,
+    'onSecondary': lightOnSecondary,
+    'secondaryContainer': lightSecondaryContainer,
+    'onSecondaryContainer': lightOnSecondaryContainer,
+    'error': lightError,
+    'onError': lightOnError,
+    'errorContainer': lightErrorContainer,
+    'onErrorContainer': lightOnErrorContainer,
+    'background': lightBackground,
+    'onBackground': lightOnBackground,
+    'surface': lightSurface,
+    'onSurface': lightOnSurface,
+    'text': lightText,
+    'textPrimary': lightTextPrimary,
+    'textSecondary': lightTextSecondary,
+    'textDisabled': lightTextDisabled,
+    'success': lightSuccess,
+    'warrning': lightWarrning,
+    'action': lightAction,
+    'info': lightInfo,
+    'actionSelected': lightActionSelected,
+  };
+
   static Future initialize() async {
     final remoteConfig = FirebaseRemoteConfig.instance;
-    await remoteConfig.setDefaults(<String, dynamic>{
-      _lightColorSchemeKey: jsonEncode({
-        'primary': lightPrimary,
-        'onPrimary': lightOnPrimary,
-        'primaryContainer': lightPrimaryContainer,
-        'onPrimaryContainer': lightOnPrimaryContainer,
-        'secondary': lightSecondary,
-        'onSecondary': lightOnSecondary,
-        'secondaryContainer': lightSecondaryContainer,
-        'onSecondaryContainer': lightOnSecondaryContainer,
-        'error': lightError,
-        'onError': lightOnError,
-        'errorContainer': lightErrorContainer,
-        'onErrorContainer': lightOnErrorContainer,
-        'background': lightBackground,
-        'onBackground': lightOnBackground,
-        'surface': lightSurface,
-        'onSurface': lightOnSurface,
-        'text': lightText,
-        'textPrimary': lightTextPrimary,
-        'textSecondary': lightTextSecondary,
-        'textDisabled': lightTextDisabled,
-        'success': lightSuccess,
-        'warrning': lightWarrning,
-        'action': lightAction,
-        'info': lightInfo,
-        'actionSelected': lightActionSelected,
-      })
-    });
+    await remoteConfig.setDefaults(
+        <String, dynamic>{_lightColorSchemeKey: jsonEncode(colorMap)});
 
     await remoteConfig.setConfigSettings(
       RemoteConfigSettings(
@@ -95,15 +96,19 @@ class AppColor {
     await remoteConfig.fetchAndActivate();
   }
 
-  static LightColors getLightColors() {
-    final remoteConfig = FirebaseRemoteConfig.instance;
-    return LightColors.fromJson(
-      jsonDecode(
-        remoteConfig.getString(
-          _lightColorSchemeKey,
+  static LightColors getLightColors(bool justLocal) {
+    if (justLocal) {
+      return LightColors.fromJson(colorMap);
+    } else {
+      final remoteConfig = FirebaseRemoteConfig.instance;
+      return LightColors.fromJson(
+        jsonDecode(
+          remoteConfig.getString(
+            _lightColorSchemeKey,
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 }
 

@@ -11,6 +11,7 @@ class UserAuth {
     clientId: dotenv.env['IOS_FIREBASE_CLIENT_ID']!,
     serverClientId: dotenv.env['IOS_FIREBASE_SERVER_CLIENT_ID']!,
   );
+  static final GoogleSignIn _googleSignInForWeb = GoogleSignIn();
   static final GoogleSignIn _googleSignInForAndroid = GoogleSignIn();
 
   static Stream<bool> isAuthenticatedStateChanges() {
@@ -35,7 +36,9 @@ class UserAuth {
   static Future<void> loginGoogleSignIn() async {
     final GoogleSignInAccount googleSignInAccount = Platform.isAndroid
         ? (await _googleSignInForAndroid.signIn())!
-        : (await _googleSignInForIos.signIn())!;
+        : Platform.isIOS
+            ? (await _googleSignInForIos.signIn())!
+            : (await _googleSignInForWeb.signIn())!;
     final GoogleSignInAuthentication googleSignInAuthentication =
         await googleSignInAccount.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(
@@ -83,6 +86,7 @@ class UserAuth {
     try {
       await FirebaseAuth.instance.signOut();
       if (Platform.isAndroid) {
+        await _googleSignInForAndroid.signOut();
       } else {
         await _googleSignInForIos.signOut();
       }

@@ -7,6 +7,7 @@ import 'package:cycletowork/src/utility/logger.dart';
 import 'package:flutter/material.dart';
 
 class ViewModel extends ChangeNotifier {
+  final bool isAdmin;
   final _repository = Repository();
 
   final _uiState = UiState();
@@ -16,7 +17,7 @@ class ViewModel extends ChangeNotifier {
 
   ViewModel() : this.instance();
 
-  ViewModel.instance() {
+  ViewModel.instance({this.isAdmin = false}) {
     getter();
   }
 
@@ -38,10 +39,18 @@ class ViewModel extends ChangeNotifier {
           if (isAuthenticated) {
             if (_uiState.pageOption != PageOption.home) {
               Timer(const Duration(seconds: 2), () async {
-                await _getInitialInfo();
-                _uiState.pageOption = PageOption.home;
-                notifyListeners();
-                return;
+                try {
+                  await _getInitialInfo();
+                  _uiState.pageOption = PageOption.home;
+                  notifyListeners();
+                  return;
+                } catch (e) {
+                  _uiState.errorMessage = e.toString();
+                  _uiState.error = true;
+                  Logger.error(e);
+                  _uiState.pageOption = PageOption.logout;
+                  notifyListeners();
+                }
               });
             }
           } else {
@@ -129,10 +138,17 @@ class ViewModel extends ChangeNotifier {
   }
 
   Future<void> _getInitialInfo() async {
-    await _repository.saveDeviceToken();
-    AppData.user = await _repository.getUserInfo();
-    if (displayName != null && displayName != '') {
-      AppData.user!.displayName = displayName;
+    if (isAdmin) {
+      if (!_repository.isAdmin()) {
+        await _repository.logout();
+        throw ('Non Sei un utente admin');
+      }
+    } else {
+      AppData.user = await _repository.getUserInfo();
+      await _repository.saveDeviceToken();
+      if (displayName != null && displayName != '') {
+        AppData.user!.displayName = displayName;
+      }
     }
   }
 }

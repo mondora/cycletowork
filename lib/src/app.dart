@@ -1,6 +1,5 @@
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/landing/view.dart';
-import 'package:cycletowork/src/ui/signup/view.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -37,7 +36,7 @@ class _CycleToWorkAppState extends State<CycleToWorkApp> {
         Locale('it', ''), // English, no country code
       ],
       title: 'Cycle2Work',
-      theme: AppTheme.getLightTheme(),
+      theme: AppTheme.getLightTheme(false),
       // darkTheme: ThemeData.dark(),
       home: const LandingView(),
     );

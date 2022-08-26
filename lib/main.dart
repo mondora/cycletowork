@@ -1,3 +1,6 @@
+import 'package:cycletowork/src/admin_app.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 import 'package:cycletowork/src/app.dart';
 import 'package:cycletowork/src/color.dart';
 import 'package:cycletowork/src/utility/gps.dart';
@@ -11,15 +14,19 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await AppColor.initialize();
-  await Gps.initialize();
   await dotenv.load(fileName: '.env');
 
-  await AppNotification.initialize();
-
-  runApp(const CycleToWorkApp());
+  if (kIsWeb) {
+    runApp(const AdminCycleToWorkApp());
+  } else {
+    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+    await AppColor.initialize();
+    await Gps.initialize();
+    await AppNotification.initialize();
+    runApp(const CycleToWorkApp());
+  }
 }

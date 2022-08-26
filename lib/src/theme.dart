@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static ThemeData getLightTheme() {
-    final colorScheme = AppColor.getLightColors();
+  static ThemeData getLightTheme(bool justLocal) {
+    final colorScheme = AppColor.getLightColors(justLocal);
     final textTheme = _getTextTheme(colorScheme);
     return ThemeData(
       textTheme: textTheme,

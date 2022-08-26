@@ -5,7 +5,7 @@ import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/data/user_activity_summary.dart';
 import 'package:cycletowork/src/service/remote.dart';
 
-class RemoteService implements AppService {
+class RemoteService implements AppService, AppAdminService {
   @override
   Future<bool> isOpenNewChallenge() {
     // TODO: implement isOpenNewChallenge
@@ -86,5 +86,43 @@ class RemoteService implements AppService {
   Future<void> updateUserName(String name) async {
     var arg = {'displayName': name};
     await Remote.callFirebaseFunctions('updateUserInfo', arg);
+  }
+
+  @override
+  Future<ListUser> getListUserAdmin(
+    int pageSize,
+    String? nextPageToken,
+    String? emailFilter,
+  ) async {
+    var arg = {
+      'pagination': {
+        'pageSize': pageSize,
+        'nextPageToken': nextPageToken,
+      },
+      'filter': {
+        'email': emailFilter,
+      }
+    };
+    var map = await Remote.callFirebaseFunctions('getListUserAdmin', arg);
+    return ListUser.fromMap(map);
+  }
+
+  @override
+  Future<User> getUserInfoAdmin(String uid) async {
+    var arg = {'uid': uid};
+    var map = await Remote.callFirebaseFunctions('getUserInfoAdmin', arg);
+    return User.fromMap(map);
+  }
+
+  @override
+  Future<bool> verifyUserAdmin(String uid) async {
+    var arg = {'uid': uid};
+    return await Remote.callFirebaseFunctions('verifyUserAdmin', arg);
+  }
+
+  @override
+  Future<bool> setAdminUser(String uid) async {
+    var arg = {'uid': uid};
+    return await Remote.callFirebaseFunctions('setAdminUser', arg);
   }
 }

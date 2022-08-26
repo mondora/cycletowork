@@ -67,4 +67,8 @@ class Repository {
   Future<void> loginEmail(String email, String password) async {
     await UserAuth.loginEmail(email, password);
   }
+
+  bool isAdmin() {
+    return UserAuth.isAdmin;
+  }
 }

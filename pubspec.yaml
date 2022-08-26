@@ -45,6 +45,7 @@ dependencies:
     logger: ^1.1.0
     firebase_messaging: ^12.0.3
     flutter_local_notifications: ^9.8.0+1
+    badges: ^2.0.3
 
 dev_dependencies:
     flutter_test:
