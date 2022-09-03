@@ -59,6 +59,8 @@ class ViewModel extends ChangeNotifier {
     _uiState.challengeRegistry.companyToAdd!.registerUserUid =
         AppData.user!.uid;
 
+    _uiState.challengeRegistry.startTimeChallenge = challenge.startTime;
+    _uiState.challengeRegistry.stopTimeChallenge = challenge.stopTime;
     getter();
   }
 
@@ -148,6 +150,8 @@ class ViewModel extends ChangeNotifier {
       } else {
         _uiState.challengeRegistry.companySelected =
             _uiState.challengeRegistry.companyToAdd;
+        _uiState.challengeRegistry.companySelected!.id =
+            _uiState.challengeRegistry.companyToAdd!.id;
       }
       await _repository.registerChallenge(_uiState.challengeRegistry);
       _uiState.pageOption = PageOption.thanks;
@@ -314,6 +318,8 @@ class ViewModel extends ChangeNotifier {
     _uiState.challengeRegistry.companyName = companyName;
     _uiState.challengeRegistry.companySelected = _uiState.listCompany
         .firstWhere((element) => element.name == companyName);
+    _uiState.challengeRegistry.companyId =
+        _uiState.challengeRegistry.companySelected!.id;
     notifyListeners();
   }
 
