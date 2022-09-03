@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cycletowork/src/data/company.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/register_challenge/view_model.dart';
@@ -604,11 +605,12 @@ class _RegisterChallengChampionViewState
                           colorScheme.secondary,
                         ),
                       ),
-                      child: Text(
+                      child: AutoSizeText(
                         'Prosegui'.toUpperCase(),
                         style: textTheme.button!.copyWith(
                           color: colorScheme.onSecondary,
                         ),
+                        maxLines: 1,
                       ),
                     ),
                   ),
@@ -639,11 +641,12 @@ class _RegisterChallengChampionViewState
                           colorScheme.secondary.withOpacity(0.40),
                         ),
                       ),
-                      child: Text(
+                      child: AutoSizeText(
                         'Torna indietro'.toUpperCase(),
                         style: textTheme.button!.copyWith(
                           color: colorScheme.secondary,
                         ),
+                        maxLines: 1,
                       ),
                     ),
                   ),

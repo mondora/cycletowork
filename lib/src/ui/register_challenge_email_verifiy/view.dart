@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/register_challenge/view_model.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +92,7 @@ class _RegisterChallengEmailVerifyViewState
                         colorScheme.secondary.withOpacity(0.40),
                       ),
                     ),
-                    child: Text(
+                    child: AutoSizeText(
                       'Invia di nuovo'.toUpperCase(),
                       style: textTheme.button!.copyWith(
                         color: !emailIsVerified
@@ -99,6 +100,7 @@ class _RegisterChallengEmailVerifyViewState
                             : colorSchemeExtension.textDisabled
                                 .withOpacity(0.12),
                       ),
+                      maxLines: 1,
                     ),
                   ),
                 ),
@@ -188,13 +190,14 @@ class _RegisterChallengEmailVerifyViewState
                                   .withOpacity(0.12),
                         ),
                       ),
-                      child: Text(
+                      child: AutoSizeText(
                         'Prosegui'.toUpperCase(),
                         style: textTheme.button!.copyWith(
                           color: emailIsVerified
                               ? colorScheme.onSecondary
                               : colorSchemeExtension.textDisabled,
                         ),
+                        maxLines: 1,
                       ),
                     ),
                   ),
@@ -230,13 +233,14 @@ class _RegisterChallengEmailVerifyViewState
                           colorScheme.secondary.withOpacity(0.40),
                         ),
                       ),
-                      child: Text(
+                      child: AutoSizeText(
                         'Torna indietro'.toUpperCase(),
                         style: textTheme.button!.copyWith(
                           color: !emailIsVerified
                               ? colorScheme.secondary
                               : colorSchemeExtension.textDisabled,
                         ),
+                        maxLines: 1,
                       ),
                     ),
                   ),

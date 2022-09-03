@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/register_challenge/view_model.dart';
 import 'package:flutter/material.dart';
@@ -178,11 +179,12 @@ class _RegisterChallengCyclistViewState
                             ),
                             child: Row(
                               children: [
-                                Text(
+                                AutoSizeText(
                                   'Scopri come diventarlo'.toUpperCase(),
                                   style: textTheme.button!.copyWith(
                                     color: colorScheme.secondary,
                                   ),
+                                  maxLines: 1,
                                 ),
                                 const SizedBox(
                                   width: 8.0,
@@ -475,11 +477,12 @@ class _RegisterChallengCyclistViewState
                         backgroundColor: MaterialStateProperty.all<Color>(
                             colorScheme.secondary),
                       ),
-                      child: Text(
+                      child: AutoSizeText(
                         'Prosegui'.toUpperCase(),
                         style: textTheme.button!.copyWith(
                           color: colorScheme.onSecondary,
                         ),
+                        maxLines: 1,
                       ),
                     ),
                   ),
@@ -510,11 +513,12 @@ class _RegisterChallengCyclistViewState
                           colorScheme.secondary.withOpacity(0.40),
                         ),
                       ),
-                      child: Text(
+                      child: AutoSizeText(
                         'Torna indietro'.toUpperCase(),
                         style: textTheme.button!.copyWith(
                           color: colorScheme.secondary,
                         ),
+                        maxLines: 1,
                       ),
                     ),
                   ),

@@ -50,7 +50,7 @@ class PauseTrackingView extends StatelessWidget {
             ),
             child: SlidingUpPanel(
               backdropColor: Theme.of(context).colorScheme.background,
-              maxHeight: 268.0,
+              maxHeight: 275.0,
               minHeight: 155.0,
               parallaxEnabled: true,
               parallaxOffset: 0.2,

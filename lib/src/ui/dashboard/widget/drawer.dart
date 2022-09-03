@@ -50,54 +50,45 @@ class AppDrawer extends StatelessWidget {
               ],
             ),
           ),
-          ListView(
-            shrinkWrap: true,
-            physics: const ScrollPhysics(),
-            children: [
-              for (var item in AppMenuOption.values)
-                _AppDrawerItem(
-                  selected: menuOption == item,
-                  title: _ItemInfo(item).title,
-                  icon: _ItemInfo(item).icon,
-                  onPressed: () {
-                    onPressed(item);
-                    Navigator.pop(context);
-                  },
-                ),
-            ],
-          ),
-          Container(
-            margin: const EdgeInsets.only(
-              left: 29.0,
-              right: 24.0,
-            ),
-            child: const Divider(),
-          ),
-          Container(
-            margin: const EdgeInsets.only(
-              top: 35.0,
-              left: 47.0,
-              right: 46.0,
-            ),
-            child: InkWell(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(15.0),
-              ),
-              onTap: () {},
-              child: Container(
-                // margin: const EdgeInsets.only(
-                //   left: 47.0,
-                //   right: 46.0,
-                // ),
-                padding: EdgeInsets.all(20),
-                child: Image.asset('assets/images/fiab_more.png'),
-              ),
-            ),
-          ),
           Expanded(
-            child: Stack(
-              fit: StackFit.expand,
+            child: ListView(
+              shrinkWrap: true,
+              physics: const ScrollPhysics(),
               children: [
+                for (var item in AppMenuOption.values)
+                  _AppDrawerItem(
+                    selected: menuOption == item,
+                    title: _ItemInfo(item).title,
+                    icon: _ItemInfo(item).icon,
+                    onPressed: () {
+                      onPressed(item);
+                      Navigator.pop(context);
+                    },
+                  ),
+                Container(
+                  margin: const EdgeInsets.only(
+                    left: 29.0,
+                    right: 24.0,
+                  ),
+                  child: const Divider(),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(
+                    top: 35.0,
+                    left: 47.0,
+                    right: 46.0,
+                  ),
+                  child: InkWell(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(15.0),
+                    ),
+                    onTap: () {},
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      child: Image.asset('assets/images/fiab_more.png'),
+                    ),
+                  ),
+                ),
                 Align(
                   alignment: Alignment.bottomLeft,
                   child: Container(

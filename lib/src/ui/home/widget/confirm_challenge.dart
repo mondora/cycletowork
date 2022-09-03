@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cycletowork/src/data/company.dart';
 import 'package:cycletowork/src/data/survey.dart';
 import 'package:flutter/material.dart';
@@ -71,11 +72,15 @@ class ConfirmChallengeDialog {
                       const SizedBox(
                         height: 9,
                       ),
-                      Text(
-                        title,
-                        style: textTheme.headline6!.copyWith(
-                          color: colorScheme.secondary,
-                          fontWeight: FontWeight.w700,
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Text(
+                          title,
+                          style: textTheme.headline6!.copyWith(
+                            color: colorScheme.secondary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                       const SizedBox(
@@ -107,11 +112,12 @@ class ConfirmChallengeDialog {
                               colorScheme.secondary,
                             ),
                           ),
-                          child: Text(
+                          child: AutoSizeText(
                             confirmButton,
                             style: textTheme.button!.copyWith(
                               color: colorScheme.onSecondary,
                             ),
+                            maxLines: 1,
                           ),
                         ),
                       ),
@@ -134,11 +140,12 @@ class ConfirmChallengeDialog {
                               ),
                             ),
                           ),
-                          child: Text(
+                          child: AutoSizeText(
                             cancelButton,
                             style: textTheme.button!.copyWith(
                               color: colorScheme.secondary,
                             ),
+                            maxLines: 1,
                           ),
                         ),
                       ),

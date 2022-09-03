@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 enum ButtonType {
@@ -57,9 +58,10 @@ class AppButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             children: [
               buttonStyle.icon != null ? buttonStyle.icon! : Container(),
-              Text(
+              AutoSizeText(
                 textUpperCase ? title.toUpperCase() : title,
                 style: buttonStyle.textStyle,
+                maxLines: 1,
               ),
             ],
           ),

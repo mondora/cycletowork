@@ -48,6 +48,7 @@ dependencies:
     badges: ^2.0.3
     flutter_otp_text_field: ^1.1.0+2
     searchfield: ^0.7.0
+    auto_size_text: ^3.0.0
 
 dev_dependencies:
     flutter_test:

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/theme.dart';
@@ -116,6 +117,23 @@ class ActivityList extends StatelessWidget {
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
                     children: [
+                      SizedBox(
+                        height: 65,
+                        child: ListView.builder(
+                          physics: const ScrollPhysics(),
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: listChallengeActive.length,
+                          itemBuilder: (context, index) {
+                            var challenge = listChallengeActive[index];
+                            return _NewChallengeCard(
+                              title: challenge.name,
+                              isFiabChallenge: challenge.fiabEdition,
+                              onTap: () => onChallengeActiveClick(challenge),
+                            );
+                          },
+                        ),
+                      ),
                       Shimmer.fromColors(
                         baseColor: Colors.grey.withOpacity(0.60),
                         highlightColor: Colors.white,
@@ -170,7 +188,7 @@ class _NewChallengeCard extends StatelessWidget {
                 child: Container(
                   margin: const EdgeInsets.only(right: 50.0),
                   width: 130,
-                  child: Text(
+                  child: AutoSizeText(
                     title,
                     textAlign: TextAlign.end,
                     maxLines: 2,

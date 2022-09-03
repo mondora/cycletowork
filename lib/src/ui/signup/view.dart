@@ -199,6 +199,9 @@ class SignupView extends StatelessWidget {
                   radius: 8.0,
                 ),
               ),
+              const SizedBox(
+                height: 20.0,
+              ),
             ],
           ),
         ),
