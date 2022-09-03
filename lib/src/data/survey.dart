@@ -16,6 +16,13 @@ class Survey {
 
   factory Survey.fromSurvey(Survey survey) => Survey.fromMap(survey.toJson());
 
+  Survey.fromEmpty()
+      : id = '',
+        name = '',
+        title = '',
+        listQuestion = [],
+        required = false;
+
   Survey.fromMap(Map<String, dynamic> map)
       : id = map['id'],
         name = map['name'],

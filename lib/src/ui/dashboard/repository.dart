@@ -1,9 +1,11 @@
 import 'dart:typed_data';
 
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/chart_data.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/repository_service_locator.dart';
+import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/data/user_activity_summary.dart';
 import 'package:cycletowork/src/database/local_database_service.dart';
@@ -40,12 +42,28 @@ class Repository {
     _remoteService = serviceLocator.getRemoteData();
   }
 
-  Future<bool> isOpenNewChallenge() async {
-    return false;
-  }
+  Future<ChallengeRegistry?> isChallengeActivity() async {
+    var listChallengeIdRegister = AppData.user!.listChallengeIdRegister;
 
-  Future<bool> isChallengeActivity() async {
-    return false;
+    if (listChallengeIdRegister == null || listChallengeIdRegister.isEmpty) {
+      return null;
+    }
+
+    var listActiveRegisterChallenge =
+        await _localDatabase.getListActiveRegisterChallenge();
+
+    if (listActiveRegisterChallenge.isEmpty) {
+      return null;
+    }
+
+    for (var element in listActiveRegisterChallenge) {
+      var index = listChallengeIdRegister.indexOf(element.challengeId);
+      if (index >= 0) {
+        return element;
+      }
+    }
+
+    return null;
   }
 
   Future<List<UserActivity>> getListUserActivity(
@@ -180,7 +198,11 @@ class Repository {
   }
 
   Future<List<Challenge>> getActiveChallengeList() async {
-    return await _remoteService.getActiveChallengeList();
+    var listChallenge = await _remoteService.getActiveChallengeList();
+    if (listChallenge.isNotEmpty) {
+      await _localDatabase.saveListChallenge(listChallenge);
+    }
+    return listChallenge;
   }
 
   UserActivityChartData getUserActivityChartData(Map args) {
@@ -325,5 +347,11 @@ class Repository {
       locationData.longitude,
       localeIdentifier: localeIdentifier,
     );
+  }
+
+  Future<User> getUserInfo() async {
+    var user = await _remoteService.getUserInfo();
+    await _localDatabase.saveUserInfo(user);
+    return user;
   }
 }

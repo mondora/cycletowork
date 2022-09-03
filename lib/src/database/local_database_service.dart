@@ -30,30 +30,9 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
       );
     }
 
-    final sharedPreferences = await SharedPreferences.getInstance();
-    await sharedPreferences.setDouble(
-      UserActivitySummary.averageSpeedKey,
-      userActivitySummary.averageSpeed,
-    );
-    await sharedPreferences.setDouble(
-      UserActivitySummary.maxSpeedKey,
-      userActivitySummary.maxSpeed,
-    );
-    await sharedPreferences.setInt(
-      UserActivitySummary.calorieKey,
-      userActivitySummary.calorie,
-    );
-    await sharedPreferences.setDouble(
-      UserActivitySummary.co2Key,
-      userActivitySummary.co2,
-    );
-    await sharedPreferences.setDouble(
-      UserActivitySummary.distanceKey,
-      userActivitySummary.distance,
-    );
-    await sharedPreferences.setInt(
-      UserActivitySummary.stepsKey,
-      userActivitySummary.steps,
+    await _localDatabase.insertData(
+      tableName: UserActivitySummary.tableName,
+      item: userActivitySummary.toJson(),
     );
   }
 
@@ -75,20 +54,16 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
       orderBy = 'stopTime DESC';
     }
 
-    whereCondition = '''uid = ?''';
+    whereCondition = 'uid = ?';
     whereArgs.add(AppData.user!.uid);
 
     if (justChallenges) {
-      whereCondition =
-          '''${whereCondition != null ? '$whereCondition  AND ' : ''}
-          isChallenge = ?''';
+      whereCondition = '$whereCondition  AND isChallenge = ?';
       whereArgs.add(1);
     }
 
     if (timeFilter) {
-      whereCondition =
-          '''${whereCondition != null ? '$whereCondition  AND ' : ''}
-            startTime >= ?''';
+      whereCondition = '$whereCondition  AND startTime >= ?';
       var now = DateTime.now();
       if (thisWeek) {
         var dateThisWeek = DateTime.now().getDateOfThisWeek();
@@ -117,33 +92,22 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
 
   @override
   Future<UserActivitySummary> getUserActivitySummary() async {
-    final sharedPreferences = await SharedPreferences.getInstance();
-    var averageSpeed = sharedPreferences.getDouble(
-      UserActivitySummary.averageSpeedKey,
+    String whereCondition = 'uid = ?';
+    List<dynamic> whereArgs = [AppData.user!.uid];
+
+    var map = await _localDatabase.getData(
+      tableName: UserActivitySummary.tableName,
+      whereCondition: whereCondition,
+      whereArgs: whereArgs,
     );
-    var maxSpeed = sharedPreferences.getDouble(
-      UserActivitySummary.maxSpeedKey,
+    var result = map.map<UserActivitySummary>(
+      (json) => UserActivitySummary.fromMap(Map<String, dynamic>.from(json)),
     );
-    var calorie = sharedPreferences.getInt(
-      UserActivitySummary.calorieKey,
-    );
-    var co2 = sharedPreferences.getDouble(
-      UserActivitySummary.co2Key,
-    );
-    var distance = sharedPreferences.getDouble(
-      UserActivitySummary.distanceKey,
-    );
-    var steps = sharedPreferences.getInt(
-      UserActivitySummary.stepsKey,
-    );
-    return UserActivitySummary(
-      averageSpeed: averageSpeed ?? 0,
-      maxSpeed: maxSpeed ?? 0,
-      calorie: calorie ?? 0,
-      co2: co2 ?? 0,
-      distance: distance ?? 0,
-      steps: steps ?? 0,
-    );
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return UserActivitySummary.fromEmpty();
+    }
   }
 
   @override
@@ -188,14 +152,75 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
   }
 
   @override
-  Future<List<Challenge>> getActiveChallengeList() {
-    // TODO: implement getActiveChallengeList
-    throw UnimplementedError();
+  Future<List<ChallengeRegistry>> getListActiveRegisterChallenge() async {
+    var now = DateTime.now();
+    String whereCondition =
+        'uid = ? AND startTimeChallenge <= ? AND stopTimeChallenge >= ?';
+    List<dynamic> whereArgs = [
+      AppData.user!.uid,
+      now.millisecondsSinceEpoch,
+      now.millisecondsSinceEpoch,
+    ];
+
+    var map = await _localDatabase.getData(
+      tableName: ChallengeRegistry.tableName,
+      whereCondition: whereCondition,
+      whereArgs: whereArgs,
+    );
+
+    return map
+        .map<ChallengeRegistry>(
+          (json) => ChallengeRegistry.fromMapLocalDatabase(
+            Map<String, dynamic>.from(json),
+          ),
+        )
+        .toList();
   }
 
   @override
-  Future<bool> registerChallenge(ChallengeRegistry challengeRegistry) {
-    // TODO: implement registerChallenge
-    throw UnimplementedError();
+  Future<bool> registerChallenge(ChallengeRegistry challengeRegistry) async {
+    await _localDatabase.insertData(
+      tableName: ChallengeRegistry.tableName,
+      item: challengeRegistry.toJsonForLocalDatabase(),
+    );
+    return true;
+  }
+
+  @override
+  Future<void> saveUserInfo(User user) async {
+    await _localDatabase.insertData(
+      tableName: User.tableName,
+      item: user.toJsonForLocalDatabase(),
+    );
+  }
+
+  @override
+  Future<void> saveListChallenge(List<Challenge> listChallenge) async {
+    for (var element in listChallenge) {
+      await _localDatabase.insertData(
+        tableName: Challenge.tableName,
+        item: element.toJsonForLocalDatabase(),
+      );
+    }
+  }
+
+  @override
+  Future<Challenge?> getChallengeInfo(String challengeId) async {
+    String whereCondition = 'challengeId = ?';
+    List<dynamic> whereArgs = [challengeId];
+
+    var map = await _localDatabase.getData(
+      tableName: Challenge.tableName,
+      whereCondition: whereCondition,
+      whereArgs: whereArgs,
+    );
+    var result = map.map<Challenge>(
+      (json) => Challenge.fromMap(Map<String, dynamic>.from(json)),
+    );
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return null;
+    }
   }
 }

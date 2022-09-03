@@ -333,19 +333,51 @@ class _ActivityCard extends StatelessWidget {
                 Container(
                   height: 57,
                   width: 57,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: map != null
-                          ? (map! as Image).image
-                          : Image.asset(
-                              'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking_small.png',
-                            ).image,
-                      fit: BoxFit.cover,
-                    ),
-                    borderRadius: const BorderRadius.all(
+                  decoration: const BoxDecoration(
+                    // image: DecorationImage(
+                    //   image: map != null
+                    //       ? (map! as Image).image
+                    //       : Image.asset(
+                    //           'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking_small.png',
+                    //         ).image,
+                    //   fit: BoxFit.cover,
+                    // ),
+                    borderRadius: BorderRadius.all(
                       Radius.circular(10),
                     ),
                   ),
+                  child: map != null
+                      ? Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            ClipRRect(
+                              child: map!,
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
+                            if (isChallenge)
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: Container(
+                                  margin: const EdgeInsets.only(
+                                    right: 6,
+                                    bottom: 4,
+                                  ),
+                                  child: SvgPicture.asset(
+                                    'assets/icons/challenge.svg',
+                                    height: 8.0,
+                                    width: 8.0,
+                                    color: infoColor,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        )
+                      : Image.asset(
+                          'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking_small.png',
+                          fit: BoxFit.cover,
+                        ),
                 ),
                 Container(
                   margin: const EdgeInsets.only(left: 20.0),

@@ -16,15 +16,12 @@ class RemoteService
     UserActivity userActivity,
     List<LocationData> listLocationData,
   ) async {
-    if (userActivity.isChallenge == 1) {
-    } else {
-      userActivity.imageData = null;
-      var arg = {
-        'userActivitySummary': userActivitySummary.toJson(),
-        'userActivity': userActivity.toJson(),
-      };
-      await Remote.callFirebaseFunctions('saveUserActivity', arg);
-    }
+    userActivity.imageData = null;
+    var arg = {
+      'userActivitySummary': userActivitySummary.toJson(),
+      'userActivity': userActivity.toJson(),
+    };
+    await Remote.callFirebaseFunctions('saveUserActivity', arg);
   }
 
   @override

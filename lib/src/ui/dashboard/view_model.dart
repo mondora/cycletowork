@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cycletowork/src/data/app_data.dart';
+import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/data/user_activity_summary.dart';
@@ -34,7 +35,7 @@ class ViewModel extends ChangeNotifier {
   UserActivity? get trackingUserActivity => _trackingUserActivity;
 
   bool _trackingPaused = false;
-  bool _isChallengeActivity = false;
+  ChallengeRegistry? _challengeActive;
 
   Timer? _timer;
   StreamSubscription<LocationData>? _locationSubscription;
@@ -57,7 +58,7 @@ class ViewModel extends ChangeNotifier {
       await getListUserActivityFilterd();
       notifyListeners();
       _uiState.currentPosition = await _getCurrentLocation();
-      _isChallengeActivity = await _repository.isChallengeActivity();
+      // _challengeActive = await _repository.isChallengeActivity();
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
@@ -68,10 +69,10 @@ class ViewModel extends ChangeNotifier {
     }
   }
 
-  void startCounter(context) {
+  void startCounter(context) async {
     _uiState.counter = 5;
     _trackingPaused = false;
-
+    _challengeActive = await _repository.isChallengeActivity();
     _trackingUserActivity = UserActivity(
       userActivityId: const Uuid().v4(),
       uid: AppData.user!.uid,
@@ -84,7 +85,9 @@ class ViewModel extends ChangeNotifier {
       maxSpeed: 0,
       calorie: 0,
       steps: 0,
-      isChallenge: _isChallengeActivity ? 1 : 0,
+      isChallenge: _challengeActive != null ? 1 : 0,
+      challengeId: _challengeActive?.challengeId,
+      companyId: _challengeActive?.companyId,
     );
     _listTrackingPosition = [];
 
@@ -116,6 +119,7 @@ class ViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       await _getActiveChallengeList();
+      AppData.user = await _repository.getUserInfo();
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
@@ -167,6 +171,7 @@ class ViewModel extends ChangeNotifier {
       );
       var oldUserActivitySummary = _uiState.userActivitySummary!;
       var userActivitySummary = UserActivitySummary(
+        uid: AppData.user!.uid,
         co2: oldUserActivitySummary.co2 + userActivity.co2,
         distance: oldUserActivitySummary.distance + userActivity.distance,
         averageSpeed:
@@ -485,6 +490,7 @@ class ViewModel extends ChangeNotifier {
 
   Future<void> _getActiveChallengeList() async {
     _uiState.listChallengeActive = await _repository.getActiveChallengeList();
+    notifyListeners();
   }
 
   _initAppNotification() {

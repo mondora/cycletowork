@@ -116,19 +116,51 @@ class _ActivityCard extends StatelessWidget {
                       margin: const EdgeInsets.only(left: 10.0),
                       height: 93,
                       width: 93,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: map != null
-                              ? (map! as Image).image
-                              : Image.asset(
-                                  'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking.png',
-                                ).image,
-                          fit: BoxFit.cover,
-                        ),
-                        borderRadius: const BorderRadius.all(
+                      decoration: const BoxDecoration(
+                        // image: DecorationImage(
+                        //   image: map != null
+                        //       ? (map! as Image).image
+                        //       : Image.asset(
+                        //           'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking.png',
+                        //         ).image,
+                        //   fit: BoxFit.cover,
+                        // ),
+
+                        borderRadius: BorderRadius.all(
                           Radius.circular(10),
                         ),
                       ),
+                      child: map != null
+                          ? Stack(
+                              children: [
+                                ClipRRect(
+                                  child: map!,
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                ),
+                                if (isChallenge)
+                                  Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Container(
+                                      margin: const EdgeInsets.only(
+                                        right: 8,
+                                        bottom: 8,
+                                      ),
+                                      child: SvgPicture.asset(
+                                        'assets/icons/challenge.svg',
+                                        height: 15.0,
+                                        width: 15.0,
+                                        color: infoColor,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            )
+                          : Image.asset(
+                              'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking.png',
+                              fit: BoxFit.cover,
+                            ),
                     ),
                     Container(
                       margin: const EdgeInsets.only(left: 15.0),

@@ -1,4 +1,5 @@
 class UserActivitySummary {
+  String uid;
   double co2;
   double distance;
   double averageSpeed;
@@ -7,6 +8,7 @@ class UserActivitySummary {
   int steps;
 
   UserActivitySummary({
+    required this.uid,
     required this.co2,
     required this.distance,
     required this.averageSpeed,
@@ -15,8 +17,18 @@ class UserActivitySummary {
     required this.steps,
   });
 
+  UserActivitySummary.fromEmpty()
+      : uid = '',
+        co2 = 0.0,
+        distance = 0.0,
+        averageSpeed = 0.0,
+        maxSpeed = 0.0,
+        calorie = 0,
+        steps = 0;
+
   UserActivitySummary.fromMap(Map<String, dynamic> map)
-      : co2 = map['co2'],
+      : uid = map['uid'],
+        co2 = map['co2'],
         distance = map['distance'],
         averageSpeed = map['averageSpeed'],
         maxSpeed = map['maxSpeed'],
@@ -24,6 +36,7 @@ class UserActivitySummary {
         steps = map['steps'];
 
   Map<String, dynamic> toJson() => {
+        'uid': uid,
         'co2': co2,
         'distance': distance,
         'averageSpeed': averageSpeed,
@@ -32,10 +45,17 @@ class UserActivitySummary {
         'steps': steps,
       };
 
-  static String get co2Key => 'UserActivitySummary_co2';
-  static String get distanceKey => 'UserActivitySummary_distance';
-  static String get averageSpeedKey => 'UserActivitySummary_averageSpeed';
-  static String get maxSpeedKey => 'UserActivitySummary_maxSpeed';
-  static String get calorieKey => 'UserActivitySummary_calorie';
-  static String get stepsKey => 'UserActivitySummary_steps';
+  static String get tableName => 'UserActivitySummary';
+
+  static String get tableString => '''
+    CREATE TABLE IF NOT EXISTS $tableName( 
+      uid TEXT PRIMARY KEY  NOT NULL,
+      co2 REAL NOT NULL,
+      distance REAL NOT NULL,
+      averageSpeed REAL NOT NULL,
+      maxSpeed REAL NOT NULL, 
+      calorie INTEGER NOT NULL,
+      steps INTEGER NOT NULL
+    );
+  ''';
 }

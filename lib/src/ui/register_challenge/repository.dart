@@ -60,6 +60,8 @@ class Repository {
   }
 
   Future<bool> registerChallenge(ChallengeRegistry challengeRegistry) async {
-    return await _remoteService.registerChallenge(challengeRegistry);
+    await _remoteService.registerChallenge(challengeRegistry);
+    await _localDatabase.registerChallenge(challengeRegistry);
+    return true;
   }
 }

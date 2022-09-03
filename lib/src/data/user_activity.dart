@@ -14,6 +14,7 @@ class UserActivity {
   int steps;
   int isChallenge;
   String? challengeId;
+  String? companyId;
   String? city;
   Uint8List? imageData;
 
@@ -31,6 +32,7 @@ class UserActivity {
     required this.steps,
     required this.isChallenge,
     this.challengeId,
+    this.companyId,
     this.city,
     this.imageData,
   });
@@ -50,6 +52,7 @@ class UserActivity {
         imageData = map['imageData'],
         isChallenge = map['isChallenge'],
         challengeId = map['challengeId'],
+        companyId = map['companyId'],
         city = map['city'];
 
   Map<String, dynamic> toJson() => {
@@ -67,6 +70,7 @@ class UserActivity {
         'imageData': imageData,
         'isChallenge': isChallenge,
         'challengeId': challengeId,
+        'companyId': companyId,
         'city': city,
       };
 
@@ -88,6 +92,7 @@ class UserActivity {
       imageData blob,
       isChallenge INTEGER NOT NULL,
       challengeId TEXT,
+      companyId TEXT,
       city TEXT
     );
   ''';

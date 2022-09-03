@@ -26,8 +26,6 @@ abstract class AppService {
 
   Future<void> updateUserName(String name);
 
-  Future<List<Challenge>> getActiveChallengeList();
-
   Future<bool> registerChallenge(ChallengeRegistry challengeRegistry);
 }
 
@@ -75,11 +73,19 @@ abstract class AppAdminService {
 }
 
 abstract class AppServiceOnlyLocal {
+  Future<void> saveUserInfo(User user);
+
   Future<List<LocationData>> getListLocationDataForActivity(
     String userActivityId,
   );
 
   Future<String?> getDeviceToken();
+
+  Future<void> saveListChallenge(List<Challenge> listChallenge);
+
+  Future<List<ChallengeRegistry>> getListActiveRegisterChallenge();
+
+  Future<Challenge?> getChallengeInfo(String challengeId);
 }
 
 abstract class AppServiceOnlyRemote {
@@ -91,4 +97,6 @@ abstract class AppServiceOnlyRemote {
   Future<bool> sendEmailVerificationCode(String email, String displayName);
 
   Future<bool> verifiyEmailCode(String email, String code);
+
+  Future<List<Challenge>> getActiveChallengeList();
 }
