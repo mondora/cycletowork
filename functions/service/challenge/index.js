@@ -1,6 +1,6 @@
 const admin = require('firebase-admin');
 const { Constant } = require('../../utility/constant');
-const { saveChallenge, getUserInfo } = require('../user');
+const { saveChallengeUser, getUserInfo } = require('../user');
 const { saveCompany } = require('../company');
 
 const getActiveChallengeList = async () => {
@@ -36,6 +36,14 @@ const registerChallenge = async (uid, challengeRegistry) => {
     if (challengeRegistry.companyToAdd) {
         await saveCompany(challengeRegistry.companyToAdd);
     }
+    const data = {
+        averageSpeed: 0,
+        calorie: 0,
+        co2: 0,
+        distance: 0,
+        maxSpeed: 0,
+        steps: 0,
+    };
 
     await admin
         .firestore()
@@ -43,9 +51,18 @@ const registerChallenge = async (uid, challengeRegistry) => {
         .doc(challengeId)
         .collection(Constant.usersCollectionName)
         .doc(uid)
-        .set(challengeRegistry, { merge: false });
+        .set({ challengeRegistry, ...data }, { merge: false });
 
-    await saveChallenge(uid, challengeId);
+    const company = challengeRegistry.companySelected;
+    await admin
+        .firestore()
+        .collection(Constant.challengeCollectionName)
+        .doc(challengeId)
+        .collection(Constant.companyCollectionName)
+        .doc(company.id)
+        .set({ company, ...data }, { merge: false });
+
+    await saveChallengeUser(uid, challengeId);
 };
 
 module.exports = {

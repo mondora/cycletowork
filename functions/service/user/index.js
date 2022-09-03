@@ -41,7 +41,7 @@ const saveDeviceToken = async (uid, deviceToken) => {
         .update(data, { merge: true });
 };
 
-const saveChallenge = async (uid, challengeId) => {
+const saveChallengeUser = async (uid, challengeId) => {
     const data = {
         listChallengeIdRegister: admin.firestore.FieldValue.arrayUnion(
             ...[challengeId]
@@ -185,5 +185,5 @@ module.exports = {
     updateUserInfo,
     sendEmailVerificationCode,
     verifiyEmailCode,
-    saveChallenge,
+    saveChallengeUser,
 };

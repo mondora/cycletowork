@@ -40,6 +40,8 @@ const surveyAlreadyExists = 'survey-already-exists';
 
 const challengeAlreadyExists = 'challenge-already-exists';
 
+const userNotRegisteredForChallengeError = 'user-not-registered-for-challenge';
+
 class Constant {
     static get appRegion() {
         return appRegion;
@@ -115,6 +117,10 @@ class Constant {
 
     static get userAlreadyRegisteredError() {
         return userAlreadyRegisteredError;
+    }
+
+    static get userNotRegisteredForChallengeError() {
+        return userNotRegisteredForChallengeError;
     }
 }
 
