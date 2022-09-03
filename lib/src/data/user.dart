@@ -1,3 +1,5 @@
+import 'package:cycletowork/src/data/pagination.dart';
+
 enum UserType {
   other,
   mondora,
@@ -5,8 +7,9 @@ enum UserType {
 }
 
 class User {
-  final String uid;
-  final String email;
+  static String get _splitPattern => '######';
+  String uid;
+  String email;
   UserType userType;
   bool admin;
   bool verified;
@@ -14,7 +17,8 @@ class User {
   bool? emailVerified;
   String? displayName;
   List<String>? deviceTokens;
-  List<String>? listChallengeId;
+  String? language;
+  List<String>? listChallengeIdRegister;
   bool selected = false;
 
   User({
@@ -26,8 +30,9 @@ class User {
     this.photoURL,
     this.displayName,
     this.deviceTokens,
-    this.listChallengeId,
+    this.listChallengeIdRegister,
     this.emailVerified,
+    this.language,
   });
 
   User.fromMap(Map<String, dynamic> map)
@@ -53,9 +58,10 @@ class User {
         deviceTokens = map['deviceTokens'] != null
             ? (map['deviceTokens'] as List<dynamic>).cast<String>()
             : null,
-        listChallengeId = map['listChallengeId'] != null
-            ? (map['listChallengeId'] as List<dynamic>).cast<String>()
-            : null;
+        listChallengeIdRegister = map['listChallengeIdRegister'] != null
+            ? (map['listChallengeIdRegister'] as List<dynamic>).cast<String>()
+            : null,
+        language = map['language'];
 
   Map<String, dynamic> toJson() => {
         'uid': uid,
@@ -65,17 +71,64 @@ class User {
         'photoURL': photoURL,
         'displayName': displayName,
         'deviceTokens': deviceTokens,
-        'listChallengeId': listChallengeId,
+        'listChallengeIdRegister': listChallengeIdRegister,
         'admin': admin,
         'verified': verified,
+        'language': language,
+      };
+
+  User.fromMapLocalDatabase(Map<String, dynamic> map)
+      : uid = map['uid'],
+        userType = map['userType'] != null
+            ? UserType.values.firstWhere(
+                (element) =>
+                    element.name.toLowerCase() == map['userType'].toLowerCase(),
+              )
+            : UserType.other,
+        admin = false,
+        verified = false,
+        email = map['email'],
+        emailVerified = null,
+        photoURL = map['photoURL'],
+        displayName = map['displayName'],
+        deviceTokens = [],
+        language = map['language'],
+        listChallengeIdRegister = map['listChallengeIdRegister'] != null
+            ? (map['listChallengeIdRegister'] as String).split(_splitPattern)
+            : null;
+
+  Map<String, dynamic> toJsonForLocalDatabase() => {
+        'uid': uid,
+        'email': email,
+        'userType': userType.name,
+        'photoURL': photoURL,
+        'displayName': displayName,
+        'language': language,
+        'listChallengeIdRegister': listChallengeIdRegister != null
+            ? listChallengeIdRegister!.join(_splitPattern)
+            : '',
       };
 
   static String get deviceTokensKey => 'User_deviceTokens';
+
+  static String get tableName => 'User';
+
+  static String get tableString => '''
+    CREATE TABLE IF NOT EXISTS $tableName( 
+      uid TEXT PRIMARY KEY  NOT NULL,
+      email TEXT NOT NULL,
+      userType TEXT NOT NULL,
+      photoURL TEXT,
+      displayName TEXT,
+      language TEXT,
+      listChallengeIdRegister TEXT
+    );
+  ''';
 }
 
 class ListUser {
   List<User> users;
-  ListUserPagination pagination;
+  Pagination pagination;
 
   ListUser({
     required this.users,
@@ -86,19 +139,5 @@ class ListUser {
       : users = map['users'] != null
             ? map['users'].map<User>((json) => User.fromMap(json)).toList()
             : [],
-        pagination = ListUserPagination.fromMap(map['pagination']);
-}
-
-class ListUserPagination {
-  final bool hasNextPage;
-  final String? nextPageToken;
-
-  ListUserPagination({
-    required this.hasNextPage,
-    this.nextPageToken,
-  });
-
-  ListUserPagination.fromMap(Map<String, dynamic> map)
-      : hasNextPage = map['hasNextPage'],
-        nextPageToken = map['nextPageToken'];
+        pagination = Pagination.fromMap(map['pagination']);
 }

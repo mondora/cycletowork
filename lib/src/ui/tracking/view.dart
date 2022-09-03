@@ -26,14 +26,13 @@ class TrackingView extends StatelessWidget {
       '##0.00',
       appLocale.languageCode,
     );
-    final trackingDurationInSeconds = trackingUserActivity.duration ?? 0;
-    final trackingCo2 = (trackingUserActivity.co2 ?? 0).gramToKg();
+    final trackingDurationInSeconds = trackingUserActivity.duration;
+    final trackingCo2 = trackingUserActivity.co2.gramToKg();
     final trackingAvarageSpeed =
-        (trackingUserActivity.averageSpeed ?? 0).meterPerSecondToKmPerHour();
+        trackingUserActivity.averageSpeed.meterPerSecondToKmPerHour();
     final trackingMaxSpeed =
-        (trackingUserActivity.maxSpeed ?? 0).meterPerSecondToKmPerHour();
-    final trackingDistanceInKm =
-        (trackingUserActivity.distance ?? 0).meterToKm();
+        trackingUserActivity.maxSpeed.meterPerSecondToKmPerHour();
+    final trackingDistanceInKm = trackingUserActivity.distance.meterToKm();
 
     return Scaffold(
       body: Container(

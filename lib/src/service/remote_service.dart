@@ -1,17 +1,15 @@
 import 'package:cycletowork/src/data/app_service.dart';
+import 'package:cycletowork/src/data/challenge.dart';
+import 'package:cycletowork/src/data/company.dart';
 import 'package:cycletowork/src/data/location_data.dart';
+import 'package:cycletowork/src/data/survey.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/data/user_activity_summary.dart';
 import 'package:cycletowork/src/service/remote.dart';
 
-class RemoteService implements AppService, AppAdminService {
-  @override
-  Future<bool> isOpenNewChallenge() {
-    // TODO: implement isOpenNewChallenge
-    throw UnimplementedError();
-  }
-
+class RemoteService
+    implements AppService, AppServiceOnlyRemote, AppAdminService {
   @override
   Future saveUserActivity(
     UserActivitySummary userActivitySummary,
@@ -45,41 +43,15 @@ class RemoteService implements AppService, AppAdminService {
   }
 
   @override
-  Future<bool> isChallengeActivity() {
-    // TODO: implement isChallengeActivity
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<LocationData>> getListLocationDataForActivity(
-    String userActivityId,
-  ) async {
-    // TODO: implement getListLocationDataForActivity
-    throw UnimplementedError();
-  }
-
-  @override
   Future<User> getUserInfo() async {
     var map = await Remote.callFirebaseFunctions('getUserInfo', null);
     return User.fromMap(map);
   }
 
   @override
-  Future<String?> getDeviceToken() {
-    // TODO: implement getDeviceToken
-    throw UnimplementedError();
-  }
-
-  @override
   Future<void> saveDeviceToken(String deviceToken) async {
     var arg = {'deviceToken': deviceToken};
     await Remote.callFirebaseFunctions('saveDeviceToken', arg);
-  }
-
-  @override
-  Future<List<String>> getDeviceTokens() {
-    // TODO: implement getDeviceTokens
-    throw UnimplementedError();
   }
 
   @override
@@ -124,5 +96,140 @@ class RemoteService implements AppService, AppAdminService {
   Future<bool> setAdminUser(String uid) async {
     var arg = {'uid': uid};
     return await Remote.callFirebaseFunctions('setAdminUser', arg);
+  }
+
+  @override
+  Future<List<Company>> getCompanyList(
+    int pageSize,
+    String? lastCompanyName,
+  ) async {
+    var arg = {
+      'pagination': {
+        'pageSize': pageSize,
+        'lastCompanyName': lastCompanyName,
+      }
+    };
+    List map = await Remote.callFirebaseFunctions('getCompanyList', arg);
+    return map
+        .map<Company>(
+            (json) => Company.fromMap(Map<String, dynamic>.from(json)))
+        .toList();
+  }
+
+  @override
+  Future<bool> saveCompany(Company company) async {
+    var arg = {'company': company.toJson()};
+    return await Remote.callFirebaseFunctions('saveCompany', arg);
+  }
+
+  @override
+  Future<bool> updateCompanyAdmin(Company company) async {
+    var arg = {'company': company.toJson()};
+    return await Remote.callFirebaseFunctions('updateCompanyAdmin', arg);
+  }
+
+  @override
+  Future<List<Company>> getCompanyListNameSearch(String name) async {
+    var arg = {'name': name};
+    var map =
+        await Remote.callFirebaseFunctions('getCompanyListNameSearch', arg);
+    return map
+        .map<Company>(
+            (json) => Company.fromMap(Map<String, dynamic>.from(json)))
+        .toList();
+  }
+
+  @override
+  Future<List<Survey>> getSurveyList(
+    int pageSize,
+    String? lastSurveyName,
+  ) async {
+    var arg = {
+      'pagination': {
+        'pageSize': pageSize,
+        'lastSurveyName': lastSurveyName,
+      }
+    };
+    var map = await Remote.callFirebaseFunctions('getSurveyList', arg);
+    return map.map<Survey>((json) => Survey.fromMap(json)).toList();
+  }
+
+  @override
+  Future<bool> saveSurveyAdmin(Survey survey) async {
+    var arg = {'survey': survey.toJson()};
+    return await Remote.callFirebaseFunctions('saveSurveyAdmin', arg);
+  }
+
+  @override
+  Future<List<Challenge>> getChallengeListAdmin(
+    int pageSize,
+    String? lastChallengeName,
+  ) async {
+    var arg = {
+      'pagination': {
+        'pageSize': pageSize,
+        'lastChallengeName': lastChallengeName,
+      }
+    };
+    var map = await Remote.callFirebaseFunctions('getChallengeListAdmin', arg);
+    return map.map<Challenge>((json) => Challenge.fromMap(json)).toList();
+  }
+
+  @override
+  Future<bool> saveChallengeAdmin(Challenge challenge) async {
+    var arg = {'challenge': challenge.toJson()};
+    return await Remote.callFirebaseFunctions('saveChallengeAdmin', arg);
+  }
+
+  @override
+  Future<bool> publishChallengeAdmin(Challenge challenge) async {
+    var arg = {'challenge': challenge.toJson()};
+    return await Remote.callFirebaseFunctions('publishChallengeAdmin', arg);
+  }
+
+  @override
+  Future<List<Challenge>> getActiveChallengeList() async {
+    var map =
+        await Remote.callFirebaseFunctions('getActiveChallengeList', null);
+    return map.map<Challenge>((json) => Challenge.fromMap(json)).toList();
+  }
+
+  @override
+  Future<bool> saveSurveyResponse(
+    Challenge challenge,
+    SurveyResponse surveyResponse,
+  ) async {
+    var arg = {
+      'challenge': challenge.toJson(),
+      'surveyResponse': surveyResponse.toJson(),
+    };
+    return await Remote.callFirebaseFunctions('saveSurveyResponse', arg);
+  }
+
+  @override
+  Future<bool> verifyCompanyAdmin(Company company) async {
+    var arg = {'company': company.toJson()};
+    return await Remote.callFirebaseFunctions('verifyCompanyAdmin', arg);
+  }
+
+  @override
+  Future<bool> sendEmailVerificationCode(
+    String email,
+    String displayName,
+  ) async {
+    var arg = {'email': email, 'displayName': displayName};
+    return await Remote.callFirebaseFunctions('sendEmailVerificationCode', arg);
+  }
+
+  @override
+  Future<bool> verifiyEmailCode(String email, String code) async {
+    var arg = {'email': email, 'code': code};
+    return await Remote.callFirebaseFunctions('verifiyEmailCode', arg);
+  }
+
+  @override
+  Future<bool> registerChallenge(ChallengeRegistry challengeRegistry) async {
+    var arg = {'challengeRegistry': challengeRegistry.toJson()};
+    return await Remote.callFirebaseFunctions('registerChallenge', arg);
   }
 }

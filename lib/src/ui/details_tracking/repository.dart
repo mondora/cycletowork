@@ -33,15 +33,4 @@ class Repository {
       userActivityId,
     );
   }
-
-  Future<String> getCityNameFromLocation(
-    LocationData locationData, {
-    String? localeIdentifier,
-  }) async {
-    return await Gps.getCityName(
-      locationData.latitude,
-      locationData.longitude,
-      localeIdentifier: localeIdentifier,
-    );
-  }
 }

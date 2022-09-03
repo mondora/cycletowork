@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/chart_data.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/repository_service_locator.dart';
@@ -178,6 +179,10 @@ class Repository {
     );
   }
 
+  Future<List<Challenge>> getActiveChallengeList() async {
+    return await _remoteService.getActiveChallengeList();
+  }
+
   UserActivityChartData getUserActivityChartData(Map args) {
     List<UserActivity> listUserActivity = args['listUserActivity'];
     ChartScaleType chartScaleType = args['chartScaleType'];
@@ -192,8 +197,8 @@ class Repository {
 
         var userActivitySelected = listUserActivity.where(
           (userActivity) =>
-              userActivity.stopTime! >= startDate.millisecondsSinceEpoch &&
-              userActivity.stopTime! < endDate.millisecondsSinceEpoch,
+              userActivity.stopTime >= startDate.millisecondsSinceEpoch &&
+              userActivity.stopTime < endDate.millisecondsSinceEpoch,
         );
         if (userActivitySelected.isEmpty) {
           listCo2ChartData.add(ChartData(offsetDay, 0));
@@ -202,20 +207,18 @@ class Repository {
           listCo2ChartData.add(
             ChartData(
               offsetDay,
-              (userActivitySelected.map((e) => e.co2).reduce(
-                            (a, b) => a! + b!,
-                          ) ??
-                      0)
+              userActivitySelected
+                  .map((e) => e.co2)
+                  .reduce((a, b) => a + b)
                   .gramToKg(),
             ),
           );
           listDistanceChartData.add(
             ChartData(
               offsetDay,
-              (userActivitySelected.map((e) => e.distance).reduce(
-                            (a, b) => a! + b!,
-                          ) ??
-                      0)
+              userActivitySelected
+                  .map((e) => e.distance)
+                  .reduce((a, b) => a + b)
                   .meterToKm(),
             ),
           );
@@ -238,8 +241,8 @@ class Repository {
 
         var userActivitySelected = listUserActivity.where(
           (userActivity) =>
-              userActivity.stopTime! >= startDate.millisecondsSinceEpoch &&
-              userActivity.stopTime! < endDate.millisecondsSinceEpoch,
+              userActivity.stopTime >= startDate.millisecondsSinceEpoch &&
+              userActivity.stopTime < endDate.millisecondsSinceEpoch,
         );
         if (userActivitySelected.isEmpty) {
           listCo2ChartData.add(ChartData(offsetDay, 0));
@@ -248,20 +251,18 @@ class Repository {
           listCo2ChartData.add(
             ChartData(
               offsetDay,
-              (userActivitySelected.map((e) => e.co2).reduce(
-                            (a, b) => a! + b!,
-                          ) ??
-                      0)
+              userActivitySelected
+                  .map((e) => e.co2)
+                  .reduce((a, b) => a + b)
                   .gramToKg(),
             ),
           );
           listDistanceChartData.add(
             ChartData(
               offsetDay,
-              (userActivitySelected.map((e) => e.distance).reduce(
-                            (a, b) => a! + b!,
-                          ) ??
-                      0)
+              userActivitySelected
+                  .map((e) => e.distance)
+                  .reduce((a, b) => a + b)
                   .meterToKm(),
             ),
           );
@@ -280,8 +281,8 @@ class Repository {
 
         var userActivitySelected = listUserActivity.where(
           (userActivity) =>
-              userActivity.stopTime! >= startDate.millisecondsSinceEpoch &&
-              userActivity.stopTime! < endDate.millisecondsSinceEpoch,
+              userActivity.stopTime >= startDate.millisecondsSinceEpoch &&
+              userActivity.stopTime < endDate.millisecondsSinceEpoch,
         );
         if (userActivitySelected.isEmpty) {
           listCo2ChartData.add(ChartData(offsetMonth, 0));
@@ -290,20 +291,18 @@ class Repository {
           listCo2ChartData.add(
             ChartData(
               offsetMonth,
-              (userActivitySelected.map((e) => e.co2).reduce(
-                            (a, b) => a! + b!,
-                          ) ??
-                      0)
+              userActivitySelected
+                  .map((e) => e.co2)
+                  .reduce((a, b) => a + b)
                   .gramToKg(),
             ),
           );
           listDistanceChartData.add(
             ChartData(
               offsetMonth,
-              (userActivitySelected.map((e) => e.distance).reduce(
-                            (a, b) => a! + b!,
-                          ) ??
-                      0)
+              userActivitySelected
+                  .map((e) => e.distance)
+                  .reduce((a, b) => a + b)
                   .meterToKm(),
             ),
           );
@@ -314,6 +313,17 @@ class Repository {
     return UserActivityChartData.instance(
       listCo2ChartData,
       listDistanceChartData,
+    );
+  }
+
+  Future<String> getCityNameFromLocation(
+    LocationData locationData, {
+    String? localeIdentifier,
+  }) async {
+    return await Gps.getCityName(
+      locationData.latitude,
+      locationData.longitude,
+      localeIdentifier: localeIdentifier,
     );
   }
 }

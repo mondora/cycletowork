@@ -1,4 +1,6 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/app_service.dart';
+import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/data/location_data.dart';
@@ -7,13 +9,8 @@ import 'package:cycletowork/src/database/local_database.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LocalDatabaseService implements AppService {
+class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
   final _localDatabase = LocalDatabase.db;
-
-  @override
-  Future<bool> isOpenNewChallenge() {
-    throw UnimplementedError();
-  }
 
   @override
   Future saveUserActivity(
@@ -72,11 +69,14 @@ class LocalDatabaseService implements AppService {
     bool thisYear = false,
   }) async {
     String? orderBy;
-    String? whereCondition;
+    String whereCondition;
     List<dynamic> whereArgs = [];
     if (orderByStopTimeDesc) {
       orderBy = 'stopTime DESC';
     }
+
+    whereCondition = '''uid = ?''';
+    whereArgs.add(AppData.user!.uid);
 
     if (justChallenges) {
       whereCondition =
@@ -147,11 +147,6 @@ class LocalDatabaseService implements AppService {
   }
 
   @override
-  Future<bool> isChallengeActivity() async {
-    return false;
-  }
-
-  @override
   Future<List<LocationData>> getListLocationDataForActivity(
     String userActivityId,
   ) async {
@@ -170,6 +165,14 @@ class LocalDatabaseService implements AppService {
   }
 
   @override
+  Future<String?> getDeviceToken() async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    return sharedPreferences.getString(
+      User.deviceTokensKey,
+    );
+  }
+
+  @override
   Future<void> saveDeviceToken(String deviceToken) async {
     final sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.setString(
@@ -179,22 +182,20 @@ class LocalDatabaseService implements AppService {
   }
 
   @override
-  Future<String?> getDeviceToken() async {
-    final sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences.getString(
-      User.deviceTokensKey,
-    );
-  }
-
-  @override
-  Future<List<String>> getDeviceTokens() {
-    // TODO: implement getDeviceTokens
+  Future<void> updateUserName(String name) {
+    // TODO: implement updateUserName
     throw UnimplementedError();
   }
 
   @override
-  Future<void> updateUserName(String name) {
-    // TODO: implement updateUserName
+  Future<List<Challenge>> getActiveChallengeList() {
+    // TODO: implement getActiveChallengeList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> registerChallenge(ChallengeRegistry challengeRegistry) {
+    // TODO: implement registerChallenge
     throw UnimplementedError();
   }
 }

@@ -5,7 +5,7 @@ import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/admin/dashboard/view_model.dart';
 import 'package:cycletowork/src/ui/admin/details_user/view.dart';
-import 'package:cycletowork/src/ui/dashboard/widget/data_column_search.dart';
+import 'package:cycletowork/src/widget/data_column_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -105,7 +105,7 @@ class _AdminListUserViewState extends State<AdminListUserView>
             label: const Text('Aggiorna'),
             onPressed: () {
               _rowIndex.value = 0;
-              dashboardModel.getter();
+              dashboardModel.getterListUser();
             },
             icon: const Icon(
               Icons.refresh,
@@ -245,7 +245,7 @@ class _TableDataSource extends DataTableSource {
               badgeColor: Colors.blueAccent,
               showBadge: user.verified,
               badgeContent: const Icon(
-                Icons.star,
+                Icons.verified_outlined,
                 color: Colors.white,
                 size: 10.0,
               ),

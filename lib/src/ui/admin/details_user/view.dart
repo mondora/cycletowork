@@ -95,7 +95,7 @@ class AdminDetailsUser extends StatelessWidget {
                   label: const Text('Verifica'),
                   onPressed: !verified ? () => viewModel.verifyUser() : null,
                   icon: const Icon(
-                    Icons.star,
+                    Icons.verified_outlined,
                   ),
                 ),
                 const SizedBox(
@@ -118,9 +118,9 @@ class AdminDetailsUser extends StatelessWidget {
                         position: BadgePosition.bottomEnd(end: 15.0),
                         showBadge: verified,
                         badgeContent: const Icon(
-                          Icons.star,
+                          Icons.verified_outlined,
                           color: Colors.white,
-                          size: 10.0,
+                          size: 20.0,
                         ),
                         child: CircleAvatar(
                           radius: 50,

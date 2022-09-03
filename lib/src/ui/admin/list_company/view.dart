@@ -1,12 +1,11 @@
 import 'dart:math';
 
-import 'package:badges/badges.dart';
-import 'package:cycletowork/src/data/user.dart';
+import 'package:cycletowork/src/data/company.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/admin/dashboard/view_model.dart';
-import 'package:cycletowork/src/ui/dashboard/widget/data_column_search.dart';
+import 'package:cycletowork/src/ui/admin/list_company/edit_company.dart';
+import 'package:cycletowork/src/widget/data_column_search.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class AdminListCompanyView extends StatefulWidget {
@@ -39,29 +38,20 @@ class _AdminListCompanyViewState extends State<AdminListCompanyView>
   Widget build(BuildContext context) {
     final dashboardModel = Provider.of<ViewModel>(context);
     var textTheme = Theme.of(context).textTheme;
-    List<User> data = dashboardModel.uiState.listUser != null
-        ? dashboardModel.uiState.listUser!.users
-        : [];
+    List<Company> data = dashboardModel.uiState.listCompany;
 
-    bool hasNextPage = dashboardModel.uiState.listUser != null
-        ? dashboardModel.uiState.listUser!.pagination.hasNextPage
-        : false;
     _tableDataSource = _TableDataSource(
       context: context,
       viewModel: dashboardModel,
       data: data,
-      hasNextPage: hasNextPage,
-      onTap: (user) async {
-        // await dashboardModel.getUserInfo(user.uid);
-        // await Navigator.of(context).push(
-        //   MaterialPageRoute(
-        //     builder: (context) => AdminDetailsUser(
-        //       user: user,
-        //       userInfo: dashboardModel.uiState.userInfo,
-        //       verifyUser: () {},
-        //     ),
-        //   ),
-        // );
+      onTap: (company) async {
+        var newCompany = await EditCompanyDialog(
+          context: context,
+          company: company,
+        ).show();
+        if (newCompany != null) {
+          dashboardModel.updateCompany(newCompany);
+        }
       },
     );
 
@@ -101,9 +91,12 @@ class _AdminListCompanyViewState extends State<AdminListCompanyView>
         actions: [
           TextButton.icon(
             label: const Text('Aggiungi'),
-            onPressed: () {
-              // _rowIndex.value = 0;
-              // dashboardModel.getter();
+            onPressed: () async {
+              var newCompany = await EditCompanyDialog(context: context).show();
+              if (newCompany != null) {
+                _rowIndex.value = 0;
+                dashboardModel.addCompany(newCompany);
+              }
             },
             icon: const Icon(
               Icons.add,
@@ -113,23 +106,10 @@ class _AdminListCompanyViewState extends State<AdminListCompanyView>
             width: 10,
           ),
           TextButton.icon(
-            label: const Text('Importa File CSV'),
-            onPressed: () {
-              // _rowIndex.value = 0;
-              // dashboardModel.getter();
-            },
-            icon: const Icon(
-              Icons.file_upload_outlined,
-            ),
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          TextButton.icon(
             label: const Text('Aggiorna'),
             onPressed: () {
               _rowIndex.value = 0;
-              dashboardModel.getter();
+              dashboardModel.getterListCompany();
             },
             icon: const Icon(
               Icons.refresh,
@@ -153,45 +133,51 @@ class _AdminListCompanyViewState extends State<AdminListCompanyView>
             header: const Text('Tabella'),
             columns: [
               const DataColumn(
-                label: Text(''),
+                label: Text('ID'),
               ),
               DataColumn(
                 label: DataColumnSearch(
-                  title: 'EMAIL',
+                  title: 'NOME',
                   filter: dashboardModel.uiState.listUserEmailFilte ?? '',
                   onFilterChange: (value) {
                     if (value != null) {
                       _rowIndex.value = 0;
-                      // dashboardModel.searchUserEmail(value);
+                      dashboardModel.searchCompanyName(value);
                     } else {
                       _rowIndex.value = 0;
-                      // dashboardModel.clearSearchUserEmail();
+                      dashboardModel.clearSearchCompanyName();
                     }
                   },
                 ),
               ),
               const DataColumn(
-                label: Text('UID'),
+                label: Text('È VERIFICATA'),
               ),
               const DataColumn(
-                label: Text('NOME'),
+                label: Text('CATEGORIA'),
               ),
               const DataColumn(
-                label: Text('TIPO'),
+                label: Text('N° DIPENDENTI'),
+              ),
+              const DataColumn(
+                label: Text('CITTÀ'),
+              ),
+              const DataColumn(
+                label: Text('HA DIPARTIMENTI'),
               ),
               const DataColumn(
                 label: Text(''),
               ),
             ],
-            horizontalMargin: 50,
+            horizontalMargin: 10,
             checkboxHorizontalMargin: 10,
             showCheckboxColumn: false,
             showFirstLastButtons: false,
-            rowsPerPage: dashboardModel.uiState.listUserPageSize,
+            rowsPerPage: dashboardModel.uiState.listCompanyPageSize,
             initialFirstRowIndex: _rowIndex.value,
             onPageChanged: (rowIndex) {
               _rowIndex.value = rowIndex;
-              dashboardModel.nextPageListUser(rowIndex);
+              dashboardModel.nextPageListCompany(rowIndex);
             },
             onSelectAll: (value) {},
           ),
@@ -204,9 +190,8 @@ class _AdminListCompanyViewState extends State<AdminListCompanyView>
 class _TableDataSource extends DataTableSource {
   late BuildContext context;
   late ViewModel viewModel;
-  late List<User> data;
-  late Function(User) onTap;
-  late bool hasNextPage;
+  late List<Company> data;
+  late Function(Company) onTap;
 
   late int _selectedCount;
   late Color actionColor;
@@ -216,7 +201,6 @@ class _TableDataSource extends DataTableSource {
     required this.viewModel,
     required this.data,
     required this.onTap,
-    required this.hasNextPage,
   }) {
     _selectedCount = _getSelectedCounter(data);
     final colorSchemeExtension =
@@ -224,12 +208,12 @@ class _TableDataSource extends DataTableSource {
     actionColor = colorSchemeExtension.action;
   }
 
-  int _getSelectedCounter(List<User> data) {
+  int _getSelectedCounter(List<Company> data) {
     return data.where((element) => element.selected).length;
   }
 
   selectAllItems(int page, bool selected) {
-    var pageSize = viewModel.uiState.listUserPageSize;
+    var pageSize = viewModel.uiState.listCompanyPageSize;
     for (int index = page; index < min(page + pageSize, data.length); index++) {
       final user = data[index];
       user.selected = selected;
@@ -242,14 +226,14 @@ class _TableDataSource extends DataTableSource {
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => hasNextPage ? data.length + 1 : data.length;
+  int get rowCount => data.length;
 
   @override
   int get selectedRowCount => _selectedCount;
 
   @override
   DataRow getRow(int index) {
-    final user = data[index];
+    final company = data[index];
     return DataRow.byIndex(
       color: MaterialStateProperty.resolveWith(
         (Set states) {
@@ -259,57 +243,90 @@ class _TableDataSource extends DataTableSource {
       index: index,
       // selected: user.selected,
       onSelectChanged: (value) {
-        onTap(user);
+        onTap(company);
       },
       cells: [
         DataCell(
           Tooltip(
-            message: user.verified ? 'VERIFICATO' : '',
-            child: Badge(
-              badgeColor: Colors.blueAccent,
-              showBadge: user.verified,
-              badgeContent: const Icon(
-                Icons.star,
-                color: Colors.white,
-                size: 10.0,
-              ),
-              child: CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.grey[400],
-                backgroundImage:
-                    user.photoURL != null ? NetworkImage(user.photoURL!) : null,
-                child: user.photoURL == null
-                    ? Icon(
-                        Icons.person,
-                        color: actionColor,
-                      )
-                    : Container(),
-              ),
-            ),
-          ),
-        ),
-        DataCell(
-          Tooltip(
-            message: 'EMAIL',
-            child: SelectableText(user.email),
-          ),
-        ),
-        DataCell(
-          Tooltip(
-            message: 'UID',
-            child: SelectableText(user.uid),
+            message: 'ID',
+            child: SelectableText(company.id),
           ),
         ),
         DataCell(
           Tooltip(
             message: 'NOME',
-            child: SelectableText(user.displayName ?? 'N/A'),
+            child: SelectableText(company.name),
           ),
         ),
         DataCell(
           Tooltip(
-            message: user.admin ? 'ADMIN' : user.userType.name.toUpperCase(),
-            child: _getUserTypeIcon(user.userType, user.admin),
+            message: 'VERIFICARE',
+            child: Switch(
+              value: company.isVerified,
+              onChanged: !company.isVerified
+                  ? (value) async {
+                      bool? isConfirmed = await showDialog<bool>(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text('CANCELLARE'),
+                          content: Text(
+                              'SEI SICURO DI VERIFICARE LA AZIENDA "${company.name}"?'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text('ANNULA'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              child: const Text('CONFERMA'),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (isConfirmed == true) {
+                        viewModel.verifyCompany(company);
+                      }
+                    }
+                  : null,
+            ),
+          ),
+        ),
+        DataCell(
+          Tooltip(
+            message: 'CATEGORIA',
+            child: SelectableText(company.category),
+          ),
+        ),
+        DataCell(
+          Tooltip(
+            message: 'N° DIPENDENTI',
+            child: SelectableText(company.employeesNumber.toString()),
+          ),
+        ),
+        DataCell(
+          Tooltip(
+            message: 'CITTÀ',
+            child: SelectableText(company.city),
+          ),
+        ),
+        DataCell(
+          Tooltip(
+            message: 'HA DIPARTIMENTI',
+            child: company.hasMoreDepartment == true
+                ? Row(
+                    children: const [
+                      Text('SI'),
+                      SizedBox(width: 10),
+                      Icon(Icons.apartment),
+                    ],
+                  )
+                : Row(
+                    children: const [
+                      Text('NO'),
+                      SizedBox(width: 10),
+                      Icon(Icons.domain_disabled),
+                    ],
+                  ),
           ),
         ),
         const DataCell(
@@ -320,36 +337,5 @@ class _TableDataSource extends DataTableSource {
         ),
       ],
     );
-  }
-
-  Widget _getUserTypeIcon(UserType userType, bool isAdmin) {
-    const iconSize = 40.0;
-    if (isAdmin) {
-      return const Icon(
-        Icons.admin_panel_settings_rounded,
-        size: iconSize,
-      );
-    }
-
-    switch (userType) {
-      case UserType.other:
-        return SvgPicture.asset(
-          'assets/icons/profile.svg',
-          height: iconSize,
-          width: iconSize,
-        );
-      case UserType.mondora:
-        return Image.asset(
-          'assets/images/mondora_edition_logo.png',
-          height: iconSize,
-          width: iconSize,
-        );
-      case UserType.fiab:
-        return Image.asset(
-          'assets/images/fiab_edition_logo.png',
-          height: iconSize,
-          width: iconSize,
-        );
-    }
   }
 }

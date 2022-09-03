@@ -26,18 +26,10 @@ class ViewModel extends ChangeNotifier {
     _uiState.loading = true;
     notifyListeners();
     try {
-      var userActivityId = _uiState.userActivity!.userActivityId!;
+      var userActivityId = _uiState.userActivity!.userActivityId;
       _uiState.listLocationData = await _repository.getListLocationData(
         userActivityId,
       );
-      if (_uiState.listLocationData.isNotEmpty) {
-        var firstLocation = _uiState.listLocationData.first;
-        var localeIdentifier = Localizations.localeOf(_context).languageCode;
-        _uiState.city = await _repository.getCityNameFromLocation(
-          firstLocation,
-          localeIdentifier: localeIdentifier,
-        );
-      }
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;

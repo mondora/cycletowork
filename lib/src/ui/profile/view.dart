@@ -1,7 +1,5 @@
 import 'package:cycletowork/src/data/app_data.dart';
-import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/theme.dart';
-import 'package:cycletowork/src/ui/dashboard/widget/avatar.dart';
 import 'package:flutter/material.dart';
 
 class ProfileView extends StatelessWidget {
@@ -32,7 +30,7 @@ class ProfileView extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   primary: colorScheme.secondary,
                   shape: const RoundedRectangleBorder(
-                    borderRadius: const BorderRadius.all(
+                    borderRadius: BorderRadius.all(
                       Radius.circular(15.0),
                     ),
                   ),
@@ -62,7 +60,7 @@ class ProfileView extends StatelessWidget {
                       )
                     : Container(),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15.0,
               ),
               Text(
@@ -71,7 +69,7 @@ class ProfileView extends StatelessWidget {
               )
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 30.0,
           ),
           Text(
@@ -80,7 +78,7 @@ class ProfileView extends StatelessWidget {
               color: colorSchemeExtension.textSecondary,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 6.0,
           ),
           Text(
@@ -93,7 +91,7 @@ class ProfileView extends StatelessWidget {
             email ?? '',
             style: textTheme.bodyText1,
           ),
-          SizedBox(
+          const SizedBox(
             height: 10.0,
           ),
           Text(

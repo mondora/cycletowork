@@ -1,24 +1,54 @@
 const admin = require('firebase-admin');
 const { Constant } = require('../../utility/constant');
+const { saveChallenge, getUserInfo } = require('../user');
+const { saveCompany } = require('../company');
 
-const saveUserActivity = async (uid, userActivity, userActivitySummary) => {
+const getActiveChallengeList = async () => {
+    const snapshot = await admin
+        .firestore()
+        .collection(Constant.challengeCollectionName)
+        .where('published', '==', true)
+        .where('stopTime', '>=', Date.now())
+        .limit(100)
+        .get();
+
+    if (!snapshot.empty) {
+        return snapshot.docs.map((doc) => doc.data());
+    } else {
+        return [];
+    }
+};
+
+const registerChallenge = async (uid, challengeRegistry) => {
+    const userInfo = await getUserInfo(uid);
+    const challengeId = challengeRegistry.challengeId;
+    if (!userInfo) {
+        throw new Error(Constant.userNotFoundError);
+    }
+
+    if (
+        userInfo.listChallengeIdRegister &&
+        userInfo.listChallengeIdRegister.includes(challengeId)
+    ) {
+        throw new Error(Constant.userAlreadyRegisteredError);
+    }
+
+    if (challengeRegistry.companyToAdd) {
+        await saveCompany(challengeRegistry.companyToAdd);
+    }
+
     await admin
         .firestore()
+        .collection(Constant.challengeCollectionName)
+        .doc(challengeId)
         .collection(Constant.usersCollectionName)
         .doc(uid)
-        .collection(Constant.userActivityCollectionName)
-        .doc(userActivity.userActivityId)
-        .set(userActivity, { merge: false });
+        .set(challengeRegistry, { merge: false });
 
-    await admin
-        .firestore()
-        .collection(Constant.usersCollectionName)
-        .doc(uid)
-        .collection(Constant.userActivitySummaryCollectionName)
-        .doc(uid)
-        .set(userActivitySummary, { merge: true });
+    await saveChallenge(uid, challengeId);
 };
 
 module.exports = {
-    saveUserActivity,
+    getActiveChallengeList,
+    registerChallenge,
 };

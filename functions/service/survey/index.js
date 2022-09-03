@@ -1,16 +1,16 @@
 const admin = require('firebase-admin');
 const { Constant } = require('../../utility/constant');
 
-const saveSurvey = async (uid, challengeId, survey) => {
+const saveSurveyResponse = async (challenge, surveyResponse) => {
     await admin
         .firestore()
         .collection(Constant.challengeCollectionName)
-        .doc(challengeId)
+        .doc(challenge.id)
         .collection(Constant.surveyCollectionName)
-        .doc(uid)
-        .set(survey, { merge: false });
+        .doc(surveyResponse.id)
+        .set(surveyResponse, { merge: false });
 };
 
 module.exports = {
-    saveSurvey,
+    saveSurveyResponse,
 };

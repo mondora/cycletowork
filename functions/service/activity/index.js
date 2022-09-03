@@ -19,6 +19,9 @@ const saveUserActivity = async (uid, userActivity, userActivitySummary) => {
         .set(userActivitySummary, { merge: true });
 };
 
+const saveUserActivityForChallenge = async (uid, userActivity) => {};
+
 module.exports = {
     saveUserActivity,
+    saveUserActivityForChallenge,
 };

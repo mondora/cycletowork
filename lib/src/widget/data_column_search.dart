@@ -47,6 +47,7 @@ class _DataColumnSearchState extends State<DataColumnSearch> {
             color: widget.filter.isNotEmpty ? iconColor : null,
           ),
           iconSize: size,
+          splashRadius: size,
           tooltip: 'Filtro',
           itemBuilder: (context) => [
             PopupMenuItem(

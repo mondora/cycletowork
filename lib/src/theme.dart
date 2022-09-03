@@ -37,6 +37,15 @@ class AppTheme {
         iconTheme: IconThemeData(
           color: colorScheme.onBackground,
         ),
+        toolbarTextStyle: TextStyle(
+          color: colorScheme.onBackground,
+        ),
+        titleTextStyle: TextStyle(
+          color: colorScheme.onBackground,
+        ),
+        actionsIconTheme: IconThemeData(
+          color: colorScheme.onBackground,
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         errorBorder: OutlineInputBorder(

@@ -21,7 +21,6 @@ class AppBottomNavBar extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Container(
-          // height: 50.0,
           margin: const EdgeInsets.only(
             right: 24.0,
             left: 24.0,
@@ -35,10 +34,9 @@ class AppBottomNavBar extends StatelessWidget {
               BoxShadow(color: Color.fromRGBO(0, 0, 0, .25), blurRadius: 16.0)
             ],
           ),
-
           child: ConstrainedBox(
             constraints: const BoxConstraints(
-              minWidth: 220.0,
+              minWidth: 227.0,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.max,

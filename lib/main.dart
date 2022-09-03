@@ -20,13 +20,9 @@ void main() async {
   );
   await dotenv.load(fileName: '.env');
 
-  if (kIsWeb) {
-    runApp(const AdminCycleToWorkApp());
-  } else {
-    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-    await AppColor.initialize();
-    await Gps.initialize();
-    await AppNotification.initialize();
-    runApp(const CycleToWorkApp());
-  }
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await AppColor.initialize();
+  await Gps.initialize();
+  await AppNotification.initialize();
+  runApp(const CycleToWorkApp());
 }

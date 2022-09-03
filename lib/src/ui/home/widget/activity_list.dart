@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/utility/convert.dart';
@@ -8,12 +9,16 @@ import 'package:shimmer/shimmer.dart';
 
 class ActivityList extends StatelessWidget {
   final List<UserActivity> userActivity;
+  final List<Challenge> listChallengeActive;
   final Function(UserActivity) onUserActivityClick;
+  final Function(Challenge) onChallengeActiveClick;
 
   const ActivityList({
     Key? key,
     required this.userActivity,
     required this.onUserActivityClick,
+    required this.listChallengeActive,
+    required this.onChallengeActiveClick,
   }) : super(key: key);
 
   @override
@@ -56,11 +61,23 @@ class ActivityList extends StatelessWidget {
                     physics: const ScrollPhysics(),
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
-                    itemCount: userActivity.length,
+                    itemCount: listChallengeActive.length + userActivity.length,
                     itemBuilder: (context, index) {
-                      var activity = userActivity[index];
+                      if (listChallengeActive.isNotEmpty &&
+                          listChallengeActive.length > index) {
+                        var challenge = listChallengeActive[index];
+                        return _NewChallengeCard(
+                          title: challenge.name,
+                          isFiabChallenge: challenge.fiabEdition,
+                          onTap: () => onChallengeActiveClick(challenge),
+                        );
+                      }
+                      var userActivityIndex = listChallengeActive.isEmpty
+                          ? index
+                          : index - listChallengeActive.length;
+                      var activity = userActivity[userActivityIndex];
                       var date = DateTime.fromMillisecondsSinceEpoch(
-                        activity.stopTime!,
+                        activity.stopTime,
                       );
                       var dateString = '${DateFormat(
                         'dd MMMM yyyy',
@@ -70,9 +87,9 @@ class ActivityList extends StatelessWidget {
                         appLocale.languageCode,
                       ).format(date)}';
                       var co2String =
-                          '${numberFormat.format(activity.co2!.gramToKg())} Kg CO\u2082';
+                          '${numberFormat.format(activity.co2.gramToKg())} Kg CO\u2082';
                       var moreString =
-                          '${numberFormat.format(activity.distance!.meterToKm())} Km | velocità media ${numberFormatInt.format(activity.averageSpeed!.meterPerSecondToKmPerHour())} km/h';
+                          '${numberFormat.format(activity.distance.meterToKm())} Km | velocità media ${numberFormatInt.format(activity.averageSpeed.meterPerSecondToKmPerHour())} km/h';
                       var map = activity.imageData != null
                           ? Image.memory(
                               activity.imageData!,
@@ -115,6 +132,65 @@ class ActivityList extends StatelessWidget {
                   ),
                 ),
         ],
+      ),
+    );
+  }
+}
+
+class _NewChallengeCard extends StatelessWidget {
+  final String title;
+  final bool isFiabChallenge;
+  final Function()? onTap;
+
+  const _NewChallengeCard({
+    Key? key,
+    required this.title,
+    required this.isFiabChallenge,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      width: 300,
+      margin: const EdgeInsets.only(right: 10.0),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: const BorderRadius.all(
+            Radius.circular(10.0),
+          ),
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: Container(
+                  margin: const EdgeInsets.only(right: 50.0),
+                  width: 130,
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.end,
+                    maxLines: 2,
+                    style: textTheme.button!.copyWith(
+                      color: colorScheme.secondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+              Ink.image(
+                image: AssetImage(
+                  'assets/images/challenge${isFiabChallenge ? '_fiab' : ''}.png',
+                ),
+                fit: BoxFit.fitWidth,
+              ),
+            ],
+          ),
+          onTap: onTap,
+        ),
       ),
     );
   }
@@ -244,7 +320,7 @@ class _ActivityCard extends StatelessWidget {
                       image: map != null
                           ? (map! as Image).image
                           : Image.asset(
-                              'assets/images/${isChallenge ? 'challenge_' : ''}map_tracking.png',
+                              'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking_small.png',
                             ).image,
                       fit: BoxFit.cover,
                     ),

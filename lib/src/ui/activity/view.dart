@@ -89,7 +89,6 @@ class _ActivityViewState extends State<ActivityView> {
                 );
               },
               selected: justChallenges,
-              isEnabled: isNotEmptyList,
               side: ChipTheme.of(context).shape!.side.copyWith(
                     color: justChallenges ? Colors.transparent : null,
                   ),
@@ -132,7 +131,6 @@ class _ActivityViewState extends State<ActivityView> {
                       }
                     },
                     selected: chartScaleType == ChartScaleType.week,
-                    isEnabled: isNotEmptyList && listUserActivity.isNotEmpty,
                     label: const Text(
                       'Questa settimana',
                     ),
@@ -154,7 +152,6 @@ class _ActivityViewState extends State<ActivityView> {
                       }
                     },
                     selected: chartScaleType == ChartScaleType.month,
-                    isEnabled: isNotEmptyList && listUserActivity.isNotEmpty,
                     label: const Text(
                       'Questo mese',
                     ),
@@ -176,7 +173,6 @@ class _ActivityViewState extends State<ActivityView> {
                       }
                     },
                     selected: chartScaleType == ChartScaleType.year,
-                    isEnabled: isNotEmptyList && listUserActivity.isNotEmpty,
                     label: const Text(
                       'Quest’anno',
                     ),

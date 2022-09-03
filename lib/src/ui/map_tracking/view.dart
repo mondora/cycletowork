@@ -53,7 +53,7 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
     var currentPosition = widget.currentPosition;
     var firstPosition = widget.listTrackingPosition.first;
     var lastPosition = widget.listTrackingPosition.last;
-    final trackingCo2 = (widget.trackingUserActivity.co2 ?? 0).gramToKg();
+    final trackingCo2 = widget.trackingUserActivity.co2.gramToKg();
     final isChallenge =
         widget.trackingUserActivity.isChallenge == 1 ? true : false;
 

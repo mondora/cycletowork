@@ -5,10 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "cycletowork",
+            "name": "admin (web app)",
             "request": "launch",
             "type": "dart",
+            "program": "lib/admin_main.dart",
             "args": ["-d", "chrome", "--web-port", "5000"]
+        },
+        {
+            "name": "client (mobile app)",
+            "request": "launch",
+            "type": "dart"
         },
         {
             "name": "cycletowork (profile mode)",

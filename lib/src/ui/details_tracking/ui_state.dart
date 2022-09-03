@@ -16,5 +16,4 @@ class UiState {
   String errorMessage = '';
   UserActivity? userActivity;
   List<LocationData> listLocationData = [];
-  String city = '';
 }

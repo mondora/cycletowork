@@ -37,20 +37,21 @@ class DetailsTrackingView extends StatelessWidget {
           );
           final userActivity = viewModel.uiState.userActivity!;
           final endTrackingDate = DateTime.fromMillisecondsSinceEpoch(
-            userActivity.stopTime!,
+            userActivity.stopTime,
           );
-          final trackingDurationInSeconds = userActivity.duration ?? 0;
-          final trackingCo2 = (userActivity.co2 ?? 0).gramToKg();
+          final trackingDurationInSeconds = userActivity.duration;
+          final trackingCo2 = userActivity.co2.gramToKg();
           final trackingAvarageSpeed =
-              (userActivity.averageSpeed ?? 0).meterPerSecondToKmPerHour();
+              userActivity.averageSpeed.meterPerSecondToKmPerHour();
           final trackingMaxSpeed =
-              (userActivity.maxSpeed ?? 0).meterPerSecondToKmPerHour();
-          final trackingCalorie = userActivity.calorie ?? 0;
-          final trackingSteps = userActivity.steps ?? 0;
-          final trackingDistanceInKm = (userActivity.distance ?? 0).meterToKm();
+              userActivity.maxSpeed.meterPerSecondToKmPerHour();
+          final trackingCalorie = userActivity.calorie;
+          final trackingSteps = userActivity.steps;
+          final trackingDistanceInKm = userActivity.distance.meterToKm();
           final isChallenge = userActivity.isChallenge == 1 ? true : false;
           final listLocationData = viewModel.uiState.listLocationData;
           final imageData = userActivity.imageData;
+          final city = userActivity.city;
 
           return Scaffold(
             appBar: AppBar(
@@ -78,7 +79,7 @@ class DetailsTrackingView extends StatelessWidget {
                     style: textTheme.headline6,
                   ),
                   Text(
-                    viewModel.uiState.city,
+                    city ?? '',
                     style: textTheme.bodyText1!.apply(
                       color: colorSchemeExtension.textSecondary,
                     ),

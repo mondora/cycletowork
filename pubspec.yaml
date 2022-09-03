@@ -46,6 +46,8 @@ dependencies:
     firebase_messaging: ^12.0.3
     flutter_local_notifications: ^9.8.0+1
     badges: ^2.0.3
+    flutter_otp_text_field: ^1.1.0+2
+    searchfield: ^0.7.0
 
 dev_dependencies:
     flutter_test:

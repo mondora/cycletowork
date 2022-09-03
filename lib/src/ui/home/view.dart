@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:cycletowork/src/ui/details_tracking/view.dart';
+import 'package:cycletowork/src/ui/home/widget/confirm_challenge.dart';
+import 'package:cycletowork/src/ui/register_challenge/view.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
@@ -138,6 +140,8 @@ class _HomeViewState extends State<HomeView> {
                 children: [
                   ActivityList(
                     userActivity: dashboardModel.uiState.listUserActivity,
+                    listChallengeActive:
+                        dashboardModel.uiState.listChallengeActive,
                     onUserActivityClick: (userActivity) async {
                       await Navigator.of(context).push(
                         MaterialPageRoute(
@@ -146,6 +150,25 @@ class _HomeViewState extends State<HomeView> {
                           ),
                         ),
                       );
+                    },
+                    onChallengeActiveClick: (challenge) async {
+                      var title = challenge.name;
+                      var isConfirmed = await ConfirmChallengeDialog(
+                        context: context,
+                        title: title,
+                        confirmButton: 'Mi interessa'.toUpperCase(),
+                        cancelButton: 'Questa volta passo'.toUpperCase(),
+                      ).show();
+                      if (isConfirmed == true) {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => RegisterChallengeView(
+                              challenge: challenge,
+                            ),
+                          ),
+                        );
+                        dashboardModel.getActiveChallengeList();
+                      }
                     },
                   ),
                   if (dashboardModel.uiState.loading)

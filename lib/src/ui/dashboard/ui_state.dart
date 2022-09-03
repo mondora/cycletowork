@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/chart_data.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
@@ -51,6 +52,7 @@ class UiState {
   AppBottomNavBarOption? appBottomNavBarOption = AppBottomNavBarOption.home;
   AppMenuOption appMenuOption = AppMenuOption.home;
   GpsStatus gpsStatus = GpsStatus.turnOff;
+  List<Challenge> listChallengeActive = [];
 }
 
 class UserActivityChartData {

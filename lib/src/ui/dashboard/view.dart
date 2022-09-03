@@ -28,6 +28,7 @@ class DashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final landingModel = Provider.of<landing_view_model.ViewModel>(context);
+    var localeIdentifier = Localizations.localeOf(context).languageCode;
     var dismissKey = UniqueKey();
 
     var tabs = const [
@@ -82,7 +83,7 @@ class DashboardView extends StatelessWidget {
             return StopTrackingView(
               listTrackingPosition: viewModel.listTrackingPosition,
               trackingUserActivity: viewModel.trackingUserActivity!,
-              saveTracking: viewModel.saveTracking,
+              saveTracking: () => viewModel.saveTracking(localeIdentifier),
               removeTracking: viewModel.removeTracking,
             );
           }

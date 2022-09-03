@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/data/user_activity_summary.dart';
@@ -7,6 +8,7 @@ import 'package:cycletowork/src/ui/dashboard/repository.dart';
 import 'package:cycletowork/src/ui/dashboard/ui_state.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 import 'package:cycletowork/src/utility/logger.dart';
+import 'package:cycletowork/src/utility/notification.dart';
 import 'package:cycletowork/src/widget/chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -47,9 +49,11 @@ class ViewModel extends ChangeNotifier {
     _uiState.loading = true;
     notifyListeners();
     try {
+      _initAppNotification();
       _uiState.userActivitySummary = await _repository.getUserActivitySummary();
       notifyListeners();
       await getListUserActivity();
+      await _getActiveChallengeList();
       await getListUserActivityFilterd();
       notifyListeners();
       _uiState.currentPosition = await _getCurrentLocation();
@@ -70,6 +74,7 @@ class ViewModel extends ChangeNotifier {
 
     _trackingUserActivity = UserActivity(
       userActivityId: const Uuid().v4(),
+      uid: AppData.user!.uid,
       startTime: DateTime.now().toLocal().millisecondsSinceEpoch,
       stopTime: 0,
       duration: 0,
@@ -94,7 +99,7 @@ class ViewModel extends ChangeNotifier {
         } else {
           if (!_trackingPaused) {
             _trackingUserActivity!.duration =
-                _trackingUserActivity!.duration! + 1;
+                _trackingUserActivity!.duration + 1;
           }
         }
 
@@ -104,6 +109,21 @@ class ViewModel extends ChangeNotifier {
         }
       },
     );
+  }
+
+  void getActiveChallengeList() async {
+    _uiState.loading = true;
+    notifyListeners();
+    try {
+      await _getActiveChallengeList();
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+    } finally {
+      _uiState.loading = false;
+      notifyListeners();
+    }
   }
 
   void startGetLocation(context) async {
@@ -137,7 +157,7 @@ class ViewModel extends ChangeNotifier {
     });
   }
 
-  void saveTracking() async {
+  void saveTracking(String localeIdentifier) async {
     _uiState.loading = true;
     notifyListeners();
     try {
@@ -147,18 +167,24 @@ class ViewModel extends ChangeNotifier {
       );
       var oldUserActivitySummary = _uiState.userActivitySummary!;
       var userActivitySummary = UserActivitySummary(
-        co2: oldUserActivitySummary.co2 + (userActivity.co2 ?? 0),
-        distance:
-            oldUserActivitySummary.distance + (userActivity.distance ?? 0),
-        averageSpeed: (oldUserActivitySummary.averageSpeed +
-                (userActivity.averageSpeed ?? 0)) /
-            2,
-        maxSpeed:
-            (oldUserActivitySummary.maxSpeed + (userActivity.maxSpeed ?? 0)) /
+        co2: oldUserActivitySummary.co2 + userActivity.co2,
+        distance: oldUserActivitySummary.distance + userActivity.distance,
+        averageSpeed:
+            (oldUserActivitySummary.averageSpeed + userActivity.averageSpeed) /
                 2,
-        calorie: oldUserActivitySummary.calorie + (userActivity.calorie ?? 0),
-        steps: oldUserActivitySummary.steps + (userActivity.steps ?? 0),
+        maxSpeed: (oldUserActivitySummary.maxSpeed + userActivity.maxSpeed) / 2,
+        calorie: oldUserActivitySummary.calorie + userActivity.calorie,
+        steps: oldUserActivitySummary.steps + userActivity.steps,
       );
+      if (_listTrackingPosition.isNotEmpty) {
+        var firstLocation = _listTrackingPosition.first;
+        userActivity.city = await _repository.getCityNameFromLocation(
+          firstLocation,
+          localeIdentifier: localeIdentifier,
+        );
+      } else {
+        userActivity.city = '';
+      }
       await _repository.saveUserActivity(
         userActivitySummary,
         userActivity,
@@ -436,10 +462,10 @@ class ViewModel extends ChangeNotifier {
       return;
     }
     var lastPosition = _listTrackingPosition.last;
-    var distance = _trackingUserActivity!.distance ?? 0;
-    var calorie = _trackingUserActivity!.calorie ?? 0;
-    var co2 = _trackingUserActivity!.co2 ?? 0;
-    var maxSpeed = _trackingUserActivity!.maxSpeed ?? 0;
+    var distance = _trackingUserActivity!.distance;
+    var calorie = _trackingUserActivity!.calorie;
+    var co2 = _trackingUserActivity!.co2;
+    var maxSpeed = _trackingUserActivity!.maxSpeed;
     var newDistance = _repository.calculateDistanceInMeter(
       lastPosition,
       locationData,
@@ -455,5 +481,27 @@ class ViewModel extends ChangeNotifier {
     _trackingUserActivity!.averageSpeed =
         _listTrackingPosition.map((e) => e.speed).reduce((a, b) => a + b) /
             _listTrackingPosition.length;
+  }
+
+  Future<void> _getActiveChallengeList() async {
+    _uiState.listChallengeActive = await _repository.getActiveChallengeList();
+  }
+
+  _initAppNotification() {
+    AppNotification.onMessageOpenedApp.listen((message) {
+      AppNotification.showNotification(message);
+      if (message.data['type'] != null &&
+          message.data['type'] == 'new_challenge') {
+        _getActiveChallengeList();
+      }
+    });
+
+    AppNotification.onMessage.listen((message) {
+      AppNotification.showNotification(message);
+      if (message.data['type'] != null &&
+          message.data['type'] == 'new_challenge') {
+        _getActiveChallengeList();
+      }
+    });
   }
 }

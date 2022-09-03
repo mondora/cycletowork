@@ -1,4 +1,13 @@
 {
-  "indexes": [],
-  "fieldOverrides": []
+    "indexes": [
+        {
+            "collectionGroup": "challenges",
+            "queryScope": "COLLECTION",
+            "fields": [
+                { "fieldPath": "published", "order": "ASCENDING" },
+                { "fieldPath": "stopTime", "order": "ASCENDING" }
+            ]
+        }
+    ],
+    "fieldOverrides": []
 }

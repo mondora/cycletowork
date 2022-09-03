@@ -34,7 +34,7 @@ class ActivityList extends StatelessWidget {
       itemBuilder: (context, index) {
         var activity = userActivity[index];
         var date = DateTime.fromMillisecondsSinceEpoch(
-          activity.stopTime!,
+          activity.stopTime,
         );
         var dateString = '${DateFormat(
           'dd MMMM yyyy',
@@ -44,9 +44,9 @@ class ActivityList extends StatelessWidget {
           appLocale.languageCode,
         ).format(date)}';
         var co2String =
-            '${numberFormat.format(activity.co2!.gramToKg())} Kg CO\u2082';
+            '${numberFormat.format(activity.co2.gramToKg())} Kg CO\u2082';
         var moreString =
-            '${numberFormat.format(activity.distance!.meterToKm())} Km | velocità media ${numberFormatInt.format(activity.averageSpeed!.meterPerSecondToKmPerHour())} km/h';
+            '${numberFormat.format(activity.distance.meterToKm())} Km | velocità media ${numberFormatInt.format(activity.averageSpeed.meterPerSecondToKmPerHour())} km/h';
         var map = activity.imageData != null
             ? Image.memory(
                 activity.imageData!,
@@ -121,7 +121,7 @@ class _ActivityCard extends StatelessWidget {
                           image: map != null
                               ? (map! as Image).image
                               : Image.asset(
-                                  'assets/images/${isChallenge ? 'challenge_' : ''}map_tracking.png',
+                                  'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking.png',
                                 ).image,
                           fit: BoxFit.cover,
                         ),

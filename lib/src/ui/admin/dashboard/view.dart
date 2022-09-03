@@ -2,7 +2,9 @@ import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/ui/admin/dashboard/ui_state.dart';
 import 'package:cycletowork/src/ui/admin/dashboard/view_model.dart';
+import 'package:cycletowork/src/ui/admin/list_challenge/view.dart';
 import 'package:cycletowork/src/ui/admin/list_company/view.dart';
+import 'package:cycletowork/src/ui/admin/list_survey/view.dart';
 import 'package:cycletowork/src/ui/admin/list_user/view.dart';
 import 'package:cycletowork/src/ui/landing/view_model.dart'
     as landing_view_model;
@@ -127,7 +129,7 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                         child: NavigationRail(
                           selectedIndex: viewModel.pageOptionIndex,
                           onDestinationSelected: (int index) {
-                            viewModel.changePage(index);
+                            viewModel.changePageListUser(index);
                           },
                           extended: _expanded,
                           labelType: _labelType,
@@ -200,10 +202,10 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                             return const AdminListUserView();
 
                           case PageOption.challenge:
-                            return const NewView();
+                            return const AdminListChallengeView();
 
                           case PageOption.survey:
-                            return const NewView();
+                            return const AdminListSurveyView();
 
                           case PageOption.company:
                             return const AdminListCompanyView();
@@ -216,34 +218,6 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class NewView extends StatelessWidget {
-  const NewView({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.published_with_changes_outlined,
-              size: 40,
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Text(
-              'In arrivo',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
       ),
     );
   }

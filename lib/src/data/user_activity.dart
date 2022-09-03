@@ -1,36 +1,43 @@
 import 'dart:typed_data';
 
 class UserActivity {
-  String? userActivityId;
-  int? startTime;
-  int? stopTime;
-  int? duration;
-  double? co2;
-  double? distance;
-  double? averageSpeed;
-  double? maxSpeed;
-  int? calorie;
-  int? steps;
+  String userActivityId;
+  String uid;
+  int startTime;
+  int stopTime;
+  int duration;
+  double co2;
+  double distance;
+  double averageSpeed;
+  double maxSpeed;
+  int calorie;
+  int steps;
+  int isChallenge;
+  String? challengeId;
+  String? city;
   Uint8List? imageData;
-  int? isChallenge;
 
   UserActivity({
-    this.userActivityId,
-    this.startTime,
-    this.stopTime,
-    this.duration,
-    this.co2,
-    this.distance,
-    this.averageSpeed,
-    this.maxSpeed,
-    this.calorie,
-    this.steps,
+    required this.uid,
+    required this.userActivityId,
+    required this.startTime,
+    required this.stopTime,
+    required this.duration,
+    required this.co2,
+    required this.distance,
+    required this.averageSpeed,
+    required this.maxSpeed,
+    required this.calorie,
+    required this.steps,
+    required this.isChallenge,
+    this.challengeId,
+    this.city,
     this.imageData,
-    this.isChallenge = 0,
   });
 
   UserActivity.fromMap(Map<dynamic, dynamic> map)
-      : userActivityId = map['userActivityId'],
+      : uid = map['uid'],
+        userActivityId = map['userActivityId'],
         startTime = map['startTime'],
         stopTime = map['stopTime'],
         duration = map['duration'],
@@ -41,9 +48,12 @@ class UserActivity {
         calorie = map['calorie'],
         steps = map['steps'],
         imageData = map['imageData'],
-        isChallenge = map['isChallenge'];
+        isChallenge = map['isChallenge'],
+        challengeId = map['challengeId'],
+        city = map['city'];
 
   Map<String, dynamic> toJson() => {
+        'uid': uid,
         'userActivityId': userActivityId,
         'startTime': startTime,
         'stopTime': stopTime,
@@ -56,13 +66,16 @@ class UserActivity {
         'steps': steps,
         'imageData': imageData,
         'isChallenge': isChallenge,
+        'challengeId': challengeId,
+        'city': city,
       };
 
   static String get tableName => 'UserActivity';
 
   static String get tableString => '''
     CREATE TABLE IF NOT EXISTS $tableName( 
-      userActivityId TEXT PRIMARY KEY  NOT NULL, 
+      userActivityId TEXT PRIMARY KEY  NOT NULL,
+      uid TEXT NOT NULL,
       startTime INTEGER NOT NULL,
       stopTime INTEGER NOT NULL,
       duration INTEGER NOT NULL,
@@ -73,7 +86,9 @@ class UserActivity {
       calorie INTEGER NOT NULL,
       steps INTEGER NOT NULL,
       imageData blob,
-      isChallenge INTEGER NOT NULL
+      isChallenge INTEGER NOT NULL,
+      challengeId TEXT,
+      city TEXT
     );
   ''';
 }

@@ -10,6 +10,8 @@ const challengeCollectionName = 'challenges';
 
 const surveyCollectionName = 'surveys';
 
+const companyCollectionName = 'companies';
+
 const dataList = 'dataList';
 
 const UserType = {
@@ -25,6 +27,18 @@ const badRequestDeniedMessage = 'invalid-argument';
 const unknownErrorMessage = 'unknown';
 
 const userNotFoundError = 'user-not-found';
+
+const codeIsExpired = 'code-is-expired';
+
+const codeIsNotValid = 'code-is-not-valid';
+
+const userAlreadyRegisteredError = 'user-already-registered';
+
+const companyAlreadyExists = 'company-already-exists';
+
+const surveyAlreadyExists = 'survey-already-exists';
+
+const challengeAlreadyExists = 'challenge-already-exists';
 
 class Constant {
     static get appRegion() {
@@ -73,6 +87,34 @@ class Constant {
 
     static get surveyCollectionName() {
         return surveyCollectionName;
+    }
+
+    static get companyCollectionName() {
+        return companyCollectionName;
+    }
+
+    static get companyAlreadyExists() {
+        return companyAlreadyExists;
+    }
+
+    static get surveyAlreadyExists() {
+        return surveyAlreadyExists;
+    }
+
+    static get challengeAlreadyExists() {
+        return challengeAlreadyExists;
+    }
+
+    static get codeIsExpired() {
+        return codeIsExpired;
+    }
+
+    static get codeIsNotValid() {
+        return codeIsNotValid;
+    }
+
+    static get userAlreadyRegisteredError() {
+        return userAlreadyRegisteredError;
     }
 }
 

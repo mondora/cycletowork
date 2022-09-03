@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/data/location_data.dart';
@@ -34,12 +32,11 @@ class PauseTrackingView extends StatelessWidget {
       appLocale.languageCode,
     );
 
-    final trackingDurationInSeconds = trackingUserActivity.duration ?? 0;
-    final trackingCo2 = (trackingUserActivity.co2 ?? 0).gramToKg();
+    final trackingDurationInSeconds = trackingUserActivity.duration;
+    final trackingCo2 = trackingUserActivity.co2.gramToKg();
     final trackingAvarageSpeed =
-        (trackingUserActivity.averageSpeed ?? 0).meterPerSecondToKmPerHour();
-    final trackingDistanceInKm =
-        (trackingUserActivity.distance ?? 0).meterToKm();
+        trackingUserActivity.averageSpeed.meterPerSecondToKmPerHour();
+    final trackingDistanceInKm = trackingUserActivity.distance.meterToKm();
     final isChallenge = trackingUserActivity.isChallenge == 1 ? true : false;
 
     return Scaffold(

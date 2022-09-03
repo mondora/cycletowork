@@ -80,18 +80,18 @@ class _StopTrackingViewState extends State<StopTrackingView> {
     );
 
     final endTrackingDate = DateTime.fromMillisecondsSinceEpoch(
-      widget.trackingUserActivity.stopTime!,
+      widget.trackingUserActivity.stopTime,
     );
-    final trackingDurationInSeconds = widget.trackingUserActivity.duration ?? 0;
-    final trackingCo2 = (widget.trackingUserActivity.co2 ?? 0).gramToKg();
-    final trackingAvarageSpeed = (widget.trackingUserActivity.averageSpeed ?? 0)
-        .meterPerSecondToKmPerHour();
+    final trackingDurationInSeconds = widget.trackingUserActivity.duration;
+    final trackingCo2 = widget.trackingUserActivity.co2.gramToKg();
+    final trackingAvarageSpeed =
+        widget.trackingUserActivity.averageSpeed.meterPerSecondToKmPerHour();
     final trackingMaxSpeed =
-        (widget.trackingUserActivity.maxSpeed ?? 0).meterPerSecondToKmPerHour();
-    final trackingCalorie = widget.trackingUserActivity.calorie ?? 0;
-    final trackingSteps = widget.trackingUserActivity.steps ?? 0;
+        widget.trackingUserActivity.maxSpeed.meterPerSecondToKmPerHour();
+    final trackingCalorie = widget.trackingUserActivity.calorie;
+    final trackingSteps = widget.trackingUserActivity.steps;
     final trackingDistanceInKm =
-        (widget.trackingUserActivity.distance ?? 0).meterToKm();
+        widget.trackingUserActivity.distance.meterToKm();
     final isChallenge =
         widget.trackingUserActivity.isChallenge == 1 ? true : false;
 

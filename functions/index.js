@@ -7,6 +7,8 @@ const {
     saveDeviceToken,
     getUserInfo,
     updateUserInfo,
+    sendEmailVerificationCode,
+    verifiyEmailCode,
 } = require('./service/user');
 const {
     getListUserAdmin,
@@ -18,6 +20,24 @@ const { saveUserActivity } = require('./service/activity');
 const { sendNotification } = require('./service/notification');
 const { loggerError, loggerLog, loggerDebug } = require('./utility/logger');
 const { getString } = require('./localization');
+const { elasticSearch } = require('./utility/elastic_search');
+const {
+    saveCompany,
+    getCompanyListNameSearch,
+    getCompanyList,
+} = require('./service/company');
+const { updateCompany, verifyCompany } = require('./service/admin/company');
+const { saveSurveyResponse } = require('./service/survey');
+const { saveSurvey, getSurveyList } = require('./service/admin/survey');
+const {
+    saveChallenge,
+    getChallengeList,
+    publishChallenge,
+} = require('./service/admin/challenge');
+const {
+    getActiveChallengeList,
+    registerChallenge,
+} = require('./service/challenge');
 
 admin.initializeApp();
 
@@ -33,6 +53,20 @@ exports.onDeleteUser = functions
     .auth.user()
     .onDelete(async (user) => {
         await deleteUser(user);
+    });
+
+exports.onCompanyCreated = functions
+    .region(Constant.appRegion)
+    .firestore.document(`${Constant.companyCollectionName}/{id}`)
+    .onCreate(async (snap, context) => {
+        const id = context.params.id;
+        const company = snap.data();
+
+        elasticSearch.index({
+            index: Constant.companyCollectionName,
+            id,
+            body: company,
+        });
     });
 
 exports.saveDeviceToken = functions
@@ -79,6 +113,348 @@ exports.getUserInfo = functions
                 return await getUserInfo(uid);
             } catch (error) {
                 loggerError('getUserInfo Error, UID:', uid, 'error:', error);
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.saveCompany = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+        const company = data.company;
+        if (uid) {
+            if (!company) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+            loggerLog('saveCompany UID:', uid, 'company:', company);
+            try {
+                await saveCompany(company);
+                return true;
+            } catch (error) {
+                loggerError(
+                    'saveCompany Error, UID:',
+                    uid,
+                    'company:',
+                    company,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.getCompanyListNameSearch = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+        const name = data.name;
+
+        if (uid) {
+            if (!name) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+            loggerLog('getCompanyListNameSearch UID:', uid, 'name:', name);
+            try {
+                return await getCompanyListNameSearch(name);
+            } catch (error) {
+                loggerError(
+                    'getCompanyListNameSearch Error, UID:',
+                    uid,
+                    'name:',
+                    name,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.getCompanyList = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            if (!data || !data.pagination) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+
+            const pageSize = data.pagination.pageSize;
+            const lastCompanyName = data.pagination.lastCompanyName;
+
+            loggerLog('getCompanyList UID:', uid, 'data:', data);
+            try {
+                return await getCompanyList(lastCompanyName, pageSize);
+            } catch (error) {
+                loggerError(
+                    'getCompanyList Error, UID:',
+                    uid,
+                    'data:',
+                    data,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.getSurveyList = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            if (!data || !data.pagination) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+
+            const pageSize = data.pagination.pageSize;
+            const lastSurveyName = data.pagination.lastSurveyName;
+
+            loggerLog('getSurveyList UID:', uid, 'data:', data);
+            try {
+                return await getSurveyList(lastSurveyName, pageSize);
+            } catch (error) {
+                loggerError(
+                    'getSurveyList Error, UID:',
+                    uid,
+                    'data:',
+                    data,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.getActiveChallengeList = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            loggerLog('getActiveChallengeList UID:', uid, 'data: ', data);
+            try {
+                const result = await getActiveChallengeList();
+                if (result && result.length) {
+                    const user = await getUserInfo(uid);
+                    if (
+                        user &&
+                        user.listChallengeIdRegister &&
+                        user.listChallengeIdRegister.length
+                    ) {
+                        const addedChallenges = user.listChallengeIdRegister;
+                        return result.filter(
+                            (el) => addedChallenges.indexOf(el.id) < 0
+                        );
+                    } else {
+                        return result;
+                    }
+                } else {
+                    return [];
+                }
+            } catch (error) {
+                loggerError(
+                    'getActiveChallengeList Error, UID:',
+                    uid,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.saveSurveyResponse = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+        if (uid) {
+            if (!data) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+            try {
+                const challenge = data.challenge;
+                const surveyResponse = data.surveyResponse;
+
+                loggerLog('saveSurveyResponse, UID:', uid, 'data:', data);
+                await saveSurveyResponse(challenge, surveyResponse);
+                return true;
+            } catch (error) {
+                loggerError(
+                    'saveSurveyResponse Error, UID:',
+                    uid,
+                    'data:',
+                    data,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.sendEmailVerificationCode = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+        if (uid) {
+            if (!data) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+            try {
+                const email = data.email;
+                const displayName = data.displayName;
+
+                loggerLog(
+                    'sendEmailVerificationCode, UID:',
+                    uid,
+                    'data:',
+                    data
+                );
+                await sendEmailVerificationCode(uid, email, displayName);
+                return true;
+            } catch (error) {
+                loggerError(
+                    'sendEmailVerificationCode Error, UID:',
+                    uid,
+                    'data:',
+                    data,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.verifiyEmailCode = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+        if (uid) {
+            if (!data) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+            try {
+                const email = data.email;
+                const code = data.code;
+
+                loggerLog('verifiyEmailCode, UID:', uid, 'data:', data);
+                await verifiyEmailCode(uid, email, code);
+                return true;
+            } catch (error) {
+                loggerError(
+                    'verifiyEmailCode Error, UID:',
+                    uid,
+                    'data:',
+                    data,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.registerChallenge = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+        if (uid) {
+            if (!data) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+            try {
+                const challengeRegistry = data.challengeRegistry;
+
+                loggerLog('registerChallenge, UID:', uid, 'data:', data);
+                await registerChallenge(uid, challengeRegistry);
+                return true;
+            } catch (error) {
+                loggerError(
+                    'registerChallenge Error, UID:',
+                    uid,
+                    'data:',
+                    data,
+                    'error:',
+                    error
+                );
                 throw new functions.https.HttpsError(
                     Constant.unknownErrorMessage
                 );
@@ -342,11 +718,348 @@ exports.verifyUserAdmin = functions
         }
     });
 
-// exports.scheduledFunctionCrontab = functions
-//     .region(Constant.appRegion)
-//     .pubsub.schedule('1 0 * * *')
-//     .timeZone('Europe/Berlin')
-//     .onRun((context) => {
-//         console.log('This will be run every day at 00:01 Europe/Berlin!');
-//         return null;
-//     });
+exports.verifyCompanyAdmin = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const adminUid = context.auth.uid;
+        const company = data.company;
+
+        if (!adminUid) {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+        loggerLog('verifyCompanyAdmin Admin UID:', adminUid, 'data:', data);
+        const isAdmin = await checkAdminUser(adminUid);
+        if (!isAdmin) {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+
+        if (!company || company == '') {
+            throw new functions.https.HttpsError(
+                Constant.badRequestDeniedMessage
+            );
+        }
+
+        try {
+            await verifyCompany(company);
+
+            if (!company.registerUserUid) {
+                return true;
+            }
+            const user = await getUserInfo(company.registerUserUid);
+            if (user && user.deviceTokens && user.deviceTokens.length) {
+                const language = user.language;
+                const congratulation = getString(language, 'congratulation');
+                const title = `${congratulation} ${
+                    user.displayName ? user.displayName : ''
+                }`;
+                const theCompany = getString(language, 'the_company');
+                const hasBeenVerified = getString(
+                    language,
+                    'has_been_verified_for_company'
+                );
+                const description = `${theCompany} ${
+                    company.name
+                } ${hasBeenVerified.toLowerCase()}`;
+                await sendNotification(user.deviceTokens, title, description);
+            }
+
+            return true;
+        } catch (error) {
+            loggerError(
+                'verifyCompanyAdmin Error, UID:',
+                adminUid,
+                'data:',
+                data,
+                'error:',
+                error
+            );
+            throw new functions.https.HttpsError(Constant.unknownErrorMessage);
+        }
+    });
+
+exports.updateCompanyAdmin = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+        const company = data.company;
+        if (uid) {
+            loggerLog('updateCompanyAdmin UID:', uid, 'company:', company);
+            const isAdmin = await checkAdminUser(uid);
+            if (!isAdmin) {
+                throw new functions.https.HttpsError(
+                    Constant.permissionDeniedMessage
+                );
+            }
+            if (!company) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+            try {
+                await updateCompany(company);
+                return true;
+            } catch (error) {
+                loggerError(
+                    'updateCompanyAdmin Error, UID:',
+                    uid,
+                    'company:',
+                    company,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.saveSurveyAdmin = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+        const survey = data.survey;
+        if (uid) {
+            loggerLog('saveSurveyAdmin UID:', uid, 'survey:', survey);
+            const isAdmin = await checkAdminUser(uid);
+            if (!isAdmin) {
+                throw new functions.https.HttpsError(
+                    Constant.permissionDeniedMessage
+                );
+            }
+            if (!survey) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+            try {
+                await saveSurvey(survey);
+                return true;
+            } catch (error) {
+                loggerError(
+                    'saveSurveyAdmin Error, UID:',
+                    uid,
+                    'survey:',
+                    survey,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.saveChallengeAdmin = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+        const challenge = data.challenge;
+        if (uid) {
+            loggerLog('saveChallengeAdmin UID:', uid, 'challenge:', challenge);
+            const isAdmin = await checkAdminUser(uid);
+            if (!isAdmin) {
+                throw new functions.https.HttpsError(
+                    Constant.permissionDeniedMessage
+                );
+            }
+            if (!challenge) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+            try {
+                await saveChallenge(challenge);
+                return true;
+            } catch (error) {
+                loggerError(
+                    'saveChallengeAdmin Error, UID:',
+                    uid,
+                    'challenge:',
+                    challenge,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.getChallengeListAdmin = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            const isAdmin = await checkAdminUser(uid);
+            if (!isAdmin) {
+                throw new functions.https.HttpsError(
+                    Constant.permissionDeniedMessage
+                );
+            }
+
+            if (!data || !data.pagination) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+
+            const pageSize = data.pagination.pageSize;
+            const lastChallengeName = data.pagination.lastChallengeName;
+
+            loggerLog('getChallengeListAdmin UID:', uid, 'data:', data);
+            try {
+                return await getChallengeList(lastChallengeName, pageSize);
+            } catch (error) {
+                loggerError(
+                    'getChallengeListAdmin Error, UID:',
+                    uid,
+                    'data:',
+                    data,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.publishChallengeAdmin = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const adminUid = context.auth.uid;
+        const challenge = data.challenge;
+
+        if (!adminUid) {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+        loggerLog(
+            'publishChallengeAdmin UID:',
+            adminUid,
+            'challenge:',
+            challenge
+        );
+        const isAdmin = await checkAdminUser(adminUid);
+        if (!isAdmin) {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+
+        if (!challenge || challenge == '') {
+            throw new functions.https.HttpsError(
+                Constant.badRequestDeniedMessage
+            );
+        }
+
+        try {
+            await publishChallenge(challenge);
+
+            let sentToAllUser = false;
+            let nextPageToken;
+            const UserSlot = 1000;
+            while (!sentToAllUser) {
+                try {
+                    const result = await getListUserAdmin(
+                        nextPageToken,
+                        UserSlot
+                    );
+
+                    if (result) {
+                        if (
+                            result.pagination &&
+                            result.pagination.hasNextPage
+                        ) {
+                            nextPageToken = result.pagination.nextPageToken;
+                        } else {
+                            sentToAllUser = true;
+                        }
+
+                        const allUserSlot = result.users;
+                        for (
+                            let index = 0;
+                            index < allUserSlot.length;
+                            index++
+                        ) {
+                            const userUid = allUserSlot[index].uid;
+                            const user = await getUserInfo(userUid);
+
+                            if (
+                                user &&
+                                user.deviceTokens &&
+                                user.deviceTokens.length
+                            ) {
+                                const language = user.language;
+                                const title = getString(
+                                    language,
+                                    'new_challenge_opened'
+                                );
+                                const signUpNow = getString(
+                                    language,
+                                    'sign_up_now'
+                                );
+                                const description = `${signUpNow} ${
+                                    user.displayName ? user.displayName : '!'
+                                }`;
+
+                                const data = {
+                                    type: 'new_challenge',
+                                };
+
+                                await sendNotification(
+                                    user.deviceTokens,
+                                    title,
+                                    description,
+                                    data
+                                );
+                            }
+                        }
+                    }
+                } catch (error) {
+                    loggerError(
+                        'publishChallengeAdmin SendNotification Error, UID:',
+                        adminUid,
+                        'error:',
+                        error
+                    );
+                }
+            }
+
+            return true;
+        } catch (error) {
+            loggerError(
+                'publishChallengeAdmin Error, UID:',
+                adminUid,
+                'error:',
+                error
+            );
+            throw new functions.https.HttpsError(Constant.unknownErrorMessage);
+        }
+    });

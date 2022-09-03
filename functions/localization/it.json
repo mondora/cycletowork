@@ -1,5 +1,9 @@
 {
     "congratulation": "Congratulazione",
     "you_have_become_admin": "Sei diventato Admin",
-    "you_have_been_verified": "Sei stato verificato"
+    "you_have_been_verified": "Sei stato verificato",
+    "new_challenge_opened": "È aperto nuovo challenge",
+    "sign_up_now": "Iscriviti subito",
+    "the_company": "La azienda",
+    "has_been_verified_for_company": "È stata verificata"
 }
