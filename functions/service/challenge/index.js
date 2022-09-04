@@ -51,7 +51,7 @@ const registerChallenge = async (uid, challengeRegistry) => {
         .doc(challengeId)
         .collection(Constant.usersCollectionName)
         .doc(uid)
-        .set({ challengeRegistry, ...data }, { merge: false });
+        .set({ ...challengeRegistry, ...data }, { merge: false });
 
     const company = challengeRegistry.companySelected;
     await admin
@@ -60,12 +60,50 @@ const registerChallenge = async (uid, challengeRegistry) => {
         .doc(challengeId)
         .collection(Constant.companyCollectionName)
         .doc(company.id)
-        .set({ company, ...data }, { merge: false });
+        .set({ ...company, ...data }, { merge: false });
 
     await saveChallengeUser(uid, challengeId);
+};
+
+const getListRegisterdChallenge = async (uid) => {
+    const userInfo = await getUserInfo(uid);
+    if (!userInfo) {
+        throw new Error(Constant.userNotFoundError);
+    }
+    const listRegisterdChallenge = userInfo.listChallengeIdRegister;
+    if (!listRegisterdChallenge || !listRegisterdChallenge.length) {
+        throw new Error(Constant.userNotRegisteredForChallengeError);
+    }
+
+    const list = [];
+    for (let index = 0; index < listRegisterdChallenge.length; index++) {
+        const challengeId = listRegisterdChallenge[index];
+        var challenge = await getChallengeRegistredInfo(uid, challengeId);
+        if (challenge && challenge.stopTimeChallenge >= Date.now()) {
+            list.push(challenge);
+        }
+    }
+    return list;
+};
+
+const getChallengeRegistredInfo = async (uid, challengeId) => {
+    const challengeRegistredInfo = await admin
+        .firestore()
+        .collection(Constant.challengeCollectionName)
+        .doc(challengeId)
+        .collection(Constant.usersCollectionName)
+        .doc(uid)
+        .get();
+
+    if (challengeRegistredInfo.exists) {
+        return challengeRegistredInfo.data();
+    } else {
+        throw new Error(Constant.userNotFoundError);
+    }
 };
 
 module.exports = {
     getActiveChallengeList,
     registerChallenge,
+    getListRegisterdChallenge,
 };

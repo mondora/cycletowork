@@ -12,6 +12,8 @@ const surveyCollectionName = 'surveys';
 
 const companyCollectionName = 'companies';
 
+const fcmCollectionName = 'fcm';
+
 const dataList = 'dataList';
 
 const UserType = {
@@ -121,6 +123,10 @@ class Constant {
 
     static get userNotRegisteredForChallengeError() {
         return userNotRegisteredForChallengeError;
+    }
+
+    static get fcmCollectionName() {
+        return fcmCollectionName;
     }
 }
 

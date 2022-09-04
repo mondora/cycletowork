@@ -3,14 +3,21 @@ const { Constant } = require('../../utility/constant');
 const { getUserInfo } = require('../user');
 const { loggerDebug } = require('../../utility/logger');
 
-const saveUserActivity = async (uid, userActivity, userActivitySummary) => {
+const saveUserActivity = async (uid, userActivity) => {
+    const data = {
+        calorie: admin.firestore.FieldValue.increment(userActivity.calorie),
+        co2: admin.firestore.FieldValue.increment(userActivity.co2),
+        distance: admin.firestore.FieldValue.increment(userActivity.distance),
+        steps: admin.firestore.FieldValue.increment(userActivity.steps),
+        averageSpeed: userActivity.averageSpeed,
+        maxSpeed: userActivity.maxSpeed,
+    };
+
     await admin
         .firestore()
         .collection(Constant.usersCollectionName)
         .doc(uid)
-        .collection(Constant.userActivitySummaryCollectionName)
-        .doc(uid)
-        .set(userActivitySummary, { merge: true });
+        .update(data, { merge: true });
 
     await admin
         .firestore()
@@ -56,14 +63,12 @@ const saveUserActivityForChallenge = async (uid, userActivity) => {
         .set(userActivity, { merge: false });
 
     const data = {
-        averageSpeed: admin.firestore.FieldValue.increment(
-            userActivity.averageSpeed
-        ),
         calorie: admin.firestore.FieldValue.increment(userActivity.calorie),
         co2: admin.firestore.FieldValue.increment(userActivity.co2),
         distance: admin.firestore.FieldValue.increment(userActivity.distance),
-        maxSpeed: admin.firestore.FieldValue.increment(userActivity.maxSpeed),
         steps: admin.firestore.FieldValue.increment(userActivity.steps),
+        averageSpeed: userActivity.averageSpeed,
+        maxSpeed: userActivity.maxSpeed,
     };
 
     await admin
@@ -83,6 +88,37 @@ const saveUserActivityForChallenge = async (uid, userActivity) => {
         .update(data, { merge: true });
 };
 
+const getListUserActivity = async (uid, startDate, pageSize = 100) => {
+    let snapshot;
+    if (startDate) {
+        snapshot = await admin
+            .firestore()
+            .collection(Constant.usersCollectionName)
+            .doc(uid)
+            .collection(Constant.userActivityCollectionName)
+            .orderBy('startTime', 'desc')
+            .startAfter(startDate)
+            .limit(pageSize)
+            .get();
+    } else {
+        snapshot = await admin
+            .firestore()
+            .collection(Constant.usersCollectionName)
+            .doc(uid)
+            .collection(Constant.userActivityCollectionName)
+            .orderBy('startTime', 'desc')
+            .limit(pageSize)
+            .get();
+    }
+
+    if (!snapshot.empty) {
+        return snapshot.docs.map((doc) => doc.data());
+    } else {
+        return [];
+    }
+};
+
 module.exports = {
     saveUserActivity,
+    getListUserActivity,
 };

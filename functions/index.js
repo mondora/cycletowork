@@ -4,7 +4,6 @@ const { Constant } = require('./utility/constant');
 const {
     createUser,
     deleteUser,
-    saveDeviceToken,
     getUserInfo,
     updateUserInfo,
     sendEmailVerificationCode,
@@ -16,8 +15,13 @@ const {
     setAdminUser,
     verifyUserAdmin,
 } = require('./service/admin/user');
-const { saveUserActivity } = require('./service/activity');
-const { sendNotification } = require('./service/notification');
+const { saveUserActivity, getListUserActivity } = require('./service/activity');
+const {
+    sendNotification,
+    saveDeviceToken,
+    removeDeviceToken,
+    getListDeviceToken,
+} = require('./service/notification');
 const { loggerError, loggerLog, loggerDebug } = require('./utility/logger');
 const { getString } = require('./localization');
 const { elasticSearch } = require('./utility/elastic_search');
@@ -37,6 +41,7 @@ const {
 const {
     getActiveChallengeList,
     registerChallenge,
+    getListRegisterdChallenge,
 } = require('./service/challenge');
 
 admin.initializeApp();
@@ -86,6 +91,40 @@ exports.saveDeviceToken = functions
             } catch (error) {
                 loggerError(
                     'saveDeviceToken Error, UID:',
+                    uid,
+                    'deviceToken:',
+                    deviceToken,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.removeDeviceToken = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+        const deviceToken = data.deviceToken;
+        if (uid) {
+            if (!deviceToken || deviceToken == '') {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+            try {
+                await removeDeviceToken(deviceToken);
+                return true;
+            } catch (error) {
+                loggerError(
+                    'removeDeviceToken Error, UID:',
                     uid,
                     'deviceToken:',
                     deviceToken,
@@ -470,16 +509,15 @@ exports.saveUserActivity = functions
     .region(Constant.appRegion)
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
-        const userActivitySummary = data.userActivitySummary;
         const userActivity = data.userActivity;
         if (uid) {
-            if (!userActivitySummary || !userActivity) {
+            if (!userActivity) {
                 throw new functions.https.HttpsError(
                     Constant.badRequestDeniedMessage
                 );
             }
             try {
-                await saveUserActivity(uid, userActivity, userActivitySummary);
+                await saveUserActivity(uid, userActivity);
                 return true;
             } catch (error) {
                 loggerError(
@@ -487,8 +525,71 @@ exports.saveUserActivity = functions
                     uid,
                     'userActivity:',
                     userActivity,
-                    'userActivitySummary:',
-                    userActivitySummary,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.getListUserActivity = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            if (!data || !data.pagination) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+
+            const pageSize = data.pagination.pageSize;
+            const startDate = data.pagination.startDate;
+
+            loggerLog('getListUserActivity UID:', uid, 'data:', data);
+            try {
+                return await getListUserActivity(uid, startDate, pageSize);
+            } catch (error) {
+                loggerError(
+                    'getListUserActivity Error, UID:',
+                    uid,
+                    'data:',
+                    data,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.getListRegisterdChallenge = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            loggerLog('getListRegisterdChallenge UID:', uid, 'data: ', data);
+            try {
+                return await getListRegisterdChallenge(uid);
+            } catch (error) {
+                loggerError(
+                    'getListRegisterdChallenge Error, UID:',
+                    uid,
                     'error:',
                     error
                 );
@@ -649,7 +750,8 @@ exports.setAdminUser = functions
             await setAdminUser(uid);
 
             const user = await getUserInfo(uid);
-            if (user && user.deviceTokens && user.deviceTokens.length) {
+            const listDeviceToken = await getListDeviceToken(uid);
+            if (user && listDeviceToken && listDeviceToken.length) {
                 const language = user.language;
                 const congratulation = getString(language, 'congratulation');
                 const title = `${congratulation} ${
@@ -659,7 +761,8 @@ exports.setAdminUser = functions
                     language,
                     'you_have_become_admin'
                 );
-                await sendNotification(user.deviceTokens, title, description);
+
+                await sendNotification(listDeviceToken, title, description);
             }
 
             return true;
@@ -698,7 +801,8 @@ exports.verifyUserAdmin = functions
             await verifyUserAdmin(uid);
 
             const user = await getUserInfo(uid);
-            if (user && user.deviceTokens && user.deviceTokens.length) {
+            const listDeviceToken = await getListDeviceToken(uid);
+            if (user && listDeviceToken && listDeviceToken.length) {
                 const language = user.language;
                 const congratulation = getString(language, 'congratulation');
                 const title = `${congratulation} ${
@@ -708,7 +812,8 @@ exports.verifyUserAdmin = functions
                     language,
                     'you_have_been_verified'
                 );
-                await sendNotification(user.deviceTokens, title, description);
+
+                await sendNotification(listDeviceToken, title, description);
             }
 
             return true;
@@ -749,8 +854,12 @@ exports.verifyCompanyAdmin = functions
             if (!company.registerUserUid) {
                 return true;
             }
+
             const user = await getUserInfo(company.registerUserUid);
-            if (user && user.deviceTokens && user.deviceTokens.length) {
+            const listDeviceToken = await getListDeviceToken(
+                company.registerUserUid
+            );
+            if (user && listDeviceToken && listDeviceToken.length) {
                 const language = user.language;
                 const congratulation = getString(language, 'congratulation');
                 const title = `${congratulation} ${
@@ -764,7 +873,8 @@ exports.verifyCompanyAdmin = functions
                 const description = `${theCompany} ${
                     company.name
                 } ${hasBeenVerified.toLowerCase()}`;
-                await sendNotification(user.deviceTokens, title, description);
+
+                await sendNotification(listDeviceToken, title, description);
             }
 
             return true;
@@ -1009,12 +1119,15 @@ exports.publishChallengeAdmin = functions
                             index++
                         ) {
                             const userUid = allUserSlot[index].uid;
-                            const user = await getUserInfo(userUid);
 
+                            const user = await getUserInfo(userUid);
+                            const listDeviceToken = await getListDeviceToken(
+                                userUid
+                            );
                             if (
                                 user &&
-                                user.deviceTokens &&
-                                user.deviceTokens.length
+                                listDeviceToken &&
+                                listDeviceToken.length
                             ) {
                                 const language = user.language;
                                 const title = getString(
@@ -1034,7 +1147,7 @@ exports.publishChallengeAdmin = functions
                                 };
 
                                 await sendNotification(
-                                    user.deviceTokens,
+                                    listDeviceToken,
                                     title,
                                     description,
                                     data

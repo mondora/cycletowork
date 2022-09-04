@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+const { v4: uuidv4 } = require('uuid');
 const { Constant } = require('../../utility/constant');
 const { loggerDebug, loggerError } = require('../../utility/logger');
 const { mailer } = require('../../utility/mailer');
@@ -6,6 +7,7 @@ const { sendVerifiyCode } = require('../../utility/email_template');
 
 const createUser = async (user) => {
     const uid = user.uid;
+
     const data = {
         admin: false,
         userType: Constant.UserType.Other,
@@ -15,7 +17,12 @@ const createUser = async (user) => {
         emailVerified: user.emailVerified,
         photoURL: user.photoURL,
         createUserDate: Date.now(),
-        deviceTokens: [],
+        averageSpeed: 0,
+        calorie: 0,
+        co2: 0,
+        distance: 0,
+        maxSpeed: 0,
+        steps: 0,
     };
 
     await admin.auth().setCustomUserClaims(uid, {
@@ -28,17 +35,6 @@ const createUser = async (user) => {
         .collection(Constant.usersCollectionName)
         .doc(uid)
         .set(data, { merge: false });
-};
-
-const saveDeviceToken = async (uid, deviceToken) => {
-    const data = {
-        deviceTokens: admin.firestore.FieldValue.arrayUnion(...[deviceToken]),
-    };
-    await admin
-        .firestore()
-        .collection(Constant.usersCollectionName)
-        .doc(uid)
-        .update(data, { merge: true });
 };
 
 const saveChallengeUser = async (uid, challengeId) => {
@@ -180,7 +176,6 @@ const randomInteger = (min, max) => {
 module.exports = {
     createUser,
     deleteUser,
-    saveDeviceToken,
     getUserInfo,
     updateUserInfo,
     sendEmailVerificationCode,
