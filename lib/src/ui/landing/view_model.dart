@@ -25,7 +25,7 @@ class ViewModel extends ChangeNotifier {
     _uiState.pageOption = PageOption.loading;
     notifyListeners();
     try {
-      var isAuthenticated = await _repository.isAuthenticated();
+      var isAuthenticated = _repository.isAuthenticated();
       if (isAuthenticated) {
         await _getInitialInfo();
         _uiState.pageOption = PageOption.home;
@@ -36,24 +36,7 @@ class ViewModel extends ChangeNotifier {
         _repository
             .isAuthenticatedStateChanges()
             .listen((isAuthenticated) async {
-          if (isAuthenticated) {
-            if (_uiState.pageOption != PageOption.home) {
-              Timer(const Duration(seconds: 2), () async {
-                try {
-                  await _getInitialInfo();
-                  _uiState.pageOption = PageOption.home;
-                  notifyListeners();
-                  return;
-                } catch (e) {
-                  _uiState.errorMessage = e.toString();
-                  _uiState.error = true;
-                  Logger.error(e);
-                  _uiState.pageOption = PageOption.logout;
-                  notifyListeners();
-                }
-              });
-            }
-          } else {
+          if (!isAuthenticated) {
             _uiState.pageOption = PageOption.logout;
             notifyListeners();
             return;
@@ -75,11 +58,20 @@ class ViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       await _repository.loginGoogleSignIn();
+      var isAuthenticated = _repository.isAuthenticated();
+      if (isAuthenticated) {
+        await _getInitialInfo();
+        _uiState.pageOption = PageOption.home;
+      } else {
+        _uiState.pageOption = PageOption.logout;
+      }
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
       Logger.error(e);
       _uiState.pageOption = PageOption.logout;
+      notifyListeners();
+    } finally {
       notifyListeners();
     }
   }
@@ -90,11 +82,20 @@ class ViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       await _repository.loginEmail(email, password);
+      var isAuthenticated = _repository.isAuthenticated();
+      if (isAuthenticated) {
+        await _getInitialInfo();
+        _uiState.pageOption = PageOption.home;
+      } else {
+        _uiState.pageOption = PageOption.logout;
+      }
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
       Logger.error(e);
       _uiState.pageOption = PageOption.logout;
+      notifyListeners();
+    } finally {
       notifyListeners();
     }
   }
@@ -106,11 +107,20 @@ class ViewModel extends ChangeNotifier {
     try {
       await _repository.signupEmail(email, password, name);
       displayName = name;
+      var isAuthenticated = _repository.isAuthenticated();
+      if (isAuthenticated) {
+        await _getInitialInfo();
+        _uiState.pageOption = PageOption.home;
+      } else {
+        _uiState.pageOption = PageOption.logout;
+      }
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
       Logger.error(e);
       _uiState.pageOption = PageOption.logout;
+      notifyListeners();
+    } finally {
       notifyListeners();
     }
   }
@@ -139,7 +149,8 @@ class ViewModel extends ChangeNotifier {
 
   Future<void> _getInitialInfo() async {
     if (isAdmin) {
-      if (!_repository.isAdmin()) {
+      var admin = await _repository.isAdmin();
+      if (!admin) {
         await _repository.logout();
         throw ('Non Sei un utente admin');
       }

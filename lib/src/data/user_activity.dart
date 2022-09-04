@@ -43,12 +43,18 @@ class UserActivity {
         startTime = map['startTime'],
         stopTime = map['stopTime'],
         duration = map['duration'],
-        co2 = map['co2'],
-        distance = map['distance'],
-        averageSpeed = map['averageSpeed'],
-        maxSpeed = map['maxSpeed'],
-        calorie = map['calorie'],
-        steps = map['steps'],
+        co2 = map['co2'] != null ? double.parse(map['co2'].toString()) : 0,
+        distance = map['distance'] != null
+            ? double.parse(map['distance'].toString())
+            : 0,
+        averageSpeed = map['averageSpeed'] != null
+            ? double.parse(map['averageSpeed'].toString())
+            : 0,
+        maxSpeed = map['maxSpeed'] != null
+            ? double.parse(map['maxSpeed'].toString())
+            : 0,
+        calorie = map['calorie'] ?? 0,
+        steps = map['steps'] ?? 0,
         imageData = map['imageData'],
         isChallenge = map['isChallenge'],
         challengeId = map['challengeId'],

@@ -5,20 +5,17 @@ import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/survey.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
-import 'package:cycletowork/src/data/user_activity_summary.dart';
 import 'package:cycletowork/src/service/remote.dart';
 
 class RemoteService
     implements AppService, AppServiceOnlyRemote, AppAdminService {
   @override
   Future saveUserActivity(
-    UserActivitySummary userActivitySummary,
     UserActivity userActivity,
     List<LocationData> listLocationData,
   ) async {
     userActivity.imageData = null;
     var arg = {
-      'userActivitySummary': userActivitySummary.toJson(),
       'userActivity': userActivity.toJson(),
     };
     await Remote.callFirebaseFunctions('saveUserActivity', arg);
@@ -26,17 +23,20 @@ class RemoteService
 
   @override
   Future<List<UserActivity>> getListUserActivity({
-    int page = 0,
     int pageSize = 50,
-  }) {
-    // TODO: implement getListUserActivity
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<UserActivitySummary> getUserActivitySummary() async {
-    // TODO: implement getUserActivitySummary
-    throw UnimplementedError();
+    String? startTime,
+  }) async {
+    var arg = {
+      'pagination': {
+        'pageSize': pageSize,
+        'startTime': startTime,
+      }
+    };
+    var map = await Remote.callFirebaseFunctions('getListUserActivity', arg);
+    return map
+        .map<UserActivity>(
+            (json) => UserActivity.fromMap(Map<String, dynamic>.from(json)))
+        .toList();
   }
 
   @override
@@ -228,5 +228,21 @@ class RemoteService
   Future<bool> registerChallenge(ChallengeRegistry challengeRegistry) async {
     var arg = {'challengeRegistry': challengeRegistry.toJson()};
     return await Remote.callFirebaseFunctions('registerChallenge', arg);
+  }
+
+  @override
+  Future<void> removeDeviceToken(String deviceToken) async {
+    var arg = {'deviceToken': deviceToken};
+    await Remote.callFirebaseFunctions('removeDeviceToken', arg);
+  }
+
+  @override
+  Future<List<ChallengeRegistry>> getListRegisterdChallenge() async {
+    var map =
+        await Remote.callFirebaseFunctions('getListRegisterdChallenge', null);
+    return map
+        .map<ChallengeRegistry>((json) =>
+            ChallengeRegistry.fromMap(Map<String, dynamic>.from(json)))
+        .toList();
   }
 }

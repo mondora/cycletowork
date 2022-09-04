@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/ui/details_tracking/view.dart';
 import 'package:cycletowork/src/ui/home/widget/confirm_challenge.dart';
 import 'package:cycletowork/src/ui/register_challenge/view.dart';
@@ -98,13 +99,10 @@ class _HomeViewState extends State<HomeView> {
       appLocale.languageCode,
     );
 
-    final co2 =
-        (dashboardModel.uiState.userActivitySummary?.co2 ?? 0).gramToKg();
-    final distance =
-        (dashboardModel.uiState.userActivitySummary?.distance ?? 0).meterToKm();
-    final averageSpeed =
-        (dashboardModel.uiState.userActivitySummary?.averageSpeed ?? 0)
-            .meterPerSecondToKmPerHour();
+    final user = AppData.user!;
+    final co2 = user.co2.gramToKg();
+    final distance = user.distance.meterToKm();
+    final averageSpeed = user.averageSpeed.meterPerSecondToKmPerHour();
 
     if (dashboardModel.uiState.currentPosition != null) {
       Timer(const Duration(seconds: 1), () {

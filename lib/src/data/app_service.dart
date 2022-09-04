@@ -4,25 +4,16 @@ import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/survey.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
-import 'package:cycletowork/src/data/user_activity_summary.dart';
 
 abstract class AppService {
   Future saveUserActivity(
-    UserActivitySummary userActivitySummary,
     UserActivity userActivity,
     List<LocationData> listLocationData,
   );
 
-  Future<List<UserActivity>> getListUserActivity({
-    int page = 0,
-    int pageSize = 50,
-  });
-
-  Future<UserActivitySummary> getUserActivitySummary();
-
-  Future<User> getUserInfo();
-
   Future<void> saveDeviceToken(String deviceToken);
+
+  Future<void> removeDeviceToken(String deviceToken);
 
   Future<void> updateUserName(String name);
 
@@ -73,13 +64,24 @@ abstract class AppAdminService {
 }
 
 abstract class AppServiceOnlyLocal {
+  Future<User?> getUserInfo(String uid);
+
   Future<void> saveUserInfo(User user);
+
+  Future<List<UserActivity>> getListUserActivity({
+    int page = 0,
+    int pageSize = 50,
+  });
 
   Future<List<LocationData>> getListLocationDataForActivity(
     String userActivityId,
   );
 
   Future<String?> getDeviceToken();
+
+  Future<int?> getDeviceTokenExpireDate();
+
+  Future<String?> getUserUID();
 
   Future<void> saveListChallenge(List<Challenge> listChallenge);
 
@@ -89,6 +91,13 @@ abstract class AppServiceOnlyLocal {
 }
 
 abstract class AppServiceOnlyRemote {
+  Future<User> getUserInfo();
+
+  Future<List<UserActivity>> getListUserActivity({
+    int pageSize = 50,
+    String? startTime,
+  });
+
   Future<bool> saveSurveyResponse(
     Challenge challenge,
     SurveyResponse surveyResponse,
@@ -99,4 +108,6 @@ abstract class AppServiceOnlyRemote {
   Future<bool> verifiyEmailCode(String email, String code);
 
   Future<List<Challenge>> getActiveChallengeList();
+
+  Future<List<ChallengeRegistry>> getListRegisterdChallenge();
 }

@@ -4,7 +4,6 @@ import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
-import 'package:cycletowork/src/data/user_activity_summary.dart';
 import 'package:cycletowork/src/ui/dashboard/repository.dart';
 import 'package:cycletowork/src/ui/dashboard/ui_state.dart';
 import 'package:cycletowork/src/utility/convert.dart';
@@ -51,14 +50,12 @@ class ViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       _initAppNotification();
-      _uiState.userActivitySummary = await _repository.getUserActivitySummary();
       notifyListeners();
       await getListUserActivity();
       await _getActiveChallengeList();
       await getListUserActivityFilterd();
       notifyListeners();
       _uiState.currentPosition = await _getCurrentLocation();
-      // _challengeActive = await _repository.isChallengeActivity();
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
@@ -169,18 +166,6 @@ class ViewModel extends ChangeNotifier {
       userActivity.imageData = await _repository.getMapImageData(
         _listTrackingPosition,
       );
-      var oldUserActivitySummary = _uiState.userActivitySummary!;
-      var userActivitySummary = UserActivitySummary(
-        uid: AppData.user!.uid,
-        co2: oldUserActivitySummary.co2 + userActivity.co2,
-        distance: oldUserActivitySummary.distance + userActivity.distance,
-        averageSpeed:
-            (oldUserActivitySummary.averageSpeed + userActivity.averageSpeed) /
-                2,
-        maxSpeed: (oldUserActivitySummary.maxSpeed + userActivity.maxSpeed) / 2,
-        calorie: oldUserActivitySummary.calorie + userActivity.calorie,
-        steps: oldUserActivitySummary.steps + userActivity.steps,
-      );
       if (_listTrackingPosition.isNotEmpty) {
         var firstLocation = _listTrackingPosition.first;
         userActivity.city = await _repository.getCityNameFromLocation(
@@ -190,12 +175,20 @@ class ViewModel extends ChangeNotifier {
       } else {
         userActivity.city = '';
       }
+      AppData.user!.calorie += userActivity.calorie;
+      AppData.user!.co2 += userActivity.co2;
+      AppData.user!.distance += userActivity.distance;
+      AppData.user!.steps += userActivity.steps;
+      AppData.user!.maxSpeed = AppData.user!.maxSpeed < userActivity.maxSpeed
+          ? userActivity.maxSpeed
+          : AppData.user!.maxSpeed;
+      AppData.user!.averageSpeed =
+          (AppData.user!.averageSpeed + userActivity.averageSpeed) / 2;
+
       await _repository.saveUserActivity(
-        userActivitySummary,
         userActivity,
         _listTrackingPosition,
       );
-      _uiState.userActivitySummary = userActivitySummary;
       await getListUserActivity();
       await getListUserActivityFilterd();
     } catch (e) {
@@ -438,6 +431,8 @@ class ViewModel extends ChangeNotifier {
       newLocationData,
     );
     if (distanceInMeter < _minDistanceInMeterToAdd) return false;
+
+    if (distanceInMeter >= (_minDistanceInMeterToAdd * 2)) return true;
 
     if (_listTrackingPosition.length == 1) return true;
 

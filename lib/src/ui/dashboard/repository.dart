@@ -7,7 +7,6 @@ import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/repository_service_locator.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
-import 'package:cycletowork/src/data/user_activity_summary.dart';
 import 'package:cycletowork/src/database/local_database_service.dart';
 import 'package:cycletowork/src/service/remote_service.dart';
 import 'package:cycletowork/src/ui/dashboard/ui_state.dart';
@@ -53,7 +52,23 @@ class Repository {
         await _localDatabase.getListActiveRegisterChallenge();
 
     if (listActiveRegisterChallenge.isEmpty) {
-      return null;
+      var listRegisterChallenge =
+          await _remoteService.getListRegisterdChallenge();
+      if (listRegisterChallenge.isEmpty) {
+        return null;
+      } else {
+        for (var element in listRegisterChallenge) {
+          await _localDatabase.registerChallenge(element);
+        }
+        for (var element in listRegisterChallenge) {
+          var index = listChallengeIdRegister.indexOf(element.challengeId);
+          if (index >= 0) {
+            return element;
+          }
+        }
+
+        return null;
+      }
     }
 
     for (var element in listActiveRegisterChallenge) {
@@ -103,28 +118,16 @@ class Repository {
     }
   }
 
-  Future<UserActivitySummary?> getUserActivitySummary() async {
-    try {
-      return await _localDatabase.getUserActivitySummary();
-    } catch (e) {
-      Logger.error(e);
-      return null;
-    }
-  }
-
   Future<bool> saveUserActivity(
-    UserActivitySummary userActivitySummary,
     UserActivity userActivity,
     List<LocationData> listLocationData,
   ) async {
     try {
       await _localDatabase.saveUserActivity(
-        userActivitySummary,
         userActivity,
         listLocationData,
       );
       await _remoteService.saveUserActivity(
-        userActivitySummary,
         userActivity,
         listLocationData,
       );

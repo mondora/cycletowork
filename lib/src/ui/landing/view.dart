@@ -2,6 +2,7 @@ import 'package:cycletowork/src/ui/dashboard/view.dart';
 import 'package:cycletowork/src/ui/landing/ui_state.dart';
 import 'package:cycletowork/src/ui/landing/view_model.dart';
 import 'package:cycletowork/src/ui/login/view.dart';
+import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -58,7 +59,11 @@ class _LandingViewState extends State<LandingView> {
             }
 
             if (viewModel.uiState.pageOption == PageOption.loading) {
-              return const LoginView(loading: true);
+              return const Scaffold(
+                body: Center(
+                  child: AppProgressIndicator(),
+                ),
+              );
             }
 
             if (viewModel.uiState.pageOption == PageOption.logout) {

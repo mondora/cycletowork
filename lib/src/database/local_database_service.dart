@@ -4,7 +4,6 @@ import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/data/location_data.dart';
-import 'package:cycletowork/src/data/user_activity_summary.dart';
 import 'package:cycletowork/src/database/local_database.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,11 +13,9 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
 
   @override
   Future saveUserActivity(
-    UserActivitySummary userActivitySummary,
     UserActivity userActivity,
     List<LocationData> listLocationData,
   ) async {
-    //TODO batch
     await _localDatabase.insertData(
       tableName: UserActivity.tableName,
       item: userActivity.toJson(),
@@ -29,11 +26,6 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
         item: element.toJson(),
       );
     }
-
-    await _localDatabase.insertData(
-      tableName: UserActivitySummary.tableName,
-      item: userActivitySummary.toJson(),
-    );
   }
 
   @override
@@ -91,26 +83,6 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
   }
 
   @override
-  Future<UserActivitySummary> getUserActivitySummary() async {
-    String whereCondition = 'uid = ?';
-    List<dynamic> whereArgs = [AppData.user!.uid];
-
-    var map = await _localDatabase.getData(
-      tableName: UserActivitySummary.tableName,
-      whereCondition: whereCondition,
-      whereArgs: whereArgs,
-    );
-    var result = map.map<UserActivitySummary>(
-      (json) => UserActivitySummary.fromMap(Map<String, dynamic>.from(json)),
-    );
-    if (result.isNotEmpty) {
-      return result.first;
-    } else {
-      return UserActivitySummary.fromEmpty();
-    }
-  }
-
-  @override
   Future<List<LocationData>> getListLocationDataForActivity(
     String userActivityId,
   ) async {
@@ -123,16 +95,26 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
   }
 
   @override
-  Future<User> getUserInfo() {
-    // TODO: implement getUserInfo
-    throw UnimplementedError();
-  }
-
-  @override
   Future<String?> getDeviceToken() async {
     final sharedPreferences = await SharedPreferences.getInstance();
     return sharedPreferences.getString(
       User.deviceTokensKey,
+    );
+  }
+
+  @override
+  Future<int?> getDeviceTokenExpireDate() async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    return sharedPreferences.getInt(
+      User.deviceTokensExpireDateKey,
+    );
+  }
+
+  @override
+  Future<String?> getUserUID() async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    return sharedPreferences.getString(
+      User.userUIDKey,
     );
   }
 
@@ -142,6 +124,30 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
     await sharedPreferences.setString(
       User.deviceTokensKey,
       deviceToken,
+    );
+    var now = DateTime.now();
+    var expireDate = DateTime(now.year, now.month, now.day + 20);
+    await sharedPreferences.setInt(
+      User.deviceTokensExpireDateKey,
+      expireDate.millisecondsSinceEpoch,
+    );
+    await sharedPreferences.setString(
+      User.userUIDKey,
+      AppData.user!.uid,
+    );
+  }
+
+  @override
+  Future<void> removeDeviceToken(String deviceToken) async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.remove(
+      User.deviceTokensKey,
+    );
+    await sharedPreferences.remove(
+      User.deviceTokensExpireDateKey,
+    );
+    await sharedPreferences.remove(
+      User.userUIDKey,
     );
   }
 
@@ -201,6 +207,26 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
         tableName: Challenge.tableName,
         item: element.toJsonForLocalDatabase(),
       );
+    }
+  }
+
+  @override
+  Future<User?> getUserInfo(String uid) async {
+    String whereCondition = 'uid = ?';
+    List<dynamic> whereArgs = [uid];
+
+    var map = await _localDatabase.getData(
+      tableName: User.tableName,
+      whereCondition: whereCondition,
+      whereArgs: whereArgs,
+    );
+    var result = map.map<User>(
+      (json) => User.fromMapLocalDatabase(Map<String, dynamic>.from(json)),
+    );
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return null;
     }
   }
 

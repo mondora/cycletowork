@@ -2,7 +2,6 @@ import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
-import 'package:cycletowork/src/data/user_activity_summary.dart';
 
 /// Manage Table Database for each version of Database.
 class TableDatabase {
@@ -15,7 +14,6 @@ class TableDatabase {
     if (version == 1) {
       return [
         User.tableString,
-        UserActivitySummary.tableString,
         UserActivity.tableString,
         LocationData.tableString,
         Challenge.tableString,

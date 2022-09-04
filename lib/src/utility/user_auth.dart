@@ -6,7 +6,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class UserAuth {
-  static bool isAdmin = false;
   static final GoogleSignIn _googleSignInForIos = GoogleSignIn(
     clientId: dotenv.env['IOS_FIREBASE_CLIENT_ID']!,
     serverClientId: dotenv.env['IOS_FIREBASE_SERVER_CLIENT_ID']!,
@@ -14,23 +13,32 @@ class UserAuth {
   static final GoogleSignIn _googleSignInForWeb = GoogleSignIn();
   static final GoogleSignIn _googleSignInForAndroid = GoogleSignIn();
 
+  static Future<bool> isAdmin() async {
+    var currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      return false;
+    }
+    var token = await currentUser.getIdTokenResult();
+    if (token.claims == null || token.claims!['admin'] == null) {
+      return false;
+    }
+    return token.claims!['admin'];
+  }
+
   static Stream<bool> isAuthenticatedStateChanges() {
     return FirebaseAuth.instance
         .authStateChanges()
         .where((currentUser) => currentUser != null)
         .map((currentUser) {
       if (currentUser != null) {
-        currentUser.getIdTokenResult().then((value) {
-          if (value.claims != null) {
-            isAdmin = value.claims!['admin'] ?? false;
-          } else {
-            isAdmin = false;
-          }
-        });
         return true;
       }
       return false;
     });
+  }
+
+  static bool isAuthenticated() {
+    return FirebaseAuth.instance.currentUser != null;
   }
 
   static Future<void> loginGoogleSignIn() async {

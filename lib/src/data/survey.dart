@@ -113,10 +113,12 @@ class SurveyResponse {
   SurveyResponse.fromMap(Map<String, dynamic> map)
       : id = map['id'],
         name = map['name'],
-        listAnswer = map['listAnswer']
-            .map<Answer>(
-                (json) => Answer.fromMap(Map<String, dynamic>.from(json)))
-            .toList();
+        listAnswer = map['listAnswer'] != null
+            ? map['listAnswer']
+                .map<Answer>(
+                    (json) => Answer.fromMap(Map<String, dynamic>.from(json)))
+                .toList()
+            : [];
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {

@@ -1,7 +1,11 @@
+import 'dart:async';
+
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/repository_service_locator.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/database/local_database_service.dart';
 import 'package:cycletowork/src/service/remote_service.dart';
+import 'package:cycletowork/src/utility/logger.dart';
 import 'package:cycletowork/src/utility/notification.dart';
 import 'package:cycletowork/src/utility/user_auth.dart';
 
@@ -28,6 +32,11 @@ class Repository {
   }
 
   Future<void> logout() async {
+    var token = await _localDatabase.getDeviceToken();
+    if (token != null) {
+      await _remoteService.removeDeviceToken(token);
+      await _localDatabase.removeDeviceToken(token);
+    }
     await UserAuth.logout();
   }
 
@@ -35,12 +44,21 @@ class Repository {
     return UserAuth.isAuthenticatedStateChanges();
   }
 
-  Future<bool> isAuthenticated() async {
-    return false;
+  bool isAuthenticated() {
+    return UserAuth.isAuthenticated();
   }
 
   Future<User> getUserInfo() async {
     var user = await _remoteService.getUserInfo();
+    var localUser = await _localDatabase.getUserInfo(user.uid);
+    if (localUser == null) {
+      var listUserActivity = await _remoteService.getListUserActivity(
+        pageSize: 200,
+      );
+      for (var userActivity in listUserActivity) {
+        await _localDatabase.saveUserActivity(userActivity, []);
+      }
+    }
     await _localDatabase.saveUserInfo(user);
     return user;
   }
@@ -52,17 +70,36 @@ class Repository {
   Future<void> saveDeviceToken() async {
     var deviceToken = await AppNotification.getToken();
     var localDeviceToken = await _localDatabase.getDeviceToken();
+    var expireDate = await _localDatabase.getDeviceTokenExpireDate();
+    var uid = await _localDatabase.getUserUID();
 
-    if (deviceToken != null && deviceToken != localDeviceToken) {
-      await _remoteService.saveDeviceToken(deviceToken);
-      await _localDatabase.saveDeviceToken(deviceToken);
+    if (deviceToken == null) {
+      return;
     }
+
+    if (deviceToken == localDeviceToken &&
+        expireDate != null &&
+        DateTime.now().millisecondsSinceEpoch < expireDate &&
+        uid != null &&
+        uid == AppData.user!.uid) {
+      return;
+    }
+
+    await _remoteService.saveDeviceToken(deviceToken);
+    await _localDatabase.saveDeviceToken(deviceToken);
   }
 
   Future<void> signupEmail(String email, String password, String? name) async {
     var result = await UserAuth.signupEmail(email, password);
-    if (result == true && name != null && name != '') {
-      _remoteService.updateUserName(name);
+    var isAuthenticated = this.isAuthenticated();
+    if (result == true && name != null && name != '' && isAuthenticated) {
+      Timer(const Duration(seconds: 3), () async {
+        try {
+          await _remoteService.updateUserName(name);
+        } catch (e) {
+          Logger.error(e);
+        }
+      });
     }
   }
 
@@ -70,7 +107,7 @@ class Repository {
     await UserAuth.loginEmail(email, password);
   }
 
-  bool isAdmin() {
-    return UserAuth.isAdmin;
+  Future<bool> isAdmin() async {
+    return await UserAuth.isAdmin();
   }
 }

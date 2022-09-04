@@ -13,6 +13,12 @@ class User {
   UserType userType;
   bool admin;
   bool verified;
+  double co2;
+  double distance;
+  double averageSpeed;
+  double maxSpeed;
+  int calorie;
+  int steps;
   String? photoURL;
   bool? emailVerified;
   String? displayName;
@@ -27,6 +33,12 @@ class User {
     required this.email,
     required this.admin,
     required this.verified,
+    required this.co2,
+    required this.distance,
+    required this.averageSpeed,
+    required this.maxSpeed,
+    required this.calorie,
+    required this.steps,
     this.photoURL,
     this.displayName,
     this.deviceTokens,
@@ -55,6 +67,18 @@ class User {
         emailVerified = map['emailVerified'],
         photoURL = map['photoURL'],
         displayName = map['displayName'],
+        co2 = map['co2'] != null ? double.parse(map['co2'].toString()) : 0,
+        distance = map['distance'] != null
+            ? double.parse(map['distance'].toString())
+            : 0,
+        averageSpeed = map['averageSpeed'] != null
+            ? double.parse(map['averageSpeed'].toString())
+            : 0,
+        maxSpeed = map['maxSpeed'] != null
+            ? double.parse(map['maxSpeed'].toString())
+            : 0,
+        calorie = map['calorie'] ?? 0,
+        steps = map['steps'] ?? 0,
         deviceTokens = map['deviceTokens'] != null
             ? (map['deviceTokens'] as List<dynamic>).cast<String>()
             : null,
@@ -70,6 +94,12 @@ class User {
         'emailVerified': emailVerified,
         'photoURL': photoURL,
         'displayName': displayName,
+        'co2': co2,
+        'distance': distance,
+        'averageSpeed': averageSpeed,
+        'maxSpeed': maxSpeed,
+        'calorie': calorie,
+        'steps': steps,
         'deviceTokens': deviceTokens,
         'listChallengeIdRegister': listChallengeIdRegister,
         'admin': admin,
@@ -91,6 +121,18 @@ class User {
         emailVerified = null,
         photoURL = map['photoURL'],
         displayName = map['displayName'],
+        co2 = map['co2'] != null ? double.parse(map['co2'].toString()) : 0,
+        distance = map['distance'] != null
+            ? double.parse(map['distance'].toString())
+            : 0,
+        averageSpeed = map['averageSpeed'] != null
+            ? double.parse(map['averageSpeed'].toString())
+            : 0,
+        maxSpeed = map['maxSpeed'] != null
+            ? double.parse(map['maxSpeed'].toString())
+            : 0,
+        calorie = map['calorie'] ?? 0,
+        steps = map['steps'] ?? 0,
         deviceTokens = [],
         language = map['language'],
         listChallengeIdRegister = map['listChallengeIdRegister'] != null
@@ -103,6 +145,12 @@ class User {
         'userType': userType.name,
         'photoURL': photoURL,
         'displayName': displayName,
+        'co2': co2,
+        'distance': distance,
+        'averageSpeed': averageSpeed,
+        'maxSpeed': maxSpeed,
+        'calorie': calorie,
+        'steps': steps,
         'language': language,
         'listChallengeIdRegister': listChallengeIdRegister != null
             ? listChallengeIdRegister!.join(_splitPattern)
@@ -110,6 +158,9 @@ class User {
       };
 
   static String get deviceTokensKey => 'User_deviceTokens';
+  static String get deviceTokensExpireDateKey =>
+      'User_deviceTokens_expire_date';
+  static String get userUIDKey => 'User_uid';
 
   static String get tableName => 'User';
 
@@ -118,6 +169,12 @@ class User {
       uid TEXT PRIMARY KEY  NOT NULL,
       email TEXT NOT NULL,
       userType TEXT NOT NULL,
+      co2 REAL NOT NULL,
+      distance REAL NOT NULL,
+      averageSpeed REAL NOT NULL,
+      maxSpeed REAL NOT NULL, 
+      calorie INTEGER NOT NULL,
+      steps INTEGER NOT NULL,
       photoURL TEXT,
       displayName TEXT,
       language TEXT,
