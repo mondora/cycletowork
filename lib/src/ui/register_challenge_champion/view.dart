@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:searchfield/searchfield.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RegisterChallengChampionView extends StatefulWidget {
   const RegisterChallengChampionView({Key? key}) : super(key: key);
@@ -19,11 +20,14 @@ class _RegisterChallengChampionViewState
     extends State<RegisterChallengChampionView> {
   final formKey = GlobalKey<FormState>();
   final colorGrey = const Color.fromRGBO(239, 239, 239, 1);
+  final aboutFiabUrl = 'https://www.sataspes.net/android/sp-budget';
 
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<ViewModel>(context);
-    var companyName = viewModel.uiState.challengeRegistry.companyName;
+    final companyName = viewModel.uiState.challengeRegistry.companyName;
+    final isFiabMember = viewModel.uiState.challengeRegistry.isFiabMember;
+    final fiabCardNumber = viewModel.uiState.challengeRegistry.fiabCardNumber;
     final company = viewModel.uiState.challengeRegistry.companyToAdd!;
     final companyCategory = company.category;
     final companyEmployeesNumber = company.employeesNumber;
@@ -39,14 +43,24 @@ class _RegisterChallengChampionViewState
         Theme.of(context).extension<ColorSchemeExtension>()!;
     var textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(),
-      body: Container(
-        margin: const EdgeInsets.only(
-          top: 20.0,
-          bottom: 30.0,
+      appBar: AppBar(
+        leading: IconButton(
+          splashRadius: 25.0,
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: colorScheme.onBackground,
+            size: 20,
+          ),
+          onPressed: () => viewModel.gotoSelectType(),
         ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
+      ),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 20.0,
+            bottom: 30.0,
+          ),
           child: Form(
             key: formKey,
             child: Column(
@@ -64,6 +78,174 @@ class _RegisterChallengChampionViewState
                     ),
                     textAlign: TextAlign.center,
                   ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  height: 185,
+                  color: const Color.fromRGBO(249, 249, 249, 1),
+                  padding: const EdgeInsets.only(
+                    right: 24.0,
+                    left: 24.0,
+                    top: 15.0,
+                    bottom: 15.0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Sei socio FIAB?',
+                        style: textTheme.caption!.copyWith(
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(10.0),
+                              ),
+                              onTap: () {
+                                viewModel.setFiabMember(!isFiabMember);
+                              },
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 4.5),
+                                width: 80.0,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Checkbox(
+                                      value: isFiabMember,
+                                      onChanged: (value) {
+                                        viewModel.setFiabMember(value!);
+                                      },
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        'Si',
+                                        style: textTheme.bodyText1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(10.0),
+                              ),
+                              onTap: () {
+                                viewModel.setFiabMember(!isFiabMember);
+                              },
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 4.5),
+                                width: 80.0,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Checkbox(
+                                      value: !isFiabMember,
+                                      onChanged: (value) {
+                                        viewModel.setFiabMember(!value!);
+                                      },
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        'No',
+                                        style: textTheme.bodyText1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (!isFiabMember)
+                        SizedBox(
+                          width: 245.0,
+                          height: 36.0,
+                          child: TextButton(
+                            onPressed: () async {
+                              final url = Uri.parse(aboutFiabUrl);
+                              if (await canLaunchUrl(url)) {
+                                await launchUrl(
+                                  url,
+                                );
+                              }
+                            },
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                              overlayColor: MaterialStateProperty.all<Color>(
+                                colorScheme.secondary.withOpacity(0.40),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                AutoSizeText(
+                                  'Scopri come diventarlo'.toUpperCase(),
+                                  style: textTheme.button!.copyWith(
+                                    color: colorScheme.secondary,
+                                  ),
+                                  maxLines: 1,
+                                ),
+                                const SizedBox(
+                                  width: 8.0,
+                                ),
+                                Icon(
+                                  Icons.call_made_outlined,
+                                  color: colorScheme.secondary,
+                                  size: 20.0,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      if (isFiabMember)
+                        TextFormField(
+                          initialValue: fiabCardNumber,
+                          onChanged: (value) =>
+                              viewModel.changeFiabCardNumber(value),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                          textInputAction: TextInputAction.next,
+                          decoration: InputDecoration(
+                            labelText: 'Numero tessera',
+                            labelStyle: textTheme.bodyText1!.copyWith(
+                              fontWeight: FontWeight.w400,
+                              color: colorSchemeExtension.textDisabled,
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null ||
+                                value.isEmpty && isFiabMember) {
+                              return 'Inserire numero tessera';
+                            }
+
+                            return null;
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 30.0,
                 ),
                 Container(
                   margin: const EdgeInsets.only(
@@ -208,71 +390,6 @@ class _RegisterChallengChampionViewState
                     },
                   ),
                 ),
-                // Container(
-                //   margin: const EdgeInsets.only(
-                //     right: 24.0,
-                //     left: 24.0,
-                //   ),
-                //   height: 60,
-                //   child: Row(
-                //     mainAxisSize: MainAxisSize.max,
-                //     crossAxisAlignment: CrossAxisAlignment.end,
-                //     children: [
-                //       Flexible(
-                //         child: TextFormField(
-                //           // maxLength: 90,
-                //           keyboardType: TextInputType.number,
-                //           inputFormatters: [
-                //             FilteringTextInputFormatter.digitsOnly
-                //           ],
-                //           textInputAction: TextInputAction.next,
-                //           // controller: listOtherController[index],
-                //           decoration: InputDecoration(
-                //             labelText: 'Numero di dipendenti *',
-                //             labelStyle: textTheme.bodyText1!.copyWith(
-                //               fontWeight: FontWeight.w400,
-                //               color: colorSchemeExtension.textDisabled,
-                //             ),
-                //           ),
-                //           validator: (value) {
-                //             if (value == null || value.isEmpty) {
-                //               return 'Inserire numero di dipendenti';
-                //             }
-
-                //             return null;
-                //           },
-                //         ),
-                //       ),
-                //       const SizedBox(
-                //         width: 24,
-                //       ),
-                //       SizedBox(
-                //         width: 100.0,
-                //         height: 36.0,
-                //         child: ElevatedButton(
-                //           onPressed: () {},
-                //           style: ButtonStyle(
-                //             shape: MaterialStateProperty.all<
-                //                 RoundedRectangleBorder>(
-                //               RoundedRectangleBorder(
-                //                 borderRadius: BorderRadius.circular(4.0),
-                //               ),
-                //             ),
-                //             backgroundColor: MaterialStateProperty.all<Color>(
-                //               colorScheme.secondary,
-                //             ),
-                //           ),
-                //           child: Text(
-                //             'Verifica'.toUpperCase(),
-                //             style: textTheme.button!.copyWith(
-                //               color: colorScheme.onSecondary,
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
                 const SizedBox(
                   height: 20.0,
                 ),
@@ -447,29 +564,33 @@ class _RegisterChallengChampionViewState
                                   labelText: 'Sede e/o dipartimento ',
                                   suffixIcon: Material(
                                     color: Colors.transparent,
-                                    child: IconButton(
-                                      splashRadius: 20,
-                                      onPressed: () {
-                                        if (index + 1 <
-                                            companyListDepartment.length) {
-                                          viewModel
-                                              .setCompanyToAddRemoveDepartment(
-                                                  index);
-                                        } else {
-                                          viewModel
-                                              .setCompanyToAddAddDepartment();
-                                        }
-                                      },
-                                      icon: index + 1 <
-                                              companyListDepartment.length
-                                          ? Icon(
-                                              Icons.delete_outline,
-                                              color: colorScheme.error,
-                                            )
-                                          : Icon(
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        if (index + 1 ==
+                                            companyListDepartment.length)
+                                          IconButton(
+                                            splashRadius: 20,
+                                            onPressed: () => viewModel
+                                                .setCompanyToAddAddDepartment(),
+                                            icon: Icon(
                                               Icons.add_circle_outline,
                                               color: colorScheme.secondary,
                                             ),
+                                          ),
+                                        if (index != 0)
+                                          IconButton(
+                                            splashRadius: 20,
+                                            onPressed: () => viewModel
+                                                .setCompanyToAddRemoveDepartment(
+                                              index,
+                                            ),
+                                            icon: Icon(
+                                              Icons.delete_outline,
+                                              color: colorScheme.error,
+                                            ),
+                                          ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -586,7 +707,7 @@ class _RegisterChallengChampionViewState
                 ),
                 Center(
                   child: SizedBox(
-                    width: 155.0,
+                    width: 165.0,
                     height: 36.0,
                     child: ElevatedButton(
                       onPressed: () {
@@ -620,7 +741,7 @@ class _RegisterChallengChampionViewState
                 ),
                 Center(
                   child: SizedBox(
-                    width: 155.0,
+                    width: 165.0,
                     height: 36.0,
                     child: OutlinedButton(
                       onPressed: viewModel.gotoSelectType,

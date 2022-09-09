@@ -450,7 +450,7 @@ class _TableDataSource extends DataTableSource {
                   ),
           ),
         ),
-        DataCell(
+        const DataCell(
           Tooltip(
             message: 'N° DOMANDE',
             // child: SelectableText(challenge.listQuestion.length.toString()),

@@ -8,6 +8,7 @@ import 'package:cycletowork/src/service/remote_service.dart';
 import 'package:cycletowork/src/utility/logger.dart';
 import 'package:cycletowork/src/utility/notification.dart';
 import 'package:cycletowork/src/utility/user_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 class ServiceLocator implements RepositoryServiceLocator {
   @override
@@ -60,6 +61,7 @@ class Repository {
       }
     }
     await _localDatabase.saveUserInfo(user);
+    FirebaseCrashlytics.instance.setUserIdentifier(user.uid);
     return user;
   }
 
@@ -105,6 +107,10 @@ class Repository {
 
   Future<void> loginEmail(String email, String password) async {
     await UserAuth.loginEmail(email, password);
+  }
+
+  Future<void> loginApple() async {
+    await UserAuth.loginApple();
   }
 
   Future<bool> isAdmin() async {

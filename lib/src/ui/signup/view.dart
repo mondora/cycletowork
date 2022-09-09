@@ -21,9 +21,9 @@ class SignupView extends StatelessWidget {
     var passwordController = TextEditingController();
     var rePasswordController = TextEditingController();
 
-    RegExp regExpNumber = RegExp(r'^(?=.*\d)[a-zA-Z\d]');
-    RegExp regExpLowerCase = RegExp(r'^(?=.*[a-z])');
-    RegExp regExpUpperCase = RegExp(r'^(?=.*[A-Z])');
+    // RegExp regExpNumber = RegExp(r'^(?=.*\d)[a-zA-Z\d]');
+    // RegExp regExpLowerCase = RegExp(r'^(?=.*[a-z])');
+    // RegExp regExpUpperCase = RegExp(r'^(?=.*[A-Z])');
 
     return Scaffold(
       appBar: AppBar(
@@ -93,8 +93,8 @@ class SignupView extends StatelessWidget {
                   autocorrect: false,
                   decoration: const InputDecoration(
                     labelText: 'Password*',
-                    helperText:
-                        'La password deve contenere almeno 8 caratteri, almeno uno maiuscolo, almeno un numero',
+                    helperText: 'La password deve contenere almeno 8 caratteri',
+                    hintMaxLines: 2,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -103,15 +103,15 @@ class SignupView extends StatelessWidget {
                     if (value.length < 8) {
                       return 'La password deve contenere almeno 8 caratteri';
                     }
-                    if (!regExpNumber.hasMatch(value)) {
-                      return 'La password deve contenere almeno un numero';
-                    }
-                    if (!regExpLowerCase.hasMatch(value)) {
-                      return 'La password deve contenere almeno uno minuscolo';
-                    }
-                    if (!regExpUpperCase.hasMatch(value)) {
-                      return 'La password deve contenere almeno uno maiuscolo';
-                    }
+                    // if (!regExpNumber.hasMatch(value)) {
+                    //   return 'La password deve contenere almeno un numero';
+                    // }
+                    // if (!regExpLowerCase.hasMatch(value)) {
+                    //   return 'La password deve contenere almeno uno minuscolo';
+                    // }
+                    // if (!regExpUpperCase.hasMatch(value)) {
+                    //   return 'La password deve contenere almeno uno maiuscolo';
+                    // }
                     return null;
                   },
                 ),

@@ -2,6 +2,7 @@ import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/company.dart';
 import 'package:cycletowork/src/data/survey.dart';
+import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/ui/register_challenge/repository.dart';
 import 'package:cycletowork/src/ui/register_challenge/ui_state.dart';
 import 'package:cycletowork/src/utility/logger.dart';
@@ -61,6 +62,9 @@ class ViewModel extends ChangeNotifier {
 
     _uiState.challengeRegistry.startTimeChallenge = challenge.startTime;
     _uiState.challengeRegistry.stopTimeChallenge = challenge.stopTime;
+    _uiState.challengeRegistry.isFiabMember =
+        AppData.user!.fiabCardNumber.isNotEmpty;
+    _uiState.challengeRegistry.fiabCardNumber = AppData.user!.fiabCardNumber;
     getter();
   }
 
@@ -143,6 +147,7 @@ class ViewModel extends ChangeNotifier {
       _uiState.challengeRegistry.id = AppData.user!.uid;
       _uiState.challengeRegistry.uid = AppData.user!.uid;
       _uiState.challengeRegistry.challengeId = _uiState.challenge!.id;
+      _uiState.challengeRegistry.challengeName = _uiState.challenge!.name;
       _uiState.challengeRegistry.registerDate =
           DateTime.now().millisecondsSinceEpoch;
       if (_uiState.challengeRegistry.isCyclist) {
@@ -152,7 +157,24 @@ class ViewModel extends ChangeNotifier {
             _uiState.challengeRegistry.companyToAdd;
         _uiState.challengeRegistry.companySelected!.id =
             _uiState.challengeRegistry.companyToAdd!.id;
+        _uiState.challengeRegistry.companyId =
+            _uiState.challengeRegistry.companyToAdd!.id;
       }
+      if (_uiState.challengeRegistry.businessEmail.contains('@mondora.com')) {
+        AppData.user!.userType = UserType.mondora;
+      }
+
+      if (_uiState.challengeRegistry.isFiabMember) {
+        AppData.user!.userType = UserType.fiab;
+        AppData.user!.fiabCardNumber =
+            _uiState.challengeRegistry.fiabCardNumber;
+      }
+      _uiState.challengeRegistry.email = AppData.user!.email;
+      _uiState.challengeRegistry.userType = AppData.user!.userType.name;
+      _uiState.challengeRegistry.displayName = AppData.user!.displayName;
+      _uiState.challengeRegistry.photoURL = AppData.user!.photoURL;
+      _uiState.challengeRegistry.companyEmployeesNumber =
+          _uiState.challengeRegistry.companySelected!.employeesNumber;
       await _repository.registerChallenge(_uiState.challengeRegistry);
       _uiState.pageOption = PageOption.thanks;
     } catch (e) {
@@ -190,9 +212,27 @@ class ViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void gotoChampionRegistrationData() {
-    _uiState.pageOption = PageOption.championRegistrationData;
+  void gotoChampionRegistrationData() async {
+    _uiState.loading = true;
     notifyListeners();
+    try {
+      var isCompanyExist = await _repository
+          .isCompanyExist(_uiState.challengeRegistry.companyName);
+      if (isCompanyExist) {
+        _uiState.errorMessage =
+            'La azienda "${_uiState.challengeRegistry.companyName}" già esiste';
+        _uiState.error = true;
+      } else {
+        _uiState.pageOption = PageOption.championRegistrationData;
+      }
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+    } finally {
+      _uiState.loading = false;
+      notifyListeners();
+    }
   }
 
   void gotoSurvey() {
@@ -204,14 +244,22 @@ class ViewModel extends ChangeNotifier {
     _uiState.loading = true;
     notifyListeners();
     try {
-      var email = _uiState.challengeRegistry.businessEmail;
-      var displayName =
-          '${_uiState.challengeRegistry.name} ${_uiState.challengeRegistry.lastName}';
-      await _repository.sendEmailVerificationCode(
-        email,
-        displayName,
-      );
-      _uiState.pageOption = PageOption.emailVerification;
+      var businessEmail = _uiState.challengeRegistry.businessEmail;
+      var challengeId = _uiState.challenge!.id;
+      var isEmailExist =
+          await _repository.isEmailExist(challengeId, businessEmail);
+      if (isEmailExist) {
+        _uiState.errorMessage = 'Email "$businessEmail" già registrato';
+        _uiState.error = true;
+      } else {
+        var displayName =
+            '${_uiState.challengeRegistry.name} ${_uiState.challengeRegistry.lastName}';
+        await _repository.sendEmailVerificationCode(
+          businessEmail,
+          displayName,
+        );
+        _uiState.pageOption = PageOption.emailVerification;
+      }
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;

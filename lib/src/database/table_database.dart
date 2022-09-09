@@ -1,4 +1,5 @@
 import 'package:cycletowork/src/data/challenge.dart';
+import 'package:cycletowork/src/data/classification.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
@@ -18,6 +19,8 @@ class TableDatabase {
         LocationData.tableString,
         Challenge.tableString,
         ChallengeRegistry.tableString,
+        CompanyClassification.tableString,
+        CyclistClassification.tableString,
       ];
     }
     return [];

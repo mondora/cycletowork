@@ -6,16 +6,13 @@ import 'package:flutter/material.dart';
 
 class ViewModel extends ChangeNotifier {
   final _repository = Repository();
-  BuildContext _context;
 
   final _uiState = UiState();
   UiState get uiState => _uiState;
 
-  ViewModel(BuildContext context, UserActivity userActivity)
-      : this.instance(context, userActivity);
+  ViewModel(UserActivity userActivity) : this.instance(userActivity);
 
   ViewModel.instance(
-    this._context,
     UserActivity userActivity,
   ) {
     _uiState.userActivity = userActivity;

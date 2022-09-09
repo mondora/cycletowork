@@ -1,8 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cycletowork/src/data/company.dart';
-import 'package:cycletowork/src/data/survey.dart';
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 
 class ConfirmChallengeDialog {
   final BuildContext context;
@@ -163,51 +160,51 @@ class ConfirmChallengeDialog {
     );
   }
 
-  String _getQuestionTypeName(QuestionType questionType) {
-    switch (questionType) {
-      case QuestionType.text:
-        return 'Testo';
-      case QuestionType.number:
-        return 'Numero';
-      case QuestionType.email:
-        return 'Email';
-      case QuestionType.multi:
-        return 'Multiplica risposta';
-      case QuestionType.multiOther:
-        return 'Multiplica risposta con altro';
-      case QuestionType.radio:
-        return 'Singola risposta';
-      case QuestionType.radioOther:
-        return 'Singola risposta con altro';
-      case QuestionType.selection:
-        return 'Singola risposta da selezionare';
-    }
-  }
+  // String _getQuestionTypeName(QuestionType questionType) {
+  //   switch (questionType) {
+  //     case QuestionType.text:
+  //       return 'Testo';
+  //     case QuestionType.number:
+  //       return 'Numero';
+  //     case QuestionType.email:
+  //       return 'Email';
+  //     case QuestionType.multi:
+  //       return 'Multiplica risposta';
+  //     case QuestionType.multiOther:
+  //       return 'Multiplica risposta con altro';
+  //     case QuestionType.radio:
+  //       return 'Singola risposta';
+  //     case QuestionType.radioOther:
+  //       return 'Singola risposta con altro';
+  //     case QuestionType.selection:
+  //       return 'Singola risposta da selezionare';
+  //   }
+  // }
 
-  List<Department> _getDepartment(
-      Company? company, List<TextEditingController> listDepartmentController) {
-    if (company == null) {
-      return listDepartmentController
-          .map(
-            (element) => Department(id: const Uuid().v4(), name: element.text),
-          )
-          .toList();
-    } else {
-      List<Department> list = [];
-      for (var index = 0; index < listDepartmentController.length; index++) {
-        Department department = Department(
-          id: '',
-          name: listDepartmentController[index].text,
-        );
-        try {
-          var element = company.listDepartment!.elementAt(index);
-          department.id = element.id;
-        } catch (e) {
-          department.id = const Uuid().v4();
-        }
-        list.add(department);
-      }
-      return list;
-    }
-  }
+  // List<Department> _getDepartment(
+  //     Company? company, List<TextEditingController> listDepartmentController) {
+  //   if (company == null) {
+  //     return listDepartmentController
+  //         .map(
+  //           (element) => Department(id: const Uuid().v4(), name: element.text),
+  //         )
+  //         .toList();
+  //   } else {
+  //     List<Department> list = [];
+  //     for (var index = 0; index < listDepartmentController.length; index++) {
+  //       Department department = Department(
+  //         id: '',
+  //         name: listDepartmentController[index].text,
+  //       );
+  //       try {
+  //         var element = company.listDepartment!.elementAt(index);
+  //         department.id = element.id;
+  //       } catch (e) {
+  //         department.id = const Uuid().v4();
+  //       }
+  //       list.add(department);
+  //     }
+  //     return list;
+  //   }
+  // }
 }

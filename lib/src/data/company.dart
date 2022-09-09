@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
-
 enum EmployeesNumberCategory {
   micro,
   small,
@@ -14,6 +12,7 @@ class Company {
   String name;
   String category;
   int employeesNumber;
+  int employeesNumberRegistered;
   String country;
   String city;
   String address;
@@ -30,6 +29,7 @@ class Company {
     required this.name,
     required this.category,
     required this.employeesNumber,
+    required this.employeesNumberRegistered,
     required this.country,
     required this.city,
     required this.address,
@@ -49,6 +49,7 @@ class Company {
         name = '',
         category = '',
         employeesNumber = 1,
+        employeesNumberRegistered = 0,
         country = '',
         city = '',
         address = '',
@@ -64,6 +65,7 @@ class Company {
         name = map['name'],
         category = map['category'],
         employeesNumber = map['employeesNumber'],
+        employeesNumberRegistered = map['employeesNumberRegistered'] ?? 0,
         country = map['country'],
         city = map['city'],
         address = map['address'],
@@ -80,15 +82,15 @@ class Company {
         registerUserEmail = map['registerUserEmail'] ?? '';
 
   EmployeesNumberCategory employeesNumberCategory() {
-    if (employeesNumber <= 10) {
+    if (employeesNumber < 10) {
       return EmployeesNumberCategory.micro;
     }
 
-    if (employeesNumber <= 50) {
+    if (employeesNumber < 50) {
       return EmployeesNumberCategory.small;
     }
 
-    if (employeesNumber <= 250) {
+    if (employeesNumber < 250) {
       return EmployeesNumberCategory.medium;
     }
 
@@ -100,6 +102,7 @@ class Company {
         'name': name,
         'category': category,
         'employeesNumber': employeesNumber,
+        'employeesNumberRegistered': employeesNumberRegistered,
         'country': country,
         'city': city,
         'address': address,
@@ -170,13 +173,13 @@ class Company {
         name,
         category,
         employeesNumber,
+        employeesNumberRegistered,
         country,
         city,
         address,
         zipCode,
         hasMoreDepartment,
         isVerified,
-        hashList(listDepartment),
       );
 
   @override
@@ -186,6 +189,7 @@ class Company {
       other.name == name &&
       other.category == category &&
       other.employeesNumber == employeesNumber &&
+      other.employeesNumberRegistered == employeesNumberRegistered &&
       other.country == country &&
       other.city == city &&
       other.address == address &&

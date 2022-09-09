@@ -64,4 +64,23 @@ class Repository {
     await _localDatabase.registerChallenge(challengeRegistry);
     return true;
   }
+
+  Future<bool> isCompanyExist(String companyName) async {
+    var company = await _remoteService.getCompanyFromName(companyName);
+    if (company != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> isEmailExist(String challengeId, String businessEmail) async {
+    var challengeRegistry = await _remoteService
+        .getChallengeRegistryFromBusinessEmail(challengeId, businessEmail);
+    if (challengeRegistry != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

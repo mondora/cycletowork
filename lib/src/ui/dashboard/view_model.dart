@@ -46,7 +46,7 @@ class ViewModel extends ChangeNotifier {
   }
 
   void getter() async {
-    _uiState.loading = true;
+    _uiState.refreshLocationLoading = true;
     notifyListeners();
     try {
       _initAppNotification();
@@ -54,6 +54,9 @@ class ViewModel extends ChangeNotifier {
       await getListUserActivity();
       await _getActiveChallengeList();
       await getListUserActivityFilterd();
+      await _getListChallengeRegistred();
+      await refreshCompanyClassification();
+      await refreshCyclistClassification();
       notifyListeners();
       _uiState.currentPosition = await _getCurrentLocation();
     } catch (e) {
@@ -62,11 +65,14 @@ class ViewModel extends ChangeNotifier {
       Logger.error(e);
     } finally {
       _uiState.loading = false;
+      _uiState.refreshLocationLoading = false;
       notifyListeners();
     }
   }
 
   void startCounter(context) async {
+    _uiState.loading = true;
+    notifyListeners();
     _uiState.counter = 5;
     _trackingPaused = false;
     _challengeActive = await _repository.isChallengeActivity();
@@ -88,6 +94,7 @@ class ViewModel extends ChangeNotifier {
     );
     _listTrackingPosition = [];
 
+    _uiState.loading = false;
     _uiState.dashboardPageOption = DashboardPageOption.startCounter;
     notifyListeners();
     startGetLocation(context);
@@ -127,6 +134,24 @@ class ViewModel extends ChangeNotifier {
     }
   }
 
+  void getActiveChallengeListAndClassification() async {
+    _uiState.loading = true;
+    notifyListeners();
+    try {
+      await _getActiveChallengeList();
+      AppData.user = await _repository.getUserInfo();
+      await _getListChallengeRegistred();
+      await refreshCompanyClassification();
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+    } finally {
+      _uiState.loading = false;
+      notifyListeners();
+    }
+  }
+
   void startGetLocation(context) async {
     await _repository.setGpsConfig(context);
 
@@ -152,13 +177,13 @@ class ViewModel extends ChangeNotifier {
         }
 
         if (_isHaveToAddPossitionToList(locationData)) {
-          addToListTrackingPosition(locationData);
+          _addToListTrackingPosition(locationData);
         }
       }
     });
   }
 
-  void saveTracking(String localeIdentifier) async {
+  Future<bool> saveTracking(String localeIdentifier) async {
     _uiState.loading = true;
     notifyListeners();
     try {
@@ -191,14 +216,18 @@ class ViewModel extends ChangeNotifier {
       );
       await getListUserActivity();
       await getListUserActivityFilterd();
+      _uiState.dashboardPageOption = DashboardPageOption.home;
+      _uiState.loading = false;
+      notifyListeners();
+      return true;
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
       Logger.error(e);
-    } finally {
       _uiState.dashboardPageOption = DashboardPageOption.home;
       _uiState.loading = false;
       notifyListeners();
+      return false;
     }
   }
 
@@ -209,7 +238,7 @@ class ViewModel extends ChangeNotifier {
       _uiState.userActivityPage++;
     }
 
-    _uiState.loading = true;
+    _uiState.refreshLocationLoading = true;
     notifyListeners();
     try {
       var result = await _repository.getListUserActivity(
@@ -230,7 +259,7 @@ class ViewModel extends ChangeNotifier {
       _uiState.error = true;
       Logger.error(e);
     } finally {
-      _uiState.loading = false;
+      _uiState.refreshLocationLoading = false;
       notifyListeners();
     }
   }
@@ -254,7 +283,7 @@ class ViewModel extends ChangeNotifier {
       _uiState.userActivityFilteredPage++;
     }
 
-    _uiState.loading = true;
+    _uiState.refreshLocationLoading = true;
     notifyListeners();
     try {
       var result = await _repository.getListUserActivityFiltered(
@@ -285,7 +314,7 @@ class ViewModel extends ChangeNotifier {
       _uiState.error = true;
       Logger.error(e);
     } finally {
-      _uiState.loading = false;
+      _uiState.refreshLocationLoading = false;
       notifyListeners();
     }
   }
@@ -314,7 +343,7 @@ class ViewModel extends ChangeNotifier {
       currentPosition,
     );
     if (distance > _minDistanceInMeterToAdd) {
-      addToListTrackingPosition(currentPosition);
+      _addToListTrackingPosition(currentPosition);
     }
     _uiState.dashboardPageOption = DashboardPageOption.showMapTracking;
     notifyListeners();
@@ -339,13 +368,15 @@ class ViewModel extends ChangeNotifier {
       currentPosition,
     );
     if (distance > _minDistanceInMeterToAdd) {
-      addToListTrackingPosition(currentPosition);
+      _addToListTrackingPosition(currentPosition);
     }
     _uiState.dashboardPageOption = DashboardPageOption.pauseTracking;
     notifyListeners();
   }
 
   void stopTracking() async {
+    _uiState.loading = true;
+    notifyListeners();
     _trackingPaused = true;
     _timer?.cancel();
     await _locationSubscription?.cancel();
@@ -354,11 +385,12 @@ class ViewModel extends ChangeNotifier {
     _trackingUserActivity!.stopTime =
         DateTime.now().toLocal().millisecondsSinceEpoch;
     _uiState.dashboardPageOption = DashboardPageOption.stopTracking;
+    _uiState.loading = false;
     notifyListeners();
   }
 
   void refreshLocation() async {
-    _uiState.loading = true;
+    _uiState.refreshLocationLoading = true;
     notifyListeners();
     try {
       _uiState.currentPosition = await _getCurrentLocation();
@@ -367,7 +399,7 @@ class ViewModel extends ChangeNotifier {
       _uiState.error = true;
       Logger.error(e);
     } finally {
-      _uiState.loading = false;
+      _uiState.refreshLocationLoading = false;
       notifyListeners();
     }
   }
@@ -391,6 +423,167 @@ class ViewModel extends ChangeNotifier {
         .firstWhere((x) => x.name == appBottomNavBarOption.name);
     _uiState.appMenuOption = findMenuOption;
     _uiState.showAppBarAction = _checkShowAppBarAction(findMenuOption);
+    notifyListeners();
+  }
+
+  Future<void> refreshCyclistClassification({
+    bool? nextPage,
+  }) async {
+    if (_uiState.listChallengeRegistred.isEmpty ||
+        _uiState.challengeRegistrySelected == null) {
+      return;
+    }
+
+    _uiState.refreshLocationLoading = true;
+    notifyListeners();
+    try {
+      var challengeRegistry = _uiState.challengeRegistrySelected!;
+      _uiState.userCyclistClassification =
+          await _repository.getUserCyclistClassification(
+        challengeRegistry,
+      );
+
+      if (nextPage == true) {
+        _uiState.listCyclistClassificationPage++;
+      } else {
+        _uiState.lastCyclistClassificationRankingCo2 = null;
+        _uiState.listCyclistClassificationPage = 0;
+        _uiState.listCyclistClassification = [];
+      }
+
+      var pageSize = _uiState.listCyclistClassificationPageSize;
+      var page = _uiState.listCyclistClassificationPage;
+      var lastRankingCo2 = _uiState.lastCyclistClassificationRankingCo2;
+
+      var result = await _repository.getListCyclistClassificationByRankingCo2(
+        challengeRegistry,
+        page,
+        pageSize,
+        lastRankingCo2,
+      );
+      if (nextPage == true) {
+        if (result.isNotEmpty) {
+          _uiState.listCyclistClassification.addAll(result);
+          _uiState.lastCyclistClassificationRankingCo2 = result.last.rankingCo2;
+        } else {
+          _uiState.listCyclistClassificationPage--;
+        }
+      } else {
+        if (result.isNotEmpty) {
+          _uiState.listCyclistClassification = result;
+          _uiState.lastCyclistClassificationRankingCo2 = result.last.rankingCo2;
+        }
+      }
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+    } finally {
+      _uiState.refreshLocationLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> refreshCompanyClassification({
+    bool? nextPage,
+  }) async {
+    if (_uiState.listChallengeRegistred.isEmpty ||
+        _uiState.challengeRegistrySelected == null) {
+      return;
+    }
+
+    _uiState.refreshLocationLoading = true;
+    notifyListeners();
+    try {
+      var challengeRegistry = _uiState.challengeRegistrySelected!;
+      _uiState.userCompanyClassification =
+          await _repository.getUserCompanyClassification(
+        challengeRegistry,
+      );
+      if (_uiState.listCompanyClassificationOrderByRankingCo2) {
+        if (nextPage == true) {
+          _uiState.listCompanyClassificationRankingCo2Page++;
+        } else {
+          _uiState.lastCompanyClassificationRankingCo2 = null;
+          _uiState.listCompanyClassificationRankingCo2Page = 0;
+          _uiState.listCompanyClassificationRankingCo2 = [];
+        }
+
+        var pageSize = _uiState.listCompanyClassificationRankingCo2PageSize;
+        var page = _uiState.listCompanyClassificationRankingCo2Page;
+        var lastRankingCo2 = _uiState.lastCompanyClassificationRankingCo2;
+
+        var result = await _repository.getListCompanyClassificationByRankingCo2(
+          challengeRegistry,
+          page,
+          pageSize,
+          lastRankingCo2,
+        );
+        if (nextPage == true) {
+          if (result.isNotEmpty) {
+            _uiState.listCompanyClassificationRankingCo2.addAll(result);
+            _uiState.lastCompanyClassificationRankingCo2 =
+                result.last.rankingCo2;
+          } else {
+            _uiState.listCompanyClassificationRankingCo2Page--;
+          }
+        } else {
+          if (result.isNotEmpty) {
+            _uiState.listCompanyClassificationRankingCo2 = result;
+            _uiState.lastCompanyClassificationRankingCo2 =
+                result.last.rankingCo2;
+          }
+        }
+      } else {
+        if (nextPage == true) {
+          _uiState.listCompanyClassificationRankingRegisteredPage++;
+        } else {
+          _uiState.lastCompanyClassificationRankingRegistered = null;
+          _uiState.listCompanyClassificationRankingRegisteredPage = 0;
+          _uiState.listCompanyClassificationRankingRegistered = [];
+        }
+
+        var pageSize =
+            _uiState.listCompanyClassificationRankingRegisteredPageSize;
+        var page = _uiState.listCompanyClassificationRankingRegisteredPage;
+        var lastPercentRegistered =
+            _uiState.lastCompanyClassificationRankingRegistered;
+
+        var result = await _repository
+            .getListCompanyClassificationByRankingPercentRegistered(
+          challengeRegistry,
+          page,
+          pageSize,
+          lastPercentRegistered,
+        );
+        if (nextPage == true) {
+          if (result.isNotEmpty) {
+            _uiState.listCompanyClassificationRankingRegistered.addAll(result);
+            _uiState.lastCompanyClassificationRankingRegistered =
+                result.last.rankingPercentRegistered;
+          } else {
+            _uiState.listCompanyClassificationRankingRegisteredPage--;
+          }
+        } else {
+          if (result.isNotEmpty) {
+            _uiState.listCompanyClassificationRankingRegistered = result;
+            _uiState.lastCompanyClassificationRankingRegistered =
+                result.last.rankingPercentRegistered;
+          }
+        }
+      }
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+    } finally {
+      _uiState.refreshLocationLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void setListCompanyClassificationOrderByRankingCo2(bool value) {
+    _uiState.listCompanyClassificationOrderByRankingCo2 = value;
     notifyListeners();
   }
 
@@ -432,8 +625,6 @@ class ViewModel extends ChangeNotifier {
     );
     if (distanceInMeter < _minDistanceInMeterToAdd) return false;
 
-    if (distanceInMeter >= (_minDistanceInMeterToAdd * 2)) return true;
-
     if (_listTrackingPosition.length == 1) return true;
 
     var preLastPosition =
@@ -452,7 +643,7 @@ class ViewModel extends ChangeNotifier {
     return true;
   }
 
-  void addToListTrackingPosition(LocationData locationData) {
+  void _addToListTrackingPosition(LocationData locationData) {
     locationData.locationDataId = const Uuid().v4();
     locationData.userActivityId = _trackingUserActivity!.userActivityId;
     if (_listTrackingPosition.isEmpty) {
@@ -485,6 +676,15 @@ class ViewModel extends ChangeNotifier {
 
   Future<void> _getActiveChallengeList() async {
     _uiState.listChallengeActive = await _repository.getActiveChallengeList();
+    notifyListeners();
+  }
+
+  Future<void> _getListChallengeRegistred() async {
+    var result = await _repository.getListChallengeRegistred();
+    if (result.isNotEmpty) {
+      _uiState.listChallengeRegistred = result;
+      _uiState.challengeRegistrySelected = result.first;
+    }
     notifyListeners();
   }
 

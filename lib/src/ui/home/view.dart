@@ -165,7 +165,8 @@ class _HomeViewState extends State<HomeView> {
                             ),
                           ),
                         );
-                        dashboardModel.getActiveChallengeList();
+                        dashboardModel
+                            .getActiveChallengeListAndClassification();
                       }
                     },
                   ),

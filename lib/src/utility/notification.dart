@@ -86,4 +86,8 @@ class AppNotification {
   static Stream<RemoteMessage> get onMessageOpenedApp {
     return FirebaseMessaging.onMessageOpenedApp;
   }
+
+  static void requestPermission() {
+    FirebaseMessaging.instance.requestPermission();
+  }
 }

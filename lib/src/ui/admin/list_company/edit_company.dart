@@ -288,7 +288,6 @@ class EditCompanyDialog {
                                 TextButton(
                                   style: TextButton.styleFrom(
                                     padding: const EdgeInsets.all(16.0),
-                                    primary: colorScheme.secondary,
                                     shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(15.0),
@@ -459,6 +458,7 @@ class EditCompanyDialog {
                                             category: category,
                                             employeesNumber:
                                                 int.parse(employeesNumber),
+                                            employeesNumberRegistered: 0,
                                             country: country,
                                             city: city,
                                             address: address,

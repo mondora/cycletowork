@@ -1,5 +1,6 @@
 import 'package:cycletowork/src/data/app_service.dart';
 import 'package:cycletowork/src/data/challenge.dart';
+import 'package:cycletowork/src/data/classification.dart';
 import 'package:cycletowork/src/data/company.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/survey.dart';
@@ -42,7 +43,7 @@ class RemoteService
   @override
   Future<User> getUserInfo() async {
     var map = await Remote.callFirebaseFunctions('getUserInfo', null);
-    return User.fromMap(map);
+    return User.fromMap(Map<String, dynamic>.from(map));
   }
 
   @override
@@ -237,6 +238,23 @@ class RemoteService
   }
 
   @override
+  Future<List<ChallengeRegistry>> getListActiveRegisterdChallenge() async {
+    var map = await Remote.callFirebaseFunctions(
+        'getListActiveRegisterdChallenge', null);
+    return map
+        .map<ChallengeRegistry>((json) =>
+            ChallengeRegistry.fromMap(Map<String, dynamic>.from(json)))
+        .toList();
+  }
+
+  @override
+  Future<Company?> getCompanyFromName(String companyName) async {
+    var arg = {'companyName': companyName};
+    var map = await Remote.callFirebaseFunctions('getCompanyFromName', arg);
+    return map != null ? Company.fromMap(Map<String, dynamic>.from(map)) : null;
+  }
+
+  @override
   Future<List<ChallengeRegistry>> getListRegisterdChallenge() async {
     var map =
         await Remote.callFirebaseFunctions('getListRegisterdChallenge', null);
@@ -244,5 +262,129 @@ class RemoteService
         .map<ChallengeRegistry>((json) =>
             ChallengeRegistry.fromMap(Map<String, dynamic>.from(json)))
         .toList();
+  }
+
+  @override
+  Future<List<CompanyClassification>> getListCompanyClassificationByRankingCo2(
+    String challengeId, {
+    int pageSize = 50,
+    int? lastRankingCo2,
+  }) async {
+    var arg = {
+      'challengeId': challengeId,
+      'pagination': {
+        'pageSize': pageSize,
+        'lastRankingCo2': lastRankingCo2,
+      }
+    };
+    var map = await Remote.callFirebaseFunctions(
+      'getListCompanyClassificationByRankingCo2',
+      arg,
+    );
+    return map
+        .map<CompanyClassification>(
+          (json) =>
+              CompanyClassification.fromMap(Map<String, dynamic>.from(json)),
+        )
+        .toList();
+  }
+
+  @override
+  Future<List<CompanyClassification>>
+      getListCompanyClassificationByRankingPercentRegistered(
+    String challengeId,
+    int companyEmployeesNumber, {
+    int pageSize = 50,
+    int? lastPercentRegistered,
+  }) async {
+    var arg = {
+      'challengeId': challengeId,
+      'companyEmployeesNumber': companyEmployeesNumber,
+      'pagination': {
+        'pageSize': pageSize,
+        'lastPercentRegistered': lastPercentRegistered,
+      }
+    };
+    var map = await Remote.callFirebaseFunctions(
+      'getListCompanyClassificationByRankingPercentRegistered',
+      arg,
+    );
+    return map
+        .map<CompanyClassification>(
+          (json) =>
+              CompanyClassification.fromMap(Map<String, dynamic>.from(json)),
+        )
+        .toList();
+  }
+
+  @override
+  Future<List<CyclistClassification>> getListCyclistClassificationByRankingCo2(
+    String challengeId, {
+    int pageSize = 50,
+    int? lastRankingCo2,
+  }) async {
+    var arg = {
+      'challengeId': challengeId,
+      'pagination': {
+        'pageSize': pageSize,
+        'lastRankingCo2': lastRankingCo2,
+      }
+    };
+    var map = await Remote.callFirebaseFunctions(
+      'getListCyclistClassificationByRankingCo2',
+      arg,
+    );
+    return map
+        .map<CyclistClassification>(
+          (json) =>
+              CyclistClassification.fromMap(Map<String, dynamic>.from(json)),
+        )
+        .toList();
+  }
+
+  @override
+  Future<CompanyClassification?> getUserCompanyClassification(
+    String challengeId,
+    String companyId,
+  ) async {
+    var arg = {
+      'challengeId': challengeId,
+      'companyId': companyId,
+    };
+    var map =
+        await Remote.callFirebaseFunctions('getUserCompanyClassification', arg);
+    return map != null
+        ? CompanyClassification.fromMap(Map<String, dynamic>.from(map))
+        : null;
+  }
+
+  @override
+  Future<CyclistClassification?> getUserCyclistClassification(
+    String challengeId,
+  ) async {
+    var arg = {
+      'challengeId': challengeId,
+    };
+    var map =
+        await Remote.callFirebaseFunctions('getUserCyclistClassification', arg);
+    return map != null
+        ? CyclistClassification.fromMap(Map<String, dynamic>.from(map))
+        : null;
+  }
+
+  @override
+  Future<ChallengeRegistry?> getChallengeRegistryFromBusinessEmail(
+    String challengeId,
+    String businessEmail,
+  ) async {
+    var arg = {
+      'challengeId': challengeId,
+      'businessEmail': businessEmail,
+    };
+    var map = await Remote.callFirebaseFunctions(
+        'getChallengeRegistryFromBusinessEmail', arg);
+    return map != null
+        ? ChallengeRegistry.fromMap(Map<String, dynamic>.from(map))
+        : null;
   }
 }

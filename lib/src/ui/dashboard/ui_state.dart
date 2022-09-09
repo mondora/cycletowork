@@ -1,5 +1,6 @@
 import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/chart_data.dart';
+import 'package:cycletowork/src/data/classification.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/utility/gps.dart';
@@ -32,6 +33,7 @@ enum AppMenuOption {
 
 class UiState {
   bool loading = false;
+  bool refreshLocationLoading = false;
   bool error = false;
   bool showAppBarAction = true;
   String errorMessage = '';
@@ -51,6 +53,26 @@ class UiState {
   AppMenuOption appMenuOption = AppMenuOption.home;
   GpsStatus gpsStatus = GpsStatus.turnOff;
   List<Challenge> listChallengeActive = [];
+  List<ChallengeRegistry> listChallengeRegistred = [];
+  ChallengeRegistry? challengeRegistrySelected;
+
+  bool listCompanyClassificationOrderByRankingCo2 = true;
+  List<CompanyClassification> listCompanyClassificationRankingCo2 = [];
+  int? lastCompanyClassificationRankingCo2;
+  int listCompanyClassificationRankingCo2PageSize = 20;
+  int listCompanyClassificationRankingCo2Page = 0;
+
+  List<CompanyClassification> listCompanyClassificationRankingRegistered = [];
+  int? lastCompanyClassificationRankingRegistered;
+  int listCompanyClassificationRankingRegisteredPageSize = 20;
+  int listCompanyClassificationRankingRegisteredPage = 0;
+  CompanyClassification? userCompanyClassification;
+
+  List<CyclistClassification> listCyclistClassification = [];
+  int? lastCyclistClassificationRankingCo2;
+  int listCyclistClassificationPageSize = 20;
+  int listCyclistClassificationPage = 0;
+  CyclistClassification? userCyclistClassification;
 }
 
 class UserActivityChartData {

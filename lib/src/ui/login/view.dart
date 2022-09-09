@@ -48,7 +48,7 @@ class LoginView extends StatelessWidget {
                       Container(
                         margin: const EdgeInsets.only(top: 20.0),
                         child: Text(
-                          AppLocalizations.of(context)!.iHaveAlreadyAnAccount,
+                          'Hai già un account?'.toUpperCase(),
                           style: Theme.of(context).textTheme.caption,
                         ),
                       ),
@@ -77,24 +77,24 @@ class LoginView extends StatelessWidget {
                       Container(
                         margin: const EdgeInsets.only(top: 24.0),
                         child: Text(
-                          AppLocalizations.of(context)!.createANewAccount,
+                          'Oppure:'.toUpperCase(),
                           style: Theme.of(context).textTheme.caption,
                         ),
                       ),
-                      Container(
-                        margin: const EdgeInsets.only(
-                          top: 10.0,
-                        ),
-                        child: AppButton(
-                          loading: loading,
-                          onPressed: () {},
-                          title:
-                              AppLocalizations.of(context)!.signupWithFacebook,
-                          textUpperCase: true,
-                          type: ButtonType.facebookLogin,
-                          radius: 8.0,
-                        ),
-                      ),
+                      // Container(
+                      //   margin: const EdgeInsets.only(
+                      //     top: 10.0,
+                      //   ),
+                      //   child: AppButton(
+                      //     loading: loading,
+                      //     onPressed: () {},
+                      //     title:
+                      //         AppLocalizations.of(context)!.signupWithFacebook,
+                      //     textUpperCase: true,
+                      //     type: ButtonType.facebookLogin,
+                      //     radius: 8.0,
+                      //   ),
+                      // ),
                       Container(
                         margin: const EdgeInsets.only(
                           top: 14.0,
@@ -115,7 +115,7 @@ class LoginView extends StatelessWidget {
                               ),
                               child: AppButton(
                                 loading: loading,
-                                onPressed: () {},
+                                onPressed: landingModel.loginApple,
                                 title: 'Accedi con Apple',
                                 textUpperCase: true,
                                 type: ButtonType.appleLogin,

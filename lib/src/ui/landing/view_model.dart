@@ -52,16 +52,25 @@ class ViewModel extends ChangeNotifier {
     }
   }
 
-  void loginGoogleSignIn() async {
-    debugPrint('loginGoogleSignIn');
+  void loginApple() async {
+    debugPrint('loginApple');
     _uiState.pageOption = PageOption.loading;
     notifyListeners();
     try {
-      await _repository.loginGoogleSignIn();
+      await _repository.loginApple();
       var isAuthenticated = _repository.isAuthenticated();
       if (isAuthenticated) {
-        await _getInitialInfo();
-        _uiState.pageOption = PageOption.home;
+        Timer(const Duration(seconds: 4), () async {
+          try {
+            await _getInitialInfo();
+            _uiState.pageOption = PageOption.home;
+            notifyListeners();
+          } catch (e) {
+            Logger.error(e);
+            _uiState.pageOption = PageOption.logout;
+            notifyListeners();
+          }
+        });
       } else {
         _uiState.pageOption = PageOption.logout;
       }
@@ -71,7 +80,36 @@ class ViewModel extends ChangeNotifier {
       Logger.error(e);
       _uiState.pageOption = PageOption.logout;
       notifyListeners();
-    } finally {
+    }
+  }
+
+  void loginGoogleSignIn() async {
+    debugPrint('loginGoogleSignIn');
+    _uiState.pageOption = PageOption.loading;
+    notifyListeners();
+    try {
+      await _repository.loginGoogleSignIn();
+      var isAuthenticated = _repository.isAuthenticated();
+      if (isAuthenticated) {
+        Timer(const Duration(seconds: 4), () async {
+          try {
+            await _getInitialInfo();
+            _uiState.pageOption = PageOption.home;
+            notifyListeners();
+          } catch (e) {
+            Logger.error(e);
+            _uiState.pageOption = PageOption.logout;
+            notifyListeners();
+          }
+        });
+      } else {
+        _uiState.pageOption = PageOption.logout;
+      }
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+      _uiState.pageOption = PageOption.logout;
       notifyListeners();
     }
   }
@@ -84,8 +122,17 @@ class ViewModel extends ChangeNotifier {
       await _repository.loginEmail(email, password);
       var isAuthenticated = _repository.isAuthenticated();
       if (isAuthenticated) {
-        await _getInitialInfo();
-        _uiState.pageOption = PageOption.home;
+        Timer(const Duration(seconds: 4), () async {
+          try {
+            await _getInitialInfo();
+            _uiState.pageOption = PageOption.home;
+            notifyListeners();
+          } catch (e) {
+            Logger.error(e);
+            _uiState.pageOption = PageOption.logout;
+            notifyListeners();
+          }
+        });
       } else {
         _uiState.pageOption = PageOption.logout;
       }
@@ -94,8 +141,6 @@ class ViewModel extends ChangeNotifier {
       _uiState.error = true;
       Logger.error(e);
       _uiState.pageOption = PageOption.logout;
-      notifyListeners();
-    } finally {
       notifyListeners();
     }
   }
@@ -109,18 +154,26 @@ class ViewModel extends ChangeNotifier {
       displayName = name;
       var isAuthenticated = _repository.isAuthenticated();
       if (isAuthenticated) {
-        await _getInitialInfo();
-        _uiState.pageOption = PageOption.home;
+        Timer(const Duration(seconds: 4), () async {
+          try {
+            await _getInitialInfo();
+            _uiState.pageOption = PageOption.home;
+            notifyListeners();
+          } catch (e) {
+            Logger.error(e);
+            _uiState.pageOption = PageOption.logout;
+            notifyListeners();
+          }
+        });
       } else {
         _uiState.pageOption = PageOption.logout;
+        notifyListeners();
       }
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
       Logger.error(e);
       _uiState.pageOption = PageOption.logout;
-      notifyListeners();
-    } finally {
       notifyListeners();
     }
   }

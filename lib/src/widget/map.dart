@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:math';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:cycletowork/src/utility/convert.dart';
@@ -97,7 +95,6 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
   }
 
   void setMarker(double latitude, double longitude) {
-    print('setMarker');
     _markers = [];
     Marker mark;
     if (_markerIcon != null) {
@@ -217,7 +214,7 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
     if (_markerIcon == null) {
       final Uint8List markerIcon = await getBytesFromAsset(
         'assets/images/marker_image.png',
-        150,
+        130,
       );
       _markerIcon = BitmapDescriptor.fromBytes(markerIcon);
     }

@@ -16,16 +16,26 @@ class RegisterChallengSelectTypeView extends StatelessWidget {
         Theme.of(context).extension<ColorSchemeExtension>()!;
     var textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(),
-      body: Container(
-        margin: const EdgeInsets.only(
-          top: 20.0,
-          right: 35.0,
-          left: 35.0,
-          bottom: 30.0,
+      appBar: AppBar(
+        leading: IconButton(
+          splashRadius: 25.0,
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: colorScheme.onBackground,
+            size: 20,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
+      ),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 20.0,
+            right: 35.0,
+            left: 35.0,
+            bottom: 30.0,
+          ),
           child: Column(
             children: [
               Text(

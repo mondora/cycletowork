@@ -23,7 +23,7 @@ class DetailsTrackingView extends StatelessWidget {
     final GlobalKey<AppMapState> _mapKey = GlobalKey();
 
     return ChangeNotifierProvider<ViewModel>(
-      create: (_) => ViewModel.instance(context, userActivity),
+      create: (_) => ViewModel.instance(userActivity),
       child: Consumer<ViewModel>(
         builder: (context, viewModel, child) {
           var textTheme = Theme.of(context).textTheme;
@@ -55,6 +55,15 @@ class DetailsTrackingView extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
+              leading: IconButton(
+                splashRadius: 25.0,
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  color: colorScheme.onBackground,
+                  size: 20,
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
               actions: [
                 IconButton(
                   onPressed: () {},
@@ -128,29 +137,34 @@ class DetailsTrackingView extends StatelessWidget {
                   const SizedBox(
                     height: 10.0,
                   ),
-                  SizedBox(
-                    height: 327.0,
-                    child: listLocationData.isNotEmpty && imageData == null
-                        ? AppMap(
-                            key: _mapKey,
-                            listTrackingPosition: listLocationData,
-                            type: AppMapType.static,
-                            fit: BoxFit.fitWidth,
-                            isChallenge: isChallenge,
-                            height: 327.0,
-                          )
-                        : imageData != null
-                            ? Image.memory(
-                                imageData,
-                                fit: BoxFit.fill,
+                  ClipRRect(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                    child: SizedBox(
+                        height: 327.0,
+                        child: listLocationData.isNotEmpty && imageData == null
+                            ? AppMap(
+                                key: _mapKey,
+                                listTrackingPosition: listLocationData,
+                                type: AppMapType.static,
+                                fit: BoxFit.fitWidth,
+                                isChallenge: isChallenge,
                                 height: 327.0,
-                                width: 327.0,
                               )
-                            : Container(
-                                color: userActivity.isChallenge == 1
-                                    ? colorScheme.secondary.withOpacity(0.75)
-                                    : colorScheme.primary.withOpacity(0.30),
-                              ),
+                            : imageData != null
+                                ? Image.memory(
+                                    imageData,
+                                    fit: BoxFit.fill,
+                                    height: 327.0,
+                                    width: 327.0,
+                                  )
+                                : Image.asset(
+                                    'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking_details.png',
+                                    fit: BoxFit.cover,
+                                    height: 327.0,
+                                    width: 327.0,
+                                  )),
                   ),
                   const SizedBox(
                     height: 20.0,

@@ -28,7 +28,6 @@ class ProfileView extends StatelessWidget {
               TextButton(
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.all(16.0),
-                  primary: colorScheme.secondary,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(
                       Radius.circular(15.0),

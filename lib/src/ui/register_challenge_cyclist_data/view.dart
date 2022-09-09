@@ -33,9 +33,6 @@ class _RegisterChallengCyclistDataViewState
     var zipCode = viewModel.uiState.challengeRegistry.zipCode;
     var address = viewModel.uiState.challengeRegistry.address;
     var city = viewModel.uiState.challengeRegistry.city;
-    var businessZipCode = viewModel.uiState.challengeRegistry.businessZipCode;
-    var businessAddress = viewModel.uiState.challengeRegistry.businessAddress;
-    var businessCity = viewModel.uiState.challengeRegistry.businessCity;
     var responsedQuestions = _isAnswerSurveyResponseAnswers(surveyResponse!);
 
     var colorScheme = Theme.of(context).colorScheme;
@@ -43,14 +40,24 @@ class _RegisterChallengCyclistDataViewState
         Theme.of(context).extension<ColorSchemeExtension>()!;
     var textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(),
-      body: Container(
-        margin: const EdgeInsets.only(
-          top: 20.0,
-          bottom: 30.0,
+      appBar: AppBar(
+        leading: IconButton(
+          splashRadius: 25.0,
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: colorScheme.onBackground,
+            size: 20,
+          ),
+          onPressed: () => viewModel.gotoCyclistRegistration(),
         ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
+      ),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 20.0,
+            bottom: 30.0,
+          ),
           child: Form(
             key: formKey,
             child: Column(
@@ -238,75 +245,6 @@ class _RegisterChallengCyclistDataViewState
                 const SizedBox(
                   height: 30.0,
                 ),
-                Container(
-                  margin: const EdgeInsets.only(right: 24.0, left: 24.0),
-                  child: TextFormField(
-                    maxLength: 5,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
-                    textInputAction: TextInputAction.next,
-                    decoration: const InputDecoration(
-                      labelText: 'CAP del luogo di lavoro *',
-                    ),
-                    initialValue: businessZipCode,
-                    onChanged: (value) => viewModel.setBusinessZipCode(value),
-                    validator: (value) {
-                      if (value == null || value.isEmpty || value.length < 5) {
-                        return 'Inserire CAP del luogo di lavoro';
-                      }
-
-                      return null;
-                    },
-                  ),
-                ),
-                const SizedBox(
-                  height: 30.0,
-                ),
-                Container(
-                  margin: const EdgeInsets.only(right: 24.0, left: 24.0),
-                  child: TextFormField(
-                    maxLength: 40,
-                    keyboardType: TextInputType.text,
-                    textInputAction: TextInputAction.next,
-                    decoration: const InputDecoration(
-                      labelText: 'Indirizzo del luogo di lavoro *',
-                    ),
-                    initialValue: businessAddress,
-                    onChanged: (value) => viewModel.setBusinessAddress(value),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Inserire indirizzo del luogo di lavoro';
-                      }
-
-                      return null;
-                    },
-                  ),
-                ),
-                const SizedBox(
-                  height: 30.0,
-                ),
-                Container(
-                  margin: const EdgeInsets.only(right: 24.0, left: 24.0),
-                  child: TextFormField(
-                    maxLength: 30,
-                    keyboardType: TextInputType.text,
-                    textInputAction: TextInputAction.next,
-                    decoration: const InputDecoration(
-                      labelText: 'Città del luogo di lavoro *',
-                    ),
-                    initialValue: businessCity,
-                    onChanged: (value) => viewModel.setBusinessCity(value),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Inserire città del luogo di lavoro *';
-                      }
-
-                      return null;
-                    },
-                  ),
-                ),
                 if (listQuestion.isNotEmpty)
                   Container(
                     margin: const EdgeInsets.only(
@@ -483,7 +421,7 @@ class _RegisterChallengCyclistDataViewState
                 ),
                 Center(
                   child: SizedBox(
-                    width: 155.0,
+                    width: 165.0,
                     height: 36.0,
                     child: ElevatedButton(
                       onPressed: acceptPrivacy && responsedQuestions
@@ -524,7 +462,7 @@ class _RegisterChallengCyclistDataViewState
                 ),
                 Center(
                   child: SizedBox(
-                    width: 155.0,
+                    width: 165.0,
                     height: 36.0,
                     child: OutlinedButton(
                       onPressed: viewModel.gotoCyclistRegistration,

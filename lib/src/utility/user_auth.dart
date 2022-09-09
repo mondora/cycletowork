@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -8,7 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 class UserAuth {
   static final GoogleSignIn _googleSignInForIos = GoogleSignIn(
     clientId: dotenv.env['IOS_FIREBASE_CLIENT_ID']!,
-    serverClientId: dotenv.env['IOS_FIREBASE_SERVER_CLIENT_ID']!,
+    // serverClientId: dotenv.env['IOS_FIREBASE_SERVER_CLIENT_ID']!,
   );
   static final GoogleSignIn _googleSignInForWeb = GoogleSignIn();
   static final GoogleSignIn _googleSignInForAndroid = GoogleSignIn();
@@ -54,6 +53,12 @@ class UserAuth {
       idToken: googleSignInAuthentication.idToken,
     );
     await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  static Future<void> loginApple() async {
+    final appleProvider = AppleAuthProvider();
+    appleProvider.addScope('email');
+    await FirebaseAuth.instance.signInWithAuthProvider(appleProvider);
   }
 
   static Future<bool?> signupEmail(String email, String password) async {
@@ -137,11 +142,5 @@ class UserAuth {
     } else {
       return null;
     }
-  }
-
-  static Future<String> _getToken(User user) async {
-    var token = await user.getIdToken();
-    debugPrint('Firebase token: Bearer $token');
-    return token;
   }
 }

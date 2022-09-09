@@ -43,7 +43,7 @@ class SettingsView extends StatelessWidget {
           ),
           Container(
             height: 1.5,
-            color: Color.fromRGBO(0, 0, 0, 0.12),
+            color: const Color.fromRGBO(0, 0, 0, 0.12),
           ),
           SizedBox(
             height: 63.0,
@@ -68,7 +68,7 @@ class SettingsView extends StatelessWidget {
           ),
           Container(
             height: 1.5,
-            color: Color.fromRGBO(0, 0, 0, 0.12),
+            color: const Color.fromRGBO(0, 0, 0, 0.12),
           ),
         ],
       ),

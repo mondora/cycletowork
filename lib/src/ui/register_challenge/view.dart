@@ -37,10 +37,15 @@ class RegisterChallengeView extends StatelessWidget {
                       SnackBar(
                         backgroundColor: colorScheme.error,
                         content: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.error,
                               color: colorScheme.onError,
+                            ),
+                            const SizedBox(
+                              width: 8,
                             ),
                             Expanded(
                               child: Text(

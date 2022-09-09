@@ -22,8 +22,8 @@ enum TrackingOption {
 class StopTrackingView extends StatefulWidget {
   final List<LocationData> listTrackingPosition;
   final UserActivity trackingUserActivity;
-  final GestureTapCancelCallback? saveTracking;
-  final GestureTapCancelCallback? removeTracking;
+  final GestureTapCancelCallback saveTracking;
+  final GestureTapCancelCallback removeTracking;
 
   const StopTrackingView({
     Key? key,
@@ -386,7 +386,48 @@ class _StopTrackingViewState extends State<StopTrackingView> {
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
                     backgroundColor: colorScheme.error,
-                    onPressed: widget.removeTracking,
+                    onPressed: () async {
+                      bool? isConfirmed = await showDialog<bool>(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10.0),
+                            ),
+                          ),
+                          content: Text(
+                            'SEI SICURO DI CANCELLARE?',
+                            style: textTheme.bodyText1,
+                          ),
+                          actions: <Widget>[
+                            ElevatedButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              child: Text(
+                                'CANCELLA',
+                                style: textTheme.button!.copyWith(
+                                  color: colorScheme.onSecondary,
+                                ),
+                              ),
+                              style: ButtonStyle(
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                  colorScheme.error,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (isConfirmed == true) {
+                        widget.removeTracking();
+                      }
+                    },
                     label: const Icon(
                       Icons.delete_forever,
                     ),

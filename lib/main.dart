@@ -1,5 +1,7 @@
-import 'package:cycletowork/src/admin_app.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:async';
+
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 
 import 'package:cycletowork/src/app.dart';
 import 'package:cycletowork/src/color.dart';
@@ -13,16 +15,27 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'firebase_options.dart';
 
 void main() async {
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded<Future<void>>(() async {
+    WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  await dotenv.load(fileName: '.env');
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    if (kDebugMode) {
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+    } else {
+      FlutterError.onError =
+          FirebaseCrashlytics.instance.recordFlutterFatalError;
+    }
 
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  await AppColor.initialize();
-  await Gps.initialize();
-  await AppNotification.initialize();
-  runApp(const CycleToWorkApp());
+    await dotenv.load(fileName: '.env');
+
+    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+    await AppColor.initialize();
+    await Gps.initialize();
+    await AppNotification.initialize();
+    runApp(const CycleToWorkApp());
+  },
+      (error, stack) =>
+          FirebaseCrashlytics.instance.recordError(error, stack, fatal: true));
 }

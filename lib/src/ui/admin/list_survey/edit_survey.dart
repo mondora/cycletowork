@@ -1,8 +1,6 @@
-import 'package:cycletowork/src/data/company.dart';
 import 'package:cycletowork/src/data/survey.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 
 class EditSurveyDialog {
   final BuildContext context;
@@ -158,7 +156,6 @@ class EditSurveyDialog {
                                 TextButton(
                                   style: TextButton.styleFrom(
                                     padding: const EdgeInsets.all(16.0),
-                                    primary: colorScheme.secondary,
                                     shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(15.0),
@@ -392,12 +389,12 @@ class EditSurveyDialog {
                                       onPressed: () {
                                         if (formKey.currentState!.validate()) {
                                           var isSame = true;
-                                          String id;
+                                          // String id;
                                           if (survey == null) {
                                             isSame = false;
-                                            id = const Uuid().v4();
+                                            // id = const Uuid().v4();
                                           } else {
-                                            id = survey!.id;
+                                            // id = survey!.id;
                                           }
                                           // var name = nameController.text;
                                           // var category =
@@ -486,30 +483,30 @@ class EditSurveyDialog {
     }
   }
 
-  List<Department> _getDepartment(
-      Company? company, List<TextEditingController> listDepartmentController) {
-    if (company == null) {
-      return listDepartmentController
-          .map(
-            (element) => Department(id: const Uuid().v4(), name: element.text),
-          )
-          .toList();
-    } else {
-      List<Department> list = [];
-      for (var index = 0; index < listDepartmentController.length; index++) {
-        Department department = Department(
-          id: '',
-          name: listDepartmentController[index].text,
-        );
-        try {
-          var element = company.listDepartment!.elementAt(index);
-          department.id = element.id;
-        } catch (e) {
-          department.id = const Uuid().v4();
-        }
-        list.add(department);
-      }
-      return list;
-    }
-  }
+  // List<Department> _getDepartment(
+  //     Company? company, List<TextEditingController> listDepartmentController) {
+  //   if (company == null) {
+  //     return listDepartmentController
+  //         .map(
+  //           (element) => Department(id: const Uuid().v4(), name: element.text),
+  //         )
+  //         .toList();
+  //   } else {
+  //     List<Department> list = [];
+  //     for (var index = 0; index < listDepartmentController.length; index++) {
+  //       Department department = Department(
+  //         id: '',
+  //         name: listDepartmentController[index].text,
+  //       );
+  //       try {
+  //         var element = company.listDepartment!.elementAt(index);
+  //         department.id = element.id;
+  //       } catch (e) {
+  //         department.id = const Uuid().v4();
+  //       }
+  //       list.add(department);
+  //     }
+  //     return list;
+  //   }
+  // }
 }

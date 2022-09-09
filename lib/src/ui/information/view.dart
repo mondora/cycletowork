@@ -5,7 +5,6 @@ class InformationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var colorScheme = Theme.of(context).colorScheme;
     var textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -80,7 +79,7 @@ class _InformationItem extends StatelessWidget {
         ),
         Container(
           height: 1.5,
-          color: Color.fromRGBO(0, 0, 0, 0.12),
+          color: const Color.fromRGBO(0, 0, 0, 0.12),
         ),
       ],
     );

@@ -29,7 +29,17 @@ class _SurveyViewState extends State<SurveyView> {
     var colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        leading: IconButton(
+          splashRadius: 25.0,
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: colorScheme.onBackground,
+            size: 20,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: ListView(
         padding: const EdgeInsets.only(left: 26.0, right: 24.0),
         children: [

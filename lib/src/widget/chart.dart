@@ -91,9 +91,6 @@ class Chart extends StatelessWidget {
       },
     );
 
-    var date = DateTime.now();
-    var dayOfMonth = DateTime(date.year, date.month + 1, 0).day;
-
     if (type == ChartType.speed || type == ChartType.altitude) {
       return SizedBox(
         height: height,

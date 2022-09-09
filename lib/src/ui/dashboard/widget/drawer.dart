@@ -18,90 +18,94 @@ class AppDrawer extends StatelessWidget {
 
     return Drawer(
       width: screenWidth * 0.85,
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          SizedBox(
-            height: closeSize,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Expanded(
-                  child: Container(),
-                ),
-                SizedBox(
-                  height: closeSize,
-                  width: closeSize,
-                  child: IconButton(
-                    splashRadius: closeSize / 2,
-                    iconSize: closeSize,
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: SvgPicture.asset(
-                      'assets/icons/close.svg',
+          Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: closeSize,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: Container(),
+                    ),
+                    SizedBox(
                       height: closeSize,
                       width: closeSize,
+                      child: IconButton(
+                        splashRadius: closeSize / 2,
+                        iconSize: closeSize,
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: SvgPicture.asset(
+                          'assets/icons/close.svg',
+                          height: closeSize,
+                          width: closeSize,
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Expanded(
+                child: ListView(
+                  shrinkWrap: true,
+                  physics: const ScrollPhysics(),
+                  children: [
+                    for (var item in AppMenuOption.values)
+                      _AppDrawerItem(
+                        selected: menuOption == item,
+                        title: _ItemInfo(item).title,
+                        icon: _ItemInfo(item).icon,
+                        onPressed: () {
+                          onPressed(item);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    Container(
+                      margin: const EdgeInsets.only(
+                        left: 29.0,
+                        right: 24.0,
+                      ),
+                      child: const Divider(),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(
+                        top: 35.0,
+                        left: 47.0,
+                        right: 46.0,
+                      ),
+                      child: InkWell(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(15.0),
+                        ),
+                        onTap: () {},
+                        child: Container(
+                          padding: const EdgeInsets.all(20),
+                          child: Image.asset('assets/images/fiab_more.png'),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            child: ListView(
-              shrinkWrap: true,
-              physics: const ScrollPhysics(),
-              children: [
-                for (var item in AppMenuOption.values)
-                  _AppDrawerItem(
-                    selected: menuOption == item,
-                    title: _ItemInfo(item).title,
-                    icon: _ItemInfo(item).icon,
-                    onPressed: () {
-                      onPressed(item);
-                      Navigator.pop(context);
-                    },
-                  ),
-                Container(
-                  margin: const EdgeInsets.only(
-                    left: 29.0,
-                    right: 24.0,
-                  ),
-                  child: const Divider(),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(
-                    top: 35.0,
-                    left: 47.0,
-                    right: 46.0,
-                  ),
-                  child: InkWell(
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(15.0),
-                    ),
-                    onTap: () {},
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      child: Image.asset('assets/images/fiab_more.png'),
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Container(
-                    height: 10,
-                    width: 50.0,
-                    margin: const EdgeInsets.only(
-                      left: 24.0,
-                      bottom: 20.0,
-                    ),
-                    child: Image.asset('assets/images/mondora_logo.png'),
-                  ),
-                ),
-              ],
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Container(
+              height: 10,
+              width: 50.0,
+              margin: const EdgeInsets.only(
+                left: 24.0,
+                bottom: 20.0,
+              ),
+              child: Image.asset('assets/images/mondora_logo.png'),
             ),
           ),
         ],

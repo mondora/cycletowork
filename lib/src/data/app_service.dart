@@ -1,4 +1,5 @@
 import 'package:cycletowork/src/data/challenge.dart';
+import 'package:cycletowork/src/data/classification.dart';
 import 'package:cycletowork/src/data/company.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/survey.dart';
@@ -18,6 +19,17 @@ abstract class AppService {
   Future<void> updateUserName(String name);
 
   Future<bool> registerChallenge(ChallengeRegistry challengeRegistry);
+
+  Future<List<ChallengeRegistry>> getListRegisterdChallenge();
+
+  Future<CyclistClassification?> getUserCyclistClassification(
+    String challengeId,
+  );
+
+  Future<CompanyClassification?> getUserCompanyClassification(
+    String challengeId,
+    String companyId,
+  );
 }
 
 abstract class AppAdminService {
@@ -88,6 +100,27 @@ abstract class AppServiceOnlyLocal {
   Future<List<ChallengeRegistry>> getListActiveRegisterChallenge();
 
   Future<Challenge?> getChallengeInfo(String challengeId);
+
+  Future<List<CompanyClassification>> getListCompanyClassification(
+    String challengeId, {
+    int page = 0,
+    int pageSize = 50,
+    bool orderByRankingCo2 = true,
+  });
+
+  Future<List<CyclistClassification>> getListCyclistClassification(
+    String challengeId, {
+    int page = 0,
+    int pageSize = 50,
+  });
+
+  Future<void> saveCompanyClassification(
+    CompanyClassification companyClassification,
+  );
+
+  Future<void> saveCyclistClassification(
+    CyclistClassification cyclistClassification,
+  );
 }
 
 abstract class AppServiceOnlyRemote {
@@ -109,5 +142,32 @@ abstract class AppServiceOnlyRemote {
 
   Future<List<Challenge>> getActiveChallengeList();
 
-  Future<List<ChallengeRegistry>> getListRegisterdChallenge();
+  Future<List<ChallengeRegistry>> getListActiveRegisterdChallenge();
+
+  Future<Company?> getCompanyFromName(String companyName);
+
+  Future<List<CompanyClassification>> getListCompanyClassificationByRankingCo2(
+    String challengeId, {
+    int pageSize = 50,
+    int? lastRankingCo2,
+  });
+
+  Future<List<CompanyClassification>>
+      getListCompanyClassificationByRankingPercentRegistered(
+    String challengeId,
+    int companyEmployeesNumber, {
+    int pageSize = 50,
+    int? lastPercentRegistered,
+  });
+
+  Future<List<CyclistClassification>> getListCyclistClassificationByRankingCo2(
+    String challengeId, {
+    int pageSize = 50,
+    int? lastRankingCo2,
+  });
+
+  Future<ChallengeRegistry?> getChallengeRegistryFromBusinessEmail(
+    String challengeId,
+    String businessEmail,
+  );
 }

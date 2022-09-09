@@ -25,6 +25,7 @@ class User {
   List<String>? deviceTokens;
   String? language;
   List<String>? listChallengeIdRegister;
+  String fiabCardNumber;
   bool selected = false;
 
   User({
@@ -39,6 +40,7 @@ class User {
     required this.maxSpeed,
     required this.calorie,
     required this.steps,
+    required this.fiabCardNumber,
     this.photoURL,
     this.displayName,
     this.deviceTokens,
@@ -85,11 +87,12 @@ class User {
         listChallengeIdRegister = map['listChallengeIdRegister'] != null
             ? (map['listChallengeIdRegister'] as List<dynamic>).cast<String>()
             : null,
-        language = map['language'];
+        language = map['language'],
+        fiabCardNumber = map['fiabCardNumber'] ?? '';
 
   Map<String, dynamic> toJson() => {
         'uid': uid,
-        'userType': userType,
+        'userType': userType.name,
         'email': email,
         'emailVerified': emailVerified,
         'photoURL': photoURL,
@@ -100,11 +103,11 @@ class User {
         'maxSpeed': maxSpeed,
         'calorie': calorie,
         'steps': steps,
-        'deviceTokens': deviceTokens,
         'listChallengeIdRegister': listChallengeIdRegister,
         'admin': admin,
         'verified': verified,
         'language': language,
+        'fiabCardNumber': fiabCardNumber,
       };
 
   User.fromMapLocalDatabase(Map<String, dynamic> map)
@@ -135,6 +138,7 @@ class User {
         steps = map['steps'] ?? 0,
         deviceTokens = [],
         language = map['language'],
+        fiabCardNumber = map['fiabCardNumber'],
         listChallengeIdRegister = map['listChallengeIdRegister'] != null
             ? (map['listChallengeIdRegister'] as String).split(_splitPattern)
             : null;
@@ -152,6 +156,7 @@ class User {
         'calorie': calorie,
         'steps': steps,
         'language': language,
+        'fiabCardNumber': fiabCardNumber,
         'listChallengeIdRegister': listChallengeIdRegister != null
             ? listChallengeIdRegister!.join(_splitPattern)
             : '',
@@ -175,6 +180,7 @@ class User {
       maxSpeed REAL NOT NULL, 
       calorie INTEGER NOT NULL,
       steps INTEGER NOT NULL,
+      fiabCardNumber TEXT NOT NULL,
       photoURL TEXT,
       displayName TEXT,
       language TEXT,

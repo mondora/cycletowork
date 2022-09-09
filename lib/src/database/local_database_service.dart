@@ -1,6 +1,7 @@
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/app_service.dart';
 import 'package:cycletowork/src/data/challenge.dart';
+import 'package:cycletowork/src/data/classification.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/data/location_data.dart';
@@ -184,6 +185,28 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
   }
 
   @override
+  Future<List<ChallengeRegistry>> getListRegisterdChallenge() async {
+    String whereCondition = 'uid = ?';
+    List<dynamic> whereArgs = [AppData.user!.uid];
+    String orderBy = 'registerDate DESC';
+
+    var map = await _localDatabase.getData(
+      tableName: ChallengeRegistry.tableName,
+      whereCondition: whereCondition,
+      whereArgs: whereArgs,
+      orderBy: orderBy,
+    );
+
+    return map
+        .map<ChallengeRegistry>(
+          (json) => ChallengeRegistry.fromMapLocalDatabase(
+            Map<String, dynamic>.from(json),
+          ),
+        )
+        .toList();
+  }
+
+  @override
   Future<bool> registerChallenge(ChallengeRegistry challengeRegistry) async {
     await _localDatabase.insertData(
       tableName: ChallengeRegistry.tableName,
@@ -242,6 +265,129 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
     );
     var result = map.map<Challenge>(
       (json) => Challenge.fromMap(Map<String, dynamic>.from(json)),
+    );
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  Future<List<CompanyClassification>> getListCompanyClassification(
+    String challengeId, {
+    int page = 0,
+    int pageSize = 50,
+    bool orderByRankingCo2 = true,
+  }) async {
+    String whereCondition = 'challengeId = ?';
+    List<dynamic> whereArgs = [challengeId];
+    String orderBy =
+        orderByRankingCo2 ? 'rankingCo2 ASC' : 'rankingPercentRegistered ASC';
+
+    var map = await _localDatabase.getData(
+      tableName: CompanyClassification.tableName,
+      limit: pageSize,
+      offset: page * pageSize,
+      orderBy: orderBy,
+      whereCondition: whereCondition,
+      whereArgs: whereArgs,
+    );
+
+    return map
+        .map<CompanyClassification>(
+          (json) => CompanyClassification.fromMap(
+            Map<String, dynamic>.from(json),
+          ),
+        )
+        .toList();
+  }
+
+  @override
+  Future<List<CyclistClassification>> getListCyclistClassification(
+    String challengeId, {
+    int page = 0,
+    int pageSize = 50,
+  }) async {
+    String whereCondition = 'challengeId = ?';
+    List<dynamic> whereArgs = [challengeId];
+    String orderBy = 'rankingCo2 ASC';
+
+    var map = await _localDatabase.getData(
+      tableName: CyclistClassification.tableName,
+      limit: pageSize,
+      offset: page * pageSize,
+      orderBy: orderBy,
+      whereCondition: whereCondition,
+      whereArgs: whereArgs,
+    );
+
+    return map
+        .map<CyclistClassification>(
+          (json) => CyclistClassification.fromMap(
+            Map<String, dynamic>.from(json),
+          ),
+        )
+        .toList();
+  }
+
+  @override
+  Future<void> saveCompanyClassification(
+    CompanyClassification companyClassification,
+  ) async {
+    await _localDatabase.insertData(
+      tableName: CompanyClassification.tableName,
+      item: companyClassification.toJson(),
+    );
+  }
+
+  @override
+  Future<void> saveCyclistClassification(
+    CyclistClassification cyclistClassification,
+  ) async {
+    await _localDatabase.insertData(
+      tableName: CyclistClassification.tableName,
+      item: cyclistClassification.toJson(),
+    );
+  }
+
+  @override
+  Future<CompanyClassification?> getUserCompanyClassification(
+    String challengeId,
+    String companyId,
+  ) async {
+    String whereCondition = 'challengeId = ? AND id = ?';
+    List<dynamic> whereArgs = [challengeId, companyId];
+
+    var map = await _localDatabase.getData(
+      tableName: CompanyClassification.tableName,
+      whereCondition: whereCondition,
+      whereArgs: whereArgs,
+    );
+    var result = map.map<CompanyClassification>(
+      (json) => CompanyClassification.fromMap(Map<String, dynamic>.from(json)),
+    );
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  Future<CyclistClassification?> getUserCyclistClassification(
+    String challengeId,
+  ) async {
+    String whereCondition = 'challengeId = ? AND uid = ?';
+    List<dynamic> whereArgs = [challengeId, AppData.user!.uid];
+
+    var map = await _localDatabase.getData(
+      tableName: CyclistClassification.tableName,
+      whereCondition: whereCondition,
+      whereArgs: whereArgs,
+    );
+    var result = map.map<CyclistClassification>(
+      (json) => CyclistClassification.fromMap(Map<String, dynamic>.from(json)),
     );
     if (result.isNotEmpty) {
       return result.first;

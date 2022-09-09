@@ -30,14 +30,28 @@ class _RegisterChallengEmailVerifyViewState
         Theme.of(context).extension<ColorSchemeExtension>()!;
     var textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(),
-      body: Container(
-        margin: const EdgeInsets.only(
-          top: 20.0,
-          bottom: 30.0,
+      appBar: AppBar(
+        leading: IconButton(
+          splashRadius: 25.0,
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: colorScheme.onBackground,
+            size: 20,
+          ),
+          onPressed: () => !emailIsVerified
+              ? isCyclist
+                  ? viewModel.gotoCyclistRegistrationData()
+                  : viewModel.gotoChampionRegistrationData()
+              : null,
         ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
+      ),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 20.0,
+            bottom: 30.0,
+          ),
           child: Form(
             key: formKey,
             child: Column(
@@ -73,7 +87,7 @@ class _RegisterChallengEmailVerifyViewState
                   height: 20.0,
                 ),
                 SizedBox(
-                  width: 155.0,
+                  width: 165.0,
                   height: 36.0,
                   child: TextButton(
                     onPressed: !emailIsVerified
@@ -171,7 +185,7 @@ class _RegisterChallengEmailVerifyViewState
                 ),
                 Center(
                   child: SizedBox(
-                    width: 155.0,
+                    width: 165.0,
                     height: 36.0,
                     child: ElevatedButton(
                       onPressed:
@@ -210,9 +224,11 @@ class _RegisterChallengEmailVerifyViewState
                     width: 155.0,
                     height: 36.0,
                     child: OutlinedButton(
-                      onPressed: isCyclist
-                          ? viewModel.gotoCyclistRegistrationData
-                          : viewModel.gotoChampionRegistrationData,
+                      onPressed: !emailIsVerified
+                          ? isCyclist
+                              ? viewModel.gotoCyclistRegistrationData
+                              : viewModel.gotoChampionRegistrationData
+                          : null,
                       style: ButtonStyle(
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(

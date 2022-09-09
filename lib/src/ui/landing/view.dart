@@ -2,6 +2,7 @@ import 'package:cycletowork/src/ui/dashboard/view.dart';
 import 'package:cycletowork/src/ui/landing/ui_state.dart';
 import 'package:cycletowork/src/ui/landing/view_model.dart';
 import 'package:cycletowork/src/ui/login/view.dart';
+import 'package:cycletowork/src/utility/notification.dart';
 import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +18,7 @@ class _LandingViewState extends State<LandingView> {
   @override
   void initState() {
     super.initState();
+    AppNotification.requestPermission();
   }
 
   @override
@@ -42,10 +44,18 @@ class _LandingViewState extends State<LandingView> {
                                 Icons.error,
                                 color: colorScheme.onError,
                               ),
-                              Text(
-                                viewModel.uiState.errorMessage.toUpperCase(),
-                                style: textTheme.button!.apply(
-                                  color: colorScheme.onError,
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  viewModel.uiState.errorMessage.toUpperCase(),
+                                  style: textTheme.caption!.apply(
+                                    color: colorScheme.onError,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 15,
+                                  softWrap: true,
                                 ),
                               ),
                             ],

@@ -125,19 +125,19 @@ class LoginEmailView extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(
-                  top: 10.0,
-                ),
-                child: AppButton(
-                  loading: loading,
-                  onPressed: () {},
-                  title: 'Accedi con Facebook',
-                  textUpperCase: true,
-                  type: ButtonType.facebookLogin,
-                  radius: 8.0,
-                ),
-              ),
+              // Container(
+              //   margin: const EdgeInsets.only(
+              //     top: 10.0,
+              //   ),
+              //   child: AppButton(
+              //     loading: loading,
+              //     onPressed: () {},
+              //     title: 'Accedi con Facebook',
+              //     textUpperCase: true,
+              //     type: ButtonType.facebookLogin,
+              //     radius: 8.0,
+              //   ),
+              // ),
               Container(
                 margin: const EdgeInsets.only(
                   top: 14.0,
@@ -161,7 +161,10 @@ class LoginEmailView extends StatelessWidget {
                       ),
                       child: AppButton(
                         loading: loading,
-                        onPressed: () {},
+                        onPressed: () {
+                          landingModel.loginApple();
+                          Navigator.pop(context);
+                        },
                         title: 'Accedi con Apple',
                         textUpperCase: true,
                         type: ButtonType.appleLogin,

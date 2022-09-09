@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/chart_data.dart';
+import 'package:cycletowork/src/data/classification.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/repository_service_locator.dart';
 import 'package:cycletowork/src/data/user.dart';
@@ -53,7 +54,7 @@ class Repository {
 
     if (listActiveRegisterChallenge.isEmpty) {
       var listRegisterChallenge =
-          await _remoteService.getListRegisterdChallenge();
+          await _remoteService.getListActiveRegisterdChallenge();
       if (listRegisterChallenge.isEmpty) {
         return null;
       } else {
@@ -79,6 +80,213 @@ class Repository {
     }
 
     return null;
+  }
+
+  Future<List<ChallengeRegistry>> getListChallengeRegistred() async {
+    var listChallengeIdRegister = AppData.user!.listChallengeIdRegister;
+
+    if (listChallengeIdRegister == null || listChallengeIdRegister.isEmpty) {
+      return [];
+    }
+
+    var listRegisterdChallenge =
+        await _localDatabase.getListRegisterdChallenge();
+
+    if (listRegisterdChallenge.isNotEmpty) {
+      return listRegisterdChallenge;
+    }
+
+    var listRegisterChallenge =
+        await _remoteService.getListRegisterdChallenge();
+
+    if (listRegisterChallenge.isEmpty) {
+      return [];
+    }
+    for (var element in listRegisterChallenge) {
+      await _localDatabase.registerChallenge(element);
+    }
+
+    return listRegisterChallenge;
+  }
+
+  Future<List<CompanyClassification>> getListCompanyClassificationByRankingCo2(
+    ChallengeRegistry challengeRegistry,
+    int page,
+    int pageSize,
+    int? lastRankingCo2,
+  ) async {
+    var localListCompanyClassification =
+        await _localDatabase.getListCompanyClassification(
+      challengeRegistry.challengeId,
+      page: page,
+      pageSize: pageSize,
+      orderByRankingCo2: true,
+    );
+
+    var stopDateChalleng = challengeRegistry.stopTimeChallenge;
+    var dateNow = DateTime.now().microsecond;
+    if (localListCompanyClassification.isNotEmpty &&
+        stopDateChalleng < dateNow &&
+        localListCompanyClassification.first.updateDate > stopDateChalleng) {
+      return localListCompanyClassification;
+    }
+
+    var remoteListCompanyClassification =
+        await _remoteService.getListCompanyClassificationByRankingCo2(
+      challengeRegistry.challengeId,
+      pageSize: pageSize,
+      lastRankingCo2: lastRankingCo2,
+    );
+
+    if (remoteListCompanyClassification.isEmpty) {
+      return [];
+    }
+    for (var element in remoteListCompanyClassification) {
+      await _localDatabase.saveCompanyClassification(element);
+    }
+
+    return remoteListCompanyClassification;
+  }
+
+  Future<List<CompanyClassification>>
+      getListCompanyClassificationByRankingPercentRegistered(
+    ChallengeRegistry challengeRegistry,
+    int page,
+    int pageSize,
+    int? lastPercentRegistered,
+  ) async {
+    var localListCompanyClassification =
+        await _localDatabase.getListCompanyClassification(
+      challengeRegistry.challengeId,
+      page: page,
+      pageSize: pageSize,
+      orderByRankingCo2: false,
+    );
+
+    var stopDateChalleng = challengeRegistry.stopTimeChallenge;
+    var dateNow = DateTime.now().microsecond;
+    if (localListCompanyClassification.isNotEmpty &&
+        stopDateChalleng < dateNow &&
+        localListCompanyClassification.first.updateDate > stopDateChalleng) {
+      return localListCompanyClassification;
+    }
+
+    var remoteListCompanyClassification = await _remoteService
+        .getListCompanyClassificationByRankingPercentRegistered(
+      challengeRegistry.challengeId,
+      challengeRegistry.companyEmployeesNumber,
+      pageSize: pageSize,
+      lastPercentRegistered: lastPercentRegistered,
+    );
+
+    if (remoteListCompanyClassification.isEmpty) {
+      return [];
+    }
+    for (var element in remoteListCompanyClassification) {
+      await _localDatabase.saveCompanyClassification(element);
+    }
+
+    return remoteListCompanyClassification;
+  }
+
+  Future<List<CyclistClassification>> getListCyclistClassificationByRankingCo2(
+    ChallengeRegistry challengeRegistry,
+    int page,
+    int pageSize,
+    int? lastRankingCo2,
+  ) async {
+    var localListCyclistClassification =
+        await _localDatabase.getListCyclistClassification(
+      challengeRegistry.challengeId,
+      page: page,
+      pageSize: pageSize,
+    );
+
+    var stopDateChalleng = challengeRegistry.stopTimeChallenge;
+    var dateNow = DateTime.now().microsecond;
+    if (localListCyclistClassification.isNotEmpty &&
+        stopDateChalleng < dateNow &&
+        localListCyclistClassification.first.updateDate > stopDateChalleng) {
+      return localListCyclistClassification;
+    }
+
+    var remoteListCyclistClassification =
+        await _remoteService.getListCyclistClassificationByRankingCo2(
+      challengeRegistry.challengeId,
+      pageSize: pageSize,
+      lastRankingCo2: lastRankingCo2,
+    );
+
+    if (remoteListCyclistClassification.isEmpty) {
+      return [];
+    }
+    for (var element in remoteListCyclistClassification) {
+      await _localDatabase.saveCyclistClassification(element);
+    }
+
+    return remoteListCyclistClassification;
+  }
+
+  Future<CompanyClassification?> getUserCompanyClassification(
+    ChallengeRegistry challengeRegistry,
+  ) async {
+    var localUserCompanyClassification =
+        await _localDatabase.getUserCompanyClassification(
+      challengeRegistry.challengeId,
+      challengeRegistry.companyId,
+    );
+    var stopDateChalleng = challengeRegistry.stopTimeChallenge;
+    var dateNow = DateTime.now().microsecond;
+    if (localUserCompanyClassification != null &&
+        stopDateChalleng < dateNow &&
+        localUserCompanyClassification.updateDate > stopDateChalleng) {
+      return localUserCompanyClassification;
+    }
+
+    var remoteUserCompanyClassification =
+        await _remoteService.getUserCompanyClassification(
+      challengeRegistry.challengeId,
+      challengeRegistry.companyId,
+    );
+
+    if (remoteUserCompanyClassification == null) {
+      return remoteUserCompanyClassification;
+    }
+    await _localDatabase.saveCompanyClassification(
+      remoteUserCompanyClassification,
+    );
+
+    return remoteUserCompanyClassification;
+  }
+
+  Future<CyclistClassification?> getUserCyclistClassification(
+    ChallengeRegistry challengeRegistry,
+  ) async {
+    var localUserCyclistClassification =
+        await _localDatabase.getUserCyclistClassification(
+      challengeRegistry.challengeId,
+    );
+    var stopDateChalleng = challengeRegistry.stopTimeChallenge;
+    var dateNow = DateTime.now().microsecond;
+    if (localUserCyclistClassification != null &&
+        stopDateChalleng < dateNow &&
+        localUserCyclistClassification.updateDate > stopDateChalleng) {
+      return localUserCyclistClassification;
+    }
+
+    var remoteUserCyclistClassification =
+        await _remoteService.getUserCyclistClassification(
+      challengeRegistry.challengeId,
+    );
+
+    if (remoteUserCyclistClassification == null) {
+      return remoteUserCyclistClassification;
+    }
+    await _localDatabase.saveCyclistClassification(
+      remoteUserCyclistClassification,
+    );
+
+    return remoteUserCyclistClassification;
   }
 
   Future<List<UserActivity>> getListUserActivity(

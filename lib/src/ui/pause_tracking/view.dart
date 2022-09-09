@@ -96,7 +96,7 @@ class PauseTrackingView extends StatelessWidget {
             child: Container(
               color: Theme.of(context).colorScheme.background,
               // color: Colors.blue,
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: 24.0,
                 vertical: 20.0,
               ),
@@ -421,7 +421,7 @@ class _SpeedTracking extends StatelessWidget {
         const SizedBox(
           width: 18.0,
         ),
-        Container(
+        SizedBox(
           width: 135.0,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

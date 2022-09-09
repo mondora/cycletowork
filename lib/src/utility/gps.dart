@@ -58,18 +58,14 @@ class Gps {
     }
   }
 
-  static Future initialize() async {
-    // await setLocationSettings(
-    //   interval: 1000,
-    //   fastestInterval: 800,
-    // );
-  }
+  static Future initialize() async {}
 
-  static Future setSettings() async {
+  static Future setSettings({double smallestDisplacement = 0}) async {
     await setLocationSettings(
       interval: 1000,
       fastestInterval: 800,
       accuracy: LocationAccuracy.high,
+      smallestDisplacement: smallestDisplacement,
     );
   }
 

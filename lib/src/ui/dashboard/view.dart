@@ -1,5 +1,6 @@
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/user.dart';
+import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/activity/view.dart';
 import 'package:cycletowork/src/ui/classification/view.dart';
 import 'package:cycletowork/src/ui/counter/view.dart';
@@ -19,6 +20,7 @@ import 'package:cycletowork/src/ui/settings/view.dart';
 import 'package:cycletowork/src/ui/dashboard/widget/gps_icon.dart';
 import 'package:cycletowork/src/ui/stop_tracking/view.dart';
 import 'package:cycletowork/src/ui/tracking/view.dart';
+import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -28,6 +30,10 @@ class DashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final landingModel = Provider.of<landing_view_model.ViewModel>(context);
+    var textTheme = Theme.of(context).textTheme;
+    var colorScheme = Theme.of(context).colorScheme;
+    final colorSchemeExtension =
+        Theme.of(context).extension<ColorSchemeExtension>()!;
     var localeIdentifier = Localizations.localeOf(context).languageCode;
     var dismissKey = UniqueKey();
 
@@ -44,6 +50,14 @@ class DashboardView extends StatelessWidget {
       create: (_) => ViewModel.instance(),
       child: Consumer<ViewModel>(
         builder: (context, viewModel, child) {
+          if (viewModel.uiState.loading) {
+            return const Scaffold(
+              body: Center(
+                child: AppProgressIndicator(),
+              ),
+            );
+          }
+
           if (viewModel.uiState.dashboardPageOption ==
               DashboardPageOption.startCounter) {
             return CounterView(
@@ -83,7 +97,33 @@ class DashboardView extends StatelessWidget {
             return StopTrackingView(
               listTrackingPosition: viewModel.listTrackingPosition,
               trackingUserActivity: viewModel.trackingUserActivity!,
-              saveTracking: () => viewModel.saveTracking(localeIdentifier),
+              saveTracking: () async {
+                var result = await viewModel.saveTracking(localeIdentifier);
+                if (result) {
+                  final snackBar = SnackBar(
+                    backgroundColor: colorSchemeExtension.success,
+                    content: Row(
+                      children: [
+                        Icon(
+                          Icons.done_outline,
+                          color: colorScheme.onPrimary,
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          'È stato salvato il tuo percorso'.toUpperCase(),
+                          style: textTheme.button!.apply(
+                            color: colorScheme.onError,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }
+              },
               removeTracking: viewModel.removeTracking,
             );
           }
@@ -119,7 +159,8 @@ class DashboardView extends StatelessWidget {
                   onPressed: () {
                     viewModel.changePageFromMenu(AppMenuOption.profile);
                   },
-                  loading: viewModel.uiState.loading,
+                  loading: viewModel.uiState.loading ||
+                      viewModel.uiState.refreshLocationLoading,
                   visible: viewModel.uiState.showAppBarAction,
                 ),
                 const SizedBox(
@@ -141,6 +182,7 @@ class DashboardView extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 tabs.elementAt(viewModel.uiState.appMenuOption.index),
+                // ClassificationView(),
                 Positioned(
                   bottom: 0.0,
                   right: 0,

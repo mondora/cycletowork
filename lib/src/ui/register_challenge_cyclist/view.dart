@@ -36,14 +36,24 @@ class _RegisterChallengCyclistViewState
         Theme.of(context).extension<ColorSchemeExtension>()!;
     var textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(),
-      body: Container(
-        margin: const EdgeInsets.only(
-          top: 20.0,
-          bottom: 30.0,
+      appBar: AppBar(
+        leading: IconButton(
+          splashRadius: 25.0,
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: colorScheme.onBackground,
+            size: 20,
+          ),
+          onPressed: () => viewModel.gotoSelectType(),
         ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
+      ),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 20.0,
+            bottom: 30.0,
+          ),
           child: Form(
             key: formKey,
             child: Column(
@@ -290,11 +300,12 @@ class _RegisterChallengCyclistViewState
                           if (value == null || value.isEmpty) {
                             return 'Seleziona la tua azienda';
                           }
-                          // if (CategoriaStabulazione.getCategoriaStabulazioneCode(
-                          //         value) ==
-                          //     null) {
-                          //   return 'Inserire categoria stabulazione valida';
-                          // }
+                          var index =
+                              listCompany.indexWhere((x) => x.name == value);
+                          if (index == -1) {
+                            return 'Inserire la azienda valida';
+                          }
+
                           return null;
                         },
                         onSuggestionTap: (value) {
@@ -341,10 +352,11 @@ class _RegisterChallengCyclistViewState
                             if (value == null || value.isEmpty) {
                               return 'Seleziona la sede e/o il dipartimento';
                             }
-
-                            // if (!listDepartment.contains(value)) {
-                            //   return 'Inserire la sede e/o il dipartimento valida';
-                            // }
+                            var index = companySelected.listDepartment!
+                                .indexWhere((x) => x.name == value);
+                            if (index == -1) {
+                              return 'Inserire la sede e/o il dipartimento valida';
+                            }
                             return null;
                           },
                         ),
@@ -371,13 +383,20 @@ class _RegisterChallengCyclistViewState
                                 topRight: Radius.circular(10),
                               ),
                             ),
-                            child: Text(
-                              'La tua azienda non partecipa?'.toUpperCase(),
-                              style: textTheme.headline6!.copyWith(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 18,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                right: 10.0,
+                                left: 10.0,
                               ),
-                              textAlign: TextAlign.center,
+                              child: AutoSizeText(
+                                'La tua azienda non partecipa?'.toUpperCase(),
+                                style: textTheme.headline6!.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 18,
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: 1,
+                              ),
                             ),
                           ),
                           Container(
@@ -459,7 +478,7 @@ class _RegisterChallengCyclistViewState
                 ),
                 Center(
                   child: SizedBox(
-                    width: 155.0,
+                    width: 165.0,
                     height: 36.0,
                     child: ElevatedButton(
                       onPressed: () {
@@ -492,7 +511,7 @@ class _RegisterChallengCyclistViewState
                 ),
                 Center(
                   child: SizedBox(
-                    width: 155.0,
+                    width: 165.0,
                     height: 36.0,
                     child: OutlinedButton(
                       onPressed: viewModel.gotoSelectType,

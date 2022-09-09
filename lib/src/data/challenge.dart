@@ -137,6 +137,7 @@ class ChallengeRegistry {
   String id;
   String uid;
   String challengeId;
+  String challengeName;
   bool isCyclist;
   bool isChampion;
   bool isFiabMember;
@@ -162,12 +163,18 @@ class ChallengeRegistry {
   Company? companyToAdd;
   int startTimeChallenge;
   int stopTimeChallenge;
+  String email;
+  String userType;
+  int companyEmployeesNumber;
+  String? photoURL;
+  String? displayName;
   bool selected = false;
 
   ChallengeRegistry({
     required this.id,
     required this.uid,
     required this.challengeId,
+    required this.challengeName,
     required this.isCyclist,
     required this.isChampion,
     required this.isFiabMember,
@@ -190,15 +197,21 @@ class ChallengeRegistry {
     required this.registerDate,
     required this.startTimeChallenge,
     required this.stopTimeChallenge,
+    required this.email,
+    required this.userType,
+    required this.companyEmployeesNumber,
     this.surveyResponse,
     this.companyToAdd,
     this.companySelected,
+    this.displayName,
+    this.photoURL,
   });
 
   ChallengeRegistry.fromEmpty()
       : id = '',
         uid = '',
         challengeId = '',
+        challengeName = '',
         isCyclist = false,
         isChampion = false,
         isFiabMember = false,
@@ -221,6 +234,11 @@ class ChallengeRegistry {
         registerDate = 0,
         surveyResponse = null,
         companyToAdd = null,
+        email = '',
+        userType = '',
+        companyEmployeesNumber = 0,
+        displayName = '',
+        photoURL = '',
         startTimeChallenge = 0,
         stopTimeChallenge = 0,
         companySelected = null;
@@ -229,6 +247,7 @@ class ChallengeRegistry {
       : id = map['id'],
         uid = map['uid'],
         challengeId = map['challengeId'],
+        challengeName = map['challengeName'],
         isCyclist = map['isCyclist'],
         isChampion = map['isChampion'],
         isFiabMember = map['isFiabMember'],
@@ -249,6 +268,11 @@ class ChallengeRegistry {
         role = map['role'],
         acceptPrivacy = map['acceptPrivacy'],
         registerDate = map['registerDate'],
+        email = map['email'],
+        userType = map['userType'],
+        companyEmployeesNumber = map['companyEmployeesNumber'],
+        displayName = map['displayName'],
+        photoURL = map['photoURL'],
         surveyResponse = map['surveyResponse'] != null
             ? SurveyResponse.fromMap(
                 Map<String, dynamic>.from(map['surveyResponse']))
@@ -266,6 +290,7 @@ class ChallengeRegistry {
         'id': id,
         'uid': uid,
         'challengeId': challengeId,
+        'challengeName': challengeName,
         'isCyclist': isCyclist,
         'isChampion': isChampion,
         'isFiabMember': isFiabMember,
@@ -286,6 +311,11 @@ class ChallengeRegistry {
         'role': role,
         'acceptPrivacy': acceptPrivacy,
         'registerDate': registerDate,
+        'email': email,
+        'userType': userType,
+        'companyEmployeesNumber': companyEmployeesNumber,
+        'displayName': displayName,
+        'photoURL': photoURL,
         'surveyResponse': surveyResponse?.toJson(),
         'companyToAdd': companyToAdd?.toJson(),
         'companySelected': companySelected?.toJson(),
@@ -297,6 +327,7 @@ class ChallengeRegistry {
       : id = map['id'],
         uid = map['uid'],
         challengeId = map['challengeId'],
+        challengeName = map['challengeName'],
         isCyclist = map['isCyclist'] == 1,
         isChampion = map['isChampion'] == 1,
         isFiabMember = map['isFiabMember'] == 1,
@@ -319,6 +350,11 @@ class ChallengeRegistry {
         registerDate = map['registerDate'],
         startTimeChallenge = map['startTimeChallenge'],
         stopTimeChallenge = map['stopTimeChallenge'],
+        email = map['email'],
+        userType = map['userType'],
+        companyEmployeesNumber = map['companyEmployeesNumber'],
+        displayName = map['displayName'],
+        photoURL = map['photoURL'],
         surveyResponse = null,
         companyToAdd = null,
         companySelected = null;
@@ -327,6 +363,7 @@ class ChallengeRegistry {
         'id': id,
         'uid': uid,
         'challengeId': challengeId,
+        'challengeName': challengeName,
         'isCyclist': isCyclist ? 1 : 0,
         'isChampion': isChampion ? 1 : 0,
         'isFiabMember': isFiabMember ? 1 : 0,
@@ -345,6 +382,11 @@ class ChallengeRegistry {
         'businessZipCode': businessZipCode,
         'businessAddress': businessAddress,
         'role': role,
+        'email': email,
+        'userType': userType,
+        'displayName': displayName,
+        'photoURL': photoURL,
+        'companyEmployeesNumber': companyEmployeesNumber,
         'acceptPrivacy': acceptPrivacy ? 1 : 0,
         'registerDate': registerDate,
         'startTimeChallenge': startTimeChallenge,
@@ -358,6 +400,7 @@ class ChallengeRegistry {
       id TEXT PRIMARY KEY  NOT NULL,
       uid TEXT NOT NULL,
       challengeId TEXT NOT NULL,
+      challengeName TEXT NOT NULL,
       fiabCardNumber TEXT NOT NULL,
       companyId TEXT NOT NULL,
       companyName TEXT NOT NULL,
@@ -379,7 +422,12 @@ class ChallengeRegistry {
       businessEmailVerification INTEGER NOT NULL,
       acceptPrivacy INTEGER NOT NULL,
       startTimeChallenge INTEGER NOT NULL,
-      stopTimeChallenge INTEGER NOT NULL
+      stopTimeChallenge INTEGER NOT NULL,
+      email TEXT NOT NULL,
+      userType TEXT NOT NULL,
+      companyEmployeesNumber INTEGER NOT NULL,
+      displayName TEXT,
+      photoURL TEXT
     );
   ''';
 }

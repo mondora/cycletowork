@@ -1,11 +1,9 @@
 import 'package:cycletowork/src/data/challenge.dart';
-import 'package:cycletowork/src/data/company.dart';
 import 'package:cycletowork/src/data/survey.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
 
 class EditChallengeDialog {
   final BuildContext context;
@@ -84,8 +82,6 @@ class EditChallengeDialog {
       listQuestionType.add(QuestionType.text);
 
       listQuestionAnswerController[0].addAll([]);
-
-      print(listQuestionAnswerController);
     }
   }
 
@@ -327,7 +323,6 @@ class EditChallengeDialog {
                                 TextButton(
                                   style: TextButton.styleFrom(
                                     padding: const EdgeInsets.all(16.0),
-                                    primary: colorScheme.secondary,
                                     shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(15.0),
@@ -347,7 +342,6 @@ class EditChallengeDialog {
                                       listQuestionType.add(QuestionType.text);
 
                                       listQuestionAnswerController.add([]);
-                                      print(listQuestionAnswerController);
                                     });
                                   },
                                   child: Row(
@@ -434,8 +428,6 @@ class EditChallengeDialog {
 
                                                           listQuestionAnswerController
                                                               .removeAt(index);
-                                                          print(
-                                                              listQuestionAnswerController);
                                                         });
                                                       }
                                                     : null,
@@ -598,8 +590,6 @@ class EditChallengeDialog {
                                                 style: TextButton.styleFrom(
                                                   padding: const EdgeInsets.all(
                                                       16.0),
-                                                  primary:
-                                                      colorScheme.secondary,
                                                   shape:
                                                       const RoundedRectangleBorder(
                                                     borderRadius:
@@ -626,8 +616,6 @@ class EditChallengeDialog {
                                                         .addAll([
                                                       TextEditingController()
                                                     ]);
-                                                    print(
-                                                        listQuestionAnswerController);
                                                   });
                                                 },
                                                 child: Row(
@@ -695,10 +683,10 @@ class EditChallengeDialog {
                                     child: ElevatedButton(
                                       onPressed: () {
                                         if (formKey.currentState!.validate()) {
-                                          var isSame = true;
+                                          // var isSame = true;
                                           // String id;
                                           if (challenge == null) {
-                                            isSame = false;
+                                            // isSame = false;
                                             // id = const Uuid().v4();
                                           } else {
                                             // id = challenge!.id;
@@ -830,7 +818,7 @@ class EditChallengeDialog {
                                           //   published: false,
                                           // );
 
-                                          isSame = false;
+                                          // isSame = false;
                                           // var name = nameController.text;
                                           // var category =
                                           //     categoryController.text;
@@ -873,9 +861,7 @@ class EditChallengeDialog {
                                           //   }
                                           // }
 
-                                          Navigator.of(context).pop(
-                                            isSame ? null : newChallenge,
-                                          );
+                                          Navigator.of(context).pop(null);
                                         }
                                       },
                                       child: const Text("SALVA"),
@@ -919,30 +905,30 @@ class EditChallengeDialog {
     }
   }
 
-  List<Department> _getDepartment(
-      Company? company, List<TextEditingController> listDepartmentController) {
-    if (company == null) {
-      return listDepartmentController
-          .map(
-            (element) => Department(id: const Uuid().v4(), name: element.text),
-          )
-          .toList();
-    } else {
-      List<Department> list = [];
-      for (var index = 0; index < listDepartmentController.length; index++) {
-        Department department = Department(
-          id: '',
-          name: listDepartmentController[index].text,
-        );
-        try {
-          var element = company.listDepartment!.elementAt(index);
-          department.id = element.id;
-        } catch (e) {
-          department.id = const Uuid().v4();
-        }
-        list.add(department);
-      }
-      return list;
-    }
-  }
+  // List<Department> _getDepartment(
+  //     Company? company, List<TextEditingController> listDepartmentController) {
+  //   if (company == null) {
+  //     return listDepartmentController
+  //         .map(
+  //           (element) => Department(id: const Uuid().v4(), name: element.text),
+  //         )
+  //         .toList();
+  //   } else {
+  //     List<Department> list = [];
+  //     for (var index = 0; index < listDepartmentController.length; index++) {
+  //       Department department = Department(
+  //         id: '',
+  //         name: listDepartmentController[index].text,
+  //       );
+  //       try {
+  //         var element = company.listDepartment!.elementAt(index);
+  //         department.id = element.id;
+  //       } catch (e) {
+  //         department.id = const Uuid().v4();
+  //       }
+  //       list.add(department);
+  //     }
+  //     return list;
+  //   }
+  // }
 }

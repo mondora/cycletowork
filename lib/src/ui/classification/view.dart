@@ -1,7 +1,110 @@
+import 'package:cycletowork/src/theme.dart';
+import 'package:cycletowork/src/ui/classification_cyclist/view.dart';
+import 'package:cycletowork/src/ui/dashboard/view_model.dart';
+import 'package:cycletowork/src/ui/classification_company/view.dart';
 import 'package:flutter/material.dart';
 
-class ClassificationView extends StatelessWidget {
+import 'package:provider/provider.dart';
+
+class ClassificationView extends StatefulWidget {
   const ClassificationView({Key? key}) : super(key: key);
+
+  @override
+  State<ClassificationView> createState() => _ClassificationViewState();
+}
+
+class _ClassificationViewState extends State<ClassificationView> {
+  @override
+  Widget build(BuildContext context) {
+    final viewModel = Provider.of<ViewModel>(context);
+    var textTheme = Theme.of(context).textTheme;
+    var colorScheme = Theme.of(context).colorScheme;
+    final colorSchemeExtension =
+        Theme.of(context).extension<ColorSchemeExtension>()!;
+
+    var listChallengeRegistred = viewModel.uiState.listChallengeRegistred;
+    var registeredToChalleng = listChallengeRegistred.isNotEmpty;
+    List<String> listChallengeName =
+        listChallengeRegistred.map((e) => e.challengeName).toList();
+
+    var challengeRegistrySelected = viewModel.uiState.challengeRegistrySelected;
+    var userCompanyClassification = viewModel.uiState.userCompanyClassification;
+    var userCyclistClassification = viewModel.uiState.userCompanyClassification;
+
+    if (!registeredToChalleng ||
+        userCompanyClassification == null ||
+        userCyclistClassification == null) {
+      return const _EmptyChallenge();
+    }
+
+    return DefaultTabController(
+      initialIndex: 0,
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          toolbarHeight: 90.0,
+          title: Column(
+            children: [
+              const SizedBox(
+                height: 10,
+              ),
+              Text(
+                'Classifica',
+                style: textTheme.headline5,
+              ),
+              DropdownButton<String>(
+                items: listChallengeName.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: textTheme.caption,
+                    ),
+                  );
+                }).toList(),
+                value: challengeRegistrySelected?.challengeName,
+                onChanged: (value) {
+                  if (value != null) {
+                    // viewModel.set
+                  }
+                },
+              )
+            ],
+          ),
+          bottom: TabBar(
+            indicatorColor: colorScheme.primary,
+            unselectedLabelStyle: textTheme.caption!.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+            unselectedLabelColor: colorSchemeExtension.textSecondary,
+            labelColor: colorSchemeExtension.textPrimary,
+            labelStyle: textTheme.caption!.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+            tabs: <Widget>[
+              Tab(
+                text: 'Aziende'.toUpperCase(),
+              ),
+              Tab(
+                text: 'Ciclisti'.toUpperCase(),
+              ),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: <Widget>[
+            ClassificationCompanyView(),
+            CyclistCompanyView(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyChallenge extends StatelessWidget {
+  const _EmptyChallenge({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -11,9 +114,11 @@ class ClassificationView extends StatelessWidget {
       backgroundColor: colorScheme.background,
       body: Column(
         mainAxisSize: MainAxisSize.max,
-        // mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          const SizedBox(
+            height: 10.0,
+          ),
           Center(
             child: Text(
               'Classifica',
