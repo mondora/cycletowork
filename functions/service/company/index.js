@@ -9,7 +9,7 @@ const saveCompany = async (company) => {
         .where('name', '==', company.name)
         .get();
 
-    if (!companyInfo.exists) {
+    if (companyInfo.empty) {
         await admin
             .firestore()
             .collection(Constant.companyCollectionName)
@@ -62,8 +62,23 @@ const getCompanyList = async (lastCompanyName, pageSize = 100) => {
     }
 };
 
+const getCompanyFromName = async (companyName) => {
+    const snapshot = await admin
+        .firestore()
+        .collection(Constant.companyCollectionName)
+        .where('name', '==', companyName)
+        .get();
+
+    if (!snapshot.empty) {
+        return snapshot.docs[0].data();
+    } else {
+        return null;
+    }
+};
+
 module.exports = {
     saveCompany,
     getCompanyListNameSearch,
     getCompanyList,
+    getCompanyFromName,
 };

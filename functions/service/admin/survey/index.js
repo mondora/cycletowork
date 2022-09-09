@@ -8,7 +8,7 @@ const saveSurvey = async (survey) => {
         .where('name', '==', survey.name)
         .get();
 
-    if (!surveyInfo.exists) {
+    if (surveyInfo.empty) {
         await admin
             .firestore()
             .collection(Constant.surveyCollectionName)

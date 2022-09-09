@@ -29,6 +29,7 @@ const {
     saveCompany,
     getCompanyListNameSearch,
     getCompanyList,
+    getCompanyFromName,
 } = require('./service/company');
 const { updateCompany, verifyCompany } = require('./service/admin/company');
 const { saveSurveyResponse } = require('./service/survey');
@@ -41,10 +42,165 @@ const {
 const {
     getActiveChallengeList,
     registerChallenge,
+    getListActiveRegisterdChallenge,
     getListRegisterdChallenge,
+    updateUserRankingCo2,
+    updateCompanyRankingCo2,
+    updateCompanyRankingPercentRegistered,
+    getListCyclistClassificationByRankingCo2,
+    getListCompanyClassificationByRankingCo2,
+    getListCompanyClassificationByRankingPercentRegistered,
+    getUserCyclistClassification,
+    getUserCompanyClassification,
+    updateCompanyPercentRegistered,
+    getChallengeRegistryFromBusinessEmail,
 } = require('./service/challenge');
 
 admin.initializeApp();
+
+exports.updateUserRankingCo2 = functions
+    .region(Constant.appRegion)
+    .firestore.document(
+        `${Constant.challengeCollectionName}/{challengeId}/${Constant.usersCollectionName}/{documentId}`
+    )
+    .onWrite((change, context) => {
+        const challengeId = context.params.challengeId;
+        return updateUserRankingCo2(challengeId);
+    });
+
+exports.updateCompanyRankingCo2 = functions
+    .region(Constant.appRegion)
+    .firestore.document(
+        `${Constant.challengeCollectionName}/{challengeId}/${Constant.companyCollectionName}/{documentId}`
+    )
+    .onWrite((change, context) => {
+        const challengeId = context.params.challengeId;
+        const newValue = change.after.data();
+        const previousValue = change.before.data();
+
+        if (
+            newValue.co2 != previousValue.co2 ||
+            newValue.distance != previousValue.distance
+        ) {
+            return updateCompanyRankingCo2(challengeId);
+        }
+    });
+
+exports.updateCompanyPercentRegistered = functions
+    .region(Constant.appRegion)
+    .firestore.document(
+        `${Constant.challengeCollectionName}/{challengeId}/${Constant.companyCollectionName}/{documentId}`
+    )
+    .onUpdate((change, context) => {
+        const challengeId = context.params.challengeId;
+        const documentId = context.params.documentId;
+
+        const newValue = change.after.data();
+        const previousValue = change.before.data();
+
+        if (
+            newValue.employeesNumberRegistered !=
+            previousValue.employeesNumberRegistered
+        ) {
+            updateCompanyPercentRegistered(challengeId, documentId, newValue);
+        }
+    });
+
+exports.updateMicroCompanyRankingPercentRegistered = functions
+    .region(Constant.appRegion)
+    .firestore.document(
+        `${Constant.challengeCollectionName}/{challengeId}/${Constant.microCompanyCollectionName}/{documentId}`
+    )
+    .onUpdate((change, context) => {
+        const challengeId = context.params.challengeId;
+
+        const newValue = change.after.data();
+        const previousValue = change.before.data();
+
+        if (newValue.percentRegistered != previousValue.percentRegistered) {
+            const companyCollectionForSizeCategory =
+                Constant.getCompanyCollectionForSizeCategory(
+                    newValue.employeesNumber
+                );
+
+            return updateCompanyRankingPercentRegistered(
+                challengeId,
+                companyCollectionForSizeCategory
+            );
+        }
+    });
+
+exports.updateSmallCompanyRankingPercentRegistered = functions
+    .region(Constant.appRegion)
+    .firestore.document(
+        `${Constant.challengeCollectionName}/{challengeId}/${Constant.smallCompanyCollectionName}/{documentId}`
+    )
+    .onUpdate((change, context) => {
+        const challengeId = context.params.challengeId;
+
+        const newValue = change.after.data();
+        const previousValue = change.before.data();
+
+        if (newValue.percentRegistered != previousValue.percentRegistered) {
+            const companyCollectionForSizeCategory =
+                Constant.getCompanyCollectionForSizeCategory(
+                    newValue.employeesNumber
+                );
+
+            return updateCompanyRankingPercentRegistered(
+                challengeId,
+                companyCollectionForSizeCategory
+            );
+        }
+    });
+
+exports.updateMediumCompanyRankingPercentRegistered = functions
+    .region(Constant.appRegion)
+    .firestore.document(
+        `${Constant.challengeCollectionName}/{challengeId}/${Constant.mediumCompanyCollectionName}/{documentId}`
+    )
+    .onUpdate((change, context) => {
+        const challengeId = context.params.challengeId;
+
+        const newValue = change.after.data();
+        const previousValue = change.before.data();
+
+        if (newValue.percentRegistered != previousValue.percentRegistered) {
+            const companyCollectionForSizeCategory =
+                Constant.getCompanyCollectionForSizeCategory(
+                    newValue.employeesNumber
+                );
+
+            return updateCompanyRankingPercentRegistered(
+                challengeId,
+                companyCollectionForSizeCategory
+            );
+        }
+    });
+
+exports.updateLargeCompanyRankingPercentRegistered = functions
+    .region(Constant.appRegion)
+    .firestore.document(
+        `${Constant.challengeCollectionName}/{challengeId}/${Constant.largeCompanyCollectionName}/{documentId}`
+    )
+    .onUpdate((change, context) => {
+        const challengeId = context.params.challengeId;
+
+        const newValue = change.after.data();
+        const previousValue = change.before.data();
+
+        if (newValue.percentRegistered != previousValue.percentRegistered) {
+            const companyCollectionForSizeCategory =
+                Constant.getCompanyCollectionForSizeCategory(
+                    newValue.employeesNumber
+                );
+
+            return updateCompanyRankingPercentRegistered(
+                challengeId,
+                companyCollectionForSizeCategory
+            );
+        }
+    });
 
 exports.onCreateUser = functions
     .region(Constant.appRegion)
@@ -219,6 +375,43 @@ exports.getCompanyListNameSearch = functions
                     uid,
                     'name:',
                     name,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.getCompanyFromName = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            if (!data || !data.companyName) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+
+            const companyName = data.companyName;
+
+            loggerLog('getCompanyFromName UID:', uid, 'data:', data);
+            try {
+                return await getCompanyFromName(companyName);
+            } catch (error) {
+                loggerError(
+                    'getCompanyFromName Error, UID:',
+                    uid,
+                    'data:',
+                    data,
                     'error:',
                     error
                 );
@@ -561,6 +754,348 @@ exports.getListUserActivity = functions
                 loggerError(
                     'getListUserActivity Error, UID:',
                     uid,
+                    'data:',
+                    data,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.getListActiveRegisterdChallenge = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            loggerLog(
+                'getListActiveRegisterdChallenge UID:',
+                uid,
+                'data: ',
+                data
+            );
+            try {
+                return await getListActiveRegisterdChallenge(uid);
+            } catch (error) {
+                loggerError(
+                    'getListActiveRegisterdChallenge Error, UID:',
+                    uid,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.getListCyclistClassificationByRankingCo2 = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            if (!data || !data.pagination || !data.challengeId) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+
+            const challengeId = data.challengeId;
+            const pageSize = data.pagination.pageSize;
+            const lastRankingCo2 = data.pagination.lastRankingCo2;
+
+            loggerLog(
+                'getListCyclistClassificationByRankingCo2 UID:',
+                uid,
+                'challengeId:',
+                challengeId,
+                'data:',
+                data
+            );
+            try {
+                return await getListCyclistClassificationByRankingCo2(
+                    challengeId,
+                    lastRankingCo2,
+                    pageSize
+                );
+            } catch (error) {
+                loggerError(
+                    'getListCyclistClassificationByRankingCo2 Error, UID:',
+                    uid,
+                    'challengeId:',
+                    challengeId,
+                    'data:',
+                    data,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.getListCompanyClassificationByRankingCo2 = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            if (!data || !data.pagination || !data.challengeId) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+
+            const challengeId = data.challengeId;
+            const pageSize = data.pagination.pageSize;
+            const lastRankingCo2 = data.pagination.lastRankingCo2;
+
+            loggerLog(
+                'getListCompanyClassificationByRankingCo2 UID:',
+                uid,
+                'challengeId:',
+                challengeId,
+                'data:',
+                data
+            );
+            try {
+                return await getListCompanyClassificationByRankingCo2(
+                    challengeId,
+                    lastRankingCo2,
+                    pageSize
+                );
+            } catch (error) {
+                loggerError(
+                    'getListCompanyClassificationByRankingCo2 Error, UID:',
+                    uid,
+                    'challengeId:',
+                    challengeId,
+                    'data:',
+                    data,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.getListCompanyClassificationByRankingPercentRegistered = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            if (
+                !data ||
+                !data.pagination ||
+                !data.challengeId ||
+                !data.companyEmployeesNumber
+            ) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+
+            const challengeId = data.challengeId;
+            const companyEmployeesNumber = data.companyEmployeesNumber;
+            const pageSize = data.pagination.pageSize;
+            const lastPercentRegistered = data.pagination.lastPercentRegistered;
+
+            loggerLog(
+                'getListCompanyClassificationByRankingPercentRegistered UID:',
+                uid,
+                'challengeId:',
+                challengeId,
+                'companyEmployeesNumber:',
+                companyEmployeesNumber,
+                'data:',
+                data
+            );
+            try {
+                return await getListCompanyClassificationByRankingPercentRegistered(
+                    challengeId,
+                    lastPercentRegistered,
+                    pageSize,
+                    companyEmployeesNumber
+                );
+            } catch (error) {
+                loggerError(
+                    'getListCompanyClassificationByRankingPercentRegistered Error, UID:',
+                    uid,
+                    'challengeId:',
+                    challengeId,
+                    'companyEmployeesNumber:',
+                    companyEmployeesNumber,
+                    'data:',
+                    data,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.getChallengeRegistryFromBusinessEmail = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            if (!data || !data.challengeId || !data.businessEmail) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+
+            const challengeId = data.challengeId;
+            const businessEmail = data.businessEmail;
+            loggerLog(
+                'getChallengeRegistryFromBusinessEmail UID:',
+                uid,
+                'challengeId:',
+                challengeId,
+                'data:',
+                data
+            );
+            try {
+                return await getChallengeRegistryFromBusinessEmail(
+                    challengeId,
+                    businessEmail
+                );
+            } catch (error) {
+                loggerError(
+                    'getChallengeRegistryFromBusinessEmail Error, UID:',
+                    uid,
+                    'challengeId:',
+                    challengeId,
+                    'data:',
+                    data,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.getUserCyclistClassification = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            if (!data || !data.challengeId) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+
+            const challengeId = data.challengeId;
+            loggerLog(
+                'getUserCyclistClassification UID:',
+                uid,
+                'challengeId:',
+                challengeId,
+                'data:',
+                data
+            );
+            try {
+                return await getUserCyclistClassification(challengeId, uid);
+            } catch (error) {
+                loggerError(
+                    'getUserCyclistClassification Error, UID:',
+                    uid,
+                    'challengeId:',
+                    challengeId,
+                    'data:',
+                    data,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.getUserCompanyClassification = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            if (!data || !data.challengeId || !data.companyId) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+
+            const challengeId = data.challengeId;
+            const companyId = data.companyId;
+            loggerLog(
+                'getUserCompanyClassification UID:',
+                uid,
+                'challengeId:',
+                challengeId,
+                'data:',
+                data
+            );
+            try {
+                return await getUserCompanyClassification(
+                    challengeId,
+                    companyId
+                );
+            } catch (error) {
+                loggerError(
+                    'getUserCompanyClassification Error, UID:',
+                    uid,
+                    'challengeId:',
+                    challengeId,
                     'data:',
                     data,
                     'error:',

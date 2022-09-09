@@ -2,7 +2,7 @@ const admin = require('firebase-admin');
 const { v4: uuidv4 } = require('uuid');
 const { Constant } = require('../../utility/constant');
 const { loggerDebug, loggerError } = require('../../utility/logger');
-const { mailer } = require('../../utility/mailer');
+const { sgMail } = require('../../utility/mailer');
 const { sendVerifiyCode } = require('../../utility/email_template');
 
 const createUser = async (user) => {
@@ -37,17 +37,18 @@ const createUser = async (user) => {
         .set(data, { merge: false });
 };
 
-const saveChallengeUser = async (uid, challengeId) => {
-    const data = {
+const saveChallengeUser = async (uid, challengeId, data) => {
+    const dataUser = {
         listChallengeIdRegister: admin.firestore.FieldValue.arrayUnion(
             ...[challengeId]
         ),
+        ...data,
     };
     await admin
         .firestore()
         .collection(Constant.usersCollectionName)
         .doc(uid)
-        .update(data, { merge: true });
+        .update(dataUser, { merge: true });
 };
 
 const deleteUser = async (user) => {
@@ -119,18 +120,19 @@ const sendEmailVerificationCode = async (uid, email, displayName) => {
         });
     }
     await updateUserInfo(uid, dataCode);
-
-    const mailOptions = {
-        from: '"Cycle2Work" <noreply@cycle2work.com>',
+    const msg = {
+        from: 'info@sataspes.net',
         to: email,
-        subject: 'VERIFICA IL SUO EMAIL',
+        subject: 'Verifica indirizzo mail',
         html: sendVerifiyCode(code),
     };
-    mailer.sendMail(mailOptions, (error, data) => {
-        if (error) {
-            loggerError('mailer error: ', error);
-        }
-    });
+
+    sgMail
+        .send(msg)
+        .then((response) => {})
+        .catch((error) => {
+            loggerError('sgMail error: ', error);
+        });
 };
 
 const verifiyEmailCode = async (uid, email, code) => {

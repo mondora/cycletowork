@@ -12,6 +12,14 @@ const surveyCollectionName = 'surveys';
 
 const companyCollectionName = 'companies';
 
+const microCompanyCollectionName = 'microCompanies';
+
+const smallCompanyCollectionName = 'smallCompanies';
+
+const mediumCompanyCollectionName = 'mediumCompanies';
+
+const largeCompanyCollectionName = 'largeCompanies';
+
 const fcmCollectionName = 'fcm';
 
 const dataList = 'dataList';
@@ -20,6 +28,13 @@ const UserType = {
     Other: 'other',
     Mondora: 'mondora',
     Fiab: 'fiab',
+};
+
+const CompanySizeCategory = {
+    micro: 'micro',
+    small: 'small',
+    medium: 'medium',
+    large: 'large',
 };
 
 const permissionDeniedMessage = 'permission-denied';
@@ -127,6 +142,54 @@ class Constant {
 
     static get fcmCollectionName() {
         return fcmCollectionName;
+    }
+
+    static getCompanySizeCategory(employeesNumber) {
+        if (employeesNumber < 10) {
+            return CompanySizeCategory.micro;
+        }
+
+        if (employeesNumber < 50) {
+            return CompanySizeCategory.small;
+        }
+
+        if (employeesNumber < 250) {
+            return CompanySizeCategory.medium;
+        }
+
+        return CompanySizeCategory.large;
+    }
+
+    static getCompanyCollectionForSizeCategory(employeesNumber) {
+        if (employeesNumber < 10) {
+            return microCompanyCollectionName;
+        }
+
+        if (employeesNumber < 50) {
+            return smallCompanyCollectionName;
+        }
+
+        if (employeesNumber < 250) {
+            return mediumCompanyCollectionName;
+        }
+
+        return largeCompanyCollectionName;
+    }
+
+    static get microCompanyCollectionName() {
+        return microCompanyCollectionName;
+    }
+
+    static get smallCompanyCollectionName() {
+        return smallCompanyCollectionName;
+    }
+
+    static get mediumCompanyCollectionName() {
+        return mediumCompanyCollectionName;
+    }
+
+    static get largeCompanyCollectionName() {
+        return largeCompanyCollectionName;
     }
 }
 

@@ -8,7 +8,7 @@ const saveChallenge = async (challenge) => {
         .where('name', '==', challenge.name)
         .get();
 
-    if (!challengeInfo.exists) {
+    if (challengeInfo.empty) {
         await admin
             .firestore()
             .collection(Constant.challengeCollectionName)

@@ -53,6 +53,43 @@ const saveUserActivityForChallenge = async (uid, userActivity) => {
     const challengeId = userActivity.challengeId;
     const userActivityId = userActivity.userActivityId;
     const companyId = userActivity.companyId;
+    const dataUser = {
+        calorie: admin.firestore.FieldValue.increment(userActivity.calorie),
+        co2: admin.firestore.FieldValue.increment(userActivity.co2),
+        distance: admin.firestore.FieldValue.increment(userActivity.distance),
+        steps: admin.firestore.FieldValue.increment(userActivity.steps),
+        averageSpeed: userActivity.averageSpeed,
+        maxSpeed: userActivity.maxSpeed,
+    };
+
+    const dataCompany = {
+        calorie: admin.firestore.FieldValue.increment(userActivity.calorie),
+        co2: admin.firestore.FieldValue.increment(userActivity.co2),
+        distance: admin.firestore.FieldValue.increment(userActivity.distance),
+        steps: admin.firestore.FieldValue.increment(userActivity.steps),
+        averageSpeed: userActivity.averageSpeed,
+        maxSpeed: userActivity.maxSpeed,
+    };
+
+    const registeredInfo = await admin
+        .firestore()
+        .collection(Constant.challengeCollectionName)
+        .doc(challengeId)
+        .collection(Constant.usersCollectionName)
+        .doc(uid)
+        .get();
+
+    if (!registeredInfo.exists) {
+        throw new Error(Constant.userNotFoundError);
+    }
+
+    const now = Date.now();
+    if (
+        registeredInfo.startTimeChallenge > now ||
+        registeredInfo.stopTimeChallenge < now
+    ) {
+        throw new Error(Constant.challengeIsNotOpenError);
+    }
 
     await admin
         .firestore()
@@ -62,14 +99,14 @@ const saveUserActivityForChallenge = async (uid, userActivity) => {
         .doc(userActivityId)
         .set(userActivity, { merge: false });
 
-    const data = {
-        calorie: admin.firestore.FieldValue.increment(userActivity.calorie),
-        co2: admin.firestore.FieldValue.increment(userActivity.co2),
-        distance: admin.firestore.FieldValue.increment(userActivity.distance),
-        steps: admin.firestore.FieldValue.increment(userActivity.steps),
-        averageSpeed: userActivity.averageSpeed,
-        maxSpeed: userActivity.maxSpeed,
-    };
+    const alreadyStarted = registeredInfo.data().alreadyStarted;
+
+    if (!alreadyStarted) {
+        dataCompany.employeesNumberRegistered =
+            admin.firestore.FieldValue.increment(1);
+
+        dataUser.alreadyStarted = true;
+    }
 
     await admin
         .firestore()
@@ -77,7 +114,7 @@ const saveUserActivityForChallenge = async (uid, userActivity) => {
         .doc(challengeId)
         .collection(Constant.usersCollectionName)
         .doc(uid)
-        .update(data, { merge: true });
+        .update(dataUser, { merge: true });
 
     await admin
         .firestore()
@@ -85,7 +122,7 @@ const saveUserActivityForChallenge = async (uid, userActivity) => {
         .doc(challengeId)
         .collection(Constant.companyCollectionName)
         .doc(companyId)
-        .update(data, { merge: true });
+        .update(dataCompany, { merge: true });
 };
 
 const getListUserActivity = async (uid, startDate, pageSize = 100) => {

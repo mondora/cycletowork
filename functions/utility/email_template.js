@@ -299,30 +299,18 @@ const sendVerifiyCode = (code) => {
             <!-- BEGIN BODY -->
           <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
               <tr>
-              <td valign="top" class="bg_white" style="padding: 1em 2.5em 0 2.5em;">
-                  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-                      <tr>
-                          <td class="logo" style="text-align: center;">
-                            <h1><a href="#">e-Verify</a></h1>
-                          </td>
-                      </tr>
-                  </table>
-              </td>
-              </tr><!-- end tr -->
-              <tr>
-              <td valign="middle" class="hero bg_white" style="padding: 3em 0 2em 0;">
-                <img src="https://i.ibb.co/R3zh3mC/admin-login.png" alt="image" style="width: 300px; max-width: 600px; height: auto; margin: auto; display: block;">
+              <td valign="middle" class="hero bg_white" style="padding: 0;">
+                <img src="https://i.ibb.co/MRDFch7/emai-header.png" alt="image" style="width: 300px; max-width: 600px; height: auto; margin: auto; display: block;">
               </td>
               </tr><!-- end tr -->
                     <tr>
-              <td valign="middle" class="hero bg_white" style="padding: 2em 0 4em 0;">
+              <td valign="middle" class="hero bg_white" style="padding: 0em 0 4em 0;">
                 <table>
                     <tr>
                         <td>
                             <div class="text" style="padding: 0 2.5em; text-align: center;">
-                                <h2>Per favore verificare il suo email</h2>
-                                <h3>Per verificare il suo email deve inserire codice: "${code}"</h3>
-                                <p class="btn btn-primary">${code}</p>
+                                <h2>Verifica indirizzo email</h2>
+                                <h3>Codice di verifica: "${code}"</h3>
                             </div>
                         </td>
                     </tr>
