@@ -90,8 +90,14 @@ extension DoubleExtensions on double {
     return (this * 50) ~/ 1609.34;
   }
 
+  //Each 1km distance is 250g co2
   double distanceInMeterToCo2g() {
     return (this * 250) / 1000;
+  }
+
+  //Each 1m distance is 1.312 pas
+  double distanceInMeterToSteps() {
+    return (this * 1.312);
   }
 
   double gramToKg() {

@@ -49,35 +49,49 @@ class SummeryCard extends StatelessWidget {
         const SizedBox(
           height: 13,
         ),
-        IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
+        SizedBox(
+          height: 48.0,
+          child: Stack(
             children: [
-              Text(
-                distance,
-                style: Theme.of(context).textTheme.headline5,
+              const Align(
+                alignment: Alignment.center,
+                child: VerticalDivider(
+                  thickness: 1.0,
+                  width: 1.0,
+                ),
               ),
-              const SizedBox(
-                width: 40,
-              ),
-              const VerticalDivider(
-                thickness: 1.0,
-                width: 1.0,
-              ),
-              const SizedBox(
-                width: 23,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Stack(
                 children: [
-                  Text(
-                    averageSpeed,
-                    style: Theme.of(context).textTheme.headline5,
-                  ),
-                  Text(
-                    'VEL. MEDIA',
-                    style: Theme.of(context).textTheme.caption,
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 2,
+                        child: Center(
+                          child: Text(
+                            distance,
+                            style: Theme.of(context).textTheme.headline5,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 2,
+                        child: Center(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                averageSpeed,
+                                style: Theme.of(context).textTheme.headline5,
+                              ),
+                              Text(
+                                'VEL. MEDIA',
+                                style: Theme.of(context).textTheme.caption,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -32,14 +32,11 @@ class ShowMapTracking extends StatefulWidget {
 
 class _ShowMapTrackingState extends State<ShowMapTracking> {
   final GlobalKey<AppMapState> _mapKey = GlobalKey();
-  Timer? _timer;
-  int pathCounter = 0;
-  LocationData? lastCurrentPosition;
+  LocationData? lastPositionPassed;
 
   @override
   void dispose() {
     _mapKey.currentState?.dispose();
-    _timer?.cancel();
     super.dispose();
   }
 
@@ -50,8 +47,6 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
 
   @override
   Widget build(BuildContext context) {
-    var currentPosition = widget.currentPosition;
-    var firstPosition = widget.listTrackingPosition.first;
     var lastPosition = widget.listTrackingPosition.last;
     final trackingCo2 = widget.trackingUserActivity.co2.gramToKg();
     final isChallenge =
@@ -64,54 +59,28 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
       '##0.00',
       appLocale.languageCode,
     );
-    var listTrackingPosition =
-        widget.listTrackingPosition.map((e) => e).toList();
-    listTrackingPosition.add(currentPosition);
 
-    Timer(const Duration(seconds: 1), () async {
-      _mapKey.currentState?.setPath(
-        listTrackingPosition,
-      );
+    Timer(const Duration(microseconds: 500), () async {
+      if (lastPositionPassed == null ||
+          lastPositionPassed!.latitude != lastPosition.latitude ||
+          lastPositionPassed!.longitude != lastPosition.longitude) {
+        _mapKey.currentState?.setPath(
+          widget.listTrackingPosition,
+        );
 
-      _mapKey.currentState?.setMarker(
-        currentPosition.latitude,
-        currentPosition.longitude,
-      );
-      await _mapKey.currentState?.changeCameraFromPath(
-        firstPosition.latitude,
-        firstPosition.longitude,
-        lastPosition.latitude,
-        lastPosition.longitude,
-      );
+        _mapKey.currentState?.setMarker(
+          lastPosition.latitude,
+          lastPosition.longitude,
+        );
 
-      _timer = Timer.periodic(
-        const Duration(seconds: 1),
-        (Timer timer) {
-          var currentPosition = widget.currentPosition;
-
-          if (lastCurrentPosition != null) {
-            var distance = LocationData.calculateDistanceInMeter(
-              latitude1: lastCurrentPosition!.latitude,
-              longitude1: lastCurrentPosition!.longitude,
-              latitude2: currentPosition.latitude,
-              longitude2: currentPosition.longitude,
-            );
-            if (distance > 3) {
-              _mapKey.currentState?.addPath(
-                lastCurrentPosition!,
-                currentPosition,
-              );
-              _mapKey.currentState?.setMarker(
-                currentPosition.latitude,
-                currentPosition.longitude,
-              );
-              lastCurrentPosition = currentPosition;
-            }
-          } else {
-            lastCurrentPosition = currentPosition;
-          }
-        },
-      );
+        lastPositionPassed = lastPosition;
+        await _mapKey.currentState?.changeCamera(
+          lastPosition.latitude,
+          lastPosition.longitude,
+          bearing: lastPosition.bearing,
+          zoom: 17.0,
+        );
+      }
     });
 
     return Scaffold(
@@ -168,10 +137,10 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
                 child: AppMap(
                   key: _mapKey,
                   type: AppMapType.dynamic,
-                  listTrackingPosition: listTrackingPosition,
+                  listTrackingPosition: widget.listTrackingPosition,
                   isChallenge: isChallenge,
-                  initialLatitude: currentPosition.latitude,
-                  initialLongitude: currentPosition.longitude,
+                  initialLatitude: lastPosition.latitude,
+                  initialLongitude: lastPosition.longitude,
                 ),
               ),
             ),
@@ -179,70 +148,74 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
+              height: 120.0,
               color: Theme.of(context).colorScheme.background,
               padding: const EdgeInsets.symmetric(
                 horizontal: 24.0,
                 vertical: 20.0,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              child: Stack(
                 children: [
-                  SizedBox(
-                    height: 80.0,
-                    width: 80.0,
-                    child: FittedBox(
-                      child: FloatingActionButton(
-                        onPressed: widget.pauseTracking,
-                        child: Icon(
-                          Icons.pause,
-                          color: colorSchemeExtension.textPrimary,
-                          size: 26.0,
+                  Align(
+                    alignment: Alignment.center,
+                    child: SizedBox(
+                      height: 80.0,
+                      width: 80.0,
+                      child: FittedBox(
+                        child: FloatingActionButton(
+                          onPressed: widget.pauseTracking,
+                          child: Icon(
+                            Icons.pause,
+                            color: colorSchemeExtension.textPrimary,
+                            size: 26.0,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 35.0,
-                  ),
-                  SizedBox(
-                    height: 60.0,
-                    width: 60.0,
-                    child: FittedBox(
-                      child: FloatingActionButton(
-                        onPressed: widget.hiddenMap,
-                        child: Stack(
-                          children: [
-                            Align(
-                              alignment: Alignment.center,
-                              child: SvgPicture.asset(
-                                'assets/icons/map.svg',
-                                height: 32.0,
-                                width: 27.0,
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.center,
-                              child: RotationTransition(
-                                turns: const AlwaysStoppedAnimation(45 / 360),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: colorSchemeExtension.textPrimary,
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(8),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 10.0, right: 50.0),
+                      child: SizedBox(
+                        height: 60.0,
+                        width: 60.0,
+                        child: FittedBox(
+                          child: FloatingActionButton(
+                            onPressed: widget.hiddenMap,
+                            child: Stack(
+                              children: [
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: SvgPicture.asset(
+                                    'assets/icons/map.svg',
+                                    height: 32.0,
+                                    width: 27.0,
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: RotationTransition(
+                                    turns:
+                                        const AlwaysStoppedAnimation(45 / 360),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: colorSchemeExtension.textPrimary,
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(8),
+                                        ),
+                                      ),
+                                      height: 5.0,
+                                      width: 47.0,
                                     ),
                                   ),
-                                  height: 5.0,
-                                  width: 47.0,
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    width: 28.0,
                   ),
                 ],
               ),

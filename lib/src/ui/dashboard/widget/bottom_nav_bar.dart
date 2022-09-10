@@ -7,18 +7,22 @@ class AppBottomNavBar extends StatelessWidget {
   final void Function(AppBottomNavBarOption) onChange;
   final GestureTapCallback? onPressed;
   final bool floatActionButtonEnabled;
+  final bool isCenter;
+
   const AppBottomNavBar({
     Key? key,
     required this.bottomNavBarOption,
     required this.onChange,
     required this.floatActionButtonEnabled,
     required this.onPressed,
+    required this.isCenter,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment:
+          isCenter ? MainAxisAlignment.center : MainAxisAlignment.start,
       children: [
         Container(
           margin: const EdgeInsets.only(
@@ -53,46 +57,6 @@ class AppBottomNavBar extends StatelessWidget {
               ],
             ),
           ),
-        ),
-        Container(
-          width: 50.0,
-          height: 50.0,
-          margin: const EdgeInsets.only(
-            right: 20.0,
-            left: 20.0,
-            bottom: 20.0,
-          ),
-          child: FittedBox(
-            child: FloatingActionButton(
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(15.0),
-                ),
-              ),
-              onPressed: floatActionButtonEnabled ? onPressed : null,
-              child: Text(
-                'IN SELLA!',
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                style: Theme.of(context).textTheme.caption!.copyWith(
-                      fontWeight: FontWeight.w900,
-                      fontStyle: FontStyle.italic,
-                    ),
-              ),
-            ),
-          ),
-          // child: FloatingActionButton(
-          //   onPressed: floatActionButtonEnabled ? onPressed : null,
-          //   child: Text(
-          //     'IN SELLA!',
-          //     textAlign: TextAlign.center,
-          //     maxLines: 2,
-          //     style: Theme.of(context).textTheme.caption!.copyWith(
-          //           fontWeight: FontWeight.w900,
-          //           fontStyle: FontStyle.italic,
-          //         ),
-          //   ),
-          // ),
         ),
       ],
     );

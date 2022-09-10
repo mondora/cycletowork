@@ -11,14 +11,14 @@ import 'package:cycletowork/src/utility/logger.dart';
 import 'package:cycletowork/src/utility/notification.dart';
 import 'package:cycletowork/src/widget/chart.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
 class ViewModel extends ChangeNotifier {
   final initialLatitude = 45.50315189900018;
   final initialLongitude = 9.198330425060847;
-  final _minDistanceInMeterToAdd = 3;
-  final _minAngleInRadiansToAdd = 8;
+  final _minDistanceInMeterToAdd = 3.0;
   final _ignoreAppBarActionPages = [
     AppMenuOption.profile,
   ];
@@ -108,6 +108,13 @@ class ViewModel extends ChangeNotifier {
             _trackingUserActivity!.duration =
                 _trackingUserActivity!.duration + 1;
           }
+          if (!_isTrackingStarted()) {
+            _trackingUserActivity!.startTime =
+                DateTime.now().toLocal().millisecondsSinceEpoch;
+            _uiState.dashboardPageOption = DashboardPageOption.startTracking;
+            notifyListeners();
+            return;
+          }
         }
 
         if (_uiState.dashboardPageOption == DashboardPageOption.startCounter ||
@@ -153,7 +160,7 @@ class ViewModel extends ChangeNotifier {
   }
 
   void startGetLocation(context) async {
-    await _repository.setGpsConfig(context);
+    await _repository.setGpsConfig(context, _minDistanceInMeterToAdd);
 
     _locationSubscription =
         _repository.startListenOnBackground().handleError((dynamic e) {
@@ -168,28 +175,34 @@ class ViewModel extends ChangeNotifier {
       _uiState.dashboardPageOption = DashboardPageOption.home;
     }).listen((LocationData locationData) {
       _uiState.currentPosition = locationData;
-      if (_uiState.counter == 0) {
-        if (!_isTrackingStarted()) {
-          _trackingUserActivity!.startTime =
-              DateTime.now().toLocal().millisecondsSinceEpoch;
-          _uiState.dashboardPageOption = DashboardPageOption.startTracking;
+      if (_uiState.counter == 0 && !_trackingPaused) {
+        _addToListTrackingPosition(locationData);
+        if (_uiState.dashboardPageOption ==
+            DashboardPageOption.showMapTracking) {
           notifyListeners();
         }
-
-        if (_isHaveToAddPossitionToList(locationData)) {
+      } else {
+        if (_listTrackingPosition.isEmpty) {
           _addToListTrackingPosition(locationData);
+          if (_uiState.dashboardPageOption ==
+              DashboardPageOption.showMapTracking) {
+            notifyListeners();
+          }
         }
       }
     });
   }
 
-  Future<bool> saveTracking(String localeIdentifier) async {
+  Future<bool> saveTracking(BuildContext context) async {
     _uiState.loading = true;
     notifyListeners();
     try {
+      var localeIdentifier = Localizations.localeOf(context).languageCode;
       var userActivity = _trackingUserActivity!;
       userActivity.imageData = await _repository.getMapImageData(
         _listTrackingPosition,
+        context,
+        userActivity.isChallenge == 1,
       );
       if (_listTrackingPosition.isNotEmpty) {
         var firstLocation = _listTrackingPosition.first;
@@ -336,15 +349,6 @@ class ViewModel extends ChangeNotifier {
   }
 
   void showMapTracking() {
-    var lastPosition = _listTrackingPosition.last;
-    var currentPosition = _uiState.currentPosition!;
-    var distance = _repository.calculateDistanceInMeter(
-      lastPosition,
-      currentPosition,
-    );
-    if (distance > _minDistanceInMeterToAdd) {
-      _addToListTrackingPosition(currentPosition);
-    }
     _uiState.dashboardPageOption = DashboardPageOption.showMapTracking;
     notifyListeners();
   }
@@ -361,15 +365,6 @@ class ViewModel extends ChangeNotifier {
 
   void pauseTracking() {
     _trackingPaused = true;
-    var lastPosition = _listTrackingPosition.last;
-    var currentPosition = _uiState.currentPosition!;
-    var distance = _repository.calculateDistanceInMeter(
-      lastPosition,
-      currentPosition,
-    );
-    if (distance > _minDistanceInMeterToAdd) {
-      _addToListTrackingPosition(currentPosition);
-    }
     _uiState.dashboardPageOption = DashboardPageOption.pauseTracking;
     notifyListeners();
   }
@@ -380,6 +375,11 @@ class ViewModel extends ChangeNotifier {
     _trackingPaused = true;
     _timer?.cancel();
     await _locationSubscription?.cancel();
+
+    _trackingUserActivity!.averageSpeed = await compute(
+      LocationData.getAverageSpeed,
+      _listTrackingPosition,
+    );
 
     _locationSubscription = null;
     _trackingUserActivity!.stopTime =
@@ -613,40 +613,11 @@ class ViewModel extends ChangeNotifier {
         _uiState.dashboardPageOption == DashboardPageOption.stopTracking;
   }
 
-  bool _isHaveToAddPossitionToList(LocationData newLocationData) {
-    if (_trackingPaused) return false;
-
-    if (_listTrackingPosition.isEmpty) return true;
-
-    var lastPosition = _listTrackingPosition.last;
-    var distanceInMeter = _repository.calculateDistanceInMeter(
-      lastPosition,
-      newLocationData,
-    );
-    if (distanceInMeter < _minDistanceInMeterToAdd) return false;
-
-    if (_listTrackingPosition.length == 1) return true;
-
-    var preLastPosition =
-        _listTrackingPosition[_listTrackingPosition.length - 2];
-    var angle1InRadians = _repository.calculateDistanceInRadians(
-      preLastPosition,
-      lastPosition,
-    );
-    var angle2InRadians = _repository.calculateDistanceInRadians(
-      lastPosition,
-      newLocationData,
-    );
-    var angleInRadians = (angle1InRadians - angle2InRadians).abs();
-    if (angleInRadians < _minAngleInRadiansToAdd) return false;
-
-    return true;
-  }
-
   void _addToListTrackingPosition(LocationData locationData) {
     locationData.locationDataId = const Uuid().v4();
     locationData.userActivityId = _trackingUserActivity!.userActivityId;
     if (_listTrackingPosition.isEmpty) {
+      locationData.speed = 0.0;
       _listTrackingPosition.add(locationData);
       _trackingUserActivity!.maxSpeed = locationData.speed;
       _trackingUserActivity!.averageSpeed = locationData.speed;
@@ -663,12 +634,25 @@ class ViewModel extends ChangeNotifier {
     );
     var newCalorie = newDistance.toCalorieFromDistanceInMeter();
     var newCo2 = newDistance.distanceInMeterToCo2g();
-    var newSpeed = locationData.speed;
+    var newSpeed = locationData.speed > 1 ? locationData.speed : 0.0;
     _trackingUserActivity!.distance = distance + newDistance;
     _trackingUserActivity!.calorie = calorie + newCalorie;
     _trackingUserActivity!.co2 = co2 + newCo2;
     _trackingUserActivity!.maxSpeed = maxSpeed < newSpeed ? newSpeed : maxSpeed;
-    _listTrackingPosition.add(locationData);
+    if (_listTrackingPosition.length < 2) {
+      _listTrackingPosition.add(locationData);
+    } else {
+      var point = lastPosition;
+      var endPont = locationData;
+      var startPoint = _listTrackingPosition[_listTrackingPosition.length - 2];
+      var distance = LocationData.distanceToLine(point, startPoint, endPont);
+      if (distance >= _minDistanceInMeterToAdd) {
+        _listTrackingPosition.add(locationData);
+      } else {
+        _listTrackingPosition[_listTrackingPosition.length - 1] = locationData;
+      }
+    }
+
     _trackingUserActivity!.averageSpeed =
         _listTrackingPosition.map((e) => e.speed).reduce((a, b) => a + b) /
             _listTrackingPosition.length;

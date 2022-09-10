@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:cycletowork/src/data/location_data.dart' as location_data;
 import 'package:geocoding/geocoding.dart';
-import 'package:location/location.dart';
+import 'package:location/location.dart' as location;
 
 enum GpsStatus {
   turnOff,
@@ -10,38 +10,67 @@ enum GpsStatus {
   granted,
 }
 
+/// Status of a permission request to use location services.
+enum PermissionStatus {
+  /// User has not yet made a choice with regards to this application
+  notDetermined,
+
+  /// This application is not authorized to use precise
+  restricted,
+
+  /// User has explicitly denied authorization for this application, or
+  /// location services are disabled in Settings.
+  denied,
+
+  /// User has granted authorization to use their location at any
+  /// time. Your app may be launched into the background by
+  /// monitoring APIs such as visit monitoring, region monitoring,
+  /// and significant location change monitoring.
+  authorizedAlways,
+
+  /// User has granted authorization to use their location only while
+  /// they are using your app.
+  authorizedWhenInUse,
+}
+
 class Gps {
   static Future<GpsStatus> getGpsStatus() async {
     try {
-      bool _serviceEnabled;
-      PermissionStatus _permissionGranted;
-
-      _serviceEnabled = await isGPSEnabled();
-      if (!_serviceEnabled) {
-        if (!_serviceEnabled) {
-          return GpsStatus.turnOff;
-        }
+      var isGPSEnabled = await location.isGPSEnabled();
+      if (!isGPSEnabled) {
+        return GpsStatus.turnOff;
       }
 
-      _permissionGranted = await getPermissionStatus();
-      if (_permissionGranted != PermissionStatus.authorizedAlways) {
-        _permissionGranted = await requestPermission();
+      location.PermissionStatus permissionStatus =
+          await location.getPermissionStatus();
+      if (permissionStatus == location.PermissionStatus.notDetermined) {
+        permissionStatus = await location.requestPermission();
       }
-
-      if (_permissionGranted == PermissionStatus.authorizedAlways) {
-        return GpsStatus.turnOn;
-      } else {
+      if (permissionStatus == location.PermissionStatus.authorizedAlways ||
+          permissionStatus == location.PermissionStatus.authorizedWhenInUse) {
         return GpsStatus.granted;
+      } else {
+        return GpsStatus.turnOn;
       }
     } catch (e) {
       return GpsStatus.turnOff;
     }
   }
 
+  static Future<PermissionStatus> getPermissionStatus() async {
+    location.PermissionStatus permissionStatus =
+        await location.getPermissionStatus();
+    if (permissionStatus == location.PermissionStatus.notDetermined) {
+      permissionStatus = await location.requestPermission();
+    }
+    return PermissionStatus.values
+        .firstWhere((element) => element.name == permissionStatus.name);
+  }
+
   static Future<location_data.LocationData?> getCurrentPosition() async {
     try {
-      var result = await getLocation(
-        settings: LocationSettings(ignoreLastKnownPosition: true),
+      var result = await location.getLocation(
+        settings: location.LocationSettings(ignoreLastKnownPosition: true),
       );
       return location_data.LocationData(
         latitude: result.latitude ?? 0,
@@ -61,16 +90,16 @@ class Gps {
   static Future initialize() async {}
 
   static Future setSettings({double smallestDisplacement = 0}) async {
-    await setLocationSettings(
+    await location.setLocationSettings(
       interval: 1000,
       fastestInterval: 800,
-      accuracy: LocationAccuracy.high,
+      accuracy: location.LocationAccuracy.high,
       smallestDisplacement: smallestDisplacement,
     );
   }
 
   static Future setNotificaion({String? title, String? subtitle}) async {
-    await updateBackgroundNotification(
+    await location.updateBackgroundNotification(
       title: title,
       subtitle: subtitle,
       channelName: 'Cycle2Work',
@@ -80,7 +109,7 @@ class Gps {
   }
 
   static Stream<location_data.LocationData> startListenOnBackground() {
-    return onLocationChanged(inBackground: true).map(
+    return location.onLocationChanged(inBackground: true).map(
       (result) {
         return location_data.LocationData(
           latitude: result.latitude ?? 0,

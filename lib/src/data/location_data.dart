@@ -1,6 +1,8 @@
+import 'dart:collection';
 import 'dart:math' show cos, sqrt, sin, pi, atan2;
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:maps_toolkit/maps_toolkit.dart' as mp;
+import 'package:maps_toolkit/maps_toolkit.dart';
 
 class LocationData {
   String? locationDataId;
@@ -9,7 +11,7 @@ class LocationData {
   final double longitude; // Longitude, in degrees
   final double accuracy; // Estimated horizontal accuracy, radial, in meters
   final double altitude; // In meters above the WGS 84 reference ellipsoid
-  final double speed; // In meters/second
+  double speed; // In meters/second
   final double speedAccuracy; // In meters/second, always 0 on iOS
   final int time; // timestamp of the LocationData
   final double bearing;
@@ -155,5 +157,100 @@ class LocationData {
       time: DateTime.now().toLocal().millisecondsSinceEpoch,
       bearing: 0,
     );
+  }
+
+  /// Simplifies the given polyline using the Douglas-Peucker
+  /// decimation algorithm. Increasing the tolerance will result in fewer points
+  /// in the simplified polyline.
+  /// The time complexity of Douglas-Peucker is O(n^2), so take care that you do
+  /// not call this algorithm too frequently in your code.
+  ///
+  /// @param polyline  to be simplified.
+  /// @param tolerance in meters. Increasing the tolerance will result in fewer
+  ///                  points in the simplified polyline.
+  /// @return a simplified polyline produced by the Douglas-Peucker algorithm
+  static List<LocationData> simplify(
+      List<LocationData> polyline, num tolerance) {
+    final n = polyline.length;
+    if (n < 1) {
+      throw const FormatException('Polyline must have at least 1 point');
+    }
+    if (tolerance <= 0) {
+      throw const FormatException('Tolerance must be greater than zero');
+    }
+
+    // late final LatLng lastPoint;
+
+    int idx;
+    var maxIdx = 0;
+    final stack = Queue<List<int>>();
+    final dists = List<num>.filled(n, 0);
+    dists[0] = 1;
+    dists[n - 1] = 1;
+    num maxDist;
+    num dist = 0.0;
+    List<int> current;
+
+    if (n > 2) {
+      final stackVal = [0, (n - 1)];
+      stack.add(stackVal);
+      while (stack.isNotEmpty) {
+        current = stack.removeLast();
+        maxDist = 0;
+        for (idx = current[0] + 1; idx < current[1]; ++idx) {
+          var p = LatLng(polyline[idx].latitude, polyline[idx].longitude);
+          var start = LatLng(
+              polyline[current[0]].latitude, polyline[current[0]].longitude);
+          var end = LatLng(
+              polyline[current[1]].latitude, polyline[current[1]].longitude);
+          dist = PolygonUtil.distanceToLine(p, start, end);
+          if (dist > maxDist) {
+            maxDist = dist;
+            maxIdx = idx;
+          }
+        }
+        if (maxDist > tolerance) {
+          dists[maxIdx] = maxDist;
+          final stackValCurMax = [current[0], maxIdx];
+          stack.add(stackValCurMax);
+          final stackValMaxCur = [maxIdx, current[1]];
+          stack.add(stackValMaxCur);
+        }
+      }
+    }
+
+    // Generate the simplified line
+    idx = 0;
+    final simplifiedLine = <LocationData>[];
+    for (final l in polyline) {
+      if (dists[idx] != 0) {
+        simplifiedLine.add(l);
+      }
+      idx++;
+    }
+
+    return simplifiedLine;
+  }
+
+  static double distanceToLine(
+    LocationData point,
+    LocationData startPoint,
+    LocationData endPont,
+  ) {
+    var p = LatLng(point.latitude, point.longitude);
+    var start = LatLng(startPoint.latitude, startPoint.longitude);
+    var end = LatLng(endPont.latitude, endPont.longitude);
+    return PolygonUtil.distanceToLine(p, start, end).toDouble();
+  }
+
+  static double getAverageSpeed(List<LocationData> listLocationData) {
+    if (listLocationData.isEmpty) {
+      return 0;
+    }
+    if (listLocationData.length == 1) {
+      return listLocationData.first.speed;
+    }
+    return (listLocationData.map((e) => e.speed).reduce((a, b) => a + b)) /
+        listLocationData.length;
   }
 }

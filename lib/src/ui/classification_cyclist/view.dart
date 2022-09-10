@@ -56,26 +56,7 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
       appLocale.languageCode,
     );
 
-    var selectedColor = const Color.fromRGBO(199, 21, 172, 1);
     var firstColor = const Color.fromRGBO(57, 73, 171, 1);
-    // var maxValueWidget = CircleAvatar(
-    //   backgroundColor: firstColor,
-    //   child: SvgPicture.asset(
-    //     'assets/icons/build.svg',
-    //     height: 18.0,
-    //     width: 18.0,
-    //     color: colorScheme.onPrimary,
-    //   ),
-    // );
-    // var valueWidget = CircleAvatar(
-    //   backgroundColor: selectedColor,
-    //   child: SvgPicture.asset(
-    //     'assets/icons/build.svg',
-    //     height: 18.0,
-    //     width: 18.0,
-    //     color: colorScheme.onPrimary,
-    //   ),
-    // );
 
     var listCyclistClassificationRankingCo2 =
         viewModel.uiState.listCyclistClassification;

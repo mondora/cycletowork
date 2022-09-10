@@ -90,7 +90,8 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
       longitudeDestination,
     );
 
-    var camera = CameraUpdate.newLatLngBounds(bounds, 70);
+    var camera = CameraUpdate.newLatLngBounds(bounds, 100);
+
     await controller.animateCamera(camera);
   }
 
@@ -214,7 +215,7 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
     if (_markerIcon == null) {
       final Uint8List markerIcon = await getBytesFromAsset(
         'assets/images/marker_image.png',
-        130,
+        100,
       );
       _markerIcon = BitmapDescriptor.fromBytes(markerIcon);
     }
@@ -310,14 +311,14 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
             ? <static_map.Marker>[
                 static_map.Marker.custom(
                   anchor: static_map.MarkerAnchor.center,
-                  icon: 'https://i.ibb.co/58rHbHb/start-position.png',
+                  icon: 'https://i.ibb.co/7W9gZXW/start-position.png',
                   locations: [
                     listPath.first,
                   ],
                 ),
                 static_map.Marker.custom(
                   anchor: static_map.MarkerAnchor.center,
-                  icon: 'https://i.ibb.co/d45s3yj/end-position.png',
+                  icon: 'https://i.ibb.co/pWBnTBD/end-position.png',
                   locations: [
                     listPath.last,
                   ],

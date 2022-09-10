@@ -363,8 +363,13 @@ class Repository {
     return await Gps.getCurrentPosition();
   }
 
-  Future setGpsConfig(BuildContext context) async {
-    await Gps.setSettings();
+  Future setGpsConfig(
+    BuildContext context,
+    double smallestDisplacement,
+  ) async {
+    await Gps.setSettings(
+      smallestDisplacement: smallestDisplacement,
+    );
     var date = DateTime.now().toLocal();
     await Gps.setNotificaion(
       title: date.toDayInterval(context),
@@ -402,9 +407,13 @@ class Repository {
 
   Future<Uint8List> getMapImageData(
     List<LocationData> listTrackingPosition,
+    BuildContext context,
+    bool isChallenge,
   ) async {
     return await TrackingDrawing.getTrackingDrawing(
       listTrackingPosition: listTrackingPosition,
+      context: context,
+      isChallenge: isChallenge,
     );
   }
 

@@ -69,9 +69,24 @@ class _LandingViewState extends State<LandingView> {
             }
 
             if (viewModel.uiState.pageOption == PageOption.loading) {
-              return const Scaffold(
-                body: Center(
-                  child: AppProgressIndicator(),
+              return Scaffold(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                body: Stack(
+                  children: const [
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: Image(
+                        image: AssetImage(
+                          'assets/images/login.png',
+                        ),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: AppProgressIndicator(),
+                    )
+                  ],
                 ),
               );
             }

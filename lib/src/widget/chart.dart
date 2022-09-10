@@ -2,6 +2,7 @@ import 'package:cycletowork/src/data/chart_data.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'dart:math';
 
 enum ChartType {
   co2,
@@ -32,6 +33,8 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var maxValue =
+        chartData.isNotEmpty ? chartData.map((x) => x.y).reduce(max) : 0;
     final formatterY = charts.BasicNumericTickFormatterSpec(
       (value) {
         switch (scaleType) {
@@ -110,7 +113,7 @@ class Chart extends StatelessWidget {
               dataIsInWholeNumbers: false,
             ),
             viewport: type == ChartType.speed
-                ? const charts.NumericExtents(0, 60)
+                ? charts.NumericExtents(0, max(60, maxValue.ceil() + 10))
                 : const charts.NumericExtents(0, 1000),
           ),
           //   domainAxis: charts.NumericAxisSpec(
@@ -151,8 +154,8 @@ class Chart extends StatelessWidget {
             dataIsInWholeNumbers: false,
           ),
           viewport: type == ChartType.co2
-              ? const charts.NumericExtents(0.0, 1.0)
-              : const charts.NumericExtents(0, 60),
+              ? charts.NumericExtents(0.0, maxValue.ceil() + 1)
+              : charts.NumericExtents(0, max(60, maxValue.ceil() + 10)),
         ),
         domainAxis: charts.NumericAxisSpec(
           tickProviderSpec: charts.BasicNumericTickProviderSpec(

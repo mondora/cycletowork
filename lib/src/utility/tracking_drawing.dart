@@ -10,10 +10,13 @@ import 'package:google_static_maps_controller/google_static_maps_controller.dart
 class TrackingDrawing {
   static Future<Uint8List> getTrackingDrawing({
     required List<LocationData> listTrackingPosition,
+    required BuildContext context,
+    required bool isChallenge,
     width = 320,
     height = 320,
   }) async {
     var listPath = _getPathForStaticMapFromLocationData(listTrackingPosition);
+    var colorScheme = Theme.of(context).colorScheme;
 
     var _staticController = StaticMapController(
       googleApiKey: dotenv.env['GOOGLE_MAP_STATIC_API_KEY']!,
@@ -24,7 +27,13 @@ class TrackingDrawing {
           ? <Path>[
               Path(
                 color: Colors.black,
-                weight: 2,
+                weight: 10,
+                points: listPath,
+              ),
+              Path(
+                color:
+                    isChallenge ? colorScheme.secondary : colorScheme.primary,
+                weight: 5,
                 points: listPath,
               ),
             ]
@@ -33,14 +42,14 @@ class TrackingDrawing {
           ? <Marker>[
               Marker.custom(
                 anchor: MarkerAnchor.center,
-                icon: 'https://i.ibb.co/58rHbHb/start-position.png',
+                icon: 'https://i.ibb.co/7W9gZXW/start-position.png',
                 locations: [
                   listPath.first,
                 ],
               ),
               Marker.custom(
                 anchor: MarkerAnchor.center,
-                icon: 'https://i.ibb.co/d45s3yj/end-position.png',
+                icon: 'https://i.ibb.co/pWBnTBD/end-position.png',
                 locations: [
                   listPath.last,
                 ],

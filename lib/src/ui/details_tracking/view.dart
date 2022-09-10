@@ -413,7 +413,7 @@ class _Item extends StatelessWidget {
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     return SizedBox(
-      width: 157.0,
+      width: 160.0,
       child: Column(
         children: [
           ListTile(

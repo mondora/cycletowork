@@ -67,36 +67,39 @@ class TrackingView extends StatelessWidget {
             const SizedBox(
               height: 15,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+            Stack(
               children: [
-                SizedBox(
-                  height: 80.0,
-                  width: 80.0,
-                  child: FittedBox(
-                    child: FloatingActionButton(
-                      onPressed: pauseTracking,
-                      child: Icon(
-                        Icons.pause,
-                        color: colorSchemeExtension.textPrimary,
-                        size: 26.0,
+                Align(
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    height: 80.0,
+                    width: 80.0,
+                    child: FittedBox(
+                      child: FloatingActionButton(
+                        onPressed: pauseTracking,
+                        child: Icon(
+                          Icons.pause,
+                          color: colorSchemeExtension.textPrimary,
+                          size: 26.0,
+                        ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(
-                  width: 35.0,
-                ),
-                SizedBox(
-                  height: 60.0,
-                  width: 60.0,
-                  child: FittedBox(
-                    child: FloatingActionButton(
-                      onPressed: showMap,
-                      child: SvgPicture.asset(
-                        'assets/icons/map.svg',
-                        height: 32.0,
-                        width: 27.0,
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 10, right: 50.0),
+                    height: 60.0,
+                    width: 60.0,
+                    child: FittedBox(
+                      child: FloatingActionButton(
+                        onPressed: showMap,
+                        child: SvgPicture.asset(
+                          'assets/icons/map.svg',
+                          height: 32.0,
+                          width: 27.0,
+                        ),
                       ),
                     ),
                   ),

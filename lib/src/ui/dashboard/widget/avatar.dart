@@ -39,6 +39,7 @@ class AppAvatar extends StatelessWidget {
     if (userType == UserType.other || isAdmin) {
       return IconButton(
         iconSize: smallSize,
+        splashRadius: smallSize,
         icon: _getUserIcon(
           context,
           loading,
