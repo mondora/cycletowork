@@ -45,6 +45,7 @@ dependencies:
     searchfield: ^0.7.0
     auto_size_text: ^3.0.0
     firebase_crashlytics: ^2.8.9
+    app_settings: ^4.1.8
 
 dev_dependencies:
     flutter_test:
