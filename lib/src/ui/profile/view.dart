@@ -1,5 +1,6 @@
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/theme.dart';
+import 'package:cycletowork/src/ui/edit_profile/view.dart';
 import 'package:flutter/material.dart';
 
 class ProfileView extends StatelessWidget {
@@ -33,8 +34,15 @@ class ProfileView extends StatelessWidget {
                       Radius.circular(15.0),
                     ),
                   ),
+                  foregroundColor: colorScheme.secondary,
                 ),
-                onPressed: () {},
+                onPressed: () async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const EditProfileView(),
+                    ),
+                  );
+                },
                 child: Text(
                   'Modifica',
                   style: textTheme.caption!.copyWith(
