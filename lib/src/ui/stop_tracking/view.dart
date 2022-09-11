@@ -79,6 +79,10 @@ class _StopTrackingViewState extends State<StopTrackingView> {
       '##0.00',
       appLocale.languageCode,
     );
+    final numberPaceFormat = NumberFormat(
+      '##0',
+      appLocale.languageCode,
+    );
 
     final endTrackingDate = DateTime.fromMillisecondsSinceEpoch(
       widget.trackingUserActivity.stopTime,
@@ -90,7 +94,8 @@ class _StopTrackingViewState extends State<StopTrackingView> {
     final trackingMaxSpeed =
         widget.trackingUserActivity.maxSpeed.meterPerSecondToKmPerHour();
     final trackingCalorie = widget.trackingUserActivity.calorie;
-    final trackingSteps = widget.trackingUserActivity.steps;
+    final trackingPace =
+        trackingAvarageSpeed > 2 ? 60 / trackingAvarageSpeed : 0;
     final trackingDistanceInKm =
         widget.trackingUserActivity.distance.meterToKm();
     final isChallenge =
@@ -266,7 +271,7 @@ class _StopTrackingViewState extends State<StopTrackingView> {
                     TrackingOption.steps,
                     isChallenge: isChallenge,
                   ).title,
-                  value: trackingSteps.toString(),
+                  value: numberPaceFormat.format(trackingPace),
                   unit: _getItemInfo(
                     TrackingOption.steps,
                     isChallenge: isChallenge,

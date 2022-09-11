@@ -35,6 +35,10 @@ class DetailsTrackingView extends StatelessWidget {
             '##0.00',
             appLocale.languageCode,
           );
+          final numberPaceFormat = NumberFormat(
+            '##0.00',
+            appLocale.languageCode,
+          );
           final userActivity = viewModel.uiState.userActivity!;
           final endTrackingDate = DateTime.fromMillisecondsSinceEpoch(
             userActivity.stopTime,
@@ -46,7 +50,8 @@ class DetailsTrackingView extends StatelessWidget {
           final trackingMaxSpeed =
               userActivity.maxSpeed.meterPerSecondToKmPerHour();
           final trackingCalorie = userActivity.calorie;
-          final trackingSteps = userActivity.steps;
+          final trackingPace =
+              trackingAvarageSpeed > 2 ? 60 / trackingAvarageSpeed : 0;
           final trackingDistanceInKm = userActivity.distance.meterToKm();
           final isChallenge = userActivity.isChallenge == 1 ? true : false;
           final listLocationData = viewModel.uiState.listLocationData;
@@ -261,7 +266,7 @@ class DetailsTrackingView extends StatelessWidget {
                             TrackingOption.steps,
                             isChallenge: isChallenge,
                           ).title,
-                          value: trackingSteps.toString(),
+                          value: numberPaceFormat.format(trackingPace),
                           unit: _getItemInfo(
                             TrackingOption.steps,
                             isChallenge: isChallenge,

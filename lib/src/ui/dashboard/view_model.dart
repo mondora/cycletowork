@@ -18,7 +18,7 @@ import 'package:uuid/uuid.dart';
 class ViewModel extends ChangeNotifier {
   final initialLatitude = 45.50315189900018;
   final initialLongitude = 9.198330425060847;
-  final _minDistanceInMeterToAdd = 3.0;
+  final _minDistanceInMeterToAdd = 3.5;
   final _ignoreAppBarActionPages = [
     AppMenuOption.profile,
   ];
@@ -639,6 +639,8 @@ class ViewModel extends ChangeNotifier {
     _trackingUserActivity!.calorie = calorie + newCalorie;
     _trackingUserActivity!.co2 = co2 + newCo2;
     _trackingUserActivity!.maxSpeed = maxSpeed < newSpeed ? newSpeed : maxSpeed;
+    _trackingUserActivity!.steps +=
+        newDistance.distanceInMeterToSteps().toInt();
     if (_listTrackingPosition.length < 2) {
       _listTrackingPosition.add(locationData);
     } else {

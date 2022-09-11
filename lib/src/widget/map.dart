@@ -215,7 +215,7 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
     if (_markerIcon == null) {
       final Uint8List markerIcon = await getBytesFromAsset(
         'assets/images/marker_image.png',
-        100,
+        80,
       );
       _markerIcon = BitmapDescriptor.fromBytes(markerIcon);
     }
