@@ -248,9 +248,18 @@ class RemoteService
   }
 
   @override
-  Future<Company?> getCompanyFromName(String companyName) async {
-    var arg = {'companyName': companyName};
-    var map = await Remote.callFirebaseFunctions('getCompanyFromName', arg);
+  Future<Company?> getCompanyFromNameInChallenge(
+    String challengeId,
+    String companyName,
+  ) async {
+    var arg = {
+      'challengeId': challengeId,
+      'companyName': companyName,
+    };
+    var map = await Remote.callFirebaseFunctions(
+      'getCompanyFromNameInChallenge',
+      arg,
+    );
     return map != null ? Company.fromMap(Map<String, dynamic>.from(map)) : null;
   }
 

@@ -65,8 +65,14 @@ class Repository {
     return true;
   }
 
-  Future<bool> isCompanyExist(String companyName) async {
-    var company = await _remoteService.getCompanyFromName(companyName);
+  Future<bool> isCompanyExist(
+    String challengeId,
+    String companyName,
+  ) async {
+    var company = await _remoteService.getCompanyFromNameInChallenge(
+      challengeId,
+      companyName,
+    );
     if (company != null) {
       return true;
     } else {

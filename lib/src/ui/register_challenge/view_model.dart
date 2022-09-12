@@ -216,8 +216,12 @@ class ViewModel extends ChangeNotifier {
     _uiState.loading = true;
     notifyListeners();
     try {
-      var isCompanyExist = await _repository
-          .isCompanyExist(_uiState.challengeRegistry.companyName);
+      var challengeId = _uiState.challenge!.id;
+      var companyName = _uiState.challengeRegistry.companyName;
+      var isCompanyExist = await _repository.isCompanyExist(
+        challengeId,
+        companyName,
+      );
       if (isCompanyExist) {
         _uiState.errorMessage =
             'La azienda "${_uiState.challengeRegistry.companyName}" già esiste';

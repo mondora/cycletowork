@@ -144,7 +144,10 @@ abstract class AppServiceOnlyRemote {
 
   Future<List<ChallengeRegistry>> getListActiveRegisterdChallenge();
 
-  Future<Company?> getCompanyFromName(String companyName);
+  Future<Company?> getCompanyFromNameInChallenge(
+    String challengeId,
+    String companyName,
+  );
 
   Future<List<CompanyClassification>> getListCompanyClassificationByRankingCo2(
     String challengeId, {
