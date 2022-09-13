@@ -20,83 +20,232 @@ const getActiveChallengeList = async () => {
 };
 
 const registerChallenge = async (uid, challengeRegistry) => {
-    const userInfo = await getUserInfo(uid);
+    let userInfoData, challengeInfoData, companyInfoData;
+    const now = Date.now();
     const challengeId = challengeRegistry.challengeId;
-    if (!userInfo) {
-        throw new Error(Constant.userNotFoundError);
-    }
-
-    if (
-        userInfo.listChallengeIdRegister &&
-        userInfo.listChallengeIdRegister.includes(challengeId)
-    ) {
-        throw new Error(Constant.userAlreadyRegisteredError);
-    }
-
-    if (challengeRegistry.companyToAdd) {
-        await saveCompany(challengeRegistry.companyToAdd);
-    }
-    const data = {
-        averageSpeed: 0,
-        calorie: 0,
-        co2: 0,
-        distance: 0,
-        maxSpeed: 0,
-        steps: 0,
-        rankingCo2: 0,
-        rankingPercentRegistered: 0,
-        percentRegistered: 0,
-    };
-    const company = challengeRegistry.companySelected;
+    const businessEmail = challengeRegistry.businessEmail;
+    const isCyclist = challengeRegistry.isCyclist;
+    const isChampion = challengeRegistry.isChampion;
+    const companyId = challengeRegistry.companyId;
+    const isFiabMember = challengeRegistry.isFiabMember;
+    const fiabCardNumber = challengeRegistry.fiabCardNumber;
+    const companyEmployeesNumber = challengeRegistry.companyEmployeesNumber;
     const companySizeCategory = Constant.getCompanySizeCategory(
-        company.employeesNumber
+        companyEmployeesNumber
     );
-    const companyCollectionForSizeCategory =
-        Constant.getCompanyCollectionForSizeCategory(company.employeesNumber);
-    const companyEmployeesNumber = company.employeesNumber;
-    await admin
+    const companyToAdd = challengeRegistry.companyToAdd;
+
+    const userRef = admin
+        .firestore()
+        .collection(Constant.usersCollectionName)
+        .doc(uid);
+
+    const userInChallengeRef = admin
         .firestore()
         .collection(Constant.challengeCollectionName)
         .doc(challengeId)
         .collection(Constant.usersCollectionName)
-        .doc(uid)
-        .set(
-            { ...challengeRegistry, ...data, companyEmployeesNumber },
-            { merge: false }
-        );
+        .doc(uid);
 
-    await admin
+    const challengeRef = admin
         .firestore()
         .collection(Constant.challengeCollectionName)
-        .doc(challengeId)
+        .doc(challengeId);
+
+    const companyRef = admin
+        .firestore()
         .collection(Constant.companyCollectionName)
-        .doc(company.id)
-        .set(
-            { ...company, ...data, challengeId, companySizeCategory },
-            { merge: false }
-        );
+        .doc(companyId);
 
-    await admin
+    const companyInChallengRef = admin
         .firestore()
         .collection(Constant.challengeCollectionName)
         .doc(challengeId)
-        .collection(companyCollectionForSizeCategory)
-        .doc(company.id)
-        .set(
-            { ...company, ...data, challengeId, companySizeCategory },
+        .collection(companySizeCategory)
+        .doc(companyId);
+
+    await admin.firestore().runTransaction(async (t) => {
+        const userInfo = await t.get(userRef);
+
+        if (userInfo.exists) {
+            userInfoData = userInfo.data();
+        } else {
+            throw new Error(Constant.userNotFoundError);
+        }
+
+        if (
+            userInfoData.listChallengeIdRegister &&
+            userInfoData.listChallengeIdRegister.includes(challengeId)
+        ) {
+            throw new Error(Constant.userAlreadyRegisteredError);
+        }
+
+        const userInChallengeInfo = await t.get(userInChallengeRef);
+        if (userInChallengeInfo.exists) {
+            throw new Error(Constant.userAlreadyRegisteredError);
+        }
+
+        if (
+            !userInfoData.connectedEmail ||
+            !userInfoData.connectedEmail.length ||
+            !userInfoData.connectedEmail.find((x) => x.email == businessEmail)
+        ) {
+            throw new Error(Constant.businessEmailNotConnectedError);
+        }
+
+        if (
+            !userInfoData.connectedEmail.find((x) => x.email == businessEmail)
+                .verified
+        ) {
+            throw new Error(Constant.businessEmailNotVerifiedError);
+        }
+
+        const challengeInfo = await t.get(challengeRef);
+        if (challengeInfo.exists) {
+            challengeInfoData = challengeInfo.data();
+        } else {
+            throw new Error(Constant.challengeNotFoundError);
+        }
+
+        if (challengeInfoData.startTime > now) {
+            throw new Error(Constant.challengeNotOpenedError);
+        }
+
+        if (challengeInfoData.stopTime < now) {
+            throw new Error(Constant.challengeIsExpierdError);
+        }
+
+        const businessEmailInChallenge = await t.get(
+            challengeRef
+                .collection(Constant.usersCollectionName)
+                .where('businessEmail', '==', businessEmail)
+                .limit(1)
+        );
+        if (!businessEmailInChallenge.empty) {
+            throw new Error(Constant.userAlreadyRegisteredError);
+        }
+
+        if (isCyclist) {
+            const companyInChallengInfo = await t.get(companyInChallengRef);
+            if (!companyInChallengInfo.exists) {
+                throw new Error(Constant.companyInChallengNotFoundError);
+            }
+
+            const companyInfo = await t.get(companyRef);
+            if (companyInfo.exists) {
+                companyInfoData = companyInfo.data();
+            } else {
+                throw new Error(Constant.companyNotFoundError);
+            }
+
+            if (
+                !companyInfoData.listChallengeIdRegister ||
+                !companyInfoData.listChallengeIdRegister.includes(challengeId)
+            ) {
+                throw new Error(Constant.companyNotRegisteredError);
+            }
+
+            if (!companyInfoData.isVerified) {
+                throw new Error(Constant.companyNotVerifiedError);
+            }
+        }
+
+        if (isChampion) {
+            const companyInChallengInfo = await t.get(companyInChallengRef);
+            if (companyInChallengInfo.exists) {
+                throw new Error(
+                    Constant.companyInChallengAlreadyExistFoundError
+                );
+            }
+
+            const dataCompany = {
+                listChallengeIdRegister: admin.firestore.FieldValue.arrayUnion(
+                    ...[challengeId]
+                ),
+                companySizeCategory: companySizeCategory,
+            };
+            const companyInfo = await t.get(companyRef);
+            if (companyInfo.exists) {
+                t.update(userRef, dataCompany, { merge: true });
+            } else {
+                t.set(
+                    companyRef,
+                    { ...companyToAdd, ...dataCompany, isVerified: false },
+                    { merge: false }
+                );
+            }
+
+            const dataCompanyInChhalenge = {
+                averageSpeed: 0,
+                calorie: 0,
+                co2: 0,
+                distance: 0,
+                maxSpeed: 0,
+                steps: 0,
+                rankingCo2: 0,
+                rankingPercentRegistered: 0,
+                percentRegistered: 0,
+                companySizeCategory: companySizeCategory,
+            };
+
+            t.set(
+                companyInChallengRef,
+                { ...companyToAdd, ...dataCompanyInChhalenge },
+                { merge: false }
+            );
+
+            if (
+                companyToAdd.listDepartment &&
+                companyToAdd.listDepartment.length
+            ) {
+                companyToAdd.listDepartment.forEach((department) => {
+                    const departmentName = department.name;
+                    const departmentId = department.id;
+                    t.set(
+                        companyInChallengRef
+                            .collection(Constant.departmentCollectionName)
+                            .doc(departmentName),
+                        { ...companyToAdd, ...dataCompanyInChhalenge },
+                        { merge: false }
+                    );
+                });
+            }
+        }
+        const dataUserInChhalenge = {
+            averageSpeed: 0,
+            calorie: 0,
+            co2: 0,
+            distance: 0,
+            maxSpeed: 0,
+            steps: 0,
+            rankingCo2: 0,
+            alreadyStarted: false,
+            companySizeCategory: companySizeCategory,
+        };
+
+        t.set(
+            userInChallengeRef,
+            { ...challengeRegistry, ...dataUserInChhalenge },
             { merge: false }
         );
 
-    const dataUser = {};
-    if (challengeRegistry.businessEmail.includes('@mondora.com')) {
-        dataUser.userType = 'mondora';
-    }
+        const dataUser = {
+            listChallengeIdRegister: admin.firestore.FieldValue.arrayUnion(
+                ...[challengeId]
+            ),
+        };
 
-    if (challengeRegistry.isFiabMember && challengeRegistry.fiabCardNumber) {
-        dataUser.userType = 'fiab';
-        dataUser.fiabCardNumber = challengeRegistry.fiabCardNumber;
-    }
-    await saveChallengeUser(uid, challengeId, dataUser);
+        if (businessEmail.includes('@mondora.com')) {
+            dataUser.userType = 'mondora';
+        }
+
+        if (isFiabMember && fiabCardNumber) {
+            dataUser.userType = 'fiab';
+            dataUser.fiabCardNumber = fiabCardNumber;
+        }
+        t.update(userRef, dataUser, { merge: true });
+        return;
+    });
 };
 
 const getListRegisterdChallenge = async (uid) => {
@@ -201,6 +350,7 @@ const updateCompanyRankingCo2 = (challengeId) => {
 
 const updateCompanyPercentRegistered = async (
     challengeId,
+    companySizeCategory,
     documentId,
     newValue
 ) => {
@@ -210,22 +360,12 @@ const updateCompanyPercentRegistered = async (
             newValue.employeesNumber,
         employeesNumberRegistered: newValue.employeesNumberRegistered,
     };
-    const companyCollectionForSizeCategory =
-        Constant.getCompanyCollectionForSizeCategory(newValue.employeesNumber);
 
     await admin
         .firestore()
         .collection(Constant.challengeCollectionName)
         .doc(challengeId)
-        .collection(Constant.companyCollectionName)
-        .doc(documentId)
-        .update(data, { merge: true });
-
-    await admin
-        .firestore()
-        .collection(Constant.challengeCollectionName)
-        .doc(challengeId)
-        .collection(companyCollectionForSizeCategory)
+        .collection(companySizeCategory)
         .doc(documentId)
         .update(data, { merge: true });
 };
@@ -264,18 +404,18 @@ const updateCompanyRankingPercentRegistered = (
 
 const getListCyclistClassificationByRankingCo2 = async (
     challengeId,
-    lastRankingCo2,
+    lastCo2,
     pageSize
 ) => {
     let snapshot;
-    if (lastRankingCo2) {
+    if (lastCo2) {
         snapshot = await admin
             .firestore()
             .collection(Constant.challengeCollectionName)
             .doc(challengeId)
             .collection(Constant.usersCollectionName)
-            .orderBy('rankingCo2')
-            .startAfter(lastRankingCo2)
+            .orderBy('co2', 'desc')
+            .startAfter(lastCo2)
             .limit(pageSize)
             .get();
     } else {
@@ -284,7 +424,7 @@ const getListCyclistClassificationByRankingCo2 = async (
             .collection(Constant.challengeCollectionName)
             .doc(challengeId)
             .collection(Constant.usersCollectionName)
-            .orderBy('rankingCo2')
+            .orderBy('co2', 'desc')
             .limit(pageSize)
             .get();
     }
@@ -298,18 +438,19 @@ const getListCyclistClassificationByRankingCo2 = async (
 
 const getListCompanyClassificationByRankingCo2 = async (
     challengeId,
-    lastRankingCo2,
+    companySizeCategory,
+    lastCo2,
     pageSize
 ) => {
     let snapshot;
-    if (lastRankingCo2) {
+    if (lastCo2) {
         snapshot = await admin
             .firestore()
             .collection(Constant.challengeCollectionName)
             .doc(challengeId)
-            .collection(Constant.companyCollectionName)
-            .orderBy('rankingCo2')
-            .startAfter(lastRankingCo2)
+            .collection(companySizeCategory)
+            .orderBy('co2', 'desc')
+            .startAfter(lastCo2)
             .limit(pageSize)
             .get();
     } else {
@@ -317,8 +458,55 @@ const getListCompanyClassificationByRankingCo2 = async (
             .firestore()
             .collection(Constant.challengeCollectionName)
             .doc(challengeId)
-            .collection(Constant.companyCollectionName)
-            .orderBy('rankingCo2')
+            .collection(companySizeCategory)
+            .orderBy('co2', 'desc')
+            .limit(pageSize)
+            .get();
+    }
+
+    if (!snapshot.empty) {
+        const list = [];
+        for (let index = 0; index < snapshot.docs.length; index++) {
+            const data = snapshot.docs[index].data();
+            if (data.rankingCo2 != 0) {
+                list.push(data);
+            }
+        }
+        return list;
+    } else {
+        return [];
+    }
+};
+
+const getListDepartmentClassificationByRankingCo2 = async (
+    challengeId,
+    companySizeCategory,
+    companyId,
+    lastCo2,
+    pageSize
+) => {
+    let snapshot;
+    if (lastCo2) {
+        snapshot = await admin
+            .firestore()
+            .collection(Constant.challengeCollectionName)
+            .doc(challengeId)
+            .collection(companySizeCategory)
+            .doc(companyId)
+            .collection(Constant.departmentCollectionName)
+            .orderBy('co2', 'desc')
+            .startAfter(lastCo2)
+            .limit(pageSize)
+            .get();
+    } else {
+        snapshot = await admin
+            .firestore()
+            .collection(Constant.challengeCollectionName)
+            .doc(challengeId)
+            .collection(companySizeCategory)
+            .doc(companyId)
+            .collection(Constant.departmentCollectionName)
+            .orderBy('co2', 'desc')
             .limit(pageSize)
             .get();
     }
@@ -341,19 +529,16 @@ const getListCompanyClassificationByRankingPercentRegistered = async (
     challengeId,
     lastPercentRegistered,
     pageSize,
-    companyEmployeesNumber
+    companySizeCategory
 ) => {
-    const companyCollectionForSizeCategory =
-        Constant.getCompanyCollectionForSizeCategory(companyEmployeesNumber);
-
     let snapshot;
     if (lastPercentRegistered) {
         snapshot = await admin
             .firestore()
             .collection(Constant.challengeCollectionName)
             .doc(challengeId)
-            .collection(companyCollectionForSizeCategory)
-            .orderBy('rankingPercentRegistered')
+            .collection(companySizeCategory)
+            .orderBy('percentRegistered', 'desc')
             .startAfter(lastPercentRegistered)
             .limit(pageSize)
             .get();
@@ -362,8 +547,8 @@ const getListCompanyClassificationByRankingPercentRegistered = async (
             .firestore()
             .collection(Constant.challengeCollectionName)
             .doc(challengeId)
-            .collection(companyCollectionForSizeCategory)
-            .orderBy('rankingPercentRegistered')
+            .collection(companySizeCategory)
+            .orderBy('percentRegistered', 'desc')
             .limit(pageSize)
             .get();
     }
@@ -372,6 +557,7 @@ const getListCompanyClassificationByRankingPercentRegistered = async (
         const list = [];
         for (let index = 0; index < snapshot.docs.length; index++) {
             const data = snapshot.docs[index].data();
+            data.challengeId = challengeId;
             if (data.percentRegistered != 0) {
                 list.push(data);
             }
@@ -392,49 +578,105 @@ const getUserCyclistClassification = async (challengeId, uid) => {
         .get();
 
     if (challengeInfo.exists) {
-        return challengeInfo.data();
+        const data = challengeInfo.data();
+        data.challengeId = challengeId;
+        //TODO get ranking from tree algorithm
+        data.rankingCo2 = 0;
+        return data;
     } else {
         throw new Error(Constant.cyclistClassificationNotFoundError);
     }
 };
 
-const getUserCompanyClassification = async (challengeId, companyId) => {
-    const challengeCompanyInfo = await admin
+const getUserDepartmentClassification = async (
+    challengeId,
+    companyId,
+    companySizeCategory,
+    departmentName
+) => {
+    const challengeInfo = await admin
         .firestore()
         .collection(Constant.challengeCollectionName)
         .doc(challengeId)
-        .collection(Constant.companyCollectionName)
+        .collection(companySizeCategory)
+        .doc(companyId)
+        .collection(Constant.departmentCollectionName)
+        .doc(departmentName)
+        .get();
+
+    if (challengeInfo.exists) {
+        const data = challengeInfo.data();
+        data.challengeId = challengeId;
+        data.name = departmentName;
+        //TODO get ranking from tree algorithm
+        data.rankingCo2 = 0;
+        data.rankingPercentRegistered = 0;
+        return data;
+    } else {
+        throw new Error(Constant.companyClassificationNotFoundError);
+    }
+};
+
+const getUserCompanyClassification = async (
+    challengeId,
+    companyId,
+    companySizeCategory
+) => {
+    const challengeInfo = await admin
+        .firestore()
+        .collection(Constant.challengeCollectionName)
+        .doc(challengeId)
+        .collection(companySizeCategory)
         .doc(companyId)
         .get();
 
-    if (challengeCompanyInfo.exists) {
-        const data = challengeCompanyInfo.data();
-        const companyCollectionForSizeCategory =
-            Constant.getCompanyCollectionForSizeCategory(data.employeesNumber);
-
-        const challengeCompanyForSizeCategoryInfo = await admin
-            .firestore()
-            .collection(Constant.challengeCollectionName)
-            .doc(challengeId)
-            .collection(companyCollectionForSizeCategory)
-            .doc(companyId)
-            .get();
-
-        if (challengeCompanyForSizeCategoryInfo.exists) {
-            const dataCompanyForSizeCategory =
-                challengeCompanyForSizeCategoryInfo.data();
-
-            return {
-                ...data,
-                rankingPercentRegistered:
-                    dataCompanyForSizeCategory.rankingPercentRegistered,
-            };
-        } else {
-            throw new Error(Constant.companuClassificationNotFoundError);
-        }
+    if (challengeInfo.exists) {
+        const data = challengeInfo.data();
+        data.challengeId = challengeId;
+        //TODO get ranking from tree algorithm
+        data.rankingCo2 = 0;
+        data.rankingPercentRegistered = 0;
+        return data;
     } else {
-        throw new Error(Constant.companuClassificationNotFoundError);
+        throw new Error(Constant.companyClassificationNotFoundError);
     }
+
+    // const challengeCompanyInfo = await admin
+    //     .firestore()
+    //     .collection(Constant.challengeCollectionName)
+    //     .doc(challengeId)
+    //     .collection(Constant.companyCollectionName)
+    //     .doc(companyId)
+    //     .get();
+
+    // if (challengeCompanyInfo.exists) {
+    //     const data = challengeCompanyInfo.data();
+    //     const companyCollectionForSizeCategory =
+    //         Constant.getCompanyCollectionForSizeCategory(data.employeesNumber);
+
+    //     const challengeCompanyForSizeCategoryInfo = await admin
+    //         .firestore()
+    //         .collection(Constant.challengeCollectionName)
+    //         .doc(challengeId)
+    //         .collection(companyCollectionForSizeCategory)
+    //         .doc(companyId)
+    //         .get();
+
+    //     if (challengeCompanyForSizeCategoryInfo.exists) {
+    //         const dataCompanyForSizeCategory =
+    //             challengeCompanyForSizeCategoryInfo.data();
+
+    //         return {
+    //             ...data,
+    //             rankingPercentRegistered:
+    //                 dataCompanyForSizeCategory.rankingPercentRegistered,
+    //         };
+    //     } else {
+    //         throw new Error(Constant.companuClassificationNotFoundError);
+    //     }
+    // } else {
+    //     throw new Error(Constant.companuClassificationNotFoundError);
+    // }
 };
 
 const getChallengeRegistryFromBusinessEmail = async (
@@ -465,11 +707,13 @@ module.exports = {
     updateUserRankingCo2,
     updateCompanyRankingCo2,
     updateCompanyRankingPercentRegistered,
+    getListDepartmentClassificationByRankingCo2,
     getListCyclistClassificationByRankingCo2,
     getListCompanyClassificationByRankingCo2,
     getListCompanyClassificationByRankingPercentRegistered,
     getUserCyclistClassification,
     getUserCompanyClassification,
+    getUserDepartmentClassification,
     updateCompanyPercentRegistered,
     getChallengeRegistryFromBusinessEmail,
 };

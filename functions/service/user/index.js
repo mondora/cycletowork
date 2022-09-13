@@ -123,7 +123,7 @@ const sendEmailVerificationCode = async (uid, email, displayName) => {
     const msg = {
         from: 'info@sataspes.net',
         to: email,
-        subject: 'Verifica indirizzo mail',
+        subject: 'Cycle2Work - verifica email',
         html: sendVerifiyCode(code),
     };
 

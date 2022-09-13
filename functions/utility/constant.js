@@ -12,6 +12,8 @@ const surveyCollectionName = 'surveys';
 
 const companyCollectionName = 'companies';
 
+const departmentCollectionName = 'departments';
+
 const microCompanyCollectionName = 'microCompanies';
 
 const smallCompanyCollectionName = 'smallCompanies';
@@ -190,6 +192,10 @@ class Constant {
 
     static get largeCompanyCollectionName() {
         return largeCompanyCollectionName;
+    }
+
+    static get departmentCollectionName() {
+        return departmentCollectionName;
     }
 }
 

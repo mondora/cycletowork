@@ -1,6 +1,7 @@
 const admin = require('firebase-admin');
 const { Constant } = require('../../utility/constant');
 const { elasticSearch } = require('../../utility/elastic_search');
+const { loggerError } = require('../../utility/logger');
 
 const saveCompany = async (company) => {
     const companyInfo = await admin
@@ -20,20 +21,47 @@ const saveCompany = async (company) => {
     }
 };
 
-const getCompanyListNameSearch = async (name) => {
-    const searchResult = await elasticSearch.search({
-        index: Constant.companyCollectionName,
-        body: {
-            query: {
-                query_string: {
-                    query: `*${name}*`,
-                    fields: ['name'],
+const getCompanyListNameSearchForChalleng = async (
+    challengeId,
+    name,
+    pageSize = 20
+) => {
+    try {
+        const searchResult = await elasticSearch.search({
+            index: Constant.companyCollectionName,
+            body: {
+                from: 0,
+                size: pageSize,
+                query: {
+                    bool: {
+                        must: [
+                            {
+                                term: {
+                                    isVerified: true,
+                                },
+                            },
+                            {
+                                query_string: {
+                                    query: `*${name}*`,
+                                    fields: ['name'],
+                                },
+                            },
+                            {
+                                match: {
+                                    listChallengeIdRegister: challengeId,
+                                },
+                            },
+                        ],
+                    },
                 },
             },
-        },
-    });
-    const hits = searchResult.body.hits.hits;
-    return hits.map((hit) => hit['_source']);
+        });
+        const hits = searchResult.hits.hits;
+        return hits.map((hit) => hit['_source']);
+    } catch (error) {
+        loggerError('getCompanyListNameSearchForChalleng error error:', error);
+        return [];
+    }
 };
 
 const getCompanyList = async (lastCompanyName, pageSize = 100) => {
@@ -76,9 +104,60 @@ const getCompanyFromName = async (companyName) => {
     }
 };
 
+const getCompanyFromNameInChallenge = async (challengeId, companyName) => {
+    const snapshot = await admin
+        .firestore()
+        .collection(Constant.companyCollectionName)
+        .where('name', '==', companyName)
+        .where('listChallengeIdRegister', 'array-contains', challengeId)
+        .limit(1)
+        .get();
+
+    if (!snapshot.empty) {
+        return snapshot.docs[0].data();
+    } else {
+        return null;
+    }
+};
+
+const getCompanyListForChallenge = async (challengeId, pageSize = 20) => {
+    try {
+        const searchResult = await elasticSearch.search({
+            index: Constant.companyCollectionName,
+            body: {
+                from: 0,
+                size: pageSize,
+                query: {
+                    bool: {
+                        must: [
+                            {
+                                term: {
+                                    isVerified: true,
+                                },
+                            },
+                            {
+                                match: {
+                                    listChallengeIdRegister: challengeId,
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
+        });
+        const hits = searchResult.hits.hits;
+        return hits.map((hit) => hit['_source']);
+    } catch (error) {
+        loggerError('getCompanyListForChallenge error error:', error);
+        return [];
+    }
+};
+
 module.exports = {
     saveCompany,
-    getCompanyListNameSearch,
     getCompanyList,
     getCompanyFromName,
+    getCompanyFromNameInChallenge,
+    getCompanyListNameSearchForChalleng,
+    getCompanyListForChallenge,
 };
