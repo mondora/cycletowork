@@ -40,11 +40,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Your location is required for this app to track your activity</string>
+	<string>Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Your location is required for this app to track your activity</string>
+	<string>Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Your location is required for this app to track your activity</string>
+	<string>Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
