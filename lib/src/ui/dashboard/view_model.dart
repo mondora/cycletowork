@@ -167,14 +167,14 @@ class ViewModel extends ChangeNotifier {
         context, _minDistanceInMeterToAdd, permissionRequestMessage);
 
     _locationSubscription =
-        _repository.startListenOnBackground().handleError((dynamic e) {
+        _repository.startListenOnBackground().handleError((dynamic e) async {
       if (e is PlatformException) {
         _uiState.errorMessage = e.toString();
         _uiState.error = true;
         Logger.error(e);
       }
       _timer?.cancel();
-      _locationSubscription?.cancel();
+      await _locationSubscription?.cancel();
       _locationSubscription = null;
       _uiState.dashboardPageOption = DashboardPageOption.home;
     }).listen((LocationData locationData) {
@@ -379,6 +379,7 @@ class ViewModel extends ChangeNotifier {
     _trackingPaused = true;
     _timer?.cancel();
     await _locationSubscription?.cancel();
+    _locationSubscription = null;
 
     _trackingUserActivity!.averageSpeed = await compute(
       LocationData.getAverageSpeed,
@@ -696,7 +697,10 @@ class ViewModel extends ChangeNotifier {
     );
     var newCalorie = newDistance.toCalorieFromDistanceInMeter();
     var newCo2 = newDistance.distanceInMeterToCo2g();
-    var newSpeed = locationData.speed > 1 ? locationData.speed : 0.0;
+    // var newSpeed = locationData.speed > 1 ? locationData.speed : 0.0;
+    var newSpeed =
+        (newDistance / (locationData.time - lastPosition.time)).abs();
+    newSpeed = newSpeed > 1 ? newSpeed : 0;
     _trackingUserActivity!.distance = distance + newDistance;
     _trackingUserActivity!.calorie = calorie + newCalorie;
     _trackingUserActivity!.co2 = co2 + newCo2;
