@@ -58,21 +58,27 @@ class UiState {
 
   bool listCompanyClassificationOrderByRankingCo2 = true;
   List<CompanyClassification> listCompanyClassificationRankingCo2 = [];
-  int? lastCompanyClassificationRankingCo2;
+  double? lastCompanyClassificationCo2;
   int listCompanyClassificationRankingCo2PageSize = 20;
   int listCompanyClassificationRankingCo2Page = 0;
 
   List<CompanyClassification> listCompanyClassificationRankingRegistered = [];
-  int? lastCompanyClassificationRankingRegistered;
+  double? lastCompanyClassificationPercentRegistered;
   int listCompanyClassificationRankingRegisteredPageSize = 20;
   int listCompanyClassificationRankingRegisteredPage = 0;
   CompanyClassification? userCompanyClassification;
 
   List<CyclistClassification> listCyclistClassification = [];
-  int? lastCyclistClassificationRankingCo2;
+  double? lastCyclistClassificationCo2;
   int listCyclistClassificationPageSize = 20;
   int listCyclistClassificationPage = 0;
   CyclistClassification? userCyclistClassification;
+
+  List<DepartmentClassification> listDepartmentClassification = [];
+  double? lastDepartmentClassificationCo2;
+  int listDepartmentClassificationPageSize = 20;
+  int listDepartmentClassificationPage = 0;
+  DepartmentClassification? userDepartmentClassification;
 }
 
 class UserActivityChartData {

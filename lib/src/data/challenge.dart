@@ -166,6 +166,7 @@ class ChallengeRegistry {
   String email;
   String userType;
   int companyEmployeesNumber;
+  String companySizeCategory;
   String? photoURL;
   String? displayName;
   bool selected = false;
@@ -182,6 +183,7 @@ class ChallengeRegistry {
     required this.companyId,
     required this.companyName,
     required this.departmentName,
+    required this.companySizeCategory,
     required this.name,
     required this.lastName,
     required this.city,
@@ -219,6 +221,7 @@ class ChallengeRegistry {
         companyId = '',
         companyName = '',
         departmentName = '',
+        companySizeCategory = '',
         name = '',
         lastName = '',
         city = '',
@@ -255,6 +258,7 @@ class ChallengeRegistry {
         companyId = map['companyId'],
         companyName = map['companyName'],
         departmentName = map['departmentName'],
+        companySizeCategory = map['companySizeCategory'],
         name = map['name'],
         lastName = map['lastName'],
         city = map['city'],
@@ -298,6 +302,7 @@ class ChallengeRegistry {
         'companyId': companyId,
         'companyName': companyName,
         'departmentName': departmentName,
+        'companySizeCategory': companySizeCategory,
         'name': name,
         'lastName': lastName,
         'city': city,
@@ -335,6 +340,7 @@ class ChallengeRegistry {
         companyId = map['companyId'],
         companyName = map['companyName'],
         departmentName = map['departmentName'],
+        companySizeCategory = map['companySizeCategory'],
         name = map['name'],
         lastName = map['lastName'],
         city = map['city'],
@@ -371,6 +377,7 @@ class ChallengeRegistry {
         'companyId': companyId,
         'companyName': companyName,
         'departmentName': departmentName,
+        'companySizeCategory': companySizeCategory,
         'name': name,
         'lastName': lastName,
         'city': city,
@@ -405,6 +412,7 @@ class ChallengeRegistry {
       companyId TEXT NOT NULL,
       companyName TEXT NOT NULL,
       departmentName TEXT NOT NULL,
+      companySizeCategory TEXT NOT NULL,
       name TEXT NOT NULL,
       lastName TEXT NOT NULL,
       city TEXT NOT NULL,

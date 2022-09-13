@@ -79,8 +79,66 @@ class CompanyClassification {
   ''';
 }
 
+class DepartmentClassification {
+  String id;
+  String challengeId;
+  String name;
+  double co2;
+  double distance;
+  int rankingCo2;
+  int updateDate;
+  final Color color;
+
+  DepartmentClassification({
+    required this.id,
+    required this.challengeId,
+    required this.name,
+    required this.co2,
+    required this.distance,
+    required this.rankingCo2,
+    required this.updateDate,
+  }) : color = Colors.primaries[Random().nextInt(Colors.primaries.length)];
+
+  DepartmentClassification.fromMap(Map<String, dynamic> map)
+      : id = map['id'],
+        challengeId = map['challengeId'],
+        name = map['name'],
+        co2 = double.parse(map['co2'].toString()),
+        distance = double.parse(map['distance'].toString()),
+        rankingCo2 = map['rankingCo2'],
+        updateDate = map['updateDate'] ?? DateTime.now().millisecondsSinceEpoch,
+        color = Colors.primaries[Random().nextInt(Colors.primaries.length)];
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'challengeId': challengeId,
+        'name': name,
+        'co2': co2,
+        'distance': distance,
+        'rankingCo2': rankingCo2,
+        'updateDate': updateDate,
+        'uniqueId': name + challengeId,
+      };
+
+  static String get tableName => 'DepartmentClassification';
+
+  static String get tableString => '''
+    CREATE TABLE IF NOT EXISTS $tableName(
+      uniqueId TEXT PRIMARY KEY  NOT NULL,
+      id TEXT  NOT NULL,
+      challengeId TEXT NOT NULL, 
+      name TEXT NOT NULL,
+      co2 REAL NOT NULL,
+      distance REAL NOT NULL,
+      rankingCo2 INTEGER NOT NULL,
+      updateDate INTEGER NOT NULL
+    );
+  ''';
+}
+
 class CyclistClassification {
   String uid;
+  String email;
   String challengeId;
   double co2;
   double distance;
@@ -92,6 +150,7 @@ class CyclistClassification {
 
   CyclistClassification({
     required this.uid,
+    required this.email,
     required this.challengeId,
     required this.co2,
     required this.distance,
@@ -103,6 +162,7 @@ class CyclistClassification {
 
   CyclistClassification.fromMap(Map<String, dynamic> map)
       : uid = map['uid'],
+        email = map['email'],
         challengeId = map['challengeId'],
         displayName = map['displayName'],
         co2 = double.parse(map['co2'].toString()),
@@ -114,6 +174,7 @@ class CyclistClassification {
 
   Map<String, dynamic> toJson() => {
         'uid': uid,
+        'email': email,
         'challengeId': challengeId,
         'displayName': displayName,
         'co2': co2,
@@ -130,6 +191,7 @@ class CyclistClassification {
     CREATE TABLE IF NOT EXISTS $tableName( 
       uniqueId TEXT PRIMARY KEY  NOT NULL,
       uid TEXT NOT NULL,
+      email TEXT NOT NULL,
       challengeId TEXT NOT NULL, 
       co2 REAL NOT NULL,
       distance REAL NOT NULL,

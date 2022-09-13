@@ -282,8 +282,7 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
   }) async {
     String whereCondition = 'challengeId = ?';
     List<dynamic> whereArgs = [challengeId];
-    String orderBy =
-        orderByRankingCo2 ? 'rankingCo2 ASC' : 'rankingPercentRegistered ASC';
+    String orderBy = orderByRankingCo2 ? 'co2 DESC' : 'percentRegistered DESC';
 
     var map = await _localDatabase.getData(
       tableName: CompanyClassification.tableName,
@@ -311,7 +310,7 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
   }) async {
     String whereCondition = 'challengeId = ?';
     List<dynamic> whereArgs = [challengeId];
-    String orderBy = 'rankingCo2 ASC';
+    String orderBy = 'co2 DESC';
 
     var map = await _localDatabase.getData(
       tableName: CyclistClassification.tableName,
@@ -355,6 +354,7 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
   Future<CompanyClassification?> getUserCompanyClassification(
     String challengeId,
     String companyId,
+    String companySizeCategory,
   ) async {
     String whereCondition = 'challengeId = ? AND id = ?';
     List<dynamic> whereArgs = [challengeId, companyId];
@@ -388,6 +388,71 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
     );
     var result = map.map<CyclistClassification>(
       (json) => CyclistClassification.fromMap(Map<String, dynamic>.from(json)),
+    );
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  Future<List<DepartmentClassification>> getListDepartmentClassification(
+    String challengeId,
+    String companyId, {
+    int page = 0,
+    int pageSize = 50,
+  }) async {
+    String whereCondition = 'challengeId = ? AND id = ?';
+    List<dynamic> whereArgs = [challengeId, companyId];
+    String orderBy = 'co2 DESC';
+
+    var map = await _localDatabase.getData(
+      tableName: DepartmentClassification.tableName,
+      limit: pageSize,
+      offset: page * pageSize,
+      orderBy: orderBy,
+      whereCondition: whereCondition,
+      whereArgs: whereArgs,
+    );
+
+    return map
+        .map<DepartmentClassification>(
+          (json) => DepartmentClassification.fromMap(
+            Map<String, dynamic>.from(json),
+          ),
+        )
+        .toList();
+  }
+
+  @override
+  Future<void> saveDepartmentClassification(
+    DepartmentClassification departmentClassification,
+  ) async {
+    await _localDatabase.insertData(
+      tableName: DepartmentClassification.tableName,
+      item: departmentClassification.toJson(),
+    );
+  }
+
+  @override
+  Future<DepartmentClassification?> getUserDepartmentClassification(
+    String challengeId,
+    String companyId,
+    String companySizeCategory,
+    String departmentName,
+  ) async {
+    String whereCondition = 'challengeId = ? AND name = ?';
+    List<dynamic> whereArgs = [challengeId, departmentName];
+
+    var map = await _localDatabase.getData(
+      tableName: DepartmentClassification.tableName,
+      whereCondition: whereCondition,
+      whereArgs: whereArgs,
+    );
+    var result = map.map<DepartmentClassification>(
+      (json) =>
+          DepartmentClassification.fromMap(Map<String, dynamic>.from(json)),
     );
     if (result.isNotEmpty) {
       return result.first;

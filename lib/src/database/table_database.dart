@@ -21,6 +21,7 @@ class TableDatabase {
         ChallengeRegistry.tableString,
         CompanyClassification.tableString,
         CyclistClassification.tableString,
+        DepartmentClassification.tableString,
       ];
     }
     return [];

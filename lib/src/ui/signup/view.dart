@@ -184,13 +184,16 @@ class SignupView extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 20.0),
                 child: AppButton(
                   title: AppLocalizations.of(context)!.login,
-                  onPressed: () {
+                  onPressed: () async {
                     if (formKey.currentState!.validate()) {
                       var email = emailController.text;
                       var password = passwordController.text;
                       var name = nameController.text;
-                      landingModel.signupEmail(email, password, name);
-                      Navigator.pop(context);
+                      var result =
+                          await landingModel.signupEmail(email, password, name);
+                      if (result) {
+                        Navigator.pop(context);
+                      }
                     }
                   },
                   type: ButtonType.secondary,

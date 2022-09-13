@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 
 class TrackingView extends StatelessWidget {
+  final LocationData? lastLocation;
   final UserActivity trackingUserActivity;
   final GestureTapCancelCallback? pauseTracking;
   final GestureTapCancelCallback? showMap;
@@ -15,6 +17,7 @@ class TrackingView extends StatelessWidget {
     required this.trackingUserActivity,
     required this.pauseTracking,
     required this.showMap,
+    required this.lastLocation,
   }) : super(key: key);
 
   @override
@@ -30,8 +33,9 @@ class TrackingView extends StatelessWidget {
     final trackingCo2 = trackingUserActivity.co2.gramToKg();
     final trackingAvarageSpeed =
         trackingUserActivity.averageSpeed.meterPerSecondToKmPerHour();
-    final trackingMaxSpeed =
-        trackingUserActivity.maxSpeed.meterPerSecondToKmPerHour();
+    final trackingSpeed = lastLocation != null
+        ? lastLocation!.speed.meterPerSecondToKmPerHour()
+        : 0.0;
     final trackingDistanceInKm = trackingUserActivity.distance.meterToKm();
 
     return Scaffold(
@@ -61,7 +65,7 @@ class TrackingView extends StatelessWidget {
             const _Divider(),
             _SpeedTracking(
               avarageSpeed: numberFormat.format(trackingAvarageSpeed),
-              speed: numberFormat.format(trackingMaxSpeed),
+              speed: numberFormat.format(trackingSpeed),
             ),
             const _Divider(),
             const SizedBox(
@@ -267,7 +271,7 @@ class _SpeedTracking extends StatelessWidget {
         Column(
           children: [
             Text(
-              'VELOCITÀ Massima'.toUpperCase(),
+              'VELOCITÀ'.toUpperCase(),
               style: textTheme.caption!.apply(
                 color: colorSchemeExtension.textSecondary,
               ),

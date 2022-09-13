@@ -8,15 +8,16 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 
-class ClassificationCompanyView extends StatefulWidget {
-  const ClassificationCompanyView({Key? key}) : super(key: key);
+class DepartmentClassificationView extends StatefulWidget {
+  const DepartmentClassificationView({Key? key}) : super(key: key);
 
   @override
-  State<ClassificationCompanyView> createState() =>
-      _ClassificationCompanyViewState();
+  State<DepartmentClassificationView> createState() =>
+      _DepartmentClassificationViewState();
 }
 
-class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
+class _DepartmentClassificationViewState
+    extends State<DepartmentClassificationView> {
   final ScrollController _controller = ScrollController();
 
   @override
@@ -37,7 +38,7 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
         context,
         listen: false,
       );
-      dashboardModel.refreshCompanyClassification(
+      dashboardModel.refreshDepartmentClassification(
         nextPage: true,
       );
     }
@@ -54,10 +55,6 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
     );
     final co2NumberFormat = NumberFormat(
       '##0.00',
-      appLocale.languageCode,
-    );
-    final percentNumberFormat = NumberFormat(
-      '##0',
       appLocale.languageCode,
     );
 
@@ -81,28 +78,18 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
         color: colorScheme.onPrimary,
       ),
     );
-    var isRankingCo2 =
-        viewModel.uiState.listCompanyClassificationOrderByRankingCo2;
 
-    var listCompanyClassificationRankingCo2 =
-        viewModel.uiState.listCompanyClassificationRankingCo2;
+    var listDepartmentClassificationRankingCo2 =
+        viewModel.uiState.listDepartmentClassification;
 
-    var listCompanyClassificationRankingRegistered =
-        viewModel.uiState.listCompanyClassificationRankingRegistered;
-    var firstRankingPercent =
-        listCompanyClassificationRankingRegistered.isNotEmpty
-            ? listCompanyClassificationRankingRegistered.first
-            : null;
-
-    var firstRankingCo2 = listCompanyClassificationRankingCo2.isNotEmpty
-        ? listCompanyClassificationRankingCo2.first
+    var firstRankingCo2 = listDepartmentClassificationRankingCo2.isNotEmpty
+        ? listDepartmentClassificationRankingCo2.first
         : null;
 
-    var userValues = viewModel.uiState.userCompanyClassification!;
+    var userValues = viewModel.uiState.userDepartmentClassification!;
     var userRankingCo2 = userValues.rankingCo2;
-    var userRankingPercent = userValues.rankingPercentRegistered;
 
-    var expandedHeight = isRankingCo2 ? 275.0 : 225.0;
+    var expandedHeight = 235.0;
     var isVisible = true;
 
     return NestedScrollView(
@@ -134,98 +121,26 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (isVisible)
-                        Container(
-                          margin: const EdgeInsets.only(top: 20),
-                          height: 35,
-                          child: ListView(
-                            padding: EdgeInsets.zero,
-                            scrollDirection: Axis.horizontal,
-                            children: [
-                              InputChip(
-                                onSelected: (bool value) async {
-                                  viewModel
-                                      .setListCompanyClassificationOrderByRankingCo2(
-                                    !value,
-                                  );
-                                },
-                                selected: !isRankingCo2,
-                                label: const Text(
-                                  'Impegno aziendale',
-                                ),
-                                side:
-                                    ChipTheme.of(context).shape!.side.copyWith(
-                                          color: !isRankingCo2
-                                              ? Colors.transparent
-                                              : null,
-                                        ),
-                              ),
-                              const SizedBox(
-                                width: 10.0,
-                              ),
-                              InputChip(
-                                onSelected: (bool value) async {
-                                  viewModel
-                                      .setListCompanyClassificationOrderByRankingCo2(
-                                    value,
-                                  );
-                                },
-                                selected: isRankingCo2,
-                                label: const Text(
-                                  'km e CO\u2082 risparmiata',
-                                ),
-                                side:
-                                    ChipTheme.of(context).shape!.side.copyWith(
-                                          color: isRankingCo2
-                                              ? Colors.transparent
-                                              : null,
-                                        ),
-                              ),
-                              const SizedBox(
-                                width: 10.0,
-                              ),
-                            ],
-                          ),
-                        ),
                       const SizedBox(
                         height: 20,
                       ),
-                      if (isRankingCo2)
-                        RankingSlider(
-                          percent: firstRankingCo2 != null
-                              ? userValues.co2 / firstRankingCo2.co2
-                              : 0,
-                          maxValue: firstRankingCo2 != null
-                              ? co2NumberFormat
-                                  .format(firstRankingCo2.co2.gramToKg())
-                              : '',
-                          value:
-                              co2NumberFormat.format(userValues.co2.gramToKg()),
-                          title: 'CO\u2082 risparmiata (Kg)',
-                          isEmpty: firstRankingCo2 == null ||
-                              firstRankingCo2.co2.gramToKg() < 0.01,
-                          maxValueWidget: maxValueWidget,
-                          valueWidget: valueWidget,
-                          isFirst: userRankingCo2 == 1,
-                        ),
-                      if (!isRankingCo2)
-                        RankingSlider(
-                          percent: firstRankingPercent != null
-                              ? userValues.percentRegistered /
-                                  firstRankingPercent.percentRegistered
-                              : 0,
-                          maxValue: firstRankingPercent != null
-                              ? '${percentNumberFormat.format(firstRankingPercent.percentRegistered)}%'
-                              : '',
-                          value:
-                              '${percentNumberFormat.format(userValues.percentRegistered)}%',
-                          title: 'Partecipanti / totale dipendenti',
-                          isEmpty: firstRankingPercent == null ||
-                              firstRankingPercent.percentRegistered == 0,
-                          maxValueWidget: maxValueWidget,
-                          valueWidget: valueWidget,
-                          isFirst: userRankingPercent == 1,
-                        ),
+                      RankingSlider(
+                        percent: firstRankingCo2 != null
+                            ? userValues.co2 / firstRankingCo2.co2
+                            : 0,
+                        maxValue: firstRankingCo2 != null
+                            ? co2NumberFormat
+                                .format(firstRankingCo2.co2.gramToKg())
+                            : '',
+                        value:
+                            co2NumberFormat.format(userValues.co2.gramToKg()),
+                        title: 'CO\u2082 risparmiata (Kg)',
+                        isEmpty: firstRankingCo2 == null ||
+                            firstRankingCo2.co2.gramToKg() < 0.01,
+                        maxValueWidget: maxValueWidget,
+                        valueWidget: valueWidget,
+                        isFirst: userRankingCo2 == 1,
+                      ),
                       if (isVisible)
                         Column(
                           key: UniqueKey(),
@@ -234,36 +149,34 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                             const SizedBox(
                               height: 10,
                             ),
-                            if (isRankingCo2)
-                              RankingSlider(
-                                percent: firstRankingCo2 != null
-                                    ? userValues.distance /
-                                        firstRankingCo2.distance
-                                    : 0,
-                                maxValue: firstRankingCo2 != null
-                                    ? distanceNumberFormat.format(
-                                        firstRankingCo2.distance.meterToKm(),
-                                      )
-                                    : '',
-                                value: distanceNumberFormat.format(
-                                  userValues.distance.meterToKm(),
-                                ),
-                                title: 'Chilometri percorsi',
-                                isEmpty: firstRankingCo2 == null ||
-                                    firstRankingCo2.distance.meterToKm() < 1,
-                                maxValueWidget: maxValueWidget,
-                                valueWidget: valueWidget,
-                                isFirst: userRankingCo2 == 1,
+                            RankingSlider(
+                              percent: firstRankingCo2 != null
+                                  ? userValues.distance /
+                                      firstRankingCo2.distance
+                                  : 0,
+                              maxValue: firstRankingCo2 != null
+                                  ? distanceNumberFormat.format(
+                                      firstRankingCo2.distance.meterToKm(),
+                                    )
+                                  : '',
+                              value: distanceNumberFormat.format(
+                                userValues.distance.meterToKm(),
                               ),
+                              title: 'Chilometri percorsi',
+                              isEmpty: firstRankingCo2 == null ||
+                                  firstRankingCo2.distance.meterToKm() < 1,
+                              maxValueWidget: maxValueWidget,
+                              valueWidget: valueWidget,
+                              isFirst: userRankingCo2 == 1,
+                            ),
                           ],
                         ),
                       const SizedBox(
                         height: 10,
                       ),
                       RankingPositionSlider(
-                        ranking:
-                            isRankingCo2 ? userRankingCo2 : userRankingPercent,
-                        isEmpty: listCompanyClassificationRankingCo2.isEmpty,
+                        ranking: userRankingCo2,
+                        isEmpty: listDepartmentClassificationRankingCo2.isEmpty,
                         title: 'Posizione in classifica',
                       ),
                     ],
@@ -275,51 +188,29 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
         ),
       ],
       body: RefreshIndicator(
-        onRefresh: viewModel.refreshCompanyClassification,
-        color: colorScheme.secondary,
-        displacement: 0,
-        child: isRankingCo2
-            ? ListView.builder(
-                padding: const EdgeInsets.only(bottom: 80.0),
-                itemCount: listCompanyClassificationRankingCo2.length,
-                itemBuilder: (context, index) {
-                  var item = listCompanyClassificationRankingCo2[index];
-                  return _Card(
-                    ranking: item.rankingCo2,
-                    title: item.name,
-                    subtitle:
-                        '${distanceNumberFormat.format(item.distance.meterToKm())} km',
-                    value:
-                        '${co2NumberFormat.format(item.co2.gramToKg())} Kg CO\u2082',
-                    isRankingCo2: isRankingCo2,
-                    selected: item.rankingCo2 != 0
-                        ? item.rankingCo2 == userRankingCo2
-                        : item.name == userValues.name,
-                    color: item.color,
-                  );
-                },
-              )
-            : ListView.builder(
-                padding: const EdgeInsets.only(bottom: 80.0),
-                itemCount: listCompanyClassificationRankingRegistered.length,
-                itemBuilder: (context, index) {
-                  var item = listCompanyClassificationRankingRegistered[index];
-                  return _Card(
-                    ranking: item.rankingPercentRegistered,
-                    title: item.name,
-                    subtitle:
-                        '${item.employeesNumberRegistered} su ${item.employeesNumber} dipendenti',
-                    value:
-                        '${percentNumberFormat.format(item.percentRegistered)}%',
-                    isRankingCo2: false,
-                    selected: item.rankingCo2 != 0
-                        ? item.rankingPercentRegistered == userRankingPercent
-                        : item.name == userValues.name,
-                    color: item.color,
-                  );
-                },
-              ),
-      ),
+          onRefresh: viewModel.refreshDepartmentClassification,
+          color: colorScheme.secondary,
+          displacement: 0,
+          child: ListView.builder(
+            padding: const EdgeInsets.only(bottom: 80.0),
+            itemCount: listDepartmentClassificationRankingCo2.length,
+            itemBuilder: (context, index) {
+              var item = listDepartmentClassificationRankingCo2[index];
+              return _Card(
+                ranking: item.rankingCo2,
+                title: item.name,
+                subtitle:
+                    '${distanceNumberFormat.format(item.distance.meterToKm())} km',
+                value:
+                    '${co2NumberFormat.format(item.co2.gramToKg())} Kg CO\u2082',
+                isRankingCo2: true,
+                selected: item.rankingCo2 != 0
+                    ? item.rankingCo2 == userRankingCo2
+                    : item.name == userValues.name,
+                color: item.color,
+              );
+            },
+          )),
     );
   }
 }

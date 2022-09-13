@@ -52,14 +52,6 @@ class ViewModel extends ChangeNotifier {
           .toList(),
     );
 
-    _uiState.challengeRegistry.companyToAdd = Company.fromEmpty();
-    _uiState.challengeRegistry.companyToAdd!.id = const Uuid().v4();
-    _uiState.challengeRegistry.companyToAdd!.country = 'ITALIA';
-    _uiState.challengeRegistry.companyToAdd!.registerUserEmail =
-        AppData.user!.email;
-    _uiState.challengeRegistry.companyToAdd!.registerUserUid =
-        AppData.user!.uid;
-
     _uiState.challengeRegistry.startTimeChallenge = challenge.startTime;
     _uiState.challengeRegistry.stopTimeChallenge = challenge.stopTime;
     _uiState.challengeRegistry.isFiabMember =
@@ -72,7 +64,7 @@ class ViewModel extends ChangeNotifier {
     _uiState.loading = true;
     notifyListeners();
     try {
-      await _getCompanyList();
+      await getCompanyList();
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
@@ -105,16 +97,17 @@ class ViewModel extends ChangeNotifier {
   }
 
   void searchCompanyName(String name) async {
-    _uiState.loading = true;
-    notifyListeners();
+    // _uiState.loading = true;
+    // notifyListeners();
     try {
       await _getCompanyListNameSearch(name);
+      // _uiState.challengeRegistry.compan syName = name;
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
       Logger.error(e);
     } finally {
-      _uiState.loading = false;
+      // _uiState.loading = false;
       notifyListeners();
     }
   }
@@ -175,6 +168,10 @@ class ViewModel extends ChangeNotifier {
       _uiState.challengeRegistry.photoURL = AppData.user!.photoURL;
       _uiState.challengeRegistry.companyEmployeesNumber =
           _uiState.challengeRegistry.companySelected!.employeesNumber;
+      _uiState.challengeRegistry.companySizeCategory = _uiState
+          .challengeRegistry.companySelected!
+          .employeesNumberCategory()
+          .name;
       await _repository.registerChallenge(_uiState.challengeRegistry);
       _uiState.pageOption = PageOption.thanks;
     } catch (e) {
@@ -198,6 +195,13 @@ class ViewModel extends ChangeNotifier {
   void gotoChampionRegistration() {
     _uiState.challengeRegistry.isCyclist = false;
     _uiState.challengeRegistry.isChampion = true;
+    _uiState.challengeRegistry.companyToAdd = Company.fromEmpty();
+    _uiState.challengeRegistry.companyToAdd!.id = const Uuid().v4();
+    _uiState.challengeRegistry.companyToAdd!.country = 'ITALIA';
+    _uiState.challengeRegistry.companyToAdd!.registerUserEmail =
+        AppData.user!.email;
+    _uiState.challengeRegistry.companyToAdd!.registerUserUid =
+        AppData.user!.uid;
     _uiState.pageOption = PageOption.championRegistration;
     notifyListeners();
   }
@@ -489,19 +493,31 @@ class ViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _getCompanyList() async {
-    var result = await _repository.getCompanyList(
-      50,
-      null,
+  Future<void> getCompanyList() async {
+    var result = await _repository.getCompanyListForChallenge(
+      _uiState.challenge!.id,
+      10,
+    );
+    _uiState.listCompany = result;
+    notifyListeners();
+  }
+
+  Future<void> _getCompanyListNameSearch(String name) async {
+    var result = await _repository.getCompanyListNameSearchForChalleng(
+      _uiState.challenge!.id,
+      name,
+      10,
     );
     _uiState.listCompany = result;
   }
 
-  Future<void> _getCompanyListNameSearch(String name) async {
-    var result = await _repository.getCompanyListNameSearch(name);
-    _uiState.listCompany = result;
-    // if (result.isNotEmpty) {
-    //   _uiState.lastCompany = result.last;
-    // }
-  }
+  // void _initCompanyToAdd() {
+  //   _uiState.challengeRegistry.companyToAdd = Company.fromEmpty();
+  //   _uiState.challengeRegistry.companyToAdd!.id = const Uuid().v4();
+  //   _uiState.challengeRegistry.companyToAdd!.country = 'ITALIA';
+  //   _uiState.challengeRegistry.companyToAdd!.registerUserEmail =
+  //       AppData.user!.email;
+  //   _uiState.challengeRegistry.companyToAdd!.registerUserUid =
+  //       AppData.user!.uid;
+  // }
 }

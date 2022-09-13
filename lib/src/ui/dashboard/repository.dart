@@ -113,7 +113,7 @@ class Repository {
     ChallengeRegistry challengeRegistry,
     int page,
     int pageSize,
-    int? lastRankingCo2,
+    double? lastCo2,
   ) async {
     var localListCompanyClassification =
         await _localDatabase.getListCompanyClassification(
@@ -134,8 +134,9 @@ class Repository {
     var remoteListCompanyClassification =
         await _remoteService.getListCompanyClassificationByRankingCo2(
       challengeRegistry.challengeId,
+      challengeRegistry.companySizeCategory,
       pageSize: pageSize,
-      lastRankingCo2: lastRankingCo2,
+      lastCo2: lastCo2,
     );
 
     if (remoteListCompanyClassification.isEmpty) {
@@ -153,7 +154,7 @@ class Repository {
     ChallengeRegistry challengeRegistry,
     int page,
     int pageSize,
-    int? lastPercentRegistered,
+    double? lastPercentRegistered,
   ) async {
     var localListCompanyClassification =
         await _localDatabase.getListCompanyClassification(
@@ -174,7 +175,7 @@ class Repository {
     var remoteListCompanyClassification = await _remoteService
         .getListCompanyClassificationByRankingPercentRegistered(
       challengeRegistry.challengeId,
-      challengeRegistry.companyEmployeesNumber,
+      challengeRegistry.companySizeCategory,
       pageSize: pageSize,
       lastPercentRegistered: lastPercentRegistered,
     );
@@ -193,7 +194,7 @@ class Repository {
     ChallengeRegistry challengeRegistry,
     int page,
     int pageSize,
-    int? lastRankingCo2,
+    double? lastCo2,
   ) async {
     var localListCyclistClassification =
         await _localDatabase.getListCyclistClassification(
@@ -214,7 +215,7 @@ class Repository {
         await _remoteService.getListCyclistClassificationByRankingCo2(
       challengeRegistry.challengeId,
       pageSize: pageSize,
-      lastRankingCo2: lastRankingCo2,
+      lastCo2: lastCo2,
     );
 
     if (remoteListCyclistClassification.isEmpty) {
@@ -234,6 +235,7 @@ class Repository {
         await _localDatabase.getUserCompanyClassification(
       challengeRegistry.challengeId,
       challengeRegistry.companyId,
+      challengeRegistry.companySizeCategory,
     );
     var stopDateChalleng = challengeRegistry.stopTimeChallenge;
     var dateNow = DateTime.now().microsecond;
@@ -247,6 +249,7 @@ class Repository {
         await _remoteService.getUserCompanyClassification(
       challengeRegistry.challengeId,
       challengeRegistry.companyId,
+      challengeRegistry.companySizeCategory,
     );
 
     if (remoteUserCompanyClassification == null) {
@@ -287,6 +290,84 @@ class Repository {
     );
 
     return remoteUserCyclistClassification;
+  }
+
+  Future<DepartmentClassification?> getUserDepartmentClassification(
+    ChallengeRegistry challengeRegistry,
+  ) async {
+    var localUserDepartmentClassification =
+        await _localDatabase.getUserDepartmentClassification(
+      challengeRegistry.challengeId,
+      challengeRegistry.companyId,
+      challengeRegistry.companySizeCategory,
+      challengeRegistry.departmentName,
+    );
+    var stopDateChalleng = challengeRegistry.stopTimeChallenge;
+    var dateNow = DateTime.now().microsecond;
+    if (localUserDepartmentClassification != null &&
+        stopDateChalleng < dateNow &&
+        localUserDepartmentClassification.updateDate > stopDateChalleng) {
+      return localUserDepartmentClassification;
+    }
+
+    var remoteUserDepartmentClassification =
+        await _remoteService.getUserDepartmentClassification(
+      challengeRegistry.challengeId,
+      challengeRegistry.companyId,
+      challengeRegistry.companySizeCategory,
+      challengeRegistry.departmentName,
+    );
+
+    if (remoteUserDepartmentClassification == null) {
+      return remoteUserDepartmentClassification;
+    }
+    await _localDatabase.saveDepartmentClassification(
+      remoteUserDepartmentClassification,
+    );
+
+    return remoteUserDepartmentClassification;
+  }
+
+  Future<List<DepartmentClassification>>
+      getListDepartmentClassificationByRankingCo2(
+    ChallengeRegistry challengeRegistry,
+    int page,
+    int pageSize,
+    double? lastCo2,
+  ) async {
+    var localListDepartmentClassification =
+        await _localDatabase.getListDepartmentClassification(
+      challengeRegistry.challengeId,
+      challengeRegistry.companyId,
+      page: page,
+      pageSize: pageSize,
+    );
+
+    var stopDateChalleng = challengeRegistry.stopTimeChallenge;
+    var dateNow = DateTime.now().microsecond;
+    if (localListDepartmentClassification.isNotEmpty &&
+        stopDateChalleng < dateNow &&
+        localListDepartmentClassification.first.updateDate > stopDateChalleng) {
+      return localListDepartmentClassification;
+    }
+
+    var remoteListDepartmentClassification =
+        await _remoteService.getListDepartmentClassificationByRankingCo2(
+      challengeRegistry.challengeId,
+      challengeRegistry.companySizeCategory,
+      challengeRegistry.companyId,
+      pageSize: pageSize,
+      lastCo2: lastCo2,
+    );
+
+    if (remoteListDepartmentClassification.isEmpty) {
+      return [];
+    }
+    for (var element in remoteListDepartmentClassification) {
+      await _localDatabase.saveDepartmentClassification(element);
+    }
+
+    return remoteListDepartmentClassification;
   }
 
   Future<List<UserActivity>> getListUserActivity(
@@ -366,9 +447,11 @@ class Repository {
   Future setGpsConfig(
     BuildContext context,
     double smallestDisplacement,
+    String permissionRequestMessage,
   ) async {
     await Gps.setSettings(
       smallestDisplacement: smallestDisplacement,
+      permissionRequestMessage: permissionRequestMessage,
     );
     var date = DateTime.now().toLocal();
     await Gps.setNotificaion(

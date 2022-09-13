@@ -103,12 +103,15 @@ class LoginEmailView extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 20.0),
                 child: AppButton(
                   title: AppLocalizations.of(context)!.login,
-                  onPressed: () {
+                  onPressed: () async {
                     if (formKey.currentState!.validate()) {
                       var email = emailController.text;
                       var password = passwordController.text;
-                      landingModel.loginEmail(email, password);
-                      Navigator.pop(context);
+                      var result =
+                          await landingModel.loginEmail(email, password);
+                      if (result) {
+                        Navigator.pop(context);
+                      }
                     }
                   },
                   type: ButtonType.secondary,

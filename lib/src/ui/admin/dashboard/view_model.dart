@@ -394,8 +394,8 @@ class ViewModel extends ChangeNotifier {
   }
 
   Future<void> _getCompanyListNameSearch(String name) async {
-    var result = await _repository.getCompanyListNameSearch(name);
-    _uiState.listCompany = result;
+    // var result = await _repository.getCompanyListNameSearch(name);
+    // _uiState.listCompany = result;
     // if (result.isNotEmpty) {
     //   _uiState.lastCompany = result.last;
     // }

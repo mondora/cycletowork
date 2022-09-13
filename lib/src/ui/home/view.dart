@@ -208,7 +208,7 @@ class _HomeViewState extends State<HomeView> {
                     ),
                     SummeryCard(
                       co2: '${numberFormat.format(co2)} Kg',
-                      distance: '${numberFormat.format(distance)} Km',
+                      distance: '${numberFormat.format(distance)} km',
                       averageSpeed: '${numberFormat.format(averageSpeed)} km/h',
                     ),
                     Row(

@@ -29,6 +29,14 @@ abstract class AppService {
   Future<CompanyClassification?> getUserCompanyClassification(
     String challengeId,
     String companyId,
+    String companySizeCategory,
+  );
+
+  Future<DepartmentClassification?> getUserDepartmentClassification(
+    String challengeId,
+    String companyId,
+    String companySizeCategory,
+    String departmentName,
   );
 }
 
@@ -54,7 +62,11 @@ abstract class AppAdminService {
 
   Future<bool> updateCompanyAdmin(Company company);
 
-  Future<List<Company>> getCompanyListNameSearch(String name);
+  Future<List<Company>> getCompanyListNameSearchForChalleng(
+    String challengeId,
+    String name,
+    int oageSize,
+  );
 
   Future<List<Survey>> getSurveyList(
     int pageSize,
@@ -121,6 +133,17 @@ abstract class AppServiceOnlyLocal {
   Future<void> saveCyclistClassification(
     CyclistClassification cyclistClassification,
   );
+
+  Future<List<DepartmentClassification>> getListDepartmentClassification(
+    String challengeId,
+    String companyId, {
+    int page = 0,
+    int pageSize = 50,
+  });
+
+  Future<void> saveDepartmentClassification(
+    DepartmentClassification departmentClassification,
+  );
 }
 
 abstract class AppServiceOnlyRemote {
@@ -150,27 +173,42 @@ abstract class AppServiceOnlyRemote {
   );
 
   Future<List<CompanyClassification>> getListCompanyClassificationByRankingCo2(
-    String challengeId, {
+    String challengeId,
+    String companySizeCategory, {
     int pageSize = 50,
-    int? lastRankingCo2,
+    double? lastCo2,
   });
 
   Future<List<CompanyClassification>>
       getListCompanyClassificationByRankingPercentRegistered(
     String challengeId,
-    int companyEmployeesNumber, {
+    String companySizeCategory, {
     int pageSize = 50,
-    int? lastPercentRegistered,
+    double? lastPercentRegistered,
   });
 
   Future<List<CyclistClassification>> getListCyclistClassificationByRankingCo2(
     String challengeId, {
     int pageSize = 50,
-    int? lastRankingCo2,
+    double? lastCo2,
   });
 
   Future<ChallengeRegistry?> getChallengeRegistryFromBusinessEmail(
     String challengeId,
     String businessEmail,
+  );
+
+  Future<List<DepartmentClassification>>
+      getListDepartmentClassificationByRankingCo2(
+    String challengeId,
+    String companySizeCategory,
+    String companyId, {
+    int pageSize = 50,
+    double? lastCo2,
+  });
+
+  Future<List<Company>> getCompanyListForChallenge(
+    String challengeId,
+    int pageSize,
   );
 }

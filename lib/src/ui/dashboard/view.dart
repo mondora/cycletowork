@@ -83,6 +83,9 @@ class DashboardView extends StatelessWidget {
                   trackingUserActivity: viewModel.trackingUserActivity!,
                   showMap: viewModel.showMapTracking,
                   pauseTracking: viewModel.pauseTracking,
+                  lastLocation: viewModel.listTrackingPosition.isNotEmpty
+                      ? viewModel.listTrackingPosition.last
+                      : null,
                 );
               }
 
@@ -110,9 +113,11 @@ class DashboardView extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'È stato salvato il tuo percorso'.toUpperCase(),
+                                'LA TUA NUOVA ATTIVITÀ È STATA SALVATA!'
+                                    .toUpperCase(),
                                 style: textTheme.button!.apply(
                                   color: colorScheme.onError,
                                 ),
@@ -292,9 +297,9 @@ class DashboardView extends StatelessWidget {
       await AppAlartDialog(
         context: context,
         title: 'Attenzione!',
-        subtitle: 'Cycle2Work non ha permesso per prendere posizione.',
+        subtitle: 'Cycle2Work non è in grado di rilevare la tua posizione.',
         body:
-            'Per poter usare Cycle2Work devi dare i permessi nelle impostazioni.',
+            'Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione. Puoi farlo nelle impostazioni di sistema.',
         confirmLabel: 'Ho capito',
       ).show();
       await AppSettings.openLocationSettings();
@@ -304,9 +309,10 @@ class DashboardView extends StatelessWidget {
       await AppAlartDialog(
         context: context,
         title: 'Attenzione!',
-        subtitle: 'Cycle2Work non ha permesso per prendere posizione preciso.',
+        subtitle:
+            'Cycle2Work non è in grado di rilevare la tua posizione in modo preciso.',
         body:
-            'Per poter usare Cycle2Work devi dare i permessi nelle impostazioni.',
+            'Per poter usare al meglio Cycle2Work è necessario abilitare il rilevamento preciso della posizione. Puoi farlo nelle impostazioni di sistema.',
         confirmLabel: 'Ho capito',
       ).show();
       await AppSettings.openLocationSettings();

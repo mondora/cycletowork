@@ -1,5 +1,6 @@
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/classification_cyclist/view.dart';
+import 'package:cycletowork/src/ui/classification_department/view.dart';
 import 'package:cycletowork/src/ui/dashboard/view_model.dart';
 import 'package:cycletowork/src/ui/classification_company/view.dart';
 import 'package:flutter/material.dart';
@@ -30,16 +31,23 @@ class _ClassificationViewState extends State<ClassificationView> {
     var challengeRegistrySelected = viewModel.uiState.challengeRegistrySelected;
     var userCompanyClassification = viewModel.uiState.userCompanyClassification;
     var userCyclistClassification = viewModel.uiState.userCompanyClassification;
+    var userDepartmentClassification =
+        viewModel.uiState.userDepartmentClassification;
+    var hasDepartment = challengeRegistrySelected != null &&
+        challengeRegistrySelected.departmentName != '';
+    var isEmptyDepartment =
+        hasDepartment && userDepartmentClassification == null;
 
     if (!registeredToChalleng ||
         userCompanyClassification == null ||
-        userCyclistClassification == null) {
+        userCyclistClassification == null ||
+        isEmptyDepartment) {
       return const _EmptyChallenge();
     }
 
     return DefaultTabController(
       initialIndex: 0,
-      length: 2,
+      length: hasDepartment ? 3 : 2,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -86,16 +94,21 @@ class _ClassificationViewState extends State<ClassificationView> {
               Tab(
                 text: 'Aziende'.toUpperCase(),
               ),
+              if (hasDepartment)
+                Tab(
+                  text: 'Sedi / dip.'.toUpperCase(),
+                ),
               Tab(
                 text: 'Ciclisti'.toUpperCase(),
               ),
             ],
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: <Widget>[
-            ClassificationCompanyView(),
-            CyclistCompanyView(),
+            const ClassificationCompanyView(),
+            if (hasDepartment) const DepartmentClassificationView(),
+            const CyclistCompanyView(),
           ],
         ),
       ),

@@ -73,6 +73,7 @@ class ViewModel extends ChangeNotifier {
         });
       } else {
         _uiState.pageOption = PageOption.logout;
+        notifyListeners();
       }
     } catch (e) {
       _uiState.errorMessage = e.toString();
@@ -104,6 +105,7 @@ class ViewModel extends ChangeNotifier {
         });
       } else {
         _uiState.pageOption = PageOption.logout;
+        notifyListeners();
       }
     } catch (e) {
       _uiState.errorMessage = e.toString();
@@ -114,7 +116,7 @@ class ViewModel extends ChangeNotifier {
     }
   }
 
-  void loginEmail(String email, String password) async {
+  Future<bool> loginEmail(String email, String password) async {
     debugPrint('loginEmail');
     _uiState.pageOption = PageOption.loading;
     notifyListeners();
@@ -133,19 +135,30 @@ class ViewModel extends ChangeNotifier {
             notifyListeners();
           }
         });
+        return true;
       } else {
         _uiState.pageOption = PageOption.logout;
+        notifyListeners();
+        return false;
       }
     } catch (e) {
-      _uiState.errorMessage = e.toString();
-      _uiState.error = true;
-      Logger.error(e);
+      if (e == 'user-not-found') {
+        _uiState.errorMessage = 'Nessun utente trovato per questo email.';
+        _uiState.error = true;
+      } else if (e == 'wrong-password') {
+        _uiState.errorMessage = "Password errata, riprova.";
+        _uiState.error = true;
+      } else {
+        Logger.error(e);
+      }
+
       _uiState.pageOption = PageOption.logout;
       notifyListeners();
+      return false;
     }
   }
 
-  void signupEmail(String email, String password, String? name) async {
+  Future<bool> signupEmail(String email, String password, String? name) async {
     debugPrint('signupEmail');
     _uiState.pageOption = PageOption.loading;
     notifyListeners();
@@ -165,16 +178,26 @@ class ViewModel extends ChangeNotifier {
             notifyListeners();
           }
         });
+        return true;
       } else {
         _uiState.pageOption = PageOption.logout;
         notifyListeners();
+        return false;
       }
     } catch (e) {
-      _uiState.errorMessage = e.toString();
-      _uiState.error = true;
-      Logger.error(e);
+      if (e == 'weak-password') {
+        _uiState.errorMessage = 'La password fornita è troppo debole.';
+        _uiState.error = true;
+      } else if (e == 'email-already-in-use') {
+        _uiState.errorMessage = "L'account esiste già per quello email.";
+        _uiState.error = true;
+      } else {
+        Logger.error(e);
+      }
+
       _uiState.pageOption = PageOption.logout;
       notifyListeners();
+      return false;
     }
   }
 

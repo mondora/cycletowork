@@ -21,37 +21,38 @@ class ProfileView extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         children: [
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(),
-              TextButton(
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.all(16.0),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15.0),
+          if (false)
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.all(16.0),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15.0),
+                      ),
+                    ),
+                    foregroundColor: colorScheme.secondary,
+                  ),
+                  onPressed: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const EditProfileView(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'Modifica',
+                    style: textTheme.caption!.copyWith(
+                      color: colorScheme.secondary,
                     ),
                   ),
-                  foregroundColor: colorScheme.secondary,
                 ),
-                onPressed: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const EditProfileView(),
-                    ),
-                  );
-                },
-                child: Text(
-                  'Modifica',
-                  style: textTheme.caption!.copyWith(
-                    color: colorScheme.secondary,
-                  ),
-                ),
-              ),
-            ],
-          ),
+              ],
+            ),
           Column(
             children: [
               CircleAvatar(

@@ -18,7 +18,7 @@ import 'package:uuid/uuid.dart';
 class ViewModel extends ChangeNotifier {
   final initialLatitude = 45.50315189900018;
   final initialLongitude = 9.198330425060847;
-  final _minDistanceInMeterToAdd = 3.5;
+  final _minDistanceInMeterToAdd = 4.0;
   final _ignoreAppBarActionPages = [
     AppMenuOption.profile,
   ];
@@ -57,6 +57,7 @@ class ViewModel extends ChangeNotifier {
       await _getListChallengeRegistred();
       await refreshCompanyClassification();
       await refreshCyclistClassification();
+      await refreshDepartmentClassification();
       notifyListeners();
       _uiState.currentPosition = await _getCurrentLocation();
     } catch (e) {
@@ -160,7 +161,10 @@ class ViewModel extends ChangeNotifier {
   }
 
   void startGetLocation(context) async {
-    await _repository.setGpsConfig(context, _minDistanceInMeterToAdd);
+    var permissionRequestMessage =
+        'Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione';
+    await _repository.setGpsConfig(
+        context, _minDistanceInMeterToAdd, permissionRequestMessage);
 
     _locationSubscription =
         _repository.startListenOnBackground().handleError((dynamic e) {
@@ -426,6 +430,66 @@ class ViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> refreshDepartmentClassification({
+    bool? nextPage,
+  }) async {
+    if (_uiState.listChallengeRegistred.isEmpty ||
+        _uiState.challengeRegistrySelected == null ||
+        _uiState.challengeRegistrySelected!.departmentName == '') {
+      return;
+    }
+
+    _uiState.refreshLocationLoading = true;
+    notifyListeners();
+    try {
+      var challengeRegistry = _uiState.challengeRegistrySelected!;
+      _uiState.userDepartmentClassification =
+          await _repository.getUserDepartmentClassification(
+        challengeRegistry,
+      );
+
+      if (nextPage == true) {
+        _uiState.listDepartmentClassificationPage++;
+      } else {
+        _uiState.lastDepartmentClassificationCo2 = null;
+        _uiState.listDepartmentClassificationPage = 0;
+        _uiState.listDepartmentClassification = [];
+      }
+
+      var pageSize = _uiState.listDepartmentClassificationPageSize;
+      var page = _uiState.listDepartmentClassificationPage;
+      var lastCo2 = _uiState.lastDepartmentClassificationCo2;
+
+      var result =
+          await _repository.getListDepartmentClassificationByRankingCo2(
+        challengeRegistry,
+        page,
+        pageSize,
+        lastCo2,
+      );
+      if (nextPage == true) {
+        if (result.isNotEmpty) {
+          _uiState.listDepartmentClassification.addAll(result);
+          _uiState.lastDepartmentClassificationCo2 = result.last.co2;
+        } else {
+          _uiState.listDepartmentClassificationPage--;
+        }
+      } else {
+        if (result.isNotEmpty) {
+          _uiState.listDepartmentClassification = result;
+          _uiState.lastDepartmentClassificationCo2 = result.last.co2;
+        }
+      }
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+    } finally {
+      _uiState.refreshLocationLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> refreshCyclistClassification({
     bool? nextPage,
   }) async {
@@ -446,32 +510,32 @@ class ViewModel extends ChangeNotifier {
       if (nextPage == true) {
         _uiState.listCyclistClassificationPage++;
       } else {
-        _uiState.lastCyclistClassificationRankingCo2 = null;
+        _uiState.lastCyclistClassificationCo2 = null;
         _uiState.listCyclistClassificationPage = 0;
         _uiState.listCyclistClassification = [];
       }
 
       var pageSize = _uiState.listCyclistClassificationPageSize;
       var page = _uiState.listCyclistClassificationPage;
-      var lastRankingCo2 = _uiState.lastCyclistClassificationRankingCo2;
+      var lastCo2 = _uiState.lastCyclistClassificationCo2;
 
       var result = await _repository.getListCyclistClassificationByRankingCo2(
         challengeRegistry,
         page,
         pageSize,
-        lastRankingCo2,
+        lastCo2,
       );
       if (nextPage == true) {
         if (result.isNotEmpty) {
           _uiState.listCyclistClassification.addAll(result);
-          _uiState.lastCyclistClassificationRankingCo2 = result.last.rankingCo2;
+          _uiState.lastCyclistClassificationCo2 = result.last.co2;
         } else {
           _uiState.listCyclistClassificationPage--;
         }
       } else {
         if (result.isNotEmpty) {
           _uiState.listCyclistClassification = result;
-          _uiState.lastCyclistClassificationRankingCo2 = result.last.rankingCo2;
+          _uiState.lastCyclistClassificationCo2 = result.last.co2;
         }
       }
     } catch (e) {
@@ -504,41 +568,39 @@ class ViewModel extends ChangeNotifier {
         if (nextPage == true) {
           _uiState.listCompanyClassificationRankingCo2Page++;
         } else {
-          _uiState.lastCompanyClassificationRankingCo2 = null;
+          _uiState.lastCompanyClassificationCo2 = null;
           _uiState.listCompanyClassificationRankingCo2Page = 0;
           _uiState.listCompanyClassificationRankingCo2 = [];
         }
 
         var pageSize = _uiState.listCompanyClassificationRankingCo2PageSize;
         var page = _uiState.listCompanyClassificationRankingCo2Page;
-        var lastRankingCo2 = _uiState.lastCompanyClassificationRankingCo2;
+        var lastCo2 = _uiState.lastCompanyClassificationCo2;
 
         var result = await _repository.getListCompanyClassificationByRankingCo2(
           challengeRegistry,
           page,
           pageSize,
-          lastRankingCo2,
+          lastCo2,
         );
         if (nextPage == true) {
           if (result.isNotEmpty) {
             _uiState.listCompanyClassificationRankingCo2.addAll(result);
-            _uiState.lastCompanyClassificationRankingCo2 =
-                result.last.rankingCo2;
+            _uiState.lastCompanyClassificationCo2 = result.last.co2;
           } else {
             _uiState.listCompanyClassificationRankingCo2Page--;
           }
         } else {
           if (result.isNotEmpty) {
             _uiState.listCompanyClassificationRankingCo2 = result;
-            _uiState.lastCompanyClassificationRankingCo2 =
-                result.last.rankingCo2;
+            _uiState.lastCompanyClassificationCo2 = result.last.co2;
           }
         }
       } else {
         if (nextPage == true) {
           _uiState.listCompanyClassificationRankingRegisteredPage++;
         } else {
-          _uiState.lastCompanyClassificationRankingRegistered = null;
+          _uiState.lastCompanyClassificationPercentRegistered = null;
           _uiState.listCompanyClassificationRankingRegisteredPage = 0;
           _uiState.listCompanyClassificationRankingRegistered = [];
         }
@@ -547,7 +609,7 @@ class ViewModel extends ChangeNotifier {
             _uiState.listCompanyClassificationRankingRegisteredPageSize;
         var page = _uiState.listCompanyClassificationRankingRegisteredPage;
         var lastPercentRegistered =
-            _uiState.lastCompanyClassificationRankingRegistered;
+            _uiState.lastCompanyClassificationPercentRegistered;
 
         var result = await _repository
             .getListCompanyClassificationByRankingPercentRegistered(
@@ -559,16 +621,16 @@ class ViewModel extends ChangeNotifier {
         if (nextPage == true) {
           if (result.isNotEmpty) {
             _uiState.listCompanyClassificationRankingRegistered.addAll(result);
-            _uiState.lastCompanyClassificationRankingRegistered =
-                result.last.rankingPercentRegistered;
+            _uiState.lastCompanyClassificationPercentRegistered =
+                result.last.percentRegistered;
           } else {
             _uiState.listCompanyClassificationRankingRegisteredPage--;
           }
         } else {
           if (result.isNotEmpty) {
             _uiState.listCompanyClassificationRankingRegistered = result;
-            _uiState.lastCompanyClassificationRankingRegistered =
-                result.last.rankingPercentRegistered;
+            _uiState.lastCompanyClassificationPercentRegistered =
+                result.last.percentRegistered;
           }
         }
       }

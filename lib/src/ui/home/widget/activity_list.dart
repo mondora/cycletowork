@@ -90,7 +90,7 @@ class ActivityList extends StatelessWidget {
                       var co2String =
                           '${numberFormat.format(activity.co2.gramToKg())} Kg CO\u2082';
                       var moreString =
-                          '${numberFormat.format(activity.distance.meterToKm())} Km | velocità media ${numberFormatInt.format(activity.averageSpeed.meterPerSecondToKmPerHour())} km/h';
+                          '${numberFormat.format(activity.distance.meterToKm())} km | velocità media ${numberFormatInt.format(activity.averageSpeed.meterPerSecondToKmPerHour())} km/h';
                       var map = activity.imageData != null
                           ? Image.memory(
                               activity.imageData!,

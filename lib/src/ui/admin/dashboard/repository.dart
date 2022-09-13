@@ -57,8 +57,16 @@ class Repository {
     return await _remoteService.updateCompanyAdmin(company);
   }
 
-  Future<List<Company>> getCompanyListNameSearch(String name) async {
-    return await _remoteService.getCompanyListNameSearch(name);
+  Future<List<Company>> getCompanyListNameSearchForChalleng(
+    String challengeId,
+    String name,
+    int pageSize,
+  ) async {
+    return await _remoteService.getCompanyListNameSearchForChalleng(
+      challengeId,
+      name,
+      pageSize,
+    );
   }
 
   Future<List<Survey>> getSurveyList(

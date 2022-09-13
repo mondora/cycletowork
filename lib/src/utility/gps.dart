@@ -89,12 +89,17 @@ class Gps {
 
   static Future initialize() async {}
 
-  static Future setSettings({double smallestDisplacement = 0}) async {
+  static Future setSettings({
+    double smallestDisplacement = 0,
+    required String permissionRequestMessage,
+  }) async {
     await location.setLocationSettings(
       interval: 1000,
-      fastestInterval: 800,
+      fastestInterval: 1000,
       accuracy: location.LocationAccuracy.high,
       smallestDisplacement: smallestDisplacement,
+      rationaleMessageForPermissionRequest: permissionRequestMessage,
+      rationaleMessageForGPSRequest: permissionRequestMessage,
     );
   }
 

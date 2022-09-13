@@ -20,6 +20,32 @@ class _RegisterChallengCyclistViewState
   final formKey = GlobalKey<FormState>();
   final aboutFiabUrl = 'https://www.sataspes.net/android/sp-budget';
   final emailFiab = 'info@fiab.it';
+  String? companyNameSearched;
+  var companyNameSearchedController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    companyNameSearchedController.addListener(_changeCompanyName);
+  }
+
+  @override
+  void dispose() {
+    companyNameSearchedController.dispose();
+    super.dispose();
+  }
+
+  void _changeCompanyName() {
+    final viewModel = Provider.of<ViewModel>(context, listen: false);
+    var name = companyNameSearchedController.text;
+    if (name != '') {
+      // companyNameSearched = name;
+      // viewModel.searchCompanyName(name);
+    } else {
+      companyNameSearched = null;
+      viewModel.getCompanyList();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +56,7 @@ class _RegisterChallengCyclistViewState
     var listCompany = viewModel.uiState.listCompany;
     var companySelected = viewModel.uiState.challengeRegistry.companySelected;
     var companyName = viewModel.uiState.challengeRegistry.companyName;
-
+    companyNameSearchedController.text = companyNameSearched ?? '';
     var colorScheme = Theme.of(context).colorScheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
@@ -279,22 +305,58 @@ class _RegisterChallengCyclistViewState
                           const EdgeInsets.only(top: 20, left: 20, right: 20),
                       child: SearchField(
                         suggestionState: Suggestion.expand,
-                        suggestionAction: SuggestionAction.next,
+                        suggestionAction: SuggestionAction.unfocus,
+                        hasOverlay: false,
+                        emptyWidget: SizedBox(
+                          height: 40.0,
+                          child: Center(
+                            child: Text(
+                              'Non si triva la azienda',
+                              style: textTheme.bodyText1!.copyWith(
+                                color: colorScheme.error,
+                              ),
+                            ),
+                          ),
+                        ),
+                        autoCorrect: false,
                         maxSuggestionsInViewPort: 10,
                         itemHeight: 50,
-                        textInputAction: TextInputAction.next,
                         suggestions: listCompany
                             .map((e) => SearchFieldListItem(e.name))
                             .toList(),
                         initialValue: companyName != ''
                             ? SearchFieldListItem(companyName)
                             : null,
+                        controller: companyNameSearchedController,
                         searchInputDecoration: InputDecoration(
                           labelText: 'Seleziona la tua azienda',
-                          suffixIcon: Icon(
-                            Icons.arrow_drop_down_outlined,
-                            color: colorSchemeExtension.textSecondary,
-                          ),
+                          suffixIcon: companyNameSearched == null
+                              ? IconButton(
+                                  onPressed: () {
+                                    var name =
+                                        companyNameSearchedController.text;
+                                    if (name != '') {
+                                      companyNameSearched = name;
+                                      viewModel.searchCompanyName(name);
+                                    }
+                                  },
+                                  icon: Icon(
+                                    Icons.search,
+                                    color: colorScheme.secondary,
+                                  ),
+                                  splashRadius: 20,
+                                )
+                              : IconButton(
+                                  onPressed: () {
+                                    companyNameSearched = null;
+                                    viewModel.getCompanyList();
+                                  },
+                                  icon: Icon(
+                                    Icons.search_off,
+                                    color: colorScheme.error,
+                                  ),
+                                  splashRadius: 20,
+                                ),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -309,9 +371,11 @@ class _RegisterChallengCyclistViewState
                           return null;
                         },
                         onSuggestionTap: (value) {
+                          companyNameSearched = value.searchKey;
                           viewModel.setCompanyName(value.searchKey);
                         },
                         onSubmit: (value) {
+                          companyNameSearched = value;
                           viewModel.searchCompanyName(value);
                         },
                       ),

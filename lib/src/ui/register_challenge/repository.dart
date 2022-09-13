@@ -41,15 +41,26 @@ class Repository {
     return await _remoteService.sendEmailVerificationCode(email, displayName);
   }
 
-  Future<List<Company>> getCompanyList(
+  Future<List<Company>> getCompanyListForChallenge(
+    String challengeId,
     int pageSize,
-    String? lastCompanyName,
   ) async {
-    return await _remoteService.getCompanyList(pageSize, lastCompanyName);
+    return await _remoteService.getCompanyListForChallenge(
+      challengeId,
+      pageSize,
+    );
   }
 
-  Future<List<Company>> getCompanyListNameSearch(String name) async {
-    return await _remoteService.getCompanyListNameSearch(name);
+  Future<List<Company>> getCompanyListNameSearchForChalleng(
+    String challengeId,
+    String name,
+    int pageSize,
+  ) async {
+    return await _remoteService.getCompanyListNameSearchForChalleng(
+      challengeId,
+      name,
+      pageSize,
+    );
   }
 
   Future<bool> verifiyEmailCode(

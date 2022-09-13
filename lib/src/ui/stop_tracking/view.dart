@@ -394,9 +394,9 @@ class _StopTrackingViewState extends State<StopTrackingView> {
                       var isConfirmed = await AppAlartDialog(
                         context: context,
                         title: 'Attenzione!',
-                        subtitle: 'Sei sicuro/a di cancellare?',
+                        subtitle: "Desideri davvero cancellare l'attività?",
                         body: '',
-                        confirmLabel: 'Cancella',
+                        confirmLabel: 'Sì, desidero cancellare',
                         barrierDismissible: true,
                       ).show();
                       if (isConfirmed == true) {

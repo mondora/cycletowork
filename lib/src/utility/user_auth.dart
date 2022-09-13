@@ -41,24 +41,32 @@ class UserAuth {
   }
 
   static Future<void> loginGoogleSignIn() async {
-    final GoogleSignInAccount googleSignInAccount = Platform.isAndroid
-        ? (await _googleSignInForAndroid.signIn())!
-        : Platform.isIOS
-            ? (await _googleSignInForIos.signIn())!
-            : (await _googleSignInForWeb.signIn())!;
-    final GoogleSignInAuthentication googleSignInAuthentication =
-        await googleSignInAccount.authentication;
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleSignInAuthentication.accessToken,
-      idToken: googleSignInAuthentication.idToken,
-    );
-    await FirebaseAuth.instance.signInWithCredential(credential);
+    try {
+      final GoogleSignInAccount googleSignInAccount = Platform.isAndroid
+          ? (await _googleSignInForAndroid.signIn())!
+          : Platform.isIOS
+              ? (await _googleSignInForIos.signIn())!
+              : (await _googleSignInForWeb.signIn())!;
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+      await FirebaseAuth.instance.signInWithCredential(credential);
+    } catch (e) {
+      return;
+    }
   }
 
   static Future<void> loginApple() async {
-    final appleProvider = AppleAuthProvider();
-    appleProvider.addScope('email');
-    await FirebaseAuth.instance.signInWithAuthProvider(appleProvider);
+    try {
+      final appleProvider = AppleAuthProvider();
+      appleProvider.addScope('email');
+      await FirebaseAuth.instance.signInWithAuthProvider(appleProvider);
+    } catch (e) {
+      return;
+    }
   }
 
   static Future<bool?> signupEmail(String email, String password) async {
@@ -69,11 +77,6 @@ class UserAuth {
       );
     } on FirebaseAuthException catch (e) {
       throw (e.code);
-      // if (e.code == 'weak-password') {
-      //   throw ('The password provided is too weak.');
-      // } else if (e.code == 'email-already-in-use') {
-      //   throw ('The account already exists for that email.');
-      // }
     }
     return true;
   }
@@ -85,11 +88,6 @@ class UserAuth {
         password: password,
       );
     } on FirebaseAuthException catch (e) {
-      // if (e.code == 'user-not-found') {
-      //   throw ('No user found for that email.');
-      // } else if (e.code == 'wrong-password') {
-      //   throw ('Wrong password provided for that user.');
-      // }
       throw (e.code);
     }
     return true;

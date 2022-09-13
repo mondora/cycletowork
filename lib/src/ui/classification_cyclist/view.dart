@@ -221,13 +221,15 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
             var item = listCyclistClassificationRankingCo2[index];
             return _Card(
               ranking: item.rankingCo2,
-              title: item.displayName ?? '',
+              title: item.displayName ?? item.email,
               subtitle:
-                  '${distanceNumberFormat.format(item.distance.meterToKm())} Km',
+                  '${distanceNumberFormat.format(item.distance.meterToKm())} km',
               value:
-                  '${co2NumberFormat.format(item.co2.gramToKg())} kg CO\u2082',
+                  '${co2NumberFormat.format(item.co2.gramToKg())} Kg CO\u2082',
               isRankingCo2: true,
-              selected: item.rankingCo2 == userRankingCo2,
+              selected: item.rankingCo2 != 0
+                  ? item.rankingCo2 == userRankingCo2
+                  : item.email == userValues.email,
               color: item.color,
               photoURL: item.photoURL,
             );
