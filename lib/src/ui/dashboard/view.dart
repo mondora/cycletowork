@@ -106,29 +106,46 @@ class DashboardView extends StatelessWidget {
                   trackingUserActivity: viewModel.trackingUserActivity!,
                   saveTracking: () async {
                     var result = await viewModel.saveTracking(context);
-                    if (result) {
-                      final snackBar = SnackBar(
-                        backgroundColor: colorSchemeExtension.success,
-                        content: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'LA TUA NUOVA ATTIVITÀ È STATA SALVATA!'
-                                    .toUpperCase(),
-                                style: textTheme.button!.apply(
+
+                    final snackBar = SnackBar(
+                      backgroundColor: result
+                          ? colorSchemeExtension.success
+                          : colorScheme.error,
+                      content: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (!result)
+                              Icon(
+                                Icons.error,
+                                color: colorScheme.onError,
+                              ),
+                            if (!result)
+                              const SizedBox(
+                                width: 5,
+                              ),
+                            Expanded(
+                              child: Text(
+                                result
+                                    ? 'LA TUA NUOVA ATTIVITÀ È STATA SALVATA!'
+                                    : 'PURTROPPO LA TUA NUOVA ATTIVITÀ NON È STATA SALVATA!'
+                                        .toUpperCase(),
+                                style: textTheme.caption!.apply(
                                   color: colorScheme.onError,
                                 ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 15,
+                                softWrap: true,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      );
+                      ),
+                    );
 
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    }
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   },
                   removeTracking: viewModel.removeTracking,
                 );

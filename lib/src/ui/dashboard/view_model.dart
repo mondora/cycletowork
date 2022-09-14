@@ -18,7 +18,7 @@ import 'package:uuid/uuid.dart';
 class ViewModel extends ChangeNotifier {
   final initialLatitude = 45.50315189900018;
   final initialLongitude = 9.198330425060847;
-  final _minDistanceInMeterToAdd = 4.0;
+  final _minDistanceInMeterToAdd = 5.0;
   final _ignoreAppBarActionPages = [
     AppMenuOption.profile,
   ];
@@ -34,6 +34,7 @@ class ViewModel extends ChangeNotifier {
   UserActivity? get trackingUserActivity => _trackingUserActivity;
 
   bool _trackingPaused = false;
+  bool _startedAfterPaused = false;
   ChallengeRegistry? _challengeActive;
 
   Timer? _timer;
@@ -79,6 +80,7 @@ class ViewModel extends ChangeNotifier {
     notifyListeners();
     _uiState.counter = 5;
     _trackingPaused = false;
+    _startedAfterPaused = false;
     AppData.isUserUsedEmailProvider = _repository.isUserUsedEmailProvider();
     _challengeActive = await _repository.isChallengeActivity();
     _trackingUserActivity = UserActivity(
@@ -110,8 +112,7 @@ class ViewModel extends ChangeNotifier {
           _uiState.counter--;
         } else {
           if (!_trackingPaused) {
-            _trackingUserActivity!.duration =
-                _trackingUserActivity!.duration + 1;
+            _trackingUserActivity!.duration++;
           }
           if (!_isTrackingStarted()) {
             _trackingUserActivity!.startTime =
@@ -173,7 +174,10 @@ class ViewModel extends ChangeNotifier {
     var permissionRequestMessage =
         'Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione';
     await _repository.setGpsConfig(
-        context, _minDistanceInMeterToAdd, permissionRequestMessage);
+      context,
+      0,
+      permissionRequestMessage,
+    );
 
     _locationSubscription =
         _repository.startListenOnBackground().handleError((dynamic e) async {
@@ -236,7 +240,7 @@ class ViewModel extends ChangeNotifier {
       AppData.user!.averageSpeed =
           (AppData.user!.averageSpeed + userActivity.averageSpeed) / 2;
 
-      await _repository.saveUserActivity(
+      var result = await _repository.saveUserActivity(
         userActivity,
         _listTrackingPosition,
       );
@@ -245,7 +249,7 @@ class ViewModel extends ChangeNotifier {
       _uiState.dashboardPageOption = DashboardPageOption.home;
       _uiState.loading = false;
       notifyListeners();
-      return true;
+      return result;
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
@@ -356,6 +360,7 @@ class ViewModel extends ChangeNotifier {
   }
 
   void playTracking() {
+    _startedAfterPaused = true;
     _trackingPaused = false;
     _uiState.dashboardPageOption = DashboardPageOption.startTracking;
     notifyListeners();
@@ -688,7 +693,10 @@ class ViewModel extends ChangeNotifier {
   void _addToListTrackingPosition(LocationData locationData) {
     locationData.locationDataId = const Uuid().v4();
     locationData.userActivityId = _trackingUserActivity!.userActivityId;
-    if (_listTrackingPosition.isEmpty) {
+    if (_listTrackingPosition.isEmpty || _startedAfterPaused) {
+      if (_startedAfterPaused) {
+        _startedAfterPaused = false;
+      }
       locationData.speed = 0.0;
       _listTrackingPosition.add(locationData);
       _trackingUserActivity!.maxSpeed = locationData.speed;
@@ -700,15 +708,17 @@ class ViewModel extends ChangeNotifier {
     var calorie = _trackingUserActivity!.calorie;
     var co2 = _trackingUserActivity!.co2;
     var maxSpeed = _trackingUserActivity!.maxSpeed;
-    var newDistance = _repository.calculateDistanceInMeter(
-      lastPosition,
-      locationData,
-    );
+    var newDistance = _repository
+        .calculateDistanceInMeter(
+          lastPosition,
+          locationData,
+        )
+        .abs();
     var newCalorie = newDistance.toCalorieFromDistanceInMeter();
     var newCo2 = newDistance.distanceInMeterToCo2g();
     // var newSpeed = locationData.speed > 1 ? locationData.speed : 0.0;
     var newSpeed =
-        (newDistance / (locationData.time - lastPosition.time)).abs();
+        newDistance / ((locationData.time - lastPosition.time) / 1000);
     newSpeed = newSpeed > 1 ? newSpeed : 0;
     _trackingUserActivity!.distance = distance + newDistance;
     _trackingUserActivity!.calorie = calorie + newCalorie;
@@ -730,9 +740,13 @@ class ViewModel extends ChangeNotifier {
       }
     }
 
-    _trackingUserActivity!.averageSpeed =
-        _listTrackingPosition.map((e) => e.speed).reduce((a, b) => a + b) /
-            _listTrackingPosition.length;
+    var totalDistance = _trackingUserActivity!.distance;
+    var totalDuration = _trackingUserActivity!.duration;
+    _trackingUserActivity!.averageSpeed = totalDistance / totalDuration;
+
+    // _trackingUserActivity!.averageSpeed =
+    //     _listTrackingPosition.map((e) => e.speed).reduce((a, b) => a + b) /
+    //         _listTrackingPosition.length;
   }
 
   Future<void> _getActiveChallengeList() async {

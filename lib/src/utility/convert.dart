@@ -112,3 +112,9 @@ extension DoubleExtensions on double {
     return this * 3.6;
   }
 }
+
+extension IntExtensions on int {
+  int millisecondsSinceEpochToSeconde() {
+    return this ~/ 1000;
+  }
+}

@@ -34,7 +34,7 @@ class TrackingView extends StatelessWidget {
     final trackingAvarageSpeed =
         trackingUserActivity.averageSpeed.meterPerSecondToKmPerHour();
     final trackingSpeed = lastLocation != null
-        ? lastLocation!.speed.meterPerSecondToKmPerHour()
+        ? lastLocation!.speed.meterPerSecondToKmPerHour().abs()
         : 0.0;
     final trackingDistanceInKm = trackingUserActivity.distance.meterToKm();
 

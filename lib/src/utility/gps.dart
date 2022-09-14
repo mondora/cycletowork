@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:cycletowork/src/data/location_data.dart' as location_data;
 import 'package:geocoding/geocoding.dart';
 import 'package:location/location.dart' as location;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 
 enum GpsStatus {
   turnOff,
@@ -93,10 +95,13 @@ class Gps {
     double smallestDisplacement = 0,
     required String permissionRequestMessage,
   }) async {
+    var accuracy = defaultTargetPlatform == TargetPlatform.iOS
+        ? location.LocationAccuracy.navigation
+        : location.LocationAccuracy.high;
     await location.setLocationSettings(
       interval: 1000,
       fastestInterval: 1000,
-      accuracy: location.LocationAccuracy.high,
+      accuracy: accuracy,
       smallestDisplacement: smallestDisplacement,
       rationaleMessageForPermissionRequest: permissionRequestMessage,
       rationaleMessageForGPSRequest: permissionRequestMessage,
