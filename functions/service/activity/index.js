@@ -4,10 +4,7 @@ const { getUserInfo } = require('../user');
 const { loggerDebug } = require('../../utility/logger');
 
 const saveUserActivity = async (uid, userActivity) => {
-    let userInfoData,
-        challengeInfoData,
-        companyInfoData,
-        userInChallengeInfoData;
+    let userInfoData, challengeInfoData, userInChallengeInfoData;
     const now = Date.now();
     const userActivityId = userActivity.userActivityId;
     const isChallenge = userActivity.isChallenge;
@@ -20,27 +17,6 @@ const saveUserActivity = async (uid, userActivity) => {
 
     const userActivityRef = admin
         .firestore()
-        .collection(Constant.usersCollectionName)
-        .doc(uid)
-        .collection(Constant.userActivityCollectionName)
-        .doc(userActivityId);
-
-    const challengeRef = admin
-        .firestore()
-        .collection(Constant.challengeCollectionName)
-        .doc(challengeId);
-
-    const userInChallengeRef = admin
-        .firestore()
-        .collection(Constant.challengeCollectionName)
-        .doc(challengeId)
-        .collection(Constant.usersCollectionName)
-        .doc(uid);
-
-    const userActivityInChallengeRef = admin
-        .firestore()
-        .collection(Constant.challengeCollectionName)
-        .doc(challengeId)
         .collection(Constant.usersCollectionName)
         .doc(uid)
         .collection(Constant.userActivityCollectionName)
@@ -71,7 +47,29 @@ const saveUserActivity = async (uid, userActivity) => {
 
             t.update(userRef, data, { merge: true });
             t.set(userActivityRef, userActivity, { merge: false });
+            return;
         }
+
+        const challengeRef = admin
+            .firestore()
+            .collection(Constant.challengeCollectionName)
+            .doc(challengeId);
+
+        const userInChallengeRef = admin
+            .firestore()
+            .collection(Constant.challengeCollectionName)
+            .doc(challengeId)
+            .collection(Constant.usersCollectionName)
+            .doc(uid);
+
+        const userActivityInChallengeRef = admin
+            .firestore()
+            .collection(Constant.challengeCollectionName)
+            .doc(challengeId)
+            .collection(Constant.usersCollectionName)
+            .doc(uid)
+            .collection(Constant.userActivityCollectionName)
+            .doc(userActivityId);
 
         if (
             !userInfoData.listChallengeIdRegister ||
