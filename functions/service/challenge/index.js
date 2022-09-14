@@ -201,11 +201,29 @@ const registerChallenge = async (uid, challengeRegistry) => {
                 companyToAdd.listDepartment.forEach((department) => {
                     const departmentName = department.name;
                     const departmentId = department.id;
+                    const companyName = companyToAdd.name;
+                    const dataDepartment = {
+                        id: departmentId,
+                        name: departmentName,
+                        challengeId: challengeId,
+                        companyId: companyId,
+                        companyName: companyName,
+                        companySizeCategory: companySizeCategory,
+                        averageSpeed: 0,
+                        calorie: 0,
+                        co2: 0,
+                        distance: 0,
+                        maxSpeed: 0,
+                        steps: 0,
+                        rankingCo2: 0,
+                        rankingPercentRegistered: 0,
+                        percentRegistered: 0,
+                    };
                     t.set(
                         companyInChallengRef
                             .collection(Constant.departmentCollectionName)
                             .doc(departmentName),
-                        { ...companyToAdd, ...dataCompanyInChhalenge },
+                        dataDepartment,
                         { merge: false }
                     );
                 });
@@ -408,7 +426,7 @@ const getListCyclistClassificationByRankingCo2 = async (
     pageSize
 ) => {
     let snapshot;
-    if (lastCo2) {
+    if (lastCo2 != null) {
         snapshot = await admin
             .firestore()
             .collection(Constant.challengeCollectionName)
@@ -443,7 +461,7 @@ const getListCompanyClassificationByRankingCo2 = async (
     pageSize
 ) => {
     let snapshot;
-    if (lastCo2) {
+    if (lastCo2 != null) {
         snapshot = await admin
             .firestore()
             .collection(Constant.challengeCollectionName)
@@ -468,9 +486,11 @@ const getListCompanyClassificationByRankingCo2 = async (
         const list = [];
         for (let index = 0; index < snapshot.docs.length; index++) {
             const data = snapshot.docs[index].data();
-            if (data.rankingCo2 != 0) {
-                list.push(data);
-            }
+            data.challengeId = challengeId;
+            list.push(data);
+            // if (data.rankingCo2 != 0) {
+            //     list.push(data);
+            // }
         }
         return list;
     } else {
@@ -486,7 +506,7 @@ const getListDepartmentClassificationByRankingCo2 = async (
     pageSize
 ) => {
     let snapshot;
-    if (lastCo2) {
+    if (lastCo2 != null) {
         snapshot = await admin
             .firestore()
             .collection(Constant.challengeCollectionName)
@@ -515,9 +535,11 @@ const getListDepartmentClassificationByRankingCo2 = async (
         const list = [];
         for (let index = 0; index < snapshot.docs.length; index++) {
             const data = snapshot.docs[index].data();
-            if (data.rankingCo2 != 0) {
-                list.push(data);
-            }
+            data.challengeId = challengeId;
+            list.push(data);
+            // if (data.rankingCo2 != 0) {
+            //     list.push(data);
+            // }
         }
         return list;
     } else {
@@ -532,7 +554,7 @@ const getListCompanyClassificationByRankingPercentRegistered = async (
     companySizeCategory
 ) => {
     let snapshot;
-    if (lastPercentRegistered) {
+    if (lastPercentRegistered != null) {
         snapshot = await admin
             .firestore()
             .collection(Constant.challengeCollectionName)
@@ -558,9 +580,10 @@ const getListCompanyClassificationByRankingPercentRegistered = async (
         for (let index = 0; index < snapshot.docs.length; index++) {
             const data = snapshot.docs[index].data();
             data.challengeId = challengeId;
-            if (data.percentRegistered != 0) {
-                list.push(data);
-            }
+            list.push(data);
+            // if (data.percentRegistered != 0) {
+            //     list.push(data);
+            // }
         }
         return list;
     } else {
