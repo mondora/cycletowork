@@ -89,6 +89,15 @@ class _DepartmentClassificationViewState
     var userValues = viewModel.uiState.userDepartmentClassification!;
     var userRankingCo2 = userValues.rankingCo2;
 
+    var userRankingCo2Finded = userRankingCo2 != 0
+        ? userRankingCo2
+        : listDepartmentClassificationRankingCo2.isNotEmpty
+            ? listDepartmentClassificationRankingCo2.indexWhere(
+                  (e) => e.name == userValues.name,
+                ) +
+                1
+            : 0;
+
     var expandedHeight = 235.0;
     var isVisible = true;
 
@@ -139,7 +148,13 @@ class _DepartmentClassificationViewState
                             firstRankingCo2.co2.gramToKg() < 0.01,
                         maxValueWidget: maxValueWidget,
                         valueWidget: valueWidget,
-                        isFirst: userRankingCo2 == 1,
+                        isFirst: userRankingCo2 != 0
+                            ? userRankingCo2 == 1
+                            : listDepartmentClassificationRankingCo2
+                                    .isNotEmpty &&
+                                listDepartmentClassificationRankingCo2
+                                        .first.name ==
+                                    userValues.name,
                       ),
                       if (isVisible)
                         Column(
@@ -164,10 +179,16 @@ class _DepartmentClassificationViewState
                               ),
                               title: 'Chilometri percorsi',
                               isEmpty: firstRankingCo2 == null ||
-                                  firstRankingCo2.distance.meterToKm() < 1,
+                                  firstRankingCo2.distance.meterToKm() < 0.9,
                               maxValueWidget: maxValueWidget,
                               valueWidget: valueWidget,
-                              isFirst: userRankingCo2 == 1,
+                              isFirst: userRankingCo2 != 0
+                                  ? userRankingCo2 == 1
+                                  : listDepartmentClassificationRankingCo2
+                                          .isNotEmpty &&
+                                      listDepartmentClassificationRankingCo2
+                                              .first.name ==
+                                          userValues.name,
                             ),
                           ],
                         ),
@@ -175,7 +196,7 @@ class _DepartmentClassificationViewState
                         height: 10,
                       ),
                       RankingPositionSlider(
-                        ranking: userRankingCo2,
+                        ranking: userRankingCo2Finded,
                         isEmpty: listDepartmentClassificationRankingCo2.isEmpty,
                         title: 'Posizione in classifica',
                       ),
@@ -197,7 +218,8 @@ class _DepartmentClassificationViewState
             itemBuilder: (context, index) {
               var item = listDepartmentClassificationRankingCo2[index];
               return _Card(
-                ranking: item.rankingCo2,
+                // ranking: item.rankingCo2,
+                ranking: index + 1,
                 title: item.name,
                 subtitle:
                     '${distanceNumberFormat.format(item.distance.meterToKm())} km',

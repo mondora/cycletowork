@@ -52,9 +52,12 @@ class ViewModel extends ChangeNotifier {
       _initAppNotification();
       notifyListeners();
       await getListUserActivity();
-      await _getActiveChallengeList();
       await getListUserActivityFilterd();
+      await _getActiveChallengeList();
       await _getListChallengeRegistred();
+      _uiState.listCompanyClassificationOrderByRankingCo2 = false;
+      await refreshCompanyClassification();
+      _uiState.listCompanyClassificationOrderByRankingCo2 = true;
       await refreshCompanyClassification();
       await refreshCyclistClassification();
       await refreshDepartmentClassification();
@@ -76,6 +79,7 @@ class ViewModel extends ChangeNotifier {
     notifyListeners();
     _uiState.counter = 5;
     _trackingPaused = false;
+    AppData.isUserUsedEmailProvider = _repository.isUserUsedEmailProvider();
     _challengeActive = await _repository.isChallengeActivity();
     _trackingUserActivity = UserActivity(
       userActivityId: const Uuid().v4(),
@@ -146,10 +150,15 @@ class ViewModel extends ChangeNotifier {
     _uiState.loading = true;
     notifyListeners();
     try {
-      await _getActiveChallengeList();
       AppData.user = await _repository.getUserInfo();
+      await _getActiveChallengeList();
       await _getListChallengeRegistred();
+      _uiState.listCompanyClassificationOrderByRankingCo2 = false;
       await refreshCompanyClassification();
+      _uiState.listCompanyClassificationOrderByRankingCo2 = true;
+      await refreshCompanyClassification();
+      await refreshCyclistClassification();
+      await refreshDepartmentClassification();
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;

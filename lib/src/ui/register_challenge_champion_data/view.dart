@@ -375,36 +375,37 @@ class _RegisterChallengCompanyDataViewState
                           ),
                         ),
                       ),
-                      Container(
-                        margin: const EdgeInsets.only(
-                          right: 10.0,
-                          left: 10.0,
-                          top: 10.0,
-                        ),
-                        child: TextFormField(
-                          key: _mapKey,
-                          readOnly: !isOtherRole,
-                          maxLength: 40,
-                          keyboardType: TextInputType.emailAddress,
-                          textInputAction: TextInputAction.next,
-                          controller: otherRoleController,
-                          decoration: InputDecoration(
-                            labelText: 'Specifica il tuo ruolo',
-                            labelStyle: textTheme.bodyText1!.copyWith(
-                              fontWeight: FontWeight.w400,
-                              color: colorSchemeExtension.textDisabled,
-                            ),
+                      if (isOtherRole)
+                        Container(
+                          margin: const EdgeInsets.only(
+                            right: 10.0,
+                            left: 10.0,
+                            top: 10.0,
                           ),
-                          validator: (value) {
-                            if ((value == null || value.isEmpty) &&
-                                isOtherRole) {
-                              return 'Inserire il tuo ruolo';
-                            }
+                          child: TextFormField(
+                            key: _mapKey,
+                            readOnly: !isOtherRole,
+                            maxLength: 40,
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
+                            controller: otherRoleController,
+                            decoration: InputDecoration(
+                              labelText: 'Specifica il tuo ruolo',
+                              labelStyle: textTheme.bodyText1!.copyWith(
+                                fontWeight: FontWeight.w400,
+                                color: colorSchemeExtension.textDisabled,
+                              ),
+                            ),
+                            validator: (value) {
+                              if ((value == null || value.isEmpty) &&
+                                  isOtherRole) {
+                                return 'Inserire il tuo ruolo';
+                              }
 
-                            return null;
-                          },
+                              return null;
+                            },
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),

@@ -101,7 +101,22 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
     var userValues = viewModel.uiState.userCompanyClassification!;
     var userRankingCo2 = userValues.rankingCo2;
     var userRankingPercent = userValues.rankingPercentRegistered;
-
+    var userRankingCo2Finded = userRankingCo2 != 0
+        ? userRankingCo2
+        : listCompanyClassificationRankingCo2.isNotEmpty
+            ? listCompanyClassificationRankingCo2.indexWhere(
+                  (e) => e.name == userValues.name,
+                ) +
+                1
+            : 0;
+    var userRankingRegisteredFinded = userRankingPercent != 0
+        ? userRankingPercent
+        : listCompanyClassificationRankingRegistered.isNotEmpty
+            ? listCompanyClassificationRankingRegistered.indexWhere(
+                  (e) => e.name == userValues.name,
+                ) +
+                1
+            : 0;
     var expandedHeight = isRankingCo2 ? 275.0 : 225.0;
     var isVisible = true;
 
@@ -206,7 +221,13 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                               firstRankingCo2.co2.gramToKg() < 0.01,
                           maxValueWidget: maxValueWidget,
                           valueWidget: valueWidget,
-                          isFirst: userRankingCo2 == 1,
+                          isFirst: userRankingCo2 != 0
+                              ? userRankingCo2 == 1
+                              : listCompanyClassificationRankingCo2
+                                      .isNotEmpty &&
+                                  listCompanyClassificationRankingCo2
+                                          .first.name ==
+                                      userValues.name,
                         ),
                       if (!isRankingCo2)
                         RankingSlider(
@@ -224,7 +245,13 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                               firstRankingPercent.percentRegistered == 0,
                           maxValueWidget: maxValueWidget,
                           valueWidget: valueWidget,
-                          isFirst: userRankingPercent == 1,
+                          isFirst: userRankingPercent != 0
+                              ? userRankingPercent == 1
+                              : listCompanyClassificationRankingRegistered
+                                      .isNotEmpty &&
+                                  listCompanyClassificationRankingRegistered
+                                          .first.name ==
+                                      userValues.name,
                         ),
                       if (isVisible)
                         Column(
@@ -250,10 +277,16 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                                 ),
                                 title: 'Chilometri percorsi',
                                 isEmpty: firstRankingCo2 == null ||
-                                    firstRankingCo2.distance.meterToKm() < 1,
+                                    firstRankingCo2.distance.meterToKm() < 0.9,
                                 maxValueWidget: maxValueWidget,
                                 valueWidget: valueWidget,
-                                isFirst: userRankingCo2 == 1,
+                                isFirst: userRankingCo2 != 0
+                                    ? userRankingCo2 == 1
+                                    : listCompanyClassificationRankingCo2
+                                            .isNotEmpty &&
+                                        listCompanyClassificationRankingCo2
+                                                .first.name ==
+                                            userValues.name,
                               ),
                           ],
                         ),
@@ -261,8 +294,9 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                         height: 10,
                       ),
                       RankingPositionSlider(
-                        ranking:
-                            isRankingCo2 ? userRankingCo2 : userRankingPercent,
+                        ranking: isRankingCo2
+                            ? userRankingCo2Finded
+                            : userRankingRegisteredFinded,
                         isEmpty: listCompanyClassificationRankingCo2.isEmpty,
                         title: 'Posizione in classifica',
                       ),
@@ -285,7 +319,8 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                 itemBuilder: (context, index) {
                   var item = listCompanyClassificationRankingCo2[index];
                   return _Card(
-                    ranking: item.rankingCo2,
+                    // ranking: item.rankingCo2,
+                    ranking: index + 1,
                     title: item.name,
                     subtitle:
                         '${distanceNumberFormat.format(item.distance.meterToKm())} km',
@@ -305,7 +340,8 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                 itemBuilder: (context, index) {
                   var item = listCompanyClassificationRankingRegistered[index];
                   return _Card(
-                    ranking: item.rankingPercentRegistered,
+                    // ranking: item.rankingPercentRegistered,
+                    ranking: index + 1,
                     title: item.name,
                     subtitle:
                         '${item.employeesNumberRegistered} su ${item.employeesNumber} dipendenti',

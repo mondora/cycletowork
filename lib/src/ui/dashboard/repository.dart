@@ -15,6 +15,7 @@ import 'package:cycletowork/src/utility/convert.dart';
 import 'package:cycletowork/src/utility/gps.dart';
 import 'package:cycletowork/src/utility/logger.dart';
 import 'package:cycletowork/src/utility/tracking_drawing.dart';
+import 'package:cycletowork/src/utility/user_auth.dart';
 import 'package:cycletowork/src/widget/chart.dart';
 import 'package:flutter/material.dart';
 
@@ -656,5 +657,9 @@ class Repository {
     var user = await _remoteService.getUserInfo();
     await _localDatabase.saveUserInfo(user);
     return user;
+  }
+
+  bool isUserUsedEmailProvider() {
+    return UserAuth.isUserUsedEmailProvider();
   }
 }

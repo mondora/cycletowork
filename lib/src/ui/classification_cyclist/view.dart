@@ -94,10 +94,17 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
       ),
     );
 
+    var valueColor = userValues.photoURL == null
+        ? listCyclistClassificationRankingCo2.isEmpty
+            ? userValues.color
+            : listCyclistClassificationRankingCo2
+                .firstWhere((e) => e.email == userValues.email)
+                .color
+        : null;
+
     var valueWidget = CircleAvatar(
-      backgroundColor: userValues.photoURL == null
-          ? userValues.color.withOpacity(0.65)
-          : null,
+      backgroundColor:
+          userValues.photoURL == null ? valueColor!.withOpacity(0.65) : null,
       child: ClipRRect(
         borderRadius: const BorderRadius.all(
           Radius.circular(22),
@@ -107,10 +114,19 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
             : Icon(
                 Icons.star,
                 size: 18.0,
-                color: userValues.photoURL == null ? userValues.color : null,
+                color: valueColor,
               ),
       ),
     );
+
+    var userRankingCo2Finded = userRankingCo2 != 0
+        ? userRankingCo2
+        : listCyclistClassificationRankingCo2.isNotEmpty
+            ? listCyclistClassificationRankingCo2.indexWhere(
+                  (e) => e.email == userValues.email,
+                ) +
+                1
+            : 0;
 
     var expandedHeight = 235.0;
     var isVisible = true;
@@ -162,7 +178,12 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
                             firstRankingCo2.co2.gramToKg() < 0.01,
                         maxValueWidget: maxValueWidget,
                         valueWidget: valueWidget,
-                        isFirst: userRankingCo2 == 1,
+                        isFirst: userRankingCo2 != 0
+                            ? userRankingCo2 == 1
+                            : listCyclistClassificationRankingCo2.isNotEmpty &&
+                                listCyclistClassificationRankingCo2
+                                        .first.email ==
+                                    userValues.email,
                       ),
                       if (isVisible)
                         Column(
@@ -187,10 +208,16 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
                               ),
                               title: 'Chilometri percorsi',
                               isEmpty: firstRankingCo2 == null ||
-                                  firstRankingCo2.distance.meterToKm() < 1,
+                                  firstRankingCo2.distance.meterToKm() < 0.9,
                               maxValueWidget: maxValueWidget,
                               valueWidget: valueWidget,
-                              isFirst: userRankingCo2 == 1,
+                              isFirst: userRankingCo2 != 0
+                                  ? userRankingCo2 == 1
+                                  : listCyclistClassificationRankingCo2
+                                          .isNotEmpty &&
+                                      listCyclistClassificationRankingCo2
+                                              .first.email ==
+                                          userValues.email,
                             ),
                           ],
                         ),
@@ -198,7 +225,7 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
                         height: 10,
                       ),
                       RankingPositionSlider(
-                        ranking: userRankingCo2,
+                        ranking: userRankingCo2Finded,
                         isEmpty: listCyclistClassificationRankingCo2.isEmpty,
                         title: 'Posizione in classifica',
                       ),
@@ -211,7 +238,7 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
         ),
       ],
       body: RefreshIndicator(
-        onRefresh: viewModel.refreshCompanyClassification,
+        onRefresh: viewModel.refreshCyclistClassification,
         color: colorScheme.secondary,
         displacement: 0,
         child: ListView.builder(
@@ -220,7 +247,8 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
           itemBuilder: (context, index) {
             var item = listCyclistClassificationRankingCo2[index];
             return _Card(
-              ranking: item.rankingCo2,
+              // ranking: item.rankingCo2,
+              ranking: index + 1,
               title: item.displayName ?? item.email,
               subtitle:
                   '${distanceNumberFormat.format(item.distance.meterToKm())} km',

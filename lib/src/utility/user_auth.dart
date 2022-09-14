@@ -40,6 +40,16 @@ class UserAuth {
     return FirebaseAuth.instance.currentUser != null;
   }
 
+  static bool isUserUsedEmailProvider() {
+    var currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      return false;
+    }
+
+    return currentUser.providerData.isNotEmpty &&
+        currentUser.providerData.first.providerId == 'password';
+  }
+
   static Future<void> loginGoogleSignIn() async {
     try {
       final GoogleSignInAccount googleSignInAccount = Platform.isAndroid

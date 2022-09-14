@@ -124,7 +124,7 @@ class RankingSlider extends StatelessWidget {
                         ),
                       ),
                     ),
-                  if (percent <= 0.8)
+                  if (percent <= 0.8 || isFirst)
                     Positioned(
                       top: 6,
                       right: 35,
@@ -147,8 +147,9 @@ class RankingSlider extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                       child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: maxValueWidget),
+                        padding: const EdgeInsets.all(2.0),
+                        child: maxValueWidget,
+                      ),
                     ),
                   ),
                 ],
