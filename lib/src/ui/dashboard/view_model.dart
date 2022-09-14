@@ -52,6 +52,7 @@ class ViewModel extends ChangeNotifier {
     try {
       _initAppNotification();
       notifyListeners();
+      AppData.isUserUsedEmailProvider = _repository.isUserUsedEmailProvider();
       await getListUserActivity();
       await getListUserActivityFilterd();
       await _getActiveChallengeList();
@@ -81,7 +82,6 @@ class ViewModel extends ChangeNotifier {
     _uiState.counter = 5;
     _trackingPaused = false;
     _startedAfterPaused = false;
-    AppData.isUserUsedEmailProvider = _repository.isUserUsedEmailProvider();
     _challengeActive = await _repository.isChallengeActivity();
     _trackingUserActivity = UserActivity(
       userActivityId: const Uuid().v4(),

@@ -103,6 +103,28 @@ class UserAuth {
     return true;
   }
 
+  static Future<bool?> changePasswordForEmail(
+    String currentPassword,
+    String newPassword,
+  ) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return false;
+      }
+      final userCredential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: currentPassword,
+      );
+
+      await user.reauthenticateWithCredential(userCredential);
+      await user.updatePassword(newPassword);
+    } on FirebaseAuthException catch (e) {
+      throw (e.code);
+    }
+    return true;
+  }
+
   static Future logout() async {
     try {
       await FirebaseAuth.instance.signOut();
