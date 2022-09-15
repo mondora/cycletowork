@@ -24,7 +24,7 @@ const {
 } = require('./service/notification');
 const { loggerError, loggerLog, loggerDebug } = require('./utility/logger');
 const { getString } = require('./localization');
-const { elasticSearch } = require('./utility/elastic_search');
+// const { elasticSearch } = require('./utility/elastic_search');
 const {
     saveCompany,
     getCompanyListNameSearchForChalleng,
@@ -223,47 +223,47 @@ exports.onDeleteUser = functions
         await deleteUser(user);
     });
 
-exports.onCompanyCreated = functions
-    .region(Constant.appRegion)
-    .firestore.document(`${Constant.companyCollectionName}/{id}`)
-    .onCreate(async (snap, context) => {
-        const id = context.params.id;
-        const company = snap.data();
+// exports.onCompanyCreated = functions
+//     .region(Constant.appRegion)
+//     .firestore.document(`${Constant.companyCollectionName}/{id}`)
+//     .onCreate(async (snap, context) => {
+//         const id = context.params.id;
+//         const company = snap.data();
 
-        elasticSearch.index({
-            index: Constant.companyCollectionName,
-            id: id,
-            body: company,
-        });
-    });
+//         elasticSearch.index({
+//             index: Constant.companyCollectionName,
+//             id: id,
+//             body: company,
+//         });
+//     });
 
-exports.onCompanyUpdate = functions
-    .region(Constant.appRegion)
-    .firestore.document(`${Constant.companyCollectionName}/{id}`)
-    .onUpdate(async (change, context) => {
-        const id = context.params.id;
-        const company = change.after.data();
+// exports.onCompanyUpdate = functions
+//     .region(Constant.appRegion)
+//     .firestore.document(`${Constant.companyCollectionName}/{id}`)
+//     .onUpdate(async (change, context) => {
+//         const id = context.params.id;
+//         const company = change.after.data();
 
-        elasticSearch.index({
-            index: Constant.companyCollectionName,
-            id,
-            body: company,
-        });
-    });
+//         elasticSearch.index({
+//             index: Constant.companyCollectionName,
+//             id,
+//             body: company,
+//         });
+//     });
 
-exports.onCompanyDelete = functions
-    .region(Constant.appRegion)
-    .firestore.document(`${Constant.companyCollectionName}/{id}`)
-    .onDelete(async (snap, context) => {
-        const id = context.params.id;
-        const company = snap.data();
+// exports.onCompanyDelete = functions
+//     .region(Constant.appRegion)
+//     .firestore.document(`${Constant.companyCollectionName}/{id}`)
+//     .onDelete(async (snap, context) => {
+//         const id = context.params.id;
+//         const company = snap.data();
 
-        elasticSearch.delete({
-            index: Constant.companyCollectionName,
-            id,
-            body: company,
-        });
-    });
+//         elasticSearch.delete({
+//             index: Constant.companyCollectionName,
+//             id,
+//             body: company,
+//         });
+//     });
 
 exports.saveDeviceToken = functions
     .region(Constant.appRegion)

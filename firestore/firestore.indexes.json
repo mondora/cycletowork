@@ -7,6 +7,18 @@
                 { "fieldPath": "published", "order": "ASCENDING" },
                 { "fieldPath": "stopTime", "order": "ASCENDING" }
             ]
+        },
+        {
+            "collectionGroup": "companies",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "listChallengeIdRegister",
+                    "arrayConfig": "CONTAINS"
+                },
+                { "fieldPath": "isVerified", "order": "ASCENDING" },
+                { "fieldPath": "name", "order": "ASCENDING" }
+            ]
         }
     ],
     "fieldOverrides": []

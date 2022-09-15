@@ -1,6 +1,6 @@
 const admin = require('firebase-admin');
 const { Constant } = require('../../utility/constant');
-const { elasticSearch } = require('../../utility/elastic_search');
+// const { elasticSearch } = require('../../utility/elastic_search');
 const { loggerError } = require('../../utility/logger');
 
 const saveCompany = async (company) => {
@@ -26,42 +26,42 @@ const getCompanyListNameSearchForChalleng = async (
     name,
     pageSize = 20
 ) => {
-    try {
-        const searchResult = await elasticSearch.search({
-            index: Constant.companyCollectionName,
-            body: {
-                from: 0,
-                size: pageSize,
-                query: {
-                    bool: {
-                        must: [
-                            {
-                                term: {
-                                    isVerified: true,
-                                },
-                            },
-                            {
-                                query_string: {
-                                    query: `*${name}*`,
-                                    fields: ['name'],
-                                },
-                            },
-                            {
-                                match: {
-                                    listChallengeIdRegister: challengeId,
-                                },
-                            },
-                        ],
-                    },
-                },
-            },
-        });
-        const hits = searchResult.hits.hits;
-        return hits.map((hit) => hit['_source']);
-    } catch (error) {
-        loggerError('getCompanyListNameSearchForChalleng error error:', error);
-        return [];
-    }
+    // try {
+    //     const searchResult = await elasticSearch.search({
+    //         index: Constant.companyCollectionName,
+    //         body: {
+    //             from: 0,
+    //             size: pageSize,
+    //             query: {
+    //                 bool: {
+    //                     must: [
+    //                         {
+    //                             term: {
+    //                                 isVerified: true,
+    //                             },
+    //                         },
+    //                         {
+    //                             query_string: {
+    //                                 query: `*${name}*`,
+    //                                 fields: ['name'],
+    //                             },
+    //                         },
+    //                         {
+    //                             match: {
+    //                                 listChallengeIdRegister: challengeId,
+    //                             },
+    //                         },
+    //                     ],
+    //                 },
+    //             },
+    //         },
+    //     });
+    //     const hits = searchResult.hits.hits;
+    //     return hits.map((hit) => hit['_source']);
+    // } catch (error) {
+    //     loggerError('getCompanyListNameSearchForChalleng error error:', error);
+    //     return [];
+    // }
 };
 
 const getCompanyList = async (lastCompanyName, pageSize = 100) => {
@@ -121,34 +121,18 @@ const getCompanyFromNameInChallenge = async (challengeId, companyName) => {
 };
 
 const getCompanyListForChallenge = async (challengeId, pageSize = 20) => {
-    try {
-        const searchResult = await elasticSearch.search({
-            index: Constant.companyCollectionName,
-            body: {
-                from: 0,
-                size: pageSize,
-                query: {
-                    bool: {
-                        must: [
-                            {
-                                term: {
-                                    isVerified: true,
-                                },
-                            },
-                            {
-                                match: {
-                                    listChallengeIdRegister: challengeId,
-                                },
-                            },
-                        ],
-                    },
-                },
-            },
-        });
-        const hits = searchResult.hits.hits;
-        return hits.map((hit) => hit['_source']);
-    } catch (error) {
-        loggerError('getCompanyListForChallenge error error:', error);
+    const snapshot = await admin
+        .firestore()
+        .collection(Constant.companyCollectionName)
+        .orderBy('name')
+        .where('isVerified', '==', true)
+        .where('listChallengeIdRegister', 'array-contains', challengeId)
+        .limit(pageSize)
+        .get();
+
+    if (!snapshot.empty) {
+        return snapshot.docs.map((doc) => doc.data());
+    } else {
         return [];
     }
 };
