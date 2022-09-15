@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cycletowork/src/data/company.dart';
 import 'package:cycletowork/src/data/survey.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/register_challenge/view_model.dart';
@@ -7,7 +6,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:searchfield/searchfield.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RegisterChallengCompanyDataView extends StatefulWidget {
@@ -63,7 +61,7 @@ class _RegisterChallengCompanyDataViewState
             color: colorScheme.onBackground,
             size: 20,
           ),
-          onPressed: () => viewModel.gotoChampionRegistration(),
+          onPressed: () => viewModel.backToChampionRegistration(),
         ),
       ),
       body: SingleChildScrollView(
@@ -98,36 +96,34 @@ class _RegisterChallengCompanyDataViewState
                       left: 24.0,
                       top: 20.0,
                     ),
-                    child: SearchField(
-                      suggestionState: Suggestion.expand,
-                      suggestionAction: SuggestionAction.next,
-                      maxSuggestionsInViewPort: 10,
-                      itemHeight: 50,
-                      textInputAction: TextInputAction.next,
-                      suggestions: listDepartment
-                          .map((e) => SearchFieldListItem(e.name))
-                          .toList(),
-                      initialValue: departmentName != ''
-                          ? SearchFieldListItem(departmentName)
-                          : null,
-                      onSuggestionTap: (value) {
-                        viewModel.setDepartmentName(value.searchKey);
-                      },
-                      searchInputDecoration: InputDecoration(
-                        labelText: 'A quale sede o dipartimento appartieni? *',
-                        suffixIcon: Icon(
-                          Icons.arrow_drop_down_outlined,
-                          color: colorSchemeExtension.textSecondary,
+                    child: DropdownButtonFormField<String>(
+                      isExpanded: true,
+                      hint: Text(
+                        'A quale sede o dipartimento appartieni? *',
+                        style: textTheme.bodyText1!.copyWith(
+                          fontWeight: FontWeight.w400,
+                          color: colorSchemeExtension.textDisabled,
                         ),
                       ),
+                      items:
+                          listDepartment.map((e) => e.name).map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: textTheme.caption,
+                          ),
+                        );
+                      }).toList(),
+                      value: departmentName != '' ? departmentName : null,
+                      onChanged: (value) {
+                        if (value != null) {
+                          viewModel.setDepartmentName(value);
+                        }
+                      },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Seleziona in quale settore opera';
-                        }
-
-                        if (!listDepartment
-                            .any((Department e) => e.name == value)) {
-                          return 'Inserire settore valida';
                         }
                         return null;
                       },
@@ -706,7 +702,7 @@ class _RegisterChallengCompanyDataViewState
                     width: 165.0,
                     height: 36.0,
                     child: OutlinedButton(
-                      onPressed: viewModel.gotoChampionRegistration,
+                      onPressed: viewModel.backToChampionRegistration,
                       style: ButtonStyle(
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(

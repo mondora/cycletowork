@@ -1,10 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cycletowork/src/data/company.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/register_challenge/view_model.dart';
+import 'package:filter_list/filter_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:searchfield/searchfield.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RegisterChallengCyclistView extends StatefulWidget {
@@ -20,31 +21,18 @@ class _RegisterChallengCyclistViewState
   final formKey = GlobalKey<FormState>();
   final aboutFiabUrl = 'https://www.sataspes.net/android/sp-budget';
   final emailFiab = 'info@fiab.it';
-  String? companyNameSearched;
+
   var companyNameSearchedController = TextEditingController();
+  List<Company> listSelectedCompany = [];
 
   @override
   void initState() {
     super.initState();
-    companyNameSearchedController.addListener(_changeCompanyName);
   }
 
   @override
   void dispose() {
-    companyNameSearchedController.dispose();
     super.dispose();
-  }
-
-  void _changeCompanyName() {
-    final viewModel = Provider.of<ViewModel>(context, listen: false);
-    var name = companyNameSearchedController.text;
-    if (name != '') {
-      // companyNameSearched = name;
-      // viewModel.searchCompanyName(name);
-    } else {
-      companyNameSearched = null;
-      viewModel.getCompanyList();
-    }
   }
 
   @override
@@ -55,8 +43,9 @@ class _RegisterChallengCyclistViewState
     var departmentName = viewModel.uiState.challengeRegistry.departmentName;
     var listCompany = viewModel.uiState.listCompany;
     var companySelected = viewModel.uiState.challengeRegistry.companySelected;
-    var companyName = viewModel.uiState.challengeRegistry.companyName;
-    companyNameSearchedController.text = companyNameSearched ?? '';
+    companyNameSearchedController.text =
+        viewModel.uiState.challengeRegistry.companyName;
+
     var colorScheme = Theme.of(context).colorScheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
@@ -303,61 +292,86 @@ class _RegisterChallengCyclistViewState
                     Container(
                       margin:
                           const EdgeInsets.only(top: 20, left: 20, right: 20),
-                      child: SearchField(
-                        suggestionState: Suggestion.expand,
-                        suggestionAction: SuggestionAction.unfocus,
-                        hasOverlay: false,
-                        emptyWidget: SizedBox(
-                          height: 40.0,
-                          child: Center(
-                            child: Text(
-                              'Non si triva la azienda',
-                              style: textTheme.bodyText1!.copyWith(
-                                color: colorScheme.error,
-                              ),
-                            ),
+                      child: TextFormField(
+                        readOnly: true,
+                        controller: companyNameSearchedController,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          hintText: 'Seleziona la tua azienda',
+                          hintStyle: textTheme.bodyText1!.copyWith(
+                            fontWeight: FontWeight.w400,
+                            color: colorSchemeExtension.textDisabled,
                           ),
                         ),
-                        autoCorrect: false,
-                        maxSuggestionsInViewPort: 10,
-                        itemHeight: 50,
-                        suggestions: listCompany
-                            .map((e) => SearchFieldListItem(e.name))
-                            .toList(),
-                        initialValue: companyName != ''
-                            ? SearchFieldListItem(companyName)
-                            : null,
-                        controller: companyNameSearchedController,
-                        searchInputDecoration: InputDecoration(
-                          labelText: 'Seleziona la tua azienda',
-                          suffixIcon: companyNameSearched == null
-                              ? IconButton(
-                                  onPressed: () {
-                                    var name =
-                                        companyNameSearchedController.text;
-                                    if (name != '') {
-                                      companyNameSearched = name;
-                                      viewModel.searchCompanyName(name);
-                                    }
-                                  },
-                                  icon: Icon(
-                                    Icons.search,
-                                    color: colorScheme.secondary,
-                                  ),
-                                  splashRadius: 20,
-                                )
-                              : IconButton(
-                                  onPressed: () {
-                                    companyNameSearched = null;
-                                    viewModel.getCompanyList();
-                                  },
-                                  icon: Icon(
-                                    Icons.search_off,
-                                    color: colorScheme.error,
-                                  ),
-                                  splashRadius: 20,
+                        onTap: () async {
+                          listSelectedCompany = [];
+                          await FilterListDialog.display<Company>(
+                            context,
+                            hideSelectedTextCount: true,
+                            barrierDismissible: true,
+                            hideCloseIcon: true,
+                            themeData: FilterListThemeData(context).copyWith(
+                              borderRadius: 15.0,
+                              headerTheme: const HeaderThemeData(
+                                searchFieldBorderRadius: 15.0,
+                                searchFieldHintText:
+                                    'Cerca la tua azienda qua ...',
+                              ),
+                              choiceChipTheme: ChoiceChipThemeData(
+                                selectedBackgroundColor: colorScheme.secondary,
+                                labelPadding: const EdgeInsets.symmetric(
+                                  horizontal: 15.0,
                                 ),
-                        ),
+                              ),
+                              controlBarButtonTheme:
+                                  ControlButtonBarThemeData(context).copyWith(
+                                margin: const EdgeInsets.all(15.0),
+                                // controlContainerDecoration: const BoxDecoration(
+                                //   borderRadius: BorderRadius.all(
+                                //     Radius.circular(10),
+                                //   ),
+                                // ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                // backgroundColor: Colors.amber,
+                                controlButtonTheme: ControlButtonThemeData(
+                                  primaryButtonBackgroundColor:
+                                      colorScheme.secondary,
+                                  // borderRadius: 10.0,
+                                  textStyle: textTheme.button,
+                                ),
+                              ),
+                            ),
+                            applyButtonText: 'SELEZIONA',
+                            resetButtonText: 'CANCELLA',
+                            enableOnlySingleSelection: true,
+                            height: 500,
+                            listData: listCompany,
+                            selectedListData: listSelectedCompany,
+                            choiceChipLabel: (item) => item!.name,
+                            validateSelectedItem: (list, val) =>
+                                list!.contains(val),
+                            onItemSearch: (company, query) {
+                              return company.name
+                                  .toLowerCase()
+                                  .contains(query.toLowerCase());
+                            },
+                            onApplyButtonClick: (list) {
+                              setState(() {
+                                listSelectedCompany = List.from(list!);
+                              });
+                              Navigator.pop(context);
+                            },
+                          );
+
+                          if (listSelectedCompany.isNotEmpty) {
+                            companyNameSearchedController.text =
+                                listSelectedCompany.first.name;
+                            viewModel
+                                .setCompanyName(listSelectedCompany.first.name);
+                          }
+                        },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Seleziona la tua azienda';
@@ -369,14 +383,6 @@ class _RegisterChallengCyclistViewState
                           }
 
                           return null;
-                        },
-                        onSuggestionTap: (value) {
-                          companyNameSearched = value.searchKey;
-                          viewModel.setCompanyName(value.searchKey);
-                        },
-                        onSubmit: (value) {
-                          companyNameSearched = value;
-                          viewModel.searchCompanyName(value);
                         },
                       ),
                     ),
@@ -390,27 +396,31 @@ class _RegisterChallengCyclistViewState
                           top: 20.0,
                           bottom: 20.0,
                         ),
-                        child: SearchField(
-                          suggestionState: Suggestion.expand,
-                          suggestionAction: SuggestionAction.next,
-                          maxSuggestionsInViewPort: 10,
-                          itemHeight: 50,
-                          textInputAction: TextInputAction.next,
-                          suggestions: companySelected.listDepartment!
-                              .map((e) => SearchFieldListItem(e.name))
-                              .toList(),
-                          searchInputDecoration: InputDecoration(
-                            labelText: 'Seleziona la sede e/o il dipartimento',
-                            suffixIcon: Icon(
-                              Icons.arrow_drop_down_outlined,
-                              color: colorSchemeExtension.textSecondary,
+                        child: DropdownButtonFormField<String>(
+                          isExpanded: true,
+                          hint: Text(
+                            'Seleziona la sede e/o il dipartimento',
+                            style: textTheme.bodyText1!.copyWith(
+                              fontWeight: FontWeight.w400,
+                              color: colorSchemeExtension.textDisabled,
                             ),
                           ),
-                          initialValue: departmentName != ''
-                              ? SearchFieldListItem(departmentName)
-                              : null,
-                          onSuggestionTap: (value) {
-                            viewModel.setDepartmentName(value.searchKey);
+                          items: companySelected.listDepartment!
+                              .map((e) => e.name)
+                              .map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: textTheme.caption,
+                              ),
+                            );
+                          }).toList(),
+                          value: departmentName != '' ? departmentName : null,
+                          onChanged: (value) {
+                            if (value != null) {
+                              viewModel.setDepartmentName(value);
+                            }
                           },
                           validator: (value) {
                             if (value == null || value.isEmpty) {

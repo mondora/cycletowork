@@ -5,7 +5,6 @@ import 'package:cycletowork/src/ui/register_challenge/view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:searchfield/searchfield.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RegisterChallengChampionView extends StatefulWidget {
@@ -318,40 +317,41 @@ class _RegisterChallengChampionViewState
                     },
                   ),
                 ),
+                const SizedBox(
+                  height: 10.0,
+                ),
                 Container(
                   margin: const EdgeInsets.only(
                     right: 24.0,
                     left: 24.0,
                   ),
-                  child: SearchField(
-                    suggestionState: Suggestion.expand,
-                    suggestionAction: SuggestionAction.next,
-                    maxSuggestionsInViewPort: 10,
-                    itemHeight: 50,
-                    textInputAction: TextInputAction.next,
-                    suggestions: Company.categories
-                        .map((e) => SearchFieldListItem(e))
-                        .toList(),
-                    initialValue: companyCategory != ''
-                        ? SearchFieldListItem(companyCategory)
-                        : null,
-                    onSuggestionTap: (value) {
-                      viewModel.setCompanyToAddCategory(value.searchKey);
-                    },
-                    searchInputDecoration: InputDecoration(
-                      labelText: 'In quale settore opera? *',
-                      suffixIcon: Icon(
-                        Icons.arrow_drop_down_outlined,
-                        color: colorSchemeExtension.textSecondary,
+                  child: DropdownButtonFormField<String>(
+                    isExpanded: true,
+                    hint: Text(
+                      'In quale settore opera? *',
+                      style: textTheme.bodyText1!.copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: colorSchemeExtension.textDisabled,
                       ),
                     ),
+                    items: Company.categories.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: textTheme.caption,
+                        ),
+                      );
+                    }).toList(),
+                    value: companyCategory != '' ? companyCategory : null,
+                    onChanged: (value) {
+                      if (value != null) {
+                        viewModel.setDepartmentName(value);
+                      }
+                    },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Seleziona in quale settore opera';
-                      }
-
-                      if (!Company.categories.contains(value)) {
-                        return 'Inserire settore valida';
                       }
                       return null;
                     },

@@ -94,10 +94,11 @@ class _StopTrackingViewState extends State<StopTrackingView> {
     final trackingMaxSpeed =
         widget.trackingUserActivity.maxSpeed.meterPerSecondToKmPerHour();
     final trackingCalorie = widget.trackingUserActivity.calorie;
-    final trackingPace =
-        trackingAvarageSpeed > 2 ? 60 / trackingAvarageSpeed : 0;
     final trackingDistanceInKm =
         widget.trackingUserActivity.distance.meterToKm();
+    final trackingPace = trackingAvarageSpeed > 2 && trackingDistanceInKm > 0.1
+        ? 60 / trackingAvarageSpeed
+        : 0;
     final isChallenge =
         widget.trackingUserActivity.isChallenge == 1 ? true : false;
 

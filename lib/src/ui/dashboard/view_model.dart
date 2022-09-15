@@ -18,7 +18,8 @@ import 'package:uuid/uuid.dart';
 class ViewModel extends ChangeNotifier {
   final initialLatitude = 45.50315189900018;
   final initialLongitude = 9.198330425060847;
-  final _minDistanceInMeterToAdd = 5.0;
+  final _minDistanceInMeterToAdd = 3;
+  final _minDistanceFromLineInMeterToAdd = 2;
   final _ignoreAppBarActionPages = [
     AppMenuOption.profile,
   ];
@@ -100,7 +101,7 @@ class ViewModel extends ChangeNotifier {
       companyId: _challengeActive?.companyId,
     );
     _listTrackingPosition = [];
-
+    await _getCurrentLocation();
     _uiState.loading = false;
     _uiState.dashboardPageOption = DashboardPageOption.startCounter;
     notifyListeners();
@@ -394,11 +395,6 @@ class ViewModel extends ChangeNotifier {
     _timer?.cancel();
     await _locationSubscription?.cancel();
     _locationSubscription = null;
-
-    _trackingUserActivity!.averageSpeed = await compute(
-      LocationData.getAverageSpeed,
-      _listTrackingPosition,
-    );
 
     _locationSubscription = null;
     _trackingUserActivity!.stopTime =
@@ -705,7 +701,7 @@ class ViewModel extends ChangeNotifier {
     }
     var lastPosition = _listTrackingPosition.last;
     var distance = _trackingUserActivity!.distance;
-    var calorie = _trackingUserActivity!.calorie;
+    // var calorie = _trackingUserActivity!.calorie;
     var co2 = _trackingUserActivity!.co2;
     var maxSpeed = _trackingUserActivity!.maxSpeed;
     var newDistance = _repository
@@ -714,39 +710,50 @@ class ViewModel extends ChangeNotifier {
           locationData,
         )
         .abs();
-    var newCalorie = newDistance.toCalorieFromDistanceInMeter();
+
+    // var newCalorie = newDistance.toCalorieFromDistanceInMeter();
     var newCo2 = newDistance.distanceInMeterToCo2g();
     // var newSpeed = locationData.speed > 1 ? locationData.speed : 0.0;
+    var durationLastLocation =
+        locationData.time.millisecondsSinceEpochToSeconde() -
+            lastPosition.time.millisecondsSinceEpochToSeconde();
     var newSpeed =
-        newDistance / ((locationData.time - lastPosition.time) / 1000);
+        durationLastLocation != 0 ? newDistance / durationLastLocation : 0.0;
     newSpeed = newSpeed > 1 ? newSpeed : 0;
-    _trackingUserActivity!.distance = distance + newDistance;
-    _trackingUserActivity!.calorie = calorie + newCalorie;
-    _trackingUserActivity!.co2 = co2 + newCo2;
+    locationData.speed = newSpeed;
     _trackingUserActivity!.maxSpeed = maxSpeed < newSpeed ? newSpeed : maxSpeed;
+    if (newDistance < _minDistanceInMeterToAdd) {
+      lastPosition.speed = newSpeed;
+      return;
+    }
+
+    _trackingUserActivity!.distance = distance + newDistance;
+
+    _trackingUserActivity!.co2 = co2 + newCo2;
     _trackingUserActivity!.steps +=
         newDistance.distanceInMeterToSteps().toInt();
+
+    _trackingUserActivity!.calorie =
+        _trackingUserActivity!.distance.toCalorieFromDistanceInMeter();
     if (_listTrackingPosition.length < 2) {
       _listTrackingPosition.add(locationData);
+
+      _trackingUserActivity!.averageSpeed =
+          _listTrackingPosition.map((e) => e.speed).reduce((a, b) => a + b) / 2;
     } else {
       var point = lastPosition;
       var endPont = locationData;
       var startPoint = _listTrackingPosition[_listTrackingPosition.length - 2];
       var distance = LocationData.distanceToLine(point, startPoint, endPont);
-      if (distance >= _minDistanceInMeterToAdd) {
+      if (distance >= _minDistanceFromLineInMeterToAdd) {
         _listTrackingPosition.add(locationData);
       } else {
         _listTrackingPosition[_listTrackingPosition.length - 1] = locationData;
       }
+      var totalDistance = _trackingUserActivity!.distance;
+      var totalDuration = _trackingUserActivity!.duration;
+      _trackingUserActivity!.averageSpeed = totalDistance / totalDuration;
     }
-
-    var totalDistance = _trackingUserActivity!.distance;
-    var totalDuration = _trackingUserActivity!.duration;
-    _trackingUserActivity!.averageSpeed = totalDistance / totalDuration;
-
-    // _trackingUserActivity!.averageSpeed =
-    //     _listTrackingPosition.map((e) => e.speed).reduce((a, b) => a + b) /
-    //         _listTrackingPosition.length;
   }
 
   Future<void> _getActiveChallengeList() async {

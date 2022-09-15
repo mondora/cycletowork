@@ -51,17 +51,17 @@ class Repository {
     );
   }
 
-  Future<List<Company>> getCompanyListNameSearchForChalleng(
-    String challengeId,
-    String name,
-    int pageSize,
-  ) async {
-    return await _remoteService.getCompanyListNameSearchForChalleng(
-      challengeId,
-      name,
-      pageSize,
-    );
-  }
+  // Future<List<Company>> getCompanyListNameSearchForChalleng(
+  //   String challengeId,
+  //   String name,
+  //   int pageSize,
+  // ) async {
+  //   return await _remoteService.getCompanyListNameSearchForChalleng(
+  //     challengeId,
+  //     name,
+  //     pageSize,
+  //   );
+  // }
 
   Future<bool> verifiyEmailCode(
     String email,

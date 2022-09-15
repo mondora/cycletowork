@@ -96,21 +96,21 @@ class ViewModel extends ChangeNotifier {
     }
   }
 
-  void searchCompanyName(String name) async {
-    // _uiState.loading = true;
-    // notifyListeners();
-    try {
-      await _getCompanyListNameSearch(name);
-      // _uiState.challengeRegistry.compan syName = name;
-    } catch (e) {
-      _uiState.errorMessage = e.toString();
-      _uiState.error = true;
-      Logger.error(e);
-    } finally {
-      // _uiState.loading = false;
-      notifyListeners();
-    }
-  }
+  // Future<void> searchCompanyName(String name) async {
+  //   // _uiState.loading = true;
+  //   // notifyListeners();
+  //   try {
+  //     await _getCompanyListNameSearch(name);
+  //     // _uiState.challengeRegistry.compan syName = name;
+  //   } catch (e) {
+  //     _uiState.errorMessage = e.toString();
+  //     _uiState.error = true;
+  //     Logger.error(e);
+  //   } finally {
+  //     // _uiState.loading = false;
+  //     notifyListeners();
+  //   }
+  // }
 
   void sendEmailVerificationCode() async {
     _uiState.loading = true;
@@ -202,6 +202,11 @@ class ViewModel extends ChangeNotifier {
         AppData.user!.email;
     _uiState.challengeRegistry.companyToAdd!.registerUserUid =
         AppData.user!.uid;
+    _uiState.pageOption = PageOption.championRegistration;
+    notifyListeners();
+  }
+
+  void backToChampionRegistration() {
     _uiState.pageOption = PageOption.championRegistration;
     notifyListeners();
   }
@@ -496,20 +501,20 @@ class ViewModel extends ChangeNotifier {
   Future<void> getCompanyList() async {
     var result = await _repository.getCompanyListForChallenge(
       _uiState.challenge!.id,
-      10,
+      500,
     );
     _uiState.listCompany = result;
     notifyListeners();
   }
 
-  Future<void> _getCompanyListNameSearch(String name) async {
-    var result = await _repository.getCompanyListNameSearchForChalleng(
-      _uiState.challenge!.id,
-      name,
-      10,
-    );
-    _uiState.listCompany = result;
-  }
+  // Future<void> _getCompanyListNameSearch(String name) async {
+  //   var result = await _repository.getCompanyListNameSearchForChalleng(
+  //     _uiState.challenge!.id,
+  //     name,
+  //     10,
+  //   );
+  //   _uiState.listCompany = result;
+  // }
 
   // void _initCompanyToAdd() {
   //   _uiState.challengeRegistry.companyToAdd = Company.fromEmpty();

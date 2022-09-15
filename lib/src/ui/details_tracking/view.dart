@@ -50,9 +50,12 @@ class DetailsTrackingView extends StatelessWidget {
           final trackingMaxSpeed =
               userActivity.maxSpeed.meterPerSecondToKmPerHour();
           final trackingCalorie = userActivity.calorie;
-          final trackingPace =
-              trackingAvarageSpeed > 2 ? 60 / trackingAvarageSpeed : 0;
           final trackingDistanceInKm = userActivity.distance.meterToKm();
+          final trackingPace =
+              trackingAvarageSpeed > 2 && trackingDistanceInKm > 0.1
+                  ? 60 / trackingAvarageSpeed
+                  : 0;
+
           final isChallenge = userActivity.isChallenge == 1 ? true : false;
           final listLocationData = viewModel.uiState.listLocationData;
           final imageData = userActivity.imageData;

@@ -17,7 +17,6 @@ import 'package:cycletowork/src/ui/landing/view_model.dart'
 import 'package:cycletowork/src/ui/map_tracking/view.dart';
 import 'package:cycletowork/src/ui/pause_tracking/view.dart';
 import 'package:cycletowork/src/ui/profile/view.dart';
-import 'package:cycletowork/src/ui/settings/view.dart';
 import 'package:cycletowork/src/ui/dashboard/widget/gps_icon.dart';
 import 'package:cycletowork/src/ui/stop_tracking/view.dart';
 import 'package:cycletowork/src/ui/tracking/view.dart';

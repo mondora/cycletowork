@@ -24,8 +24,6 @@ class _ProfileChangePasswordViewState extends State<ProfileChangePasswordView> {
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final actionColor = colorSchemeExtension.action;
-    var colorScheme = Theme.of(context).colorScheme;
-    var textTheme = Theme.of(context).textTheme;
     final userImageUrl = AppData.user != null ? AppData.user!.photoURL : null;
     final displayName = AppData.user != null ? AppData.user!.displayName : null;
 

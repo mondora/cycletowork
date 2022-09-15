@@ -32,6 +32,7 @@ class ShowMapTracking extends StatefulWidget {
 
 class _ShowMapTrackingState extends State<ShowMapTracking> {
   final GlobalKey<AppMapState> _mapKey = GlobalKey();
+  LocationData? lastPositionPassed;
 
   @override
   void dispose() {
@@ -60,22 +61,36 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
     );
 
     Timer(const Duration(microseconds: 500), () async {
-      _mapKey.currentState?.setPath(
-        widget.listTrackingPosition,
-      );
+      if (lastPositionPassed == null ||
+          lastPositionPassed!.latitude != lastPosition.latitude ||
+          lastPositionPassed!.longitude != lastPosition.longitude) {
+        lastPositionPassed = LocationData(
+          latitude: lastPosition.latitude,
+          longitude: lastPosition.longitude,
+          accuracy: 0,
+          altitude: 0,
+          speed: 0,
+          speedAccuracy: 0,
+          time: 0,
+          bearing: 0,
+        );
 
-      _mapKey.currentState?.setMarker(
-        lastPosition.latitude,
-        lastPosition.longitude,
-      );
+        _mapKey.currentState?.setPath(
+          widget.listTrackingPosition,
+        );
 
-      await _mapKey.currentState?.changeCamera(
-        lastPosition.latitude,
-        lastPosition.longitude,
-        bearing: lastPosition.bearing,
-        zoom: 17.0,
-      );
-      // }
+        _mapKey.currentState?.setMarker(
+          lastPosition.latitude,
+          lastPosition.longitude,
+        );
+
+        await _mapKey.currentState?.changeCamera(
+          lastPosition.latitude,
+          lastPosition.longitude,
+          bearing: lastPosition.bearing,
+          zoom: 17.0,
+        );
+      }
     });
 
     return Scaffold(
