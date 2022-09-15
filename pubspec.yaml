@@ -1,7 +1,7 @@
 name: cycletowork
 description: A new open source app for track bicycle.
 publish_to: 'https://github.com/mondora/cycletowork'
-version: 1.0.0+5
+version: 1.0.0+13
 
 environment:
     sdk: '>=2.18.0 <3.0.0'
@@ -42,10 +42,10 @@ dependencies:
     flutter_local_notifications: ^9.9.1
     badges: ^2.0.3
     flutter_otp_text_field: ^1.1.0+2
-    searchfield: ^0.7.0
     auto_size_text: ^3.0.0
     firebase_crashlytics: ^2.8.9
     app_settings: ^4.1.8
+    filter_list: ^1.0.2
 
 dev_dependencies:
     flutter_test:

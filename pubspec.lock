@@ -162,6 +162,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.1.2"
+  filter_list:
+    dependency: "direct main"
+    description:
+      name: filter_list
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   firebase_auth:
     dependency: "direct main"
     description:
@@ -707,13 +714,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1+1"
-  searchfield:
-    dependency: "direct main"
-    description:
-      name: searchfield
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.7.0"
   share_plus:
     dependency: "direct main"
     description:
