@@ -28,6 +28,7 @@ class AppMap extends StatefulWidget {
   final BoxFit fit;
   final double? width;
   final double? height;
+  final bool canScroll;
 
   const AppMap({
     Key? key,
@@ -42,6 +43,7 @@ class AppMap extends StatefulWidget {
     this.fit = BoxFit.fill,
     this.height,
     this.width,
+    this.canScroll = true,
   }) : super(key: key);
 
   @override
@@ -339,6 +341,9 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
       myLocationButtonEnabled: false,
       mapToolbarEnabled: false,
       buildingsEnabled: false,
+      scrollGesturesEnabled: widget.canScroll,
+      zoomGesturesEnabled: widget.canScroll,
+      rotateGesturesEnabled: widget.canScroll,
       initialCameraPosition: CameraPosition(
         target: LatLng(
           widget.initialLatitude!,
