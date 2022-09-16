@@ -1,11 +1,13 @@
 import 'package:cycletowork/src/ui/dashboard/ui_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppDrawer extends StatelessWidget {
   final AppMenuOption menuOption;
   final void Function(AppMenuOption) onPressed;
   final double closeSize = 40.0;
+  final fiabWorld = 'https://www.fiabitalia.it';
   const AppDrawer({
     Key? key,
     required this.menuOption,
@@ -84,7 +86,14 @@ class AppDrawer extends StatelessWidget {
                         borderRadius: const BorderRadius.all(
                           Radius.circular(15.0),
                         ),
-                        onTap: () {},
+                        onTap: () async {
+                          final url = Uri.parse(fiabWorld);
+                          if (await canLaunchUrl(url)) {
+                            await launchUrl(
+                              url,
+                            );
+                          }
+                        },
                         child: Container(
                           padding: const EdgeInsets.all(20),
                           child: Image.asset('assets/images/fiab_more.png'),

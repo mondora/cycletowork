@@ -489,7 +489,7 @@ class Repository {
     );
   }
 
-  Future<Uint8List> getMapImageData(
+  Future<Uint8List?> getMapImageData(
     List<LocationData> listTrackingPosition,
     BuildContext context,
     bool isChallenge,

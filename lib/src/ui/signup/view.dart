@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/ui/privacy_policy/view.dart';
 import 'package:cycletowork/src/widget/button.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -162,14 +163,11 @@ class SignupView extends StatelessWidget {
                         text: 'l’informativa sulla privacy',
                         recognizer: TapGestureRecognizer()
                           ..onTap = () async {
-                            final url = Uri.parse(
-                                'https://www.sataspes.net/android/sp-budget');
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(
-                                url,
-                                // mode: LaunchMode.inAppWebView,
-                              );
-                            }
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const PrivacyPolicyView(),
+                              ),
+                            );
                           },
                       ),
                       TextSpan(

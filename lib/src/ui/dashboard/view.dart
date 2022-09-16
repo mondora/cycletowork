@@ -276,7 +276,7 @@ class DashboardView extends StatelessWidget {
                                       .copyWith(
                                         fontWeight: FontWeight.w900,
                                         fontStyle: FontStyle.italic,
-                                        fontSize: isCenter ? 14 : 12,
+                                        fontSize: isCenter ? 13 : 12,
                                       ),
                                 ),
                               ],

@@ -501,7 +501,7 @@ class ViewModel extends ChangeNotifier {
   Future<void> getCompanyList() async {
     var result = await _repository.getCompanyListForChallenge(
       _uiState.challenge!.id,
-      500,
+      1000,
     );
     _uiState.listCompany = result;
     notifyListeners();

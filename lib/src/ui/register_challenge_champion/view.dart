@@ -19,7 +19,7 @@ class _RegisterChallengChampionViewState
     extends State<RegisterChallengChampionView> {
   final formKey = GlobalKey<FormState>();
   final colorGrey = const Color.fromRGBO(239, 239, 239, 1);
-  final aboutFiabUrl = 'https://www.sataspes.net/android/sp-budget';
+  final aboutFiabUrl = 'https://www.fiabitalia.it/diventa-socio';
 
   @override
   Widget build(BuildContext context) {

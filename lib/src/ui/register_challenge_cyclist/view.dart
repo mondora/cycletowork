@@ -19,7 +19,7 @@ class RegisterChallengCyclistView extends StatefulWidget {
 class _RegisterChallengCyclistViewState
     extends State<RegisterChallengCyclistView> {
   final formKey = GlobalKey<FormState>();
-  final aboutFiabUrl = 'https://www.sataspes.net/android/sp-budget';
+  final aboutFiabUrl = 'https://www.fiabitalia.it/diventa-socio';
   final emailFiab = 'info@fiab.it';
 
   var companyNameSearchedController = TextEditingController();
@@ -305,7 +305,6 @@ class _RegisterChallengCyclistViewState
                           ),
                         ),
                         onTap: () async {
-                          listSelectedCompany = [];
                           await FilterListDialog.display<Company>(
                             context,
                             hideSelectedTextCount: true,

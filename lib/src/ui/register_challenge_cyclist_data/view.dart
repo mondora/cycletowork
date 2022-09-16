@@ -1,12 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cycletowork/src/data/survey.dart';
 import 'package:cycletowork/src/theme.dart';
+import 'package:cycletowork/src/ui/privacy_policy/view.dart';
 import 'package:cycletowork/src/ui/register_challenge/view_model.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class RegisterChallengCyclistDataView extends StatefulWidget {
   const RegisterChallengCyclistDataView({Key? key}) : super(key: key);
@@ -19,7 +19,6 @@ class RegisterChallengCyclistDataView extends StatefulWidget {
 class _RegisterChallengCyclistDataViewState
     extends State<RegisterChallengCyclistDataView> {
   final formKey = GlobalKey<FormState>();
-  final privacyUrl = 'https://www.sataspes.net/android/sp-budget';
 
   @override
   Widget build(BuildContext context) {
@@ -384,12 +383,18 @@ class _RegisterChallengCyclistDataViewState
                                     text: 'l’informativa sulla privacy. *',
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () async {
-                                        final url = Uri.parse(privacyUrl);
-                                        if (await canLaunchUrl(url)) {
-                                          await launchUrl(
-                                            url,
-                                          );
-                                        }
+                                        await Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const PrivacyPolicyView(),
+                                          ),
+                                        );
+                                        // final url = Uri.parse(privacyUrl);
+                                        // if (await canLaunchUrl(url)) {
+                                        //   await launchUrl(
+                                        //     url,
+                                        //   );
+                                        // }
                                       },
                                   ),
                                 ],

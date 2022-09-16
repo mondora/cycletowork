@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cycletowork/src/data/survey.dart';
 import 'package:cycletowork/src/theme.dart';
+import 'package:cycletowork/src/ui/privacy_policy/view.dart';
 import 'package:cycletowork/src/ui/register_challenge/view_model.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class _RegisterChallengCompanyDataViewState
   final formKey = GlobalKey<FormState>();
   final otherRoleController = TextEditingController();
   final _mapKey = GlobalKey();
-  final privacyUrl = 'https://www.sataspes.net/android/sp-budget';
+  // final privacyUrl = 'https://www.sataspes.net/android/sp-budget';
   var isOtherRole = false;
 
   @override
@@ -617,12 +618,18 @@ class _RegisterChallengCompanyDataViewState
                                     text: 'l’informativa sulla privacy. *',
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () async {
-                                        final url = Uri.parse(privacyUrl);
-                                        if (await canLaunchUrl(url)) {
-                                          await launchUrl(
-                                            url,
-                                          );
-                                        }
+                                        await Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const PrivacyPolicyView(),
+                                          ),
+                                        );
+                                        // final url = Uri.parse(privacyUrl);
+                                        // if (await canLaunchUrl(url)) {
+                                        //   await launchUrl(
+                                        //     url,
+                                        //   );
+                                        // }
                                       },
                                   ),
                                 ],

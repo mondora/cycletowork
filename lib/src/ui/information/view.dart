@@ -1,3 +1,6 @@
+import 'package:cycletowork/src/ui/milan_bike_challenge_regulations/view.dart';
+import 'package:cycletowork/src/ui/personal_data_management/view.dart';
+import 'package:cycletowork/src/ui/privacy_policy/view.dart';
 import 'package:flutter/material.dart';
 
 class InformationView extends StatelessWidget {
@@ -18,19 +21,34 @@ class InformationView extends StatelessWidget {
           ),
           _InformationItem(
             title: 'Privacy Policy',
-            onPressed: () {},
-          ),
-          _InformationItem(
-            title: 'Terms & Conditions',
-            onPressed: () {},
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const PrivacyPolicyView(),
+                ),
+              );
+            },
           ),
           _InformationItem(
             title: 'Regolamento Milano Bike Challenge',
-            onPressed: () {},
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const MilanoBikeChallengeRegulationsView(),
+                ),
+              );
+            },
           ),
           _InformationItem(
-            title: 'Qualsiasi cosa venga in mente',
-            onPressed: () {},
+            title: 'Gestione dati personali',
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const PersonalDataManagementView(),
+                ),
+              );
+            },
           ),
         ],
       ),
