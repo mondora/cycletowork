@@ -38,6 +38,8 @@ abstract class AppService {
     String companySizeCategory,
     String departmentName,
   );
+
+  Future<bool?> deleteAccount();
 }
 
 abstract class AppAdminService {

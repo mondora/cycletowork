@@ -71,8 +71,18 @@ class LocationData {
       CONSTRAINT fk_LocationData_UserActivity
         FOREIGN KEY (userActivityId)
         REFERENCES ${UserActivity.tableName}(userActivityId)
+        ON DELETE CASCADE ON UPDATE NO ACTION
     );
   ''';
+
+  static List<String> get alterTableV1ToV2 => [
+        'PRAGMA foreign_keys=off;',
+        'ALTER TABLE $tableName RENAME TO ${tableName}_old;',
+        tableString,
+        'INSERT INTO $tableName SELECT * FROM ${tableName}_old;',
+        'DROP TABLE ${tableName}_old;',
+        'PRAGMA foreign_keys=on;',
+      ];
 
   static double calculateMaxDistanceFromCenterInMeter({
     required List<LocationData> listPosition,

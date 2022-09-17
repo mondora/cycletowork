@@ -41,7 +41,7 @@ class InformationView extends StatelessWidget {
             },
           ),
           _InformationItem(
-            title: 'Gestione dati personali',
+            title: 'Cancellare Account',
             onPressed: () async {
               await Navigator.of(context).push(
                 MaterialPageRoute(

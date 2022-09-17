@@ -28,27 +28,19 @@ class LocalDatabase {
 
   _onCreate(Database db, int version) async {
     var batch = db.batch();
-    for (String q in TableDatabase.getTables(version: version)) {
+    for (String q in TableDatabase.getTables()) {
       batch.execute(q);
     }
-    // var values = InitialDatabase.getValues(version: version);
-    // for (var value in values) {
-    //   for (var item in value.items) {
-    //     batch.insert(
-    //       value.tableName,
-    //       item,
-    //       conflictAlgorithm: ConflictAlgorithm.replace,
-    //     );
-    //   }
-    // }
     await batch.commit();
   }
 
   _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    for (int i = oldVersion; i <= newVersion; i++) {
-      for (String q in TableDatabase.getTables(version: i)) {
-        await db.execute(q);
+    if (oldVersion == 1) {
+      var batch = db.batch();
+      for (String q in TableDatabase.getAlterTablesV1ToV2()) {
+        batch.execute(q);
       }
+      await batch.commit();
     }
   }
 
@@ -64,7 +56,7 @@ class LocalDatabase {
     var _path = join(databasesPath, dbName);
     return await openDatabase(
       _path,
-      version: 1,
+      version: 2,
       onConfigure: _onConfigure,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
@@ -205,5 +197,21 @@ class LocalDatabase {
   Future<List<Map>> rawQuery(String query) async {
     final db = await database;
     return await db.rawQuery(query);
+  }
+
+  Future<void> deleteDataWithBatch({
+    required List<String> listTable,
+    required List<String> listWhere,
+    required List<List<String>> listWhereArgs,
+  }) async {
+    final db = await database;
+    var batch = db.batch();
+    for (var i = 0; i < listTable.length; i++) {
+      var table = listTable[i];
+      var where = listWhere[i];
+      var whereArgs = listWhereArgs[i];
+      batch.delete(table, where: where, whereArgs: whereArgs);
+    }
+    await batch.commit(noResult: true);
   }
 }

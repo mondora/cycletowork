@@ -11,19 +11,22 @@ class TableDatabase {
   /// [version] is version of database. version should be non-null.
   ///
   /// Return List<String> of queries.
-  static List<String> getTables({required int version}) {
-    if (version == 1) {
-      return [
-        User.tableString,
-        UserActivity.tableString,
-        LocationData.tableString,
-        Challenge.tableString,
-        ChallengeRegistry.tableString,
-        CompanyClassification.tableString,
-        CyclistClassification.tableString,
-        DepartmentClassification.tableString,
-      ];
-    }
-    return [];
+  static List<String> getTables() {
+    return [
+      User.tableString,
+      UserActivity.tableString,
+      LocationData.tableString,
+      Challenge.tableString,
+      ChallengeRegistry.tableString,
+      CompanyClassification.tableString,
+      CyclistClassification.tableString,
+      DepartmentClassification.tableString,
+    ];
+  }
+
+  static List<String> getAlterTablesV1ToV2() {
+    List<String> list = [];
+    list.addAll(LocationData.alterTableV1ToV2);
+    return list;
   }
 }

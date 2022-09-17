@@ -478,4 +478,10 @@ class RemoteService
             (json) => Company.fromMap(Map<String, dynamic>.from(json)))
         .toList();
   }
+
+  @override
+  Future<bool?> deleteAccount() async {
+    await Remote.callFirebaseFunctions('deleteAccount', null);
+    return true;
+  }
 }

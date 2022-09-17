@@ -1,6 +1,5 @@
-import 'package:flutter/gestures.dart';
+import 'package:cycletowork/src/ui/profile_delete_account/view.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class PersonalDataManagementView extends StatelessWidget {
   const PersonalDataManagementView({super.key});
@@ -14,7 +13,7 @@ class PersonalDataManagementView extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Gestione dati personali',
+          'Cancellare Account',
           style: textTheme.bodyText1,
         ),
         leading: IconButton(
@@ -33,81 +32,67 @@ class PersonalDataManagementView extends StatelessWidget {
           physics: const ScrollPhysics(),
           shrinkWrap: true,
           children: [
-            const SizedBox(
-              height: 20,
-            ),
-            Text(
-              'Cancellare i dati',
-              style: textTheme.headline6!.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
-              // maxLines: 1,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            // Text(
-            //   'Per cancellare tutti i dati personali contenuti in questo servizio mandate una email a info@mondora.com con oggetto “Richiesta di cancellazione di tutti i dati personali su Cycle2Work”. La cancellazione dei dati sarà definitiva e i dati non potranno più essere recuperati.',
-            //   style: textTheme.bodyText2!.copyWith(
-            //     fontWeight: FontWeight.w400,
-            //   ),
-            //   maxLines: 20,
-            // ),
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    style: textTheme.bodyText2!
-                        .copyWith(fontWeight: FontWeight.w400),
-                    text:
-                        'Per cancellare tutti i dati personali contenuti in questo servizio mandate una email a ',
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  'Cancellare i dati',
+                  style: textTheme.headline6!.copyWith(
+                    fontWeight: FontWeight.w500,
                   ),
-                  TextSpan(
-                    style: textTheme.bodyText2!.copyWith(
-                      decoration: TextDecoration.underline,
-                      color: colorScheme.secondary,
-                      fontWeight: FontWeight.w400,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Attenzione!',
+                  style: textTheme.bodyText2!.copyWith(
+                    fontWeight: FontWeight.w400,
+                  ),
+                  maxLines: 20,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'La cancellazione dei dati sarà definitiva e i dati non potranno più essere recuperati.',
+                  style: textTheme.bodyText2!.copyWith(
+                    fontWeight: FontWeight.w400,
+                  ),
+                  maxLines: 20,
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.all(16.0),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15.0),
+                      ),
                     ),
-                    text: 'info@mondora.com ',
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () async {
-                        final Uri emailLaunchUri = Uri(
-                          scheme: 'mailto',
-                          path: 'info@mondora.com',
-                          query: encodeQueryParameters(<String, String>{
-                            'subject':
-                                'Richiesta di cancellazione di tutti i dati personali su Cycle2Work',
-                          }),
-                        );
-                        await launchUrl(
-                          emailLaunchUri,
-                        );
-                        if (await canLaunchUrl(emailLaunchUri)) {
-                          await launchUrl(
-                            emailLaunchUri,
-                          );
-                        }
-                      },
+                    foregroundColor: colorScheme.secondary,
                   ),
-                  TextSpan(
-                    style: textTheme.bodyText2!
-                        .copyWith(fontWeight: FontWeight.w400),
-                    text:
-                        'con oggetto “Richiesta di cancellazione di tutti i dati personali su Cycle2Work”. La cancellazione dei dati sarà definitiva e i dati non potranno più essere recuperati.',
+                  onPressed: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const ProfileDeleteAccountView(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'Cancella Account',
+                    style: textTheme.caption!.copyWith(
+                      color: colorScheme.secondary,
+                    ),
                   ),
-                ],
-              ),
-            ),
+                ),
+              ],
+            )
           ],
         ),
       ),
     );
-  }
-
-  String? encodeQueryParameters(Map<String, String> params) {
-    return params.entries
-        .map((MapEntry<String, String> e) =>
-            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
-        .join('&');
   }
 }

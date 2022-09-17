@@ -80,8 +80,6 @@ class LoginEmailView extends StatelessWidget {
                   autocorrect: false,
                   decoration: const InputDecoration(
                     labelText: 'Password*',
-                    helperText:
-                        'La password deve contenere almeno 8 caratteri, almeno uno maiuscolo, almeno un numero',
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {

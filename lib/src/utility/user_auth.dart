@@ -25,10 +25,7 @@ class UserAuth {
   }
 
   static Stream<bool> isAuthenticatedStateChanges() {
-    return FirebaseAuth.instance
-        .authStateChanges()
-        .where((currentUser) => currentUser != null)
-        .map((currentUser) {
+    return FirebaseAuth.instance.authStateChanges().map((currentUser) {
       if (currentUser != null) {
         return true;
       }

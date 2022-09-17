@@ -33,16 +33,14 @@ class ViewModel extends ChangeNotifier {
       } else {
         _uiState.pageOption = PageOption.logout;
         notifyListeners();
-        _repository
-            .isAuthenticatedStateChanges()
-            .listen((isAuthenticated) async {
-          if (!isAuthenticated) {
-            _uiState.pageOption = PageOption.logout;
-            notifyListeners();
-            return;
-          }
-        });
       }
+      _repository.isAuthenticatedStateChanges().listen((isAuthenticated) async {
+        if (!isAuthenticated) {
+          _uiState.pageOption = PageOption.logout;
+          notifyListeners();
+          return;
+        }
+      });
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
@@ -55,7 +53,7 @@ class ViewModel extends ChangeNotifier {
   void loginApple() async {
     debugPrint('loginApple');
     _uiState.pageOption = PageOption.loading;
-    notifyListeners();
+    clearError();
     try {
       await _repository.loginApple();
       var isAuthenticated = _repository.isAuthenticated();
@@ -87,7 +85,7 @@ class ViewModel extends ChangeNotifier {
   void loginGoogleSignIn() async {
     debugPrint('loginGoogleSignIn');
     _uiState.pageOption = PageOption.loading;
-    notifyListeners();
+    clearError();
     try {
       await _repository.loginGoogleSignIn();
       var isAuthenticated = _repository.isAuthenticated();
@@ -119,7 +117,7 @@ class ViewModel extends ChangeNotifier {
   Future<bool> loginEmail(String email, String password) async {
     debugPrint('loginEmail');
     _uiState.pageOption = PageOption.loading;
-    notifyListeners();
+    clearError();
     try {
       await _repository.loginEmail(email, password);
       var isAuthenticated = _repository.isAuthenticated();
@@ -161,7 +159,7 @@ class ViewModel extends ChangeNotifier {
   Future<bool> signupEmail(String email, String password, String? name) async {
     debugPrint('signupEmail');
     _uiState.pageOption = PageOption.loading;
-    notifyListeners();
+    clearError();
     try {
       await _repository.signupEmail(email, password, name);
       displayName = name;

@@ -20,6 +20,10 @@ class AppNotification {
     return await FirebaseMessaging.instance.getToken();
   }
 
+  static Future<void> deleteToken() async {
+    await FirebaseMessaging.instance.deleteToken();
+  }
+
   static Future<void> initialize() async {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     await setupNotifications();

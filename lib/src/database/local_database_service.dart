@@ -460,4 +460,33 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
       return null;
     }
   }
+
+  @override
+  Future<bool?> deleteAccount() async {
+    var uid = AppData.user!.uid;
+    var listTable = [
+      User.tableName,
+      UserActivity.tableName,
+      ChallengeRegistry.tableName,
+      CyclistClassification.tableName,
+    ];
+    var listWhere = [
+      'uid = ?',
+      'uid = ?',
+      'uid = ?',
+      'uid = ?',
+    ];
+    var listWhereArgs = [
+      [uid],
+      [uid],
+      [uid],
+      [uid],
+    ];
+    await _localDatabase.deleteDataWithBatch(
+      listTable: listTable,
+      listWhere: listWhere,
+      listWhereArgs: listWhereArgs,
+    );
+    return true;
+  }
 }
