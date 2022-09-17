@@ -19,6 +19,14 @@
                 { "fieldPath": "isVerified", "order": "ASCENDING" },
                 { "fieldPath": "name", "order": "ASCENDING" }
             ]
+        },
+        {
+            "collectionGroup": "deleteDocs",
+            "queryScope": "COLLECTION",
+            "fields": [
+                { "fieldPath": "isDone", "order": "ASCENDING" },
+                { "fieldPath": "requestDate", "order": "ASCENDING" }
+            ]
         }
     ],
     "fieldOverrides": []

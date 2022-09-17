@@ -3,7 +3,7 @@ const admin = require('firebase-admin');
 const { Constant } = require('./utility/constant');
 const {
     createUser,
-    deleteUser,
+    deleteAccount,
     getUserInfo,
     updateUserInfo,
     sendEmailVerificationCode,
@@ -56,36 +56,20 @@ const {
     getChallengeRegistryFromBusinessEmail,
     updateCompanyPercentRegistered,
 } = require('./service/challenge');
+const { recursiveDeleteDocs } = require('./service/core');
 
 admin.initializeApp();
 
-// exports.updateUserRankingCo2 = functions
-//     .region(Constant.appRegion)
-//     .firestore.document(
-//         `${Constant.challengeCollectionName}/{challengeId}/${Constant.usersCollectionName}/{documentId}`
-//     )
-//     .onWrite((change, context) => {
-//         const challengeId = context.params.challengeId;
-//         return updateUserRankingCo2(challengeId);
-//     });
-
-// exports.updateCompanyRankingCo2 = functions
-//     .region(Constant.appRegion)
-//     .firestore.document(
-//         `${Constant.challengeCollectionName}/{challengeId}/${Constant.companyCollectionName}/{documentId}`
-//     )
-//     .onWrite((change, context) => {
-//         const challengeId = context.params.challengeId;
-//         const newValue = change.after.data();
-//         const previousValue = change.before.data();
-
-//         if (
-//             newValue.co2 != previousValue.co2 ||
-//             newValue.distance != previousValue.distance
-//         ) {
-//             return updateCompanyRankingCo2(challengeId);
-//         }
-//     });
+exports.scheduledFunction = functions
+    .region(Constant.appRegion)
+    .runWith({
+        timeoutSeconds: 540,
+        memory: '2GB',
+    })
+    .pubsub.schedule('every 15 minutes')
+    .onRun(async (context) => {
+        await recursiveDeleteDocs();
+    });
 
 exports.updateCompanyPercentRegistered = functions
     .region(Constant.appRegion)
@@ -113,157 +97,27 @@ exports.updateCompanyPercentRegistered = functions
         }
     });
 
-// exports.updateMicroCompanyRankingPercentRegistered = functions
-//     .region(Constant.appRegion)
-//     .firestore.document(
-//         `${Constant.challengeCollectionName}/{challengeId}/${Constant.microCompanyCollectionName}/{documentId}`
-//     )
-//     .onUpdate((change, context) => {
-//         const challengeId = context.params.challengeId;
-
-//         const newValue = change.after.data();
-//         const previousValue = change.before.data();
-
-//         if (newValue.percentRegistered != previousValue.percentRegistered) {
-//             const companyCollectionForSizeCategory =
-//                 Constant.getCompanyCollectionForSizeCategory(
-//                     newValue.employeesNumber
-//                 );
-
-//             return updateCompanyRankingPercentRegistered(
-//                 challengeId,
-//                 companyCollectionForSizeCategory
-//             );
-//         }
-//     });
-
-// exports.updateSmallCompanyRankingPercentRegistered = functions
-//     .region(Constant.appRegion)
-//     .firestore.document(
-//         `${Constant.challengeCollectionName}/{challengeId}/${Constant.smallCompanyCollectionName}/{documentId}`
-//     )
-//     .onUpdate((change, context) => {
-//         const challengeId = context.params.challengeId;
-
-//         const newValue = change.after.data();
-//         const previousValue = change.before.data();
-
-//         if (newValue.percentRegistered != previousValue.percentRegistered) {
-//             const companyCollectionForSizeCategory =
-//                 Constant.getCompanyCollectionForSizeCategory(
-//                     newValue.employeesNumber
-//                 );
-
-//             return updateCompanyRankingPercentRegistered(
-//                 challengeId,
-//                 companyCollectionForSizeCategory
-//             );
-//         }
-//     });
-
-// exports.updateMediumCompanyRankingPercentRegistered = functions
-//     .region(Constant.appRegion)
-//     .firestore.document(
-//         `${Constant.challengeCollectionName}/{challengeId}/${Constant.mediumCompanyCollectionName}/{documentId}`
-//     )
-//     .onUpdate((change, context) => {
-//         const challengeId = context.params.challengeId;
-
-//         const newValue = change.after.data();
-//         const previousValue = change.before.data();
-
-//         if (newValue.percentRegistered != previousValue.percentRegistered) {
-//             const companyCollectionForSizeCategory =
-//                 Constant.getCompanyCollectionForSizeCategory(
-//                     newValue.employeesNumber
-//                 );
-
-//             return updateCompanyRankingPercentRegistered(
-//                 challengeId,
-//                 companyCollectionForSizeCategory
-//             );
-//         }
-//     });
-
-// exports.updateLargeCompanyRankingPercentRegistered = functions
-//     .region(Constant.appRegion)
-//     .firestore.document(
-//         `${Constant.challengeCollectionName}/{challengeId}/${Constant.largeCompanyCollectionName}/{documentId}`
-//     )
-//     .onUpdate((change, context) => {
-//         const challengeId = context.params.challengeId;
-
-//         const newValue = change.after.data();
-//         const previousValue = change.before.data();
-
-//         if (newValue.percentRegistered != previousValue.percentRegistered) {
-//             const companyCollectionForSizeCategory =
-//                 Constant.getCompanyCollectionForSizeCategory(
-//                     newValue.employeesNumber
-//                 );
-
-//             return updateCompanyRankingPercentRegistered(
-//                 challengeId,
-//                 companyCollectionForSizeCategory
-//             );
-//         }
-//     });
-
-exports.onCreateUser = functions
+exports.deleteAccount = functions
     .region(Constant.appRegion)
-    .auth.user()
-    .onCreate(async (user) => {
-        await createUser(user);
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            try {
+                await deleteAccount(uid);
+                return true;
+            } catch (error) {
+                loggerError('deleteAccount Error, UID:', uid, 'error:', error);
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
     });
-
-exports.onDeleteUser = functions
-    .region(Constant.appRegion)
-    .auth.user()
-    .onDelete(async (user) => {
-        await deleteUser(user);
-    });
-
-// exports.onCompanyCreated = functions
-//     .region(Constant.appRegion)
-//     .firestore.document(`${Constant.companyCollectionName}/{id}`)
-//     .onCreate(async (snap, context) => {
-//         const id = context.params.id;
-//         const company = snap.data();
-
-//         elasticSearch.index({
-//             index: Constant.companyCollectionName,
-//             id: id,
-//             body: company,
-//         });
-//     });
-
-// exports.onCompanyUpdate = functions
-//     .region(Constant.appRegion)
-//     .firestore.document(`${Constant.companyCollectionName}/{id}`)
-//     .onUpdate(async (change, context) => {
-//         const id = context.params.id;
-//         const company = change.after.data();
-
-//         elasticSearch.index({
-//             index: Constant.companyCollectionName,
-//             id,
-//             body: company,
-//         });
-//     });
-
-// exports.onCompanyDelete = functions
-//     .region(Constant.appRegion)
-//     .firestore.document(`${Constant.companyCollectionName}/{id}`)
-//     .onDelete(async (snap, context) => {
-//         const id = context.params.id;
-//         const company = snap.data();
-
-//         elasticSearch.delete({
-//             index: Constant.companyCollectionName,
-//             id,
-//             body: company,
-//         });
-//     });
 
 exports.saveDeviceToken = functions
     .region(Constant.appRegion)

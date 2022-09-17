@@ -51,13 +51,74 @@ const saveChallengeUser = async (uid, challengeId, data) => {
         .update(dataUser, { merge: true });
 };
 
-const deleteUser = async (user) => {
-    const uid = user.uid;
-    await admin
+const deleteAccount = async (uid) => {
+    let userInfoData;
+    const userRef = admin
         .firestore()
         .collection(Constant.usersCollectionName)
-        .doc(uid)
-        .delete();
+        .doc(uid);
+
+    const deleteAccountRef = admin
+        .firestore()
+        .collection(Constant.deleteDocsCollectionName);
+
+    await admin.firestore().runTransaction(async (t) => {
+        const userInfo = await t.get(userRef);
+        if (userInfo.exists) {
+            userInfoData = userInfo.data();
+        } else {
+            throw new Error(Constant.userNotFoundError);
+        }
+        const userToDelete = {
+            id: uuidv4(),
+            path: `/${Constant.usersCollectionName}/${uid}`,
+            isDone: false,
+            requestDate: Date.now(),
+        };
+        const userActivityToDelete = {
+            id: uuidv4(),
+            path: `/${Constant.usersCollectionName}/${uid}/${Constant.userActivityCollectionName}`,
+            isDone: false,
+            requestDate: Date.now(),
+        };
+        t.create(deleteAccountRef.doc(userToDelete.id), userToDelete);
+        t.create(
+            deleteAccountRef.doc(userActivityToDelete.id),
+            userActivityToDelete
+        );
+        const listRegisterdChallenge = userInfoData.listChallengeIdRegister;
+        if (listRegisterdChallenge && listRegisterdChallenge.length) {
+            for (
+                let index = 0;
+                index < listRegisterdChallenge.length;
+                index++
+            ) {
+                const challengeId = listRegisterdChallenge[index];
+
+                const userToDeleteInChallenge = {
+                    id: uuidv4(),
+                    path: `/${Constant.challengeCollectionName}/${challengeId}/${Constant.usersCollectionName}/${uid}`,
+                    isDone: false,
+                    requestDate: Date.now(),
+                };
+                const userActivityToDeleteInChallenge = {
+                    id: uuidv4(),
+                    path: `/${Constant.challengeCollectionName}/${challengeId}/${Constant.usersCollectionName}/${uid}/${Constant.userActivityCollectionName}`,
+                    isDone: false,
+                    requestDate: Date.now(),
+                };
+                t.create(
+                    deleteAccountRef.doc(userToDeleteInChallenge.id),
+                    userToDeleteInChallenge
+                );
+                t.create(
+                    deleteAccountRef.doc(userActivityToDeleteInChallenge.id),
+                    userActivityToDeleteInChallenge
+                );
+            }
+        }
+    });
+    await admin.auth().deleteUser(uid);
 };
 
 const getUserInfo = async (uid) => {
@@ -177,7 +238,7 @@ const randomInteger = (min, max) => {
 
 module.exports = {
     createUser,
-    deleteUser,
+    deleteAccount,
     getUserInfo,
     updateUserInfo,
     sendEmailVerificationCode,

@@ -24,7 +24,7 @@ const largeCompanyCollectionName = 'largeCompanies';
 
 const fcmCollectionName = 'fcm';
 
-const dataList = 'dataList';
+const deleteDocsCollectionName = 'deleteDocs';
 
 const UserType = {
     Other: 'other',
@@ -98,8 +98,8 @@ class Constant {
         return userActivityCollectionName;
     }
 
-    static get dataList() {
-        return dataList;
+    static get deleteDocsCollectionName() {
+        return deleteDocsCollectionName;
     }
 
     static get challengeCollectionName() {
