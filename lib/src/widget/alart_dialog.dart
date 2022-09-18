@@ -12,7 +12,12 @@ class AppAlartDialog {
   final String confirmLabel;
   TextStyle? confirmLabelStyle;
   ButtonStyle? confirmButtonStyle;
+  bool iscConfirmDestructiveAction;
   bool barrierDismissible;
+  final String? cancelLabel;
+  TextStyle? cancelLabelStyle;
+  ButtonStyle? cancelButtonStyle;
+  final bool iscCancelDestructiveAction;
 
   AppAlartDialog({
     required this.context,
@@ -26,7 +31,12 @@ class AppAlartDialog {
     required this.confirmLabel,
     this.confirmLabelStyle,
     this.confirmButtonStyle,
+    this.iscConfirmDestructiveAction = false,
     this.barrierDismissible = false,
+    this.cancelLabel,
+    this.cancelLabelStyle,
+    this.cancelButtonStyle,
+    this.iscCancelDestructiveAction = false,
   }) {
     var colorScheme = Theme.of(context).colorScheme;
     var textTheme = Theme.of(context).textTheme;
@@ -40,7 +50,9 @@ class AppAlartDialog {
     bodyStyle = bodyStyle ?? textTheme.bodyText2;
     confirmLabelStyle = confirmLabelStyle ??
         textTheme.caption!.copyWith(
-          color: colorScheme.secondary,
+          color: iscConfirmDestructiveAction
+              ? colorScheme.error
+              : colorScheme.secondary,
         );
 
     confirmButtonStyle = confirmButtonStyle ??
@@ -49,7 +61,27 @@ class AppAlartDialog {
           shape: RoundedRectangleBorder(
             borderRadius: borderRadius!,
           ),
-          foregroundColor: colorScheme.secondary,
+          foregroundColor: iscConfirmDestructiveAction
+              ? colorScheme.error
+              : colorScheme.secondary,
+        );
+
+    cancelLabelStyle = cancelLabelStyle ??
+        textTheme.caption!.copyWith(
+          color: iscCancelDestructiveAction
+              ? colorScheme.error
+              : colorScheme.secondary,
+        );
+
+    cancelButtonStyle = cancelButtonStyle ??
+        TextButton.styleFrom(
+          padding: const EdgeInsets.all(16.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: borderRadius!,
+          ),
+          foregroundColor: iscCancelDestructiveAction
+              ? colorScheme.error
+              : colorScheme.secondary,
         );
   }
 
@@ -83,7 +115,18 @@ class AppAlartDialog {
               ],
             ),
           ),
+          actionsAlignment:
+              cancelLabel != null ? MainAxisAlignment.center : null,
           actions: <Widget>[
+            if (cancelLabel != null)
+              TextButton(
+                style: cancelButtonStyle,
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(
+                  cancelLabel!,
+                  style: cancelLabelStyle,
+                ),
+              ),
             TextButton(
               style: confirmButtonStyle,
               onPressed: () => Navigator.of(context).pop(true),

@@ -398,6 +398,7 @@ class _StopTrackingViewState extends State<StopTrackingView> {
                         subtitle: "Desideri davvero cancellare l'attività?",
                         body: '',
                         confirmLabel: 'Sì, desidero cancellare',
+                        iscConfirmDestructiveAction: true,
                         barrierDismissible: true,
                       ).show();
                       if (isConfirmed == true) {
