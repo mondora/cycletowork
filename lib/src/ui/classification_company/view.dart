@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/dashboard/view_model.dart';
 import 'package:cycletowork/src/widget/ranking_position_slider.dart';
@@ -45,6 +46,7 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final viewModel = Provider.of<ViewModel>(context);
     var colorScheme = Theme.of(context).colorScheme;
     final Locale appLocale = Localizations.localeOf(context);
@@ -67,8 +69,8 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
       backgroundColor: firstColor,
       child: SvgPicture.asset(
         'assets/icons/build.svg',
-        height: 18.0,
-        width: 18.0,
+        height: 18.0 * scale,
+        width: 18.0 * scale,
         color: colorScheme.onPrimary,
       ),
     );
@@ -76,8 +78,8 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
       backgroundColor: selectedColor,
       child: SvgPicture.asset(
         'assets/icons/build.svg',
-        height: 18.0,
-        width: 18.0,
+        height: 18.0 * scale,
+        width: 18.0 * scale,
         color: colorScheme.onPrimary,
       ),
     );
@@ -117,7 +119,7 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                 ) +
                 1
             : 0;
-    var expandedHeight = isRankingCo2 ? 275.0 : 225.0;
+    var expandedHeight = (isRankingCo2 ? 275.0 : 225.0) * scale;
     var isVisible = true;
 
     return NestedScrollView(
@@ -130,7 +132,7 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
           snap: true,
           floating: true,
           expandedHeight: expandedHeight,
-          collapsedHeight: 160.0,
+          collapsedHeight: 160.0 * scale,
           elevation: 1,
           forceElevated: true,
           flexibleSpace: LayoutBuilder(
@@ -145,14 +147,14 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                 expandedTitleScale: 1,
                 collapseMode: CollapseMode.none,
                 title: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 24.0),
+                  margin: EdgeInsets.symmetric(horizontal: 24.0 * scale),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (isVisible)
                         Container(
-                          margin: const EdgeInsets.only(top: 20),
-                          height: 35,
+                          margin: EdgeInsets.only(top: 20 * scale),
+                          height: 35 * scale,
                           child: ListView(
                             padding: EdgeInsets.zero,
                             scrollDirection: Axis.horizontal,
@@ -175,8 +177,8 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                                               : null,
                                         ),
                               ),
-                              const SizedBox(
-                                width: 10.0,
+                              SizedBox(
+                                width: 10.0 * scale,
                               ),
                               InputChip(
                                 onSelected: (bool value) async {
@@ -196,14 +198,14 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                                               : null,
                                         ),
                               ),
-                              const SizedBox(
-                                width: 10.0,
+                              SizedBox(
+                                width: 10.0 * scale,
                               ),
                             ],
                           ),
                         ),
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: 20 * scale,
                       ),
                       if (isRankingCo2)
                         RankingSlider(
@@ -258,8 +260,8 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                           key: UniqueKey(),
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(
-                              height: 10,
+                            SizedBox(
+                              height: 10 * scale,
                             ),
                             if (isRankingCo2)
                               RankingSlider(
@@ -290,8 +292,8 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                               ),
                           ],
                         ),
-                      const SizedBox(
-                        height: 10,
+                      SizedBox(
+                        height: 10 * scale,
                       ),
                       RankingPositionSlider(
                         ranking: isRankingCo2
@@ -314,12 +316,11 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
         displacement: 0,
         child: isRankingCo2
             ? ListView.builder(
-                padding: const EdgeInsets.only(bottom: 80.0),
+                padding: EdgeInsets.only(bottom: 80.0 * scale),
                 itemCount: listCompanyClassificationRankingCo2.length,
                 itemBuilder: (context, index) {
                   var item = listCompanyClassificationRankingCo2[index];
                   return _Card(
-                    // ranking: item.rankingCo2,
                     ranking: index + 1,
                     title: item.name,
                     subtitle:
@@ -335,12 +336,11 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                 },
               )
             : ListView.builder(
-                padding: const EdgeInsets.only(bottom: 80.0),
+                padding: EdgeInsets.only(bottom: 80.0 * scale),
                 itemCount: listCompanyClassificationRankingRegistered.length,
                 itemBuilder: (context, index) {
                   var item = listCompanyClassificationRankingRegistered[index];
                   return _Card(
-                    // ranking: item.rankingPercentRegistered,
                     ranking: index + 1,
                     title: item.name,
                     subtitle:
@@ -384,25 +384,26 @@ class _Card extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var textTheme = Theme.of(context).textTheme;
     var colorScheme = Theme.of(context).colorScheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24.0),
-      height: 70.0,
+      margin: EdgeInsets.symmetric(horizontal: 24.0 * scale),
+      height: 70.0 * scale,
       color: selected
           ? colorScheme.secondary.withOpacity(0.08)
           : colorScheme.background,
       child: Column(
         children: [
           SizedBox(
-            height: 69.0,
+            height: 69.0 * scale,
             child: Row(
               children: [
                 SizedBox(
-                  width: 60.0,
+                  width: 60.0 * scale,
                   child: Text(
                     ranking.toString(),
                     style: textTheme.bodyText1!.copyWith(
@@ -414,12 +415,12 @@ class _Card extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(
-                  width: 10,
+                SizedBox(
+                  width: 10 * scale,
                 ),
                 Container(
-                  height: 40,
-                  width: 40,
+                  height: 40 * scale,
+                  width: 40 * scale,
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(
                       Radius.circular(4),
@@ -433,14 +434,14 @@ class _Card extends StatelessWidget {
                   child: Center(
                     child: SvgPicture.asset(
                       'assets/icons/build.svg',
-                      height: 24.0,
-                      width: 24.0,
+                      height: 24.0 * scale,
+                      width: 24.0 * scale,
                       color: colorScheme.onPrimary,
                     ),
                   ),
                 ),
-                const SizedBox(
-                  width: 10,
+                SizedBox(
+                  width: 10 * scale,
                 ),
                 Expanded(
                   child: Column(
@@ -475,16 +476,16 @@ class _Card extends StatelessWidget {
                           if (isRankingCo2)
                             Row(
                               children: [
-                                const SizedBox(
-                                  width: 10.0,
+                                SizedBox(
+                                  width: 10.0 * scale,
                                 ),
                                 SvgPicture.asset(
                                   'assets/icons/co2.svg',
-                                  height: 24.0,
-                                  width: 24.0,
+                                  height: 24.0 * scale,
+                                  width: 24.0 * scale,
                                 ),
-                                const SizedBox(
-                                  width: 5.0,
+                                SizedBox(
+                                  width: 5.0 * scale,
                                 ),
                                 Text(
                                   value,
@@ -497,14 +498,14 @@ class _Card extends StatelessWidget {
                                     color: colorSchemeExtension.info,
                                   ),
                                 ),
-                                const SizedBox(
-                                  width: 10.0,
+                                SizedBox(
+                                  width: 10.0 * scale,
                                 ),
                               ],
                             ),
                           if (!isRankingCo2)
                             SizedBox(
-                              width: 35.0,
+                              width: 35.0 * scale,
                               child: Text(
                                 value,
                                 overflow: TextOverflow.ellipsis,
@@ -525,9 +526,9 @@ class _Card extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(
-            height: 1,
-            thickness: 1,
+          Divider(
+            height: 1 * scale,
+            thickness: 1 * scale,
           ),
         ],
       ),

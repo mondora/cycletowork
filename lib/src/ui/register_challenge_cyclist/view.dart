@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/company.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/register_challenge/view_model.dart';
@@ -37,6 +38,7 @@ class _RegisterChallengCyclistViewState
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final viewModel = Provider.of<ViewModel>(context);
     var isFiabMember = viewModel.uiState.challengeRegistry.isFiabMember;
     var fiabCardNumber = viewModel.uiState.challengeRegistry.fiabCardNumber;
@@ -65,9 +67,9 @@ class _RegisterChallengCyclistViewState
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Padding(
-          padding: const EdgeInsets.only(
-            top: 20.0,
-            bottom: 30.0,
+          padding: EdgeInsets.only(
+            top: 20.0 * scale,
+            bottom: 30.0 * scale,
           ),
           child: Form(
             key: formKey,
@@ -75,9 +77,9 @@ class _RegisterChallengCyclistViewState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 24.0,
-                    left: 24.0,
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
                   ),
                   child: Text(
                     'Iscrizione ciclista',
@@ -87,17 +89,17 @@ class _RegisterChallengCyclistViewState
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
+                SizedBox(
+                  height: 20 * scale,
                 ),
                 Container(
-                  height: 185,
+                  height: 185 * scale,
                   color: const Color.fromRGBO(249, 249, 249, 1),
-                  padding: const EdgeInsets.only(
-                    right: 24.0,
-                    left: 24.0,
-                    top: 15.0,
-                    bottom: 15.0,
+                  padding: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
+                    top: 15.0 * scale,
+                    bottom: 15.0 * scale,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,7 +124,7 @@ class _RegisterChallengCyclistViewState
                               child: Container(
                                 margin:
                                     const EdgeInsets.symmetric(vertical: 4.5),
-                                width: 80.0,
+                                width: 80.0 * scale,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
@@ -155,7 +157,7 @@ class _RegisterChallengCyclistViewState
                               child: Container(
                                 margin:
                                     const EdgeInsets.symmetric(vertical: 4.5),
-                                width: 80.0,
+                                width: 80.0 * scale,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
@@ -180,8 +182,8 @@ class _RegisterChallengCyclistViewState
                       ),
                       if (!isFiabMember)
                         SizedBox(
-                          width: 245.0,
-                          height: 36.0,
+                          width: 245.0 * scale,
+                          height: 36.0 * scale,
                           child: TextButton(
                             onPressed: () async {
                               final url = Uri.parse(aboutFiabUrl);
@@ -211,13 +213,13 @@ class _RegisterChallengCyclistViewState
                                   ),
                                   maxLines: 1,
                                 ),
-                                const SizedBox(
-                                  width: 8.0,
+                                SizedBox(
+                                  width: 8.0 * scale,
                                 ),
                                 Icon(
                                   Icons.call_made_outlined,
                                   color: colorScheme.secondary,
-                                  size: 20.0,
+                                  size: 20.0 * scale,
                                 ),
                               ],
                             ),
@@ -252,16 +254,16 @@ class _RegisterChallengCyclistViewState
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: const EdgeInsets.only(
-                        right: 24.0,
-                        left: 24.0,
+                      margin: EdgeInsets.only(
+                        right: 24.0 * scale,
+                        left: 24.0 * scale,
                       ),
                       child: Text(
                         'Seleziona la tua azienda',
@@ -270,13 +272,13 @@ class _RegisterChallengCyclistViewState
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 5,
+                    SizedBox(
+                      height: 5 * scale,
                     ),
                     Container(
-                      margin: const EdgeInsets.only(
-                        right: 24.0,
-                        left: 24.0,
+                      margin: EdgeInsets.only(
+                        right: 24.0 * scale,
+                        left: 24.0 * scale,
                       ),
                       child: Text(
                         'Se la tua azienda non è nell’elenco, ma sai che dovrebbe esserci, contatta il tuo referente.',
@@ -286,12 +288,15 @@ class _RegisterChallengCyclistViewState
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 20.0,
+                    SizedBox(
+                      height: 20.0 * scale,
                     ),
                     Container(
-                      margin:
-                          const EdgeInsets.only(top: 20, left: 20, right: 20),
+                      margin: EdgeInsets.only(
+                        top: 20 * scale,
+                        left: 20 * scale,
+                        right: 20 * scale,
+                      ),
                       child: TextFormField(
                         readOnly: true,
                         controller: companyNameSearchedController,
@@ -311,33 +316,27 @@ class _RegisterChallengCyclistViewState
                             barrierDismissible: true,
                             hideCloseIcon: true,
                             themeData: FilterListThemeData(context).copyWith(
-                              borderRadius: 15.0,
-                              headerTheme: const HeaderThemeData(
-                                searchFieldBorderRadius: 15.0,
+                              borderRadius: 15.0 * scale,
+                              headerTheme: HeaderThemeData(
+                                searchFieldBorderRadius: 15.0 * scale,
                                 searchFieldHintText:
                                     'Cerca la tua azienda qua ...',
                               ),
                               choiceChipTheme: ChoiceChipThemeData(
                                 selectedBackgroundColor: colorScheme.secondary,
-                                labelPadding: const EdgeInsets.symmetric(
-                                  horizontal: 15.0,
+                                labelPadding: EdgeInsets.symmetric(
+                                  horizontal: 15.0 * scale,
                                 ),
                               ),
                               controlBarButtonTheme:
                                   ControlButtonBarThemeData(context).copyWith(
-                                margin: const EdgeInsets.all(15.0),
-                                // controlContainerDecoration: const BoxDecoration(
-                                //   borderRadius: BorderRadius.all(
-                                //     Radius.circular(10),
-                                //   ),
-                                // ),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0),
-                                // backgroundColor: Colors.amber,
+                                margin: EdgeInsets.all(15.0 * scale),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10.0 * scale,
+                                ),
                                 controlButtonTheme: ControlButtonThemeData(
                                   primaryButtonBackgroundColor:
                                       colorScheme.secondary,
-                                  // borderRadius: 10.0,
                                   textStyle: textTheme.button,
                                 ),
                               ),
@@ -345,7 +344,7 @@ class _RegisterChallengCyclistViewState
                             applyButtonText: 'SELEZIONA',
                             resetButtonText: 'CANCELLA',
                             enableOnlySingleSelection: true,
-                            height: 500,
+                            height: 500 * scale,
                             listData: listCompany,
                             selectedListData: listSelectedCompany,
                             choiceChipLabel: (item) => item!.name,
@@ -389,11 +388,11 @@ class _RegisterChallengCyclistViewState
                         companySelected.listDepartment != null &&
                         companySelected.listDepartment!.isNotEmpty)
                       Container(
-                        margin: const EdgeInsets.only(
-                          right: 24.0,
-                          left: 24.0,
-                          top: 20.0,
-                          bottom: 20.0,
+                        margin: EdgeInsets.only(
+                          right: 24.0 * scale,
+                          left: 24.0 * scale,
+                          top: 20.0 * scale,
+                          bottom: 20.0 * scale,
                         ),
                         child: DropdownButtonFormField<String>(
                           isExpanded: true,
@@ -434,13 +433,13 @@ class _RegisterChallengCyclistViewState
                           },
                         ),
                       ),
-                    const SizedBox(
-                      height: 50.0,
+                    SizedBox(
+                      height: 50.0 * scale,
                     ),
                     Container(
-                      margin: const EdgeInsets.only(
-                        right: 24.0,
-                        left: 24.0,
+                      margin: EdgeInsets.only(
+                        right: 24.0 * scale,
+                        left: 24.0 * scale,
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -457,15 +456,15 @@ class _RegisterChallengCyclistViewState
                               ),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.only(
-                                right: 10.0,
-                                left: 10.0,
+                              padding: EdgeInsets.only(
+                                right: 10.0 * scale,
+                                left: 10.0 * scale,
                               ),
                               child: AutoSizeText(
                                 'La tua azienda non partecipa?'.toUpperCase(),
                                 style: textTheme.headline6!.copyWith(
                                   fontWeight: FontWeight.w800,
-                                  fontSize: 18,
+                                  fontSize: 18 * scale,
                                 ),
                                 textAlign: TextAlign.center,
                                 maxLines: 1,
@@ -474,11 +473,11 @@ class _RegisterChallengCyclistViewState
                           ),
                           Container(
                             width: double.infinity,
-                            padding: const EdgeInsets.only(
-                              top: 15.0,
-                              bottom: 15.0,
-                              right: 20.0,
-                              left: 20.0,
+                            padding: EdgeInsets.only(
+                              top: 15.0 * scale,
+                              bottom: 15.0 * scale,
+                              right: 20.0 * scale,
+                              left: 20.0 * scale,
                             ),
                             decoration: BoxDecoration(
                               color: colorScheme.primary,
@@ -526,8 +525,8 @@ class _RegisterChallengCyclistViewState
                                     ],
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: 15.0,
+                                SizedBox(
+                                  height: 15.0 * scale,
                                 ),
                                 SelectableText(
                                   emailFiab,
@@ -544,15 +543,15 @@ class _RegisterChallengCyclistViewState
                         ],
                       ),
                     ),
-                    const SizedBox(
-                      height: 30.0,
+                    SizedBox(
+                      height: 30.0 * scale,
                     ),
                   ],
                 ),
                 Center(
                   child: SizedBox(
-                    width: 165.0,
-                    height: 36.0,
+                    width: 165.0 * scale,
+                    height: 36.0 * scale,
                     child: ElevatedButton(
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
@@ -579,13 +578,13 @@ class _RegisterChallengCyclistViewState
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 20.0,
+                SizedBox(
+                  height: 20.0 * scale,
                 ),
                 Center(
                   child: SizedBox(
-                    width: 165.0,
-                    height: 36.0,
+                    width: 165.0 * scale,
+                    height: 36.0 * scale,
                     child: OutlinedButton(
                       onPressed: viewModel.gotoSelectType,
                       style: ButtonStyle(
@@ -615,8 +614,8 @@ class _RegisterChallengCyclistViewState
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
               ],
             ),

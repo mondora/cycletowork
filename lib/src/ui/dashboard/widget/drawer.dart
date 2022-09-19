@@ -1,6 +1,8 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/ui/dashboard/ui_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -16,6 +18,7 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var screenWidth = MediaQuery.of(context).size.width;
 
     return Drawer(
@@ -62,29 +65,29 @@ class AppDrawer extends StatelessWidget {
                     for (var item in AppMenuOption.values)
                       _AppDrawerItem(
                         selected: menuOption == item,
-                        title: _ItemInfo(item).title,
-                        icon: _ItemInfo(item).icon,
+                        title: _ItemInfo(item, scale).title,
+                        icon: _ItemInfo(item, scale).icon,
                         onPressed: () {
                           onPressed(item);
                           Navigator.pop(context);
                         },
                       ),
                     Container(
-                      margin: const EdgeInsets.only(
-                        left: 29.0,
-                        right: 24.0,
+                      margin: EdgeInsets.only(
+                        left: 29.0 * scale,
+                        right: 24.0 * scale,
                       ),
                       child: const Divider(),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(
-                        top: 35.0,
-                        left: 47.0,
-                        right: 46.0,
+                      margin: EdgeInsets.only(
+                        top: 35.0 * scale,
+                        left: 47.0 * scale,
+                        right: 46.0 * scale,
                       ),
                       child: InkWell(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(15.0),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(15.0 * scale),
                         ),
                         onTap: () async {
                           final url = Uri.parse(fiabWorld);
@@ -95,7 +98,7 @@ class AppDrawer extends StatelessWidget {
                           }
                         },
                         child: Container(
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(20 * scale),
                           child: Image.asset('assets/images/fiab_more.png'),
                         ),
                       ),
@@ -108,11 +111,11 @@ class AppDrawer extends StatelessWidget {
           Align(
             alignment: Alignment.bottomLeft,
             child: Container(
-              height: 10,
-              width: 50.0,
-              margin: const EdgeInsets.only(
-                left: 24.0,
-                bottom: 20.0,
+              height: 10 * scale,
+              width: 50.0 * scale,
+              margin: EdgeInsets.only(
+                left: 24.0 * scale,
+                bottom: 20.0 * scale,
               ),
               child: Image.asset('assets/images/mondora_logo.png'),
             ),
@@ -138,24 +141,26 @@ class _AppDrawerItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     return Container(
-      margin: const EdgeInsets.only(
-        left: 12.0,
-        right: 24.0,
+      margin: EdgeInsets.only(
+        left: 12.0 * scale,
+        right: 24.0 * scale,
       ),
       child: ListTile(
+        dense: scale < 1 ? true : null,
         tileColor:
             selected == true ? Theme.of(context).colorScheme.primary : null,
-        shape: const RoundedRectangleBorder(
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
-            Radius.circular(30.0),
+            Radius.circular(30.0 * scale),
           ),
         ),
         title: Row(
           children: [
             icon,
-            const SizedBox(
-              width: 12,
+            SizedBox(
+              width: 12 * scale,
             ),
             Text(
               title,
@@ -172,9 +177,9 @@ class _AppDrawerItem extends StatelessWidget {
 class _ItemInfo {
   late String title;
   late Widget icon;
-  final iconSize = 24.0;
 
-  _ItemInfo(AppMenuOption appMenuOption) {
+  _ItemInfo(AppMenuOption appMenuOption, double scale) {
+    final iconSize = 24.0 * scale;
     switch (appMenuOption) {
       case AppMenuOption.home:
         title = 'Home';

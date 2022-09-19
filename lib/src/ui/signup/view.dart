@@ -1,9 +1,11 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/ui/privacy_policy/view.dart';
 import 'package:cycletowork/src/widget/button.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:cycletowork/src/ui/landing/view_model.dart';
+import 'package:provider/provider.dart';
 
 class SignupView extends StatelessWidget {
   final ViewModel landingModel;
@@ -14,6 +16,7 @@ class SignupView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final onBackgroundColor = Theme.of(context).colorScheme.onBackground;
     var formKey = GlobalKey<FormState>();
     var nameController = TextEditingController();
@@ -38,12 +41,12 @@ class SignupView extends StatelessWidget {
       body: Form(
         key: formKey,
         child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 24.0),
+          margin: EdgeInsets.symmetric(horizontal: 24.0 * scale),
           child: ListView(
             physics: const ScrollPhysics(),
             children: [
               Container(
-                margin: const EdgeInsets.only(top: 30.0),
+                margin: EdgeInsets.only(top: 30.0 * scale),
                 child: Center(
                   child: Text(
                     AppLocalizations.of(context)!.signupWithEmail,
@@ -52,7 +55,7 @@ class SignupView extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.only(top: 30.0),
+                margin: EdgeInsets.only(top: 30.0 * scale),
                 child: TextFormField(
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
@@ -63,7 +66,7 @@ class SignupView extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.only(top: 30.0),
+                margin: EdgeInsets.only(top: 30.0 * scale),
                 child: TextFormField(
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
@@ -83,7 +86,7 @@ class SignupView extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.only(top: 30.0),
+                margin: EdgeInsets.only(top: 30.0 * scale),
                 child: TextFormField(
                   controller: passwordController,
                   keyboardType: TextInputType.visiblePassword,
@@ -117,7 +120,7 @@ class SignupView extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.only(top: 10.0),
+                margin: EdgeInsets.only(top: 10.0 * scale),
                 child: TextFormField(
                   controller: rePasswordController,
                   keyboardType: TextInputType.visiblePassword,
@@ -140,14 +143,14 @@ class SignupView extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.only(top: 26.0),
+                margin: EdgeInsets.only(top: 26.0 * scale),
                 child: Text(
                   '(*) Campi obbligatori',
                   style: Theme.of(context).textTheme.caption,
                 ),
               ),
               Container(
-                margin: const EdgeInsets.only(top: 30.0),
+                margin: EdgeInsets.only(top: 30.0 * scale),
                 child: RichText(
                   text: TextSpan(
                     children: [
@@ -178,7 +181,7 @@ class SignupView extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.only(top: 20.0),
+                margin: EdgeInsets.only(top: 20.0 * scale),
                 child: AppButton(
                   title: AppLocalizations.of(context)!.login,
                   onPressed: () async {
@@ -194,13 +197,13 @@ class SignupView extends StatelessWidget {
                     }
                   },
                   type: ButtonType.secondary,
-                  maxWidth: 95,
+                  maxWidth: 95 * scale,
                   horizontalMargin: 0.0,
-                  radius: 8.0,
+                  radius: 8.0 * scale,
                 ),
               ),
-              const SizedBox(
-                height: 20.0,
+              SizedBox(
+                height: 20.0 * scale,
               ),
             ],
           ),

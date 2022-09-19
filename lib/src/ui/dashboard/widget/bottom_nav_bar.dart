@@ -1,6 +1,8 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/ui/dashboard/ui_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 class AppBottomNavBar extends StatelessWidget {
   final AppBottomNavBarOption? bottomNavBarOption;
@@ -20,27 +22,28 @@ class AppBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     return Row(
       mainAxisAlignment:
           isCenter ? MainAxisAlignment.center : MainAxisAlignment.start,
       children: [
         Container(
-          margin: const EdgeInsets.only(
-            right: 24.0,
-            left: 24.0,
-            bottom: 20.0,
+          margin: EdgeInsets.only(
+            right: 24.0 * scale,
+            left: 24.0 * scale,
+            bottom: 20.0 * scale,
           ),
-          padding: const EdgeInsets.all(5),
+          padding: EdgeInsets.all(5 * scale),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.background,
-            borderRadius: BorderRadius.circular(15.0),
+            borderRadius: BorderRadius.circular(15.0 * scale),
             boxShadow: const [
               BoxShadow(color: Color.fromRGBO(0, 0, 0, .25), blurRadius: 16.0)
             ],
           ),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              minWidth: 227.0,
+            constraints: BoxConstraints(
+              minWidth: 227.0 * scale,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.max,
@@ -49,7 +52,7 @@ class AppBottomNavBar extends StatelessWidget {
                 for (var item in AppBottomNavBarOption.values)
                   _BottomNavBarItem(
                     selected: bottomNavBarOption == item,
-                    icon: _ItemInfo(item).icon,
+                    icon: _ItemInfo(item, scale).icon,
                     onPressed: () {
                       onChange(item);
                     },
@@ -76,16 +79,17 @@ class _BottomNavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     return SizedBox(
-      height: 40.0,
-      width: 40.0,
+      height: 40.0 * scale,
+      width: 40.0 * scale,
       child: Material(
         color: selected
             ? Theme.of(context).colorScheme.primary
             : Theme.of(context).colorScheme.background,
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(10.0 * scale),
         child: InkWell(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(10.0 * scale),
           onTap: onPressed,
           child: icon,
         ),
@@ -96,9 +100,9 @@ class _BottomNavBarItem extends StatelessWidget {
 
 class _ItemInfo {
   late Widget icon;
-  final iconSize = 32.0;
 
-  _ItemInfo(AppBottomNavBarOption bottomNavBarOption) {
+  _ItemInfo(AppBottomNavBarOption bottomNavBarOption, double scale) {
+    final iconSize = 32.0 * scale;
     switch (bottomNavBarOption) {
       case AppBottomNavBarOption.home:
         icon = SvgPicture.asset(

@@ -1,5 +1,7 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RankingSlider extends StatelessWidget {
   final double percent;
@@ -25,6 +27,7 @@ class RankingSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var textTheme = Theme.of(context).textTheme;
     var colorScheme = Theme.of(context).colorScheme;
     final colorSchemeExtension =
@@ -41,11 +44,11 @@ class RankingSlider extends StatelessWidget {
             fontWeight: FontWeight.w400,
           ),
         ),
-        const SizedBox(
-          height: 5,
+        SizedBox(
+          height: 5 * scale,
         ),
         SizedBox(
-          height: 30,
+          height: 30 * scale,
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               var width = constraints.biggest.width;
@@ -55,11 +58,11 @@ class RankingSlider extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Container(
                       alignment: Alignment.center,
-                      height: 20,
+                      height: 20 * scale,
                       decoration: BoxDecoration(
                         color: colorScheme.secondary,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(15.0),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(15.0 * scale),
                         ),
                       ),
                     ),
@@ -70,13 +73,13 @@ class RankingSlider extends StatelessWidget {
                       right: isEmpty || percent < minPercentFilter
                           ? null
                           : width - (width * percent),
-                      top: 5,
+                      top: 5 * scale,
                       child: Container(
-                        height: 20,
+                        height: 20 * scale,
                         decoration: BoxDecoration(
                           color: colorScheme.primary,
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(15.0),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0 * scale),
                           ),
                         ),
                       ),
@@ -99,8 +102,8 @@ class RankingSlider extends StatelessWidget {
                           ? width - (width * percent)
                           : null,
                       child: Container(
-                        width: 30,
-                        height: 30,
+                        width: 30 * scale,
+                        height: 30 * scale,
                         decoration: BoxDecoration(
                           color: colorScheme.background,
                           shape: BoxShape.circle,
@@ -113,8 +116,8 @@ class RankingSlider extends StatelessWidget {
                     ),
                   if (isEmpty && !isFirst)
                     Positioned(
-                      top: 6,
-                      left: 35,
+                      top: 6 * scale,
+                      left: 35 * scale,
                       child: Center(
                         child: Text(
                           '--',
@@ -126,8 +129,8 @@ class RankingSlider extends StatelessWidget {
                     ),
                   if (percent <= 0.8 || isFirst)
                     Positioned(
-                      top: 6,
-                      right: 35,
+                      top: 6 * scale,
+                      right: 35 * scale,
                       child: Center(
                         child: Text(
                           isEmpty ? '--' : maxValue,
@@ -140,8 +143,8 @@ class RankingSlider extends StatelessWidget {
                   Positioned(
                     right: 0,
                     child: Container(
-                      width: 30,
-                      height: 30,
+                      width: 30 * scale,
+                      height: 30 * scale,
                       decoration: BoxDecoration(
                         color: colorScheme.background,
                         shape: BoxShape.circle,

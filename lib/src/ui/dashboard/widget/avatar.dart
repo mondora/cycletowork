@@ -1,6 +1,8 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AppAvatar extends StatelessWidget {
   final UserType userType;
@@ -32,43 +34,41 @@ class AppAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     if (!visible) {
       return Container();
     }
 
     if (userType == UserType.other || isAdmin) {
       return IconButton(
-        iconSize: smallSize,
-        splashRadius: smallSize,
+        iconSize: smallSize * scale,
+        splashRadius: smallSize * scale,
         icon: _getUserIcon(
           context,
           loading,
           userImageUrl,
+          scale,
         ),
         onPressed: onPressed,
       );
     }
 
     return IconButton(
-      iconSize: size,
-      splashRadius: smallSize,
+      iconSize: size * scale,
+      splashRadius: smallSize * scale,
       onPressed: onPressed,
       icon: SizedBox(
-        width: size,
-        height: size,
+        width: size * scale,
+        height: size * scale,
         child: Stack(
           children: <Widget>[
             SizedBox(
-              width: size,
-              height: size,
+              width: size * scale,
+              height: size * scale,
             ),
             Align(
               alignment: Alignment.bottomLeft,
-              child: _getUserIcon(
-                context,
-                loading,
-                userImageUrl,
-              ),
+              child: _getUserIcon(context, loading, userImageUrl, scale),
             ),
             if (userType != UserType.other)
               Align(
@@ -85,7 +85,7 @@ class AppAvatar extends StatelessWidget {
     );
   }
 
-  _getUserIcon(context, loading, userImageUrl) {
+  _getUserIcon(context, loading, userImageUrl, scale) {
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final actionColor = colorSchemeExtension.action;
@@ -93,7 +93,7 @@ class AppAvatar extends StatelessWidget {
     return Stack(
       children: [
         CircleAvatar(
-          radius: avatarUserRadius,
+          radius: avatarUserRadius * scale,
           backgroundColor: Colors.grey[400],
           backgroundImage:
               userImageUrl != null ? NetworkImage(userImageUrl) : null,
@@ -106,8 +106,8 @@ class AppAvatar extends StatelessWidget {
         ),
         if (loading)
           SizedBox(
-            height: smallSize,
-            width: smallSize,
+            height: smallSize * scale,
+            width: smallSize * scale,
             child: CircularProgressIndicator(
               color: Theme.of(context).colorScheme.secondary,
               strokeWidth: progressStrokeWidth,

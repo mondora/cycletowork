@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/company.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/register_challenge/view_model.dart';
@@ -23,6 +24,7 @@ class _RegisterChallengChampionViewState
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final viewModel = Provider.of<ViewModel>(context);
     final companyName = viewModel.uiState.challengeRegistry.companyName;
     final isFiabMember = viewModel.uiState.challengeRegistry.isFiabMember;
@@ -56,9 +58,9 @@ class _RegisterChallengChampionViewState
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Padding(
-          padding: const EdgeInsets.only(
-            top: 20.0,
-            bottom: 30.0,
+          padding: EdgeInsets.only(
+            top: 20.0 * scale,
+            bottom: 30.0 * scale,
           ),
           child: Form(
             key: formKey,
@@ -66,9 +68,9 @@ class _RegisterChallengChampionViewState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 24.0,
-                    left: 24.0,
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
                   ),
                   child: Text(
                     'Registrazione azienda',
@@ -78,17 +80,17 @@ class _RegisterChallengChampionViewState
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
+                SizedBox(
+                  height: 20 * scale,
                 ),
                 Container(
-                  height: 185,
+                  height: 185 * scale,
                   color: const Color.fromRGBO(249, 249, 249, 1),
-                  padding: const EdgeInsets.only(
-                    right: 24.0,
-                    left: 24.0,
-                    top: 15.0,
-                    bottom: 15.0,
+                  padding: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
+                    top: 15.0 * scale,
+                    bottom: 15.0 * scale,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,7 +115,7 @@ class _RegisterChallengChampionViewState
                               child: Container(
                                 margin:
                                     const EdgeInsets.symmetric(vertical: 4.5),
-                                width: 80.0,
+                                width: 80.0 * scale,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
@@ -146,7 +148,7 @@ class _RegisterChallengChampionViewState
                               child: Container(
                                 margin:
                                     const EdgeInsets.symmetric(vertical: 4.5),
-                                width: 80.0,
+                                width: 80.0 * scale,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
@@ -171,8 +173,8 @@ class _RegisterChallengChampionViewState
                       ),
                       if (!isFiabMember)
                         SizedBox(
-                          width: 245.0,
-                          height: 36.0,
+                          width: 245.0 * scale,
+                          height: 36.0 * scale,
                           child: TextButton(
                             onPressed: () async {
                               final url = Uri.parse(aboutFiabUrl);
@@ -202,13 +204,13 @@ class _RegisterChallengChampionViewState
                                   ),
                                   maxLines: 1,
                                 ),
-                                const SizedBox(
-                                  width: 8.0,
+                                SizedBox(
+                                  width: 8.0 * scale,
                                 ),
                                 Icon(
                                   Icons.call_made_outlined,
                                   color: colorScheme.secondary,
-                                  size: 20.0,
+                                  size: 20.0 * scale,
                                 ),
                               ],
                             ),
@@ -243,13 +245,13 @@ class _RegisterChallengChampionViewState
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 24.0,
-                    left: 24.0,
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
                   ),
                   child: RichText(
                     text: TextSpan(
@@ -275,7 +277,7 @@ class _RegisterChallengChampionViewState
                                   padding: const EdgeInsets.all(1.0),
                                   child: Icon(
                                     Icons.info,
-                                    size: 15,
+                                    size: 15 * scale,
                                     color: colorSchemeExtension.info,
                                   ),
                                 ),
@@ -287,13 +289,13 @@ class _RegisterChallengChampionViewState
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 24.0,
-                    left: 24.0,
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
                   ),
                   child: TextFormField(
                     maxLength: 90,
@@ -317,13 +319,13 @@ class _RegisterChallengChampionViewState
                     },
                   ),
                 ),
-                const SizedBox(
-                  height: 10.0,
+                SizedBox(
+                  height: 10.0 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 24.0,
-                    left: 24.0,
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
                   ),
                   child: DropdownButtonFormField<String>(
                     isExpanded: true,
@@ -357,13 +359,13 @@ class _RegisterChallengChampionViewState
                     },
                   ),
                 ),
-                const SizedBox(
-                  height: 20.0,
+                SizedBox(
+                  height: 20.0 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 24.0,
-                    left: 24.0,
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
                   ),
                   child: TextFormField(
                     keyboardType: TextInputType.number,
@@ -390,13 +392,13 @@ class _RegisterChallengChampionViewState
                     },
                   ),
                 ),
-                const SizedBox(
-                  height: 20.0,
+                SizedBox(
+                  height: 20.0 * scale,
                 ),
                 Container(
                   color: colorGrey,
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  height: 82,
+                  padding: EdgeInsets.symmetric(horizontal: 24.0 * scale),
+                  height: 82 * scale,
                   width: double.infinity,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -426,7 +428,7 @@ class _RegisterChallengChampionViewState
                                       padding: const EdgeInsets.all(1.0),
                                       child: Icon(
                                         Icons.info,
-                                        size: 15,
+                                        size: 15 * scale,
                                         color: colorSchemeExtension.info,
                                       ),
                                     ),
@@ -447,13 +449,13 @@ class _RegisterChallengChampionViewState
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 24.0,
-                    left: 24.0,
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -519,17 +521,17 @@ class _RegisterChallengChampionViewState
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 30,
+                SizedBox(
+                  height: 30 * scale,
                 ),
                 if (companyHasMoreDepartment &&
                     companyListDepartment.isNotEmpty)
                   Container(
-                    padding: const EdgeInsets.only(
-                      top: 20,
-                      bottom: 39.0,
-                      left: 24.0,
-                      right: 24.0,
+                    padding: EdgeInsets.only(
+                      top: 20 * scale,
+                      bottom: 39.0 * scale,
+                      left: 24.0 * scale,
+                      right: 24.0 * scale,
                     ),
                     color: colorGrey,
                     child: Column(
@@ -556,7 +558,7 @@ class _RegisterChallengChampionViewState
                           itemCount: companyListDepartment.length,
                           itemBuilder: (context, index) {
                             return Container(
-                              margin: const EdgeInsets.only(top: 15.0),
+                              margin: EdgeInsets.only(top: 15.0 * scale),
                               child: TextFormField(
                                 keyboardType: TextInputType.text,
                                 textInputAction: TextInputAction.next,
@@ -570,17 +572,18 @@ class _RegisterChallengChampionViewState
                                         if (index + 1 ==
                                             companyListDepartment.length)
                                           IconButton(
-                                            splashRadius: 20,
+                                            splashRadius: 20 * scale,
                                             onPressed: () => viewModel
                                                 .setCompanyToAddAddDepartment(),
                                             icon: Icon(
                                               Icons.add_circle_outline,
                                               color: colorScheme.secondary,
+                                              size: 20 * scale,
                                             ),
                                           ),
                                         if (index != 0)
                                           IconButton(
-                                            splashRadius: 20,
+                                            splashRadius: 20 * scale,
                                             onPressed: () => viewModel
                                                 .setCompanyToAddRemoveDepartment(
                                               index,
@@ -588,6 +591,7 @@ class _RegisterChallengChampionViewState
                                             icon: Icon(
                                               Icons.delete_outline,
                                               color: colorScheme.error,
+                                              size: 20 * scale,
                                             ),
                                           ),
                                       ],
@@ -612,11 +616,14 @@ class _RegisterChallengChampionViewState
                       ],
                     ),
                   ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(right: 24.0, left: 24.0),
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
+                  ),
                   child: TextFormField(
                     maxLength: 5,
                     keyboardType: TextInputType.number,
@@ -640,11 +647,14 @@ class _RegisterChallengChampionViewState
                     },
                   ),
                 ),
-                const SizedBox(
-                  height: 20.0,
+                SizedBox(
+                  height: 20.0 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(right: 24.0, left: 24.0),
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
+                  ),
                   child: TextFormField(
                     maxLength: 40,
                     keyboardType: TextInputType.text,
@@ -664,11 +674,12 @@ class _RegisterChallengChampionViewState
                     },
                   ),
                 ),
-                const SizedBox(
-                  height: 20.0,
+                SizedBox(
+                  height: 20.0 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(right: 24.0, left: 24.0),
+                  margin:
+                      EdgeInsets.only(right: 24.0 * scale, left: 24.0 * scale),
                   child: TextFormField(
                     maxLength: 30,
                     keyboardType: TextInputType.text,
@@ -687,13 +698,13 @@ class _RegisterChallengChampionViewState
                     },
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 24.0,
-                    left: 24.0,
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
                   ),
                   child: Text(
                     '(*) Campi obbligatori',
@@ -702,13 +713,13 @@ class _RegisterChallengChampionViewState
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
                 Center(
                   child: SizedBox(
-                    width: 165.0,
-                    height: 36.0,
+                    width: 165.0 * scale,
+                    height: 36.0 * scale,
                     child: ElevatedButton(
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
@@ -736,13 +747,13 @@ class _RegisterChallengChampionViewState
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 20.0,
+                SizedBox(
+                  height: 20.0 * scale,
                 ),
                 Center(
                   child: SizedBox(
-                    width: 165.0,
-                    height: 36.0,
+                    width: 165.0 * scale,
+                    height: 36.0 * scale,
                     child: OutlinedButton(
                       onPressed: viewModel.gotoSelectType,
                       style: ButtonStyle(
@@ -772,8 +783,8 @@ class _RegisterChallengChampionViewState
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
               ],
             ),

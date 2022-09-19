@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/survey.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/privacy_policy/view.dart';
@@ -21,11 +22,11 @@ class _RegisterChallengCompanyDataViewState
   final formKey = GlobalKey<FormState>();
   final otherRoleController = TextEditingController();
   final _mapKey = GlobalKey();
-  // final privacyUrl = 'https://www.sataspes.net/android/sp-budget';
   var isOtherRole = false;
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final viewModel = Provider.of<ViewModel>(context);
     final company = viewModel.uiState.challengeRegistry.companyToAdd!;
     final hasMoreDepartment = company.hasMoreDepartment;
@@ -67,9 +68,9 @@ class _RegisterChallengCompanyDataViewState
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Padding(
-          padding: const EdgeInsets.only(
-            top: 20.0,
-            bottom: 30.0,
+          padding: EdgeInsets.only(
+            top: 20.0 * scale,
+            bottom: 30.0 * scale,
           ),
           child: Form(
             key: formKey,
@@ -77,9 +78,9 @@ class _RegisterChallengCompanyDataViewState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 24.0,
-                    left: 24.0,
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
                   ),
                   child: Text(
                     'Dati anagrafici',
@@ -91,10 +92,10 @@ class _RegisterChallengCompanyDataViewState
                 ),
                 if (hasMoreDepartment && listDepartment.isNotEmpty)
                   Container(
-                    margin: const EdgeInsets.only(
-                      right: 24.0,
-                      left: 24.0,
-                      top: 20.0,
+                    margin: EdgeInsets.only(
+                      right: 24.0 * scale,
+                      left: 24.0 * scale,
+                      top: 20.0 * scale,
                     ),
                     child: DropdownButtonFormField<String>(
                       isExpanded: true,
@@ -129,13 +130,13 @@ class _RegisterChallengCompanyDataViewState
                       },
                     ),
                   ),
-                const SizedBox(
-                  height: 30,
+                SizedBox(
+                  height: 30 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 24.0,
-                    left: 24.0,
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
                   ),
                   child: TextFormField(
                     maxLength: 40,
@@ -159,13 +160,13 @@ class _RegisterChallengCompanyDataViewState
                     },
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 24.0,
-                    left: 24.0,
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
                   ),
                   child: TextFormField(
                     maxLength: 40,
@@ -189,13 +190,13 @@ class _RegisterChallengCompanyDataViewState
                     },
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 24.0,
-                    left: 24.0,
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
                   ),
                   child: TextFormField(
                     maxLength: 40,
@@ -221,13 +222,13 @@ class _RegisterChallengCompanyDataViewState
                     },
                   ),
                 ),
-                const SizedBox(
-                  height: 38.0,
+                SizedBox(
+                  height: 38.0 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 24.0,
-                    left: 24.0,
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -373,10 +374,10 @@ class _RegisterChallengCompanyDataViewState
                       ),
                       if (isOtherRole)
                         Container(
-                          margin: const EdgeInsets.only(
-                            right: 10.0,
-                            left: 10.0,
-                            top: 10.0,
+                          margin: EdgeInsets.only(
+                            right: 10.0 * scale,
+                            left: 10.0 * scale,
+                            top: 10.0 * scale,
                           ),
                           child: TextFormField(
                             key: _mapKey,
@@ -405,11 +406,14 @@ class _RegisterChallengCompanyDataViewState
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 30,
+                SizedBox(
+                  height: 30 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(right: 24.0, left: 24.0),
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
+                  ),
                   child: TextFormField(
                     maxLength: 5,
                     keyboardType: TextInputType.number,
@@ -431,11 +435,12 @@ class _RegisterChallengCompanyDataViewState
                     },
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(right: 24.0, left: 24.0),
+                  margin:
+                      EdgeInsets.only(right: 24.0 * scale, left: 24.0 * scale),
                   child: TextFormField(
                     maxLength: 40,
                     keyboardType: TextInputType.text,
@@ -454,11 +459,14 @@ class _RegisterChallengCompanyDataViewState
                     },
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(right: 24.0, left: 24.0),
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
+                  ),
                   child: TextFormField(
                     maxLength: 30,
                     keyboardType: TextInputType.text,
@@ -477,15 +485,15 @@ class _RegisterChallengCompanyDataViewState
                     },
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
                 if (listQuestion.isNotEmpty)
                   Container(
-                    margin: const EdgeInsets.only(
-                      right: 24.0,
-                      left: 24.0,
-                      top: 30.0,
+                    margin: EdgeInsets.only(
+                      right: 24.0 * scale,
+                      left: 24.0 * scale,
+                      top: 30.0 * scale,
                     ),
                     child: ListView.builder(
                       physics: const ScrollPhysics(),
@@ -495,7 +503,7 @@ class _RegisterChallengCompanyDataViewState
                         var question = listQuestion[index];
                         var answers = question.answers!;
                         return Container(
-                          margin: const EdgeInsets.symmetric(vertical: 25.0),
+                          margin: EdgeInsets.symmetric(vertical: 25.0 * scale),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -567,21 +575,27 @@ class _RegisterChallengCompanyDataViewState
                       },
                     ),
                   ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(left: 24.0, right: 24.0),
+                  margin: EdgeInsets.only(
+                    left: 24.0 * scale,
+                    right: 24.0 * scale,
+                  ),
                   child: const Divider(
                     height: 1,
                     thickness: 1,
                   ),
                 ),
-                const SizedBox(
-                  height: 40.0,
+                SizedBox(
+                  height: 40.0 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(right: 24.0, left: 24.0),
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
+                  ),
                   child: InkWell(
                     borderRadius: const BorderRadius.all(
                       Radius.circular(10.0),
@@ -623,12 +637,6 @@ class _RegisterChallengCompanyDataViewState
                                                 const PrivacyPolicyView(),
                                           ),
                                         );
-                                        // final url = Uri.parse(privacyUrl);
-                                        // if (await canLaunchUrl(url)) {
-                                        //   await launchUrl(
-                                        //     url,
-                                        //   );
-                                        // }
                                       },
                                   ),
                                 ],
@@ -640,13 +648,13 @@ class _RegisterChallengCompanyDataViewState
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 20.0,
+                SizedBox(
+                  height: 20.0 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 24.0,
-                    left: 24.0,
+                  margin: EdgeInsets.only(
+                    right: 24.0 * scale,
+                    left: 24.0 * scale,
                   ),
                   child: Text(
                     '(*) Campi obbligatori',
@@ -655,13 +663,13 @@ class _RegisterChallengCompanyDataViewState
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
                 Center(
                   child: SizedBox(
-                    width: 165.0,
-                    height: 36.0,
+                    width: 165.0 * scale,
+                    height: 36.0 * scale,
                     child: ElevatedButton(
                       onPressed: acceptPrivacy && responsedQuestions
                           ? () {
@@ -700,13 +708,13 @@ class _RegisterChallengCompanyDataViewState
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 20.0,
+                SizedBox(
+                  height: 20.0 * scale,
                 ),
                 Center(
                   child: SizedBox(
-                    width: 165.0,
-                    height: 36.0,
+                    width: 165.0 * scale,
+                    height: 36.0 * scale,
                     child: OutlinedButton(
                       onPressed: viewModel.backToChampionRegistration,
                       style: ButtonStyle(
@@ -736,8 +744,8 @@ class _RegisterChallengCompanyDataViewState
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
               ],
             ),

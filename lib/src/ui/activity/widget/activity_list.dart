@@ -1,9 +1,11 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class ActivityList extends StatelessWidget {
   final List<UserActivity> userActivity;
@@ -87,19 +89,20 @@ class _ActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final textSecondaryColor = colorSchemeExtension.textSecondary;
     final infoColor = colorSchemeExtension.info;
 
     return Container(
-      height: 112.0,
+      height: 112.0 * scale,
       padding: const EdgeInsets.all(0),
       child: Material(
         color: Theme.of(context).colorScheme.background,
         child: InkWell(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(15.0),
+          borderRadius: BorderRadius.all(
+            Radius.circular(15.0 * scale),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.max,
@@ -107,27 +110,18 @@ class _ActivityCard extends StatelessWidget {
             children: [
               const SizedBox(),
               SizedBox(
-                height: 93.0,
+                height: 93.0 * scale,
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: const EdgeInsets.only(left: 10.0),
-                      height: 93,
-                      width: 93,
-                      decoration: const BoxDecoration(
-                        // image: DecorationImage(
-                        //   image: map != null
-                        //       ? (map! as Image).image
-                        //       : Image.asset(
-                        //           'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking.png',
-                        //         ).image,
-                        //   fit: BoxFit.cover,
-                        // ),
-
+                      margin: EdgeInsets.only(left: 10.0 * scale),
+                      height: 93 * scale,
+                      width: 93 * scale,
+                      decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(
-                          Radius.circular(10),
+                          Radius.circular(10 * scale),
                         ),
                       ),
                       child: map != null
@@ -135,22 +129,22 @@ class _ActivityCard extends StatelessWidget {
                               children: [
                                 ClipRRect(
                                   child: map!,
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(10),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10 * scale),
                                   ),
                                 ),
                                 if (isChallenge)
                                   Align(
                                     alignment: Alignment.bottomRight,
                                     child: Container(
-                                      margin: const EdgeInsets.only(
-                                        right: 8,
-                                        bottom: 8,
+                                      margin: EdgeInsets.only(
+                                        right: 8 * scale,
+                                        bottom: 8 * scale,
                                       ),
                                       child: SvgPicture.asset(
                                         'assets/icons/challenge.svg',
-                                        height: 15.0,
-                                        width: 15.0,
+                                        height: 15.0 * scale,
+                                        width: 15.0 * scale,
                                         color: infoColor,
                                       ),
                                     ),
@@ -163,7 +157,7 @@ class _ActivityCard extends StatelessWidget {
                             ),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(left: 15.0),
+                      margin: EdgeInsets.only(left: 15.0 * scale),
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,12 +167,12 @@ class _ActivityCard extends StatelessWidget {
                             children: [
                               SvgPicture.asset(
                                 'assets/icons/co2.svg',
-                                height: 24.0,
-                                width: 24.0,
+                                height: 24.0 * scale,
+                                width: 24.0 * scale,
                                 color: infoColor,
                               ),
-                              const SizedBox(
-                                width: 6,
+                              SizedBox(
+                                width: 6 * scale,
                               ),
                               Text(
                                 co2,
@@ -197,7 +191,7 @@ class _ActivityCard extends StatelessWidget {
                             style: Theme.of(context).textTheme.caption,
                           ),
                           SizedBox(
-                            width: 205,
+                            width: 205 * scale,
                             child: Text(
                               more,
                               overflow: TextOverflow.ellipsis,
@@ -214,7 +208,7 @@ class _ActivityCard extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 15.0),
+                margin: EdgeInsets.symmetric(horizontal: 15.0 * scale),
                 height: 1,
                 color: const Color.fromRGBO(0, 0, 0, 0.12),
               ),

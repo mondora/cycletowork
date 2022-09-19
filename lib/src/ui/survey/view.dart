@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/survey.dart';
 import 'package:cycletowork/src/ui/register_challenge/view_model.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ class SurveyView extends StatefulWidget {
 class _SurveyViewState extends State<SurveyView> {
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final viewModel = Provider.of<ViewModel>(context);
     final surveyResponse = viewModel.uiState.surveyResponse!;
     var survey = viewModel.uiState.challenge!.survey;
@@ -31,20 +33,20 @@ class _SurveyViewState extends State<SurveyView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          splashRadius: 25.0,
+          splashRadius: 25.0 * scale,
           icon: Icon(
             Icons.arrow_back_ios,
             color: colorScheme.onBackground,
-            size: 20,
+            size: 20 * scale,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.only(left: 26.0, right: 24.0),
+        padding: EdgeInsets.only(left: 26.0 * scale, right: 24.0 * scale),
         children: [
-          const SizedBox(
-            height: 20,
+          SizedBox(
+            height: 20 * scale,
           ),
           Text(
             'Sondaggio',
@@ -58,7 +60,7 @@ class _SurveyViewState extends State<SurveyView> {
               Question question = survey.listQuestion[index];
               var answers = question.answers!;
               return Container(
-                margin: const EdgeInsets.symmetric(vertical: 25.0),
+                margin: EdgeInsets.symmetric(vertical: 25.0 * scale),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -234,14 +236,14 @@ class _SurveyViewState extends State<SurveyView> {
               );
             },
           ),
-          const SizedBox(
-            height: 40,
+          SizedBox(
+            height: 40 * scale,
           ),
           Column(
             children: [
               SizedBox(
-                width: 75,
-                height: 36.0,
+                width: 75 * scale,
+                height: 36.0 * scale,
                 child: ElevatedButton(
                   onPressed: saveButtonIsEnabled
                       ? () async {
@@ -257,7 +259,7 @@ class _SurveyViewState extends State<SurveyView> {
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(8.0 * scale),
                       ),
                     ),
                     backgroundColor: saveButtonIsEnabled
@@ -276,8 +278,8 @@ class _SurveyViewState extends State<SurveyView> {
               ),
             ],
           ),
-          const SizedBox(
-            height: 30,
+          SizedBox(
+            height: 30 * scale,
           ),
         ],
       ),

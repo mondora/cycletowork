@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/register_challenge/view_model.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class _RegisterChallengEmailVerifyViewState
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final viewModel = Provider.of<ViewModel>(context);
     final businessEmail = viewModel.uiState.challengeRegistry.businessEmail;
     final emailIsVerified =
@@ -48,9 +50,9 @@ class _RegisterChallengEmailVerifyViewState
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Padding(
-          padding: const EdgeInsets.only(
-            top: 20.0,
-            bottom: 30.0,
+          padding: EdgeInsets.only(
+            top: 20.0 * scale,
+            bottom: 30.0 * scale,
           ),
           child: Form(
             key: formKey,
@@ -58,9 +60,9 @@ class _RegisterChallengEmailVerifyViewState
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 30.0,
-                    left: 30.0,
+                  margin: EdgeInsets.only(
+                    right: 30.0 * scale,
+                    left: 30.0 * scale,
                   ),
                   child: Text(
                     'Ti abbiamo inviato una email di verifica all’indirizzo',
@@ -71,9 +73,9 @@ class _RegisterChallengEmailVerifyViewState
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 30.0,
-                    left: 30.0,
+                  margin: EdgeInsets.only(
+                    right: 30.0 * scale,
+                    left: 30.0 * scale,
                   ),
                   child: Text(
                     businessEmail,
@@ -83,12 +85,12 @@ class _RegisterChallengEmailVerifyViewState
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(
-                  height: 20.0,
+                SizedBox(
+                  height: 20.0 * scale,
                 ),
                 SizedBox(
-                  width: 165.0,
-                  height: 36.0,
+                  width: 165.0 * scale,
+                  height: 36.0 * scale,
                   child: TextButton(
                     onPressed: !emailIsVerified
                         ? viewModel.sendEmailVerificationCode
@@ -118,14 +120,14 @@ class _RegisterChallengEmailVerifyViewState
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
                 Container(
-                  height: 150,
-                  margin: const EdgeInsets.only(
-                    right: 30.0,
-                    left: 30.0,
+                  height: 150 * scale,
+                  margin: EdgeInsets.only(
+                    right: 30.0 * scale,
+                    left: 30.0 * scale,
                   ),
                   child: emailIsVerified
                       ? Center(
@@ -151,13 +153,13 @@ class _RegisterChallengEmailVerifyViewState
                           onSubmit: (code) => viewModel.verifiyEmailCode(code),
                         ),
                 ),
-                const SizedBox(
-                  height: 40,
+                SizedBox(
+                  height: 40 * scale,
                 ),
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 30.0,
-                    left: 30.0,
+                  margin: EdgeInsets.only(
+                    right: 30.0 * scale,
+                    left: 30.0 * scale,
                   ),
                   child: Text(
                     'Se non hai ricevuto nessuna email, verifica la correttezza dell’indirizzo che hai fornito e nel caso sia errato torna indietro a correggerlo.',
@@ -168,9 +170,9 @@ class _RegisterChallengEmailVerifyViewState
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(
-                    right: 30.0,
-                    left: 30.0,
+                  margin: EdgeInsets.only(
+                    right: 30.0 * scale,
+                    left: 30.0 * scale,
                   ),
                   child: Text(
                     'Controlla anche che la nostra email non sia finita nella posta indesiderata.',
@@ -180,13 +182,13 @@ class _RegisterChallengEmailVerifyViewState
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(
-                  height: 40.0,
+                SizedBox(
+                  height: 40.0 * scale,
                 ),
                 Center(
                   child: SizedBox(
-                    width: 165.0,
-                    height: 36.0,
+                    width: 165.0 * scale,
+                    height: 36.0 * scale,
                     child: ElevatedButton(
                       onPressed:
                           emailIsVerified ? viewModel.registerChallenge : null,
@@ -216,13 +218,13 @@ class _RegisterChallengEmailVerifyViewState
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 20.0,
+                SizedBox(
+                  height: 20.0 * scale,
                 ),
                 Center(
                   child: SizedBox(
-                    width: 155.0,
-                    height: 36.0,
+                    width: 155.0 * scale,
+                    height: 36.0 * scale,
                     child: OutlinedButton(
                       onPressed: !emailIsVerified
                           ? isCyclist
@@ -261,8 +263,8 @@ class _RegisterChallengEmailVerifyViewState
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
+                SizedBox(
+                  height: 30.0 * scale,
                 ),
               ],
             ),

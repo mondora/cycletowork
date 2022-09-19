@@ -1,5 +1,7 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
 import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SliderButton extends StatelessWidget {
@@ -24,9 +26,10 @@ class SliderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     return Container(
-      height: 54.0,
-      margin: const EdgeInsets.symmetric(horizontal: 27.0),
+      height: 54.0 * scale,
+      margin: EdgeInsets.symmetric(horizontal: 27.0 * scale),
       decoration: BoxDecoration(
         color: const Color(0xFFF5F5F5),
         borderRadius: BorderRadius.circular(30.0),
@@ -51,7 +54,7 @@ class SliderButton extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: Container(
-              padding: const EdgeInsets.only(left: 13.0),
+              padding: EdgeInsets.only(left: 13.0 * scale),
               child: Shimmer.fromColors(
                 baseColor: baseColor,
                 highlightColor: highlightedColor,
@@ -63,7 +66,7 @@ class SliderButton extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: Container(
-              padding: const EdgeInsets.only(right: 13.0),
+              padding: EdgeInsets.only(right: 13.0 * scale),
               child: Shimmer.fromColors(
                 baseColor: baseColor,
                 highlightColor: highlightedColor,

@@ -1,10 +1,11 @@
-import 'package:cycletowork/src/theme.dart';
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/ui/landing/view.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:provider/provider.dart';
 
 class CycleToWorkApp extends StatefulWidget {
   const CycleToWorkApp({Key? key}) : super(key: key);
@@ -32,12 +33,10 @@ class _CycleToWorkAppState extends State<CycleToWorkApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        // Locale('en', ''),
-        Locale('it', ''), // English, no country code
+        Locale('it', ''),
       ],
       title: 'Cycle2Work',
-      theme: AppTheme.getLightTheme(false),
-      // darkTheme: ThemeData.dark(),
+      theme: context.watch<AppData>().themeData,
       home: const LandingView(),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/chart_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/theme.dart';
@@ -10,6 +11,7 @@ import 'package:cycletowork/src/widget/map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 enum TrackingOption {
   distance,
@@ -70,6 +72,7 @@ class _StopTrackingViewState extends State<StopTrackingView> {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var textTheme = Theme.of(context).textTheme;
     var colorScheme = Theme.of(context).colorScheme;
     final colorSchemeExtension =
@@ -104,9 +107,9 @@ class _StopTrackingViewState extends State<StopTrackingView> {
 
     return Scaffold(
       body: ListView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 24.0,
-          vertical: 20.0,
+        padding: EdgeInsets.symmetric(
+          horizontal: 24.0 * scale,
+          vertical: 20.0 * scale,
         ),
         children: [
           Text(
@@ -122,11 +125,11 @@ class _StopTrackingViewState extends State<StopTrackingView> {
               color: colorSchemeExtension.textSecondary,
             ),
           ),
-          const SizedBox(
-            height: 10.0,
+          SizedBox(
+            height: 10.0 * scale,
           ),
           Container(
-            padding: const EdgeInsets.all(10.0),
+            padding: EdgeInsets.all(10.0 * scale),
             decoration: BoxDecoration(
               color: colorSchemeExtension.info,
               borderRadius: BorderRadius.circular(10.0),
@@ -136,12 +139,12 @@ class _StopTrackingViewState extends State<StopTrackingView> {
               children: [
                 SvgPicture.asset(
                   'assets/icons/co2.svg',
-                  height: 46.0,
-                  width: 46.0,
+                  height: 46.0 * scale,
+                  width: 46.0 * scale,
                   color: colorScheme.onSecondary,
                 ),
-                const SizedBox(
-                  width: 10,
+                SizedBox(
+                  width: 10 * scale,
                 ),
                 Text(
                   numberFormat.format(trackingCo2),
@@ -150,8 +153,8 @@ class _StopTrackingViewState extends State<StopTrackingView> {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                const SizedBox(
-                  width: 10,
+                SizedBox(
+                  width: 10 * scale,
                 ),
                 Text(
                   'Kg CO\u2082',
@@ -163,25 +166,25 @@ class _StopTrackingViewState extends State<StopTrackingView> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 10.0,
+          SizedBox(
+            height: 10.0 * scale,
           ),
           SizedBox(
-            height: 327.0,
+            height: 327.0 * scale,
             child: AppMap(
               key: _mapKey,
               listTrackingPosition: widget.listTrackingPosition,
               type: AppMapType.static,
               fit: BoxFit.fitWidth,
               isChallenge: isChallenge,
-              height: 327.0,
+              height: 327.0 * scale,
             ),
           ),
-          const SizedBox(
-            height: 20.0,
+          SizedBox(
+            height: 20.0 * scale,
           ),
           SizedBox(
-            height: 82.0,
+            height: 82.0 * scale,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -221,7 +224,7 @@ class _StopTrackingViewState extends State<StopTrackingView> {
             ),
           ),
           SizedBox(
-            height: 82.0,
+            height: 82.0 * scale,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -259,7 +262,7 @@ class _StopTrackingViewState extends State<StopTrackingView> {
             ),
           ),
           SizedBox(
-            height: 82.0,
+            height: 82.0 * scale,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -296,8 +299,8 @@ class _StopTrackingViewState extends State<StopTrackingView> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 25.0,
+          SizedBox(
+            height: 25.0 * scale,
           ),
           Text(
             'Velocità (km/h)',
@@ -317,8 +320,8 @@ class _StopTrackingViewState extends State<StopTrackingView> {
                 .toList(),
             scaleType: ChartScaleType.time,
           ),
-          const SizedBox(
-            height: 30.0,
+          SizedBox(
+            height: 30.0 * scale,
           ),
           Text(
             'Quota (m)',
@@ -347,7 +350,7 @@ class _StopTrackingViewState extends State<StopTrackingView> {
           bottomRight: Radius.circular(10.0),
         ),
         child: Container(
-          height: 84.0,
+          height: 84.0 * scale,
           decoration: BoxDecoration(
             color: colorScheme.background,
             boxShadow: const <BoxShadow>[
@@ -361,12 +364,14 @@ class _StopTrackingViewState extends State<StopTrackingView> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               SizedBox(
-                height: 50.0,
+                height: 50.0 * scale,
                 child: FittedBox(
                   child: FloatingActionButton.extended(
-                    extendedPadding: const EdgeInsets.all(13.0),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                    extendedPadding: EdgeInsets.all(13.0 * scale),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15 * scale),
+                      ),
                     ),
                     backgroundColor: colorSchemeExtension.success,
                     onPressed: widget.saveTracking,
@@ -379,16 +384,18 @@ class _StopTrackingViewState extends State<StopTrackingView> {
                   ),
                 ),
               ),
-              const SizedBox(
-                width: 20.0,
+              SizedBox(
+                width: 20.0 * scale,
               ),
               SizedBox(
-                height: 50.0,
+                height: 50.0 * scale,
                 child: FittedBox(
                   child: FloatingActionButton.extended(
-                    extendedPadding: const EdgeInsets.all(13.0),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                    extendedPadding: EdgeInsets.all(13.0 * scale),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15 * scale),
+                      ),
                     ),
                     backgroundColor: colorScheme.error,
                     onPressed: () async {
@@ -411,8 +418,8 @@ class _StopTrackingViewState extends State<StopTrackingView> {
                   ),
                 ),
               ),
-              const SizedBox(
-                width: 24.0,
+              SizedBox(
+                width: 24.0 * scale,
               ),
             ],
           ),
@@ -494,19 +501,20 @@ class _Item extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var textTheme = Theme.of(context).textTheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     return SizedBox(
-      width: 160.0,
+      width: 160.0 * scale,
       child: Column(
         children: [
           ListTile(
             dense: true,
             leading: SvgPicture.asset(
               imagePath,
-              height: 37.0,
-              width: 37.0,
+              height: 37.0 * scale,
+              width: 37.0 * scale,
             ),
             title: Text(
               title,
@@ -524,8 +532,8 @@ class _Item extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(
-                  width: 9.0,
+                SizedBox(
+                  width: 9.0 * scale,
                 ),
                 Text(
                   unit ?? '',

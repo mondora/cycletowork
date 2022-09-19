@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static ThemeData getLightTheme(bool justLocal) {
+  static ThemeData getLightTheme(bool justLocal, {double scale = 1.0}) {
     final colorScheme = AppColor.getLightColors(justLocal);
-    final textTheme = _getTextTheme(colorScheme);
+    final textTheme = _getTextTheme(colorScheme, scale);
     return ThemeData(
       textTheme: textTheme,
       colorScheme: ColorScheme(
@@ -125,11 +125,11 @@ class AppTheme {
     );
   }
 
-  static TextTheme _getTextTheme(LightColors colorScheme) {
+  static TextTheme _getTextTheme(LightColors colorScheme, double scale) {
     return TextTheme(
       headline1: GoogleFonts.lato(
         textStyle: TextStyle(
-          fontSize: 96,
+          fontSize: 96 * scale,
           letterSpacing: -1.5,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w300,
@@ -138,7 +138,7 @@ class AppTheme {
       ),
       headline2: GoogleFonts.lato(
         textStyle: TextStyle(
-          fontSize: 60,
+          fontSize: 60 * scale,
           letterSpacing: -0.5,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w300,
@@ -147,7 +147,7 @@ class AppTheme {
       ),
       headline3: GoogleFonts.lato(
         textStyle: TextStyle(
-          fontSize: 48,
+          fontSize: 48 * scale,
           letterSpacing: 0,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w400,
@@ -156,7 +156,7 @@ class AppTheme {
       ),
       headline4: GoogleFonts.lato(
         textStyle: TextStyle(
-          fontSize: 34,
+          fontSize: 34 * scale,
           letterSpacing: 0.25,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w400,
@@ -165,7 +165,7 @@ class AppTheme {
       ),
       headline5: GoogleFonts.lato(
         textStyle: TextStyle(
-          fontSize: 24,
+          fontSize: 24 * scale,
           letterSpacing: 0,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w400,
@@ -174,7 +174,7 @@ class AppTheme {
       ),
       headline6: GoogleFonts.lato(
         textStyle: TextStyle(
-          fontSize: 20,
+          fontSize: 20 * scale,
           letterSpacing: 0.15,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w500,
@@ -183,7 +183,7 @@ class AppTheme {
       ),
       subtitle1: GoogleFonts.lato(
         textStyle: TextStyle(
-          fontSize: 16,
+          fontSize: 16 * scale,
           letterSpacing: 0.15,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w400,
@@ -192,7 +192,7 @@ class AppTheme {
       ),
       subtitle2: GoogleFonts.lato(
         textStyle: TextStyle(
-          fontSize: 14,
+          fontSize: 14 * scale,
           letterSpacing: 0.1,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w500,
@@ -201,7 +201,7 @@ class AppTheme {
       ),
       bodyText1: GoogleFonts.lato(
         textStyle: TextStyle(
-          fontSize: 16,
+          fontSize: 16 * scale,
           letterSpacing: 0.15,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w400,
@@ -210,7 +210,7 @@ class AppTheme {
       ),
       bodyText2: GoogleFonts.lato(
         textStyle: TextStyle(
-          fontSize: 14,
+          fontSize: 14 * scale,
           letterSpacing: 0.15,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w400,
@@ -219,7 +219,7 @@ class AppTheme {
       ),
       caption: GoogleFonts.lato(
         textStyle: TextStyle(
-          fontSize: 12,
+          fontSize: 12 * scale,
           letterSpacing: 0.4,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w400,
@@ -228,7 +228,7 @@ class AppTheme {
       ),
       button: GoogleFonts.lato(
         textStyle: TextStyle(
-          fontSize: 14,
+          fontSize: 14 * scale,
           letterSpacing: 0.4,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w500,
@@ -237,7 +237,7 @@ class AppTheme {
       ),
       overline: GoogleFonts.lato(
         textStyle: TextStyle(
-          fontSize: 12,
+          fontSize: 12 * scale,
           letterSpacing: 1.0,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w400,

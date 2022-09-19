@@ -1,7 +1,9 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
+import 'package:provider/provider.dart';
 
 class AppProgressIndicator extends StatelessWidget {
   final double radius;
@@ -14,19 +16,20 @@ class AppProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final secondaryColor = Theme.of(context).colorScheme.secondary;
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       return CupertinoActivityIndicator(
-        radius: radius,
+        radius: radius * scale,
         color: secondaryColor,
       );
     }
     return SizedBox(
-      height: radius * 2,
-      width: radius * 2,
+      height: radius * 2 * scale,
+      width: radius * 2 * scale,
       child: CircularProgressIndicator(
         color: secondaryColor,
-        strokeWidth: androidStrokeWidth,
+        strokeWidth: androidStrokeWidth * scale,
       ),
     );
   }

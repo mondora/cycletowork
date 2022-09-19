@@ -1,6 +1,8 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 class SummeryCard extends StatelessWidget {
   final String co2;
@@ -15,14 +17,15 @@ class SummeryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final infoColor = colorSchemeExtension.info;
 
     return Column(
       children: [
-        const SizedBox(
-          height: 15,
+        SizedBox(
+          height: 15 * scale,
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -30,12 +33,12 @@ class SummeryCard extends StatelessWidget {
           children: [
             SvgPicture.asset(
               'assets/icons/co2.svg',
-              height: 56.0,
-              width: 56.0,
+              height: 56.0 * scale,
+              width: 56.0 * scale,
               color: infoColor,
             ),
-            const SizedBox(
-              width: 6,
+            SizedBox(
+              width: 6 * scale,
             ),
             Text(
               co2,
@@ -46,11 +49,11 @@ class SummeryCard extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(
-          height: 13,
+        SizedBox(
+          height: 13 * scale,
         ),
         SizedBox(
-          height: 48.0,
+          height: 48.0 * scale,
           child: Stack(
             children: [
               const Align(
@@ -98,8 +101,8 @@ class SummeryCard extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(
-          height: 10,
+        SizedBox(
+          height: 10 * scale,
         ),
       ],
     );

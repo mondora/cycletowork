@@ -2,12 +2,14 @@ import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/profile_change_password/view.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     var colorScheme = Theme.of(context).colorScheme;
@@ -20,7 +22,7 @@ class ProfileView extends StatelessWidget {
 
     return Scaffold(
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        padding: EdgeInsets.symmetric(horizontal: 24.0 * scale),
         physics: const ScrollPhysics(),
         children: [
           // Row(
@@ -57,7 +59,7 @@ class ProfileView extends StatelessWidget {
           Column(
             children: [
               CircleAvatar(
-                radius: 50,
+                radius: 50 * scale,
                 backgroundColor: Colors.grey[400],
                 backgroundImage:
                     userImageUrl != null ? NetworkImage(userImageUrl) : null,
@@ -65,12 +67,12 @@ class ProfileView extends StatelessWidget {
                     ? Icon(
                         Icons.person,
                         color: actionColor,
-                        size: 50,
+                        size: 50 * scale,
                       )
                     : Container(),
               ),
-              const SizedBox(
-                height: 15.0,
+              SizedBox(
+                height: 15.0 * scale,
               ),
               Text(
                 displayName ?? '',
@@ -78,8 +80,8 @@ class ProfileView extends StatelessWidget {
               )
             ],
           ),
-          const SizedBox(
-            height: 30.0,
+          SizedBox(
+            height: 30.0 * scale,
           ),
           Text(
             'ACCOUNT',
@@ -119,10 +121,10 @@ class ProfileView extends StatelessWidget {
                 ),
                 TextButton(
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.all(16.0),
-                    shape: const RoundedRectangleBorder(
+                    padding: EdgeInsets.all(16.0 * scale),
+                    shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(
-                        Radius.circular(15.0),
+                        Radius.circular(15.0 * scale),
                       ),
                     ),
                     foregroundColor: colorScheme.secondary,

@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/theme.dart';
@@ -6,6 +7,7 @@ import 'package:cycletowork/src/utility/convert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ActivityList extends StatelessWidget {
@@ -24,6 +26,7 @@ class ActivityList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final colorScheme = Theme.of(context).colorScheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
@@ -40,13 +43,13 @@ class ActivityList extends StatelessWidget {
 
     return Container(
       color: colorScheme.background,
-      height: 115.0,
+      height: 115.0 * scale,
       child: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            margin: const EdgeInsets.only(left: 24.0),
+            margin: EdgeInsets.only(left: 24.0 * scale),
             child: Text(
               'Ultime attività',
               style: Theme.of(context).textTheme.caption!.apply(
@@ -56,8 +59,8 @@ class ActivityList extends StatelessWidget {
           ),
           userActivity.isNotEmpty
               ? Container(
-                  margin: const EdgeInsets.only(left: 24.0, top: 8.0),
-                  height: 65,
+                  margin: EdgeInsets.only(left: 24.0 * scale, top: 8.0 * scale),
+                  height: 65 * scale,
                   child: ListView.builder(
                     physics: const ScrollPhysics(),
                     shrinkWrap: true,
@@ -110,15 +113,15 @@ class ActivityList extends StatelessWidget {
                   ),
                 )
               : Container(
-                  margin: const EdgeInsets.only(left: 24.0, top: 8.0),
-                  height: 65,
+                  margin: EdgeInsets.only(left: 24.0 * scale, top: 8.0 * scale),
+                  height: 65 * scale,
                   child: ListView(
                     physics: const ScrollPhysics(),
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
                     children: [
                       SizedBox(
-                        height: 65,
+                        height: 65 * scale,
                         child: ListView.builder(
                           physics: const ScrollPhysics(),
                           shrinkWrap: true,
@@ -169,12 +172,13 @@ class _NewChallengeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      width: 300,
-      margin: const EdgeInsets.only(right: 10.0),
+      width: 300 * scale,
+      margin: EdgeInsets.only(right: 10.0 * scale),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -186,8 +190,8 @@ class _NewChallengeCard extends StatelessWidget {
               Align(
                 alignment: Alignment.center,
                 child: Container(
-                  margin: const EdgeInsets.only(right: 50.0),
-                  width: 130,
+                  margin: EdgeInsets.only(right: 50.0 * scale),
+                  width: 130 * scale,
                   child: AutoSizeText(
                     title,
                     textAlign: TextAlign.end,
@@ -219,65 +223,66 @@ class _EmptyActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     return Container(
-      width: 300,
+      width: 300 * scale,
       margin: const EdgeInsets.only(right: 0.0),
       child: Container(
-        padding: const EdgeInsets.all(5),
+        padding: EdgeInsets.all(5 * scale),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              height: 57,
-              width: 57,
-              decoration: const BoxDecoration(
+              height: 57 * scale,
+              width: 57 * scale,
+              decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.all(
-                  Radius.circular(10),
+                  Radius.circular(10 * scale),
                 ),
               ),
             ),
             Container(
-              margin: const EdgeInsets.only(left: 10.0),
+              margin: EdgeInsets.only(left: 10.0 * scale),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    width: 100.0,
-                    height: 7.0,
-                    decoration: const BoxDecoration(
+                    width: 100.0 * scale,
+                    height: 7.0 * scale,
+                    decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.all(
-                        Radius.circular(10),
+                        Radius.circular(10 * scale),
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 5,
+                  SizedBox(
+                    height: 5 * scale,
                   ),
                   Container(
-                    width: 200.0,
-                    height: 7.0,
-                    decoration: const BoxDecoration(
+                    width: 200.0 * scale,
+                    height: 7.0 * scale,
+                    decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.all(
-                        Radius.circular(10),
+                        Radius.circular(10 * scale),
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 5,
+                  SizedBox(
+                    height: 5 * scale,
                   ),
                   Container(
-                    width: 200.0,
-                    height: 7.0,
-                    decoration: const BoxDecoration(
+                    width: 200.0 * scale,
+                    height: 7.0 * scale,
+                    decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.all(
-                        Radius.circular(10),
+                        Radius.circular(10 * scale),
                       ),
                     ),
                   ),
@@ -311,39 +316,32 @@ class _ActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final textSecondaryColor = colorSchemeExtension.textSecondary;
     final infoColor = colorSchemeExtension.info;
 
     return Container(
-      width: 300,
+      width: 300 * scale,
       margin: const EdgeInsets.only(right: 0.0),
       child: Material(
         color: Theme.of(context).colorScheme.background,
         child: InkWell(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(15.0),
+          borderRadius: BorderRadius.all(
+            Radius.circular(15.0 * scale),
           ),
           child: Container(
-            padding: const EdgeInsets.all(5),
+            padding: EdgeInsets.all(5 * scale),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: [
                 Container(
-                  height: 57,
-                  width: 57,
-                  decoration: const BoxDecoration(
-                    // image: DecorationImage(
-                    //   image: map != null
-                    //       ? (map! as Image).image
-                    //       : Image.asset(
-                    //           'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking_small.png',
-                    //         ).image,
-                    //   fit: BoxFit.cover,
-                    // ),
+                  height: 57 * scale,
+                  width: 57 * scale,
+                  decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(
-                      Radius.circular(10),
+                      Radius.circular(10 * scale),
                     ),
                   ),
                   child: map != null
@@ -352,22 +350,22 @@ class _ActivityCard extends StatelessWidget {
                           children: [
                             ClipRRect(
                               child: map!,
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(10),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10 * scale),
                               ),
                             ),
                             if (isChallenge)
                               Align(
                                 alignment: Alignment.bottomRight,
                                 child: Container(
-                                  margin: const EdgeInsets.only(
-                                    right: 6,
-                                    bottom: 4,
+                                  margin: EdgeInsets.only(
+                                    right: 6 * scale,
+                                    bottom: 4 * scale,
                                   ),
                                   child: SvgPicture.asset(
                                     'assets/icons/challenge.svg',
-                                    height: 8.0,
-                                    width: 8.0,
+                                    height: 8.0 * scale,
+                                    width: 8.0 * scale,
                                     color: infoColor,
                                   ),
                                 ),
@@ -380,7 +378,7 @@ class _ActivityCard extends StatelessWidget {
                         ),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(left: 20.0),
+                  margin: EdgeInsets.only(left: 20.0 * scale),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -389,12 +387,12 @@ class _ActivityCard extends StatelessWidget {
                         children: [
                           SvgPicture.asset(
                             'assets/icons/co2.svg',
-                            height: 24.0,
-                            width: 24.0,
+                            height: 24.0 * scale,
+                            width: 24.0 * scale,
                             color: infoColor,
                           ),
-                          const SizedBox(
-                            width: 6,
+                          SizedBox(
+                            width: 6 * scale,
                           ),
                           Text(
                             co2,
@@ -411,7 +409,7 @@ class _ActivityCard extends StatelessWidget {
                         style: Theme.of(context).textTheme.caption,
                       ),
                       SizedBox(
-                        width: 210,
+                        width: 210 * scale,
                         child: Text(
                           more,
                           overflow: TextOverflow.ellipsis,

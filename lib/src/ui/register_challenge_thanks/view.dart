@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/ui/register_challenge/view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +9,7 @@ class RegisterChallengThanksView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final viewModel = Provider.of<ViewModel>(context);
     var isCyclist = viewModel.uiState.challengeRegistry.isCyclist;
 
@@ -29,7 +31,7 @@ class RegisterChallengThanksView extends StatelessWidget {
                   Align(
                     alignment: Alignment.topCenter,
                     child: Container(
-                      margin: const EdgeInsets.only(top: 40.0),
+                      margin: EdgeInsets.only(top: 40.0 * scale),
                       child: Text(
                         'Grazie!'.toUpperCase(),
                         style: textTheme.headline6!.copyWith(
@@ -42,8 +44,11 @@ class RegisterChallengThanksView extends StatelessWidget {
               ),
               if (!isCyclist)
                 Container(
-                  margin:
-                      const EdgeInsets.only(left: 30.0, right: 30.0, top: 20.0),
+                  margin: EdgeInsets.only(
+                    left: 30.0 * scale,
+                    right: 30.0 * scale,
+                    top: 20.0 * scale,
+                  ),
                   child: Text(
                     'L’azienda che hai appena registrato deve essere validata dal nostro team. Ti contatteremo presto via email.',
                     style: textTheme.caption!.copyWith(
@@ -54,8 +59,11 @@ class RegisterChallengThanksView extends StatelessWidget {
                   ),
                 ),
               Container(
-                margin:
-                    const EdgeInsets.only(left: 30.0, right: 30.0, top: 20.0),
+                margin: EdgeInsets.only(
+                  left: 30.0 * scale,
+                  right: 30.0 * scale,
+                  top: 20.0 * scale,
+                ),
                 child: Text(
                   'Se lo desideri puoi compilare un breve sondaggio che ci aiuterà a capire qualcosa in più su di te e sul tuo stile ciclistico',
                   style: textTheme.caption!.copyWith(
@@ -65,12 +73,12 @@ class RegisterChallengThanksView extends StatelessWidget {
                   maxLines: 3,
                 ),
               ),
-              const SizedBox(
-                height: 40,
+              SizedBox(
+                height: 40 * scale,
               ),
               SizedBox(
-                width: 210.0,
-                height: 36.0,
+                width: 210.0 * scale,
+                height: 36.0 * scale,
                 child: ElevatedButton(
                   onPressed: viewModel.gotoSurvey,
                   style: ButtonStyle(
@@ -92,12 +100,12 @@ class RegisterChallengThanksView extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 20,
+              SizedBox(
+                height: 20 * scale,
               ),
               SizedBox(
-                width: 210.0,
-                height: 36.0,
+                width: 210.0 * scale,
+                height: 36.0 * scale,
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ButtonStyle(
@@ -119,8 +127,8 @@ class RegisterChallengThanksView extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 30,
+              SizedBox(
+                height: 30 * scale,
               ),
             ],
           ),

@@ -1,5 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ConfirmChallengeDialog {
   final BuildContext context;
@@ -27,6 +29,7 @@ class ConfirmChallengeDialog {
   });
 
   Future<bool?> show() async {
+    var scale = context.read<AppData>().scale;
     return await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -38,14 +41,14 @@ class ConfirmChallengeDialog {
               shape: RoundedRectangleBorder(
                 borderRadius: borderRadius,
               ),
-              insetPadding: const EdgeInsets.all(25),
+              insetPadding: EdgeInsets.all(25 * scale),
               backgroundColor: colorScheme.primary,
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    minHeight: 320.0,
-                    maxWidth: 350.0,
+                  constraints: BoxConstraints(
+                    minHeight: 320.0 * scale,
+                    maxWidth: 350.0 * scale,
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -53,7 +56,7 @@ class ConfirmChallengeDialog {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(10 * scale),
                         child: Image.asset(
                           'assets/images/confirm_challenge.png',
                           fit: BoxFit.fitWidth,
@@ -66,11 +69,11 @@ class ConfirmChallengeDialog {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(
-                        height: 9,
+                      SizedBox(
+                        height: 9 * scale,
                       ),
                       Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                        margin: EdgeInsets.symmetric(horizontal: 10.0 * scale),
                         child: Text(
                           title,
                           style: textTheme.headline6!.copyWith(
@@ -80,8 +83,8 @@ class ConfirmChallengeDialog {
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: 20 * scale,
                       ),
                       Text(
                         'di FIAB',
@@ -90,19 +93,20 @@ class ConfirmChallengeDialog {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(
-                        height: 40,
+                      SizedBox(
+                        height: 40 * scale,
                       ),
                       SizedBox(
-                        width: 210.0,
-                        height: 36.0,
+                        width: 210.0 * scale,
+                        height: 36.0 * scale,
                         child: ElevatedButton(
                           onPressed: () => Navigator.of(context).pop(true),
                           style: ButtonStyle(
                             shape: MaterialStateProperty.all<
                                 RoundedRectangleBorder>(
                               RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius:
+                                    BorderRadius.circular(8.0 * scale),
                               ),
                             ),
                             backgroundColor: MaterialStateProperty.all<Color>(
@@ -118,19 +122,20 @@ class ConfirmChallengeDialog {
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 17,
+                      SizedBox(
+                        height: 17 * scale,
                       ),
                       SizedBox(
-                        width: 210.0,
-                        height: 36.0,
+                        width: 210.0 * scale,
+                        height: 36.0 * scale,
                         child: ElevatedButton(
                           onPressed: () => Navigator.of(context).pop(),
                           style: ButtonStyle(
                             shape: MaterialStateProperty.all<
                                 RoundedRectangleBorder>(
                               RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius:
+                                    BorderRadius.circular(8.0 * scale),
                                 side: BorderSide(
                                   color: colorScheme.secondary,
                                 ),
@@ -146,8 +151,8 @@ class ConfirmChallengeDialog {
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 30,
+                      SizedBox(
+                        height: 30 * scale,
                       ),
                     ],
                   ),
@@ -159,52 +164,4 @@ class ConfirmChallengeDialog {
       },
     );
   }
-
-  // String _getQuestionTypeName(QuestionType questionType) {
-  //   switch (questionType) {
-  //     case QuestionType.text:
-  //       return 'Testo';
-  //     case QuestionType.number:
-  //       return 'Numero';
-  //     case QuestionType.email:
-  //       return 'Email';
-  //     case QuestionType.multi:
-  //       return 'Multiplica risposta';
-  //     case QuestionType.multiOther:
-  //       return 'Multiplica risposta con altro';
-  //     case QuestionType.radio:
-  //       return 'Singola risposta';
-  //     case QuestionType.radioOther:
-  //       return 'Singola risposta con altro';
-  //     case QuestionType.selection:
-  //       return 'Singola risposta da selezionare';
-  //   }
-  // }
-
-  // List<Department> _getDepartment(
-  //     Company? company, List<TextEditingController> listDepartmentController) {
-  //   if (company == null) {
-  //     return listDepartmentController
-  //         .map(
-  //           (element) => Department(id: const Uuid().v4(), name: element.text),
-  //         )
-  //         .toList();
-  //   } else {
-  //     List<Department> list = [];
-  //     for (var index = 0; index < listDepartmentController.length; index++) {
-  //       Department department = Department(
-  //         id: '',
-  //         name: listDepartmentController[index].text,
-  //       );
-  //       try {
-  //         var element = company.listDepartment!.elementAt(index);
-  //         department.id = element.id;
-  //       } catch (e) {
-  //         department.id = const Uuid().v4();
-  //       }
-  //       list.add(department);
-  //     }
-  //     return list;
-  //   }
-  // }
 }

@@ -1,7 +1,9 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/widget/slider_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 class CounterView extends StatelessWidget {
   final int counter;
@@ -17,6 +19,7 @@ class CounterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var colorScheme = Theme.of(context).colorScheme;
     var textTheme = Theme.of(context).textTheme;
     final colorSchemeExtension =
@@ -29,7 +32,7 @@ class CounterView extends StatelessWidget {
           counter != 0 ? counter.toString() : 'VAI!',
           style: textTheme.headline1!.copyWith(
             color: colorScheme.secondary,
-            fontSize: 128.0,
+            fontSize: 128.0 * scale,
             fontWeight: FontWeight.w900,
             fontStyle: FontStyle.italic,
           ),
@@ -51,12 +54,12 @@ class CounterView extends StatelessWidget {
           children: [
             SvgPicture.asset(
               'assets/icons/timer.svg',
-              height: 24.0,
-              width: 24.0,
+              height: 24.0 * scale,
+              width: 24.0 * scale,
               color: actionColor,
             ),
-            const SizedBox(
-              width: 6.0,
+            SizedBox(
+              width: 6.0 * scale,
             ),
             Text(
               'Ritarda 10”'.toUpperCase(),
@@ -75,13 +78,13 @@ class CounterView extends StatelessWidget {
                 color: actionColor,
               ),
             ),
-            const SizedBox(
-              width: 6.0,
+            SizedBox(
+              width: 6.0 * scale,
             ),
             SvgPicture.asset(
               'assets/icons/bike.svg',
-              height: 24.0,
-              width: 24.0,
+              height: 24.0 * scale,
+              width: 24.0 * scale,
               color: actionColor,
             ),
           ],

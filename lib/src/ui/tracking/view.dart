@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/theme.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:cycletowork/src/utility/convert.dart';
+import 'package:provider/provider.dart';
 
 class TrackingView extends StatelessWidget {
   final LocationData? lastLocation;
@@ -22,6 +24,7 @@ class TrackingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final Locale appLocale = Localizations.localeOf(context);
@@ -40,10 +43,10 @@ class TrackingView extends StatelessWidget {
 
     return Scaffold(
       body: Container(
-        margin: const EdgeInsets.only(
-          right: 24.0,
-          left: 24.0,
-          top: 30.0,
+        margin: EdgeInsets.only(
+          right: 24.0 * scale,
+          left: 24.0 * scale,
+          top: 30.0 * scale,
         ),
         child: ListView(
           physics: const ScrollPhysics(),
@@ -68,23 +71,23 @@ class TrackingView extends StatelessWidget {
               speed: numberFormat.format(trackingSpeed),
             ),
             const _Divider(),
-            const SizedBox(
-              height: 15,
+            SizedBox(
+              height: 15 * scale,
             ),
             Stack(
               children: [
                 Align(
                   alignment: Alignment.center,
                   child: SizedBox(
-                    height: 80.0,
-                    width: 80.0,
+                    height: 80.0 * scale,
+                    width: 80.0 * scale,
                     child: FittedBox(
                       child: FloatingActionButton(
                         onPressed: pauseTracking,
                         child: Icon(
                           Icons.pause,
                           color: colorSchemeExtension.textPrimary,
-                          size: 26.0,
+                          size: 26.0 * scale,
                         ),
                       ),
                     ),
@@ -93,23 +96,24 @@ class TrackingView extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerRight,
                   child: Container(
-                    margin: const EdgeInsets.only(top: 10, right: 50.0),
-                    height: 60.0,
-                    width: 60.0,
+                    margin:
+                        EdgeInsets.only(top: 10 * scale, right: 50.0 * scale),
+                    height: 60.0 * scale,
+                    width: 60.0 * scale,
                     child: FittedBox(
                       child: FloatingActionButton(
                         onPressed: showMap,
                         child: SvgPicture.asset(
                           'assets/icons/map.svg',
-                          height: 32.0,
-                          width: 27.0,
+                          height: 32.0 * scale,
+                          width: 27.0 * scale,
                         ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(
-                  width: 28.0,
+                SizedBox(
+                  width: 28.0 * scale,
                 ),
               ],
             ),
@@ -125,16 +129,17 @@ class _Divider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     return Column(
-      children: const [
+      children: [
         SizedBox(
-          height: 10.0,
+          height: 10.0 * scale,
         ),
         Divider(
-          height: 1.0,
+          height: 1.0 * scale,
         ),
         SizedBox(
-          height: 10.0,
+          height: 10.0 * scale,
         ),
       ],
     );

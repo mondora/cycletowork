@@ -21,6 +21,7 @@ class _ProfileChangePasswordViewState extends State<ProfileChangePasswordView> {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final actionColor = colorSchemeExtension.action;
@@ -90,17 +91,17 @@ class _ProfileChangePasswordViewState extends State<ProfileChangePasswordView> {
                   padding: EdgeInsets.zero,
                   children: [
                     Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 24.0),
+                      margin: EdgeInsets.symmetric(horizontal: 24.0 * scale),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           TextButton(
                             style: TextButton.styleFrom(
-                              padding: const EdgeInsets.all(16.0),
-                              shape: const RoundedRectangleBorder(
+                              padding: EdgeInsets.all(16.0 * scale),
+                              shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.all(
-                                  Radius.circular(15.0),
+                                  Radius.circular(15.0 * scale),
                                 ),
                               ),
                               foregroundColor: colorScheme.secondary,
@@ -115,10 +116,10 @@ class _ProfileChangePasswordViewState extends State<ProfileChangePasswordView> {
                           ),
                           TextButton(
                             style: TextButton.styleFrom(
-                              padding: const EdgeInsets.all(16.0),
-                              shape: const RoundedRectangleBorder(
+                              padding: EdgeInsets.all(16.0 * scale),
+                              shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.all(
-                                  Radius.circular(15.0),
+                                  Radius.circular(15.0 * scale),
                                 ),
                               ),
                               foregroundColor: colorScheme.secondary,
@@ -140,7 +141,8 @@ class _ProfileChangePasswordViewState extends State<ProfileChangePasswordView> {
                                         colorSchemeExtension.success,
                                     content: Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 8),
+                                        horizontal: 8,
+                                      ),
                                       child: Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
@@ -183,7 +185,7 @@ class _ProfileChangePasswordViewState extends State<ProfileChangePasswordView> {
                     Column(
                       children: [
                         CircleAvatar(
-                          radius: 50,
+                          radius: 50 * scale,
                           backgroundColor: Colors.grey[400],
                           backgroundImage: userImageUrl != null
                               ? NetworkImage(userImageUrl)
@@ -192,12 +194,12 @@ class _ProfileChangePasswordViewState extends State<ProfileChangePasswordView> {
                               ? Icon(
                                   Icons.person,
                                   color: actionColor,
-                                  size: 50,
+                                  size: 50 * scale,
                                 )
                               : Container(),
                         ),
-                        const SizedBox(
-                          height: 15.0,
+                        SizedBox(
+                          height: 15.0 * scale,
                         ),
                         Text(
                           displayName ?? '',
@@ -205,11 +207,11 @@ class _ProfileChangePasswordViewState extends State<ProfileChangePasswordView> {
                         )
                       ],
                     ),
-                    const SizedBox(
-                      height: 20,
+                    SizedBox(
+                      height: 20 * scale,
                     ),
                     Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 24.0),
+                      margin: EdgeInsets.symmetric(horizontal: 24.0 * scale),
                       child: TextFormField(
                         controller: currentPasswordController,
                         keyboardType: TextInputType.visiblePassword,
@@ -231,11 +233,11 @@ class _ProfileChangePasswordViewState extends State<ProfileChangePasswordView> {
                         },
                       ),
                     ),
-                    const SizedBox(
-                      height: 20,
+                    SizedBox(
+                      height: 20 * scale,
                     ),
                     Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 24.0),
+                      margin: EdgeInsets.symmetric(horizontal: 24.0 * scale),
                       child: TextFormField(
                         controller: newPasswordController,
                         keyboardType: TextInputType.visiblePassword,
@@ -260,11 +262,11 @@ class _ProfileChangePasswordViewState extends State<ProfileChangePasswordView> {
                         },
                       ),
                     ),
-                    const SizedBox(
-                      height: 20,
+                    SizedBox(
+                      height: 20 * scale,
                     ),
                     Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 24.0),
+                      margin: EdgeInsets.symmetric(horizontal: 24.0 * scale),
                       child: TextFormField(
                         controller: reNewPasswordController,
                         keyboardType: TextInputType.visiblePassword,
@@ -286,8 +288,8 @@ class _ProfileChangePasswordViewState extends State<ProfileChangePasswordView> {
                         },
                       ),
                     ),
-                    const SizedBox(
-                      height: 20.0,
+                    SizedBox(
+                      height: 20.0 * scale,
                     ),
                   ],
                 ),

@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/activity/widget/activity_list.dart';
 import 'package:cycletowork/src/ui/dashboard/view_model.dart';
@@ -43,6 +44,7 @@ class _ActivityViewState extends State<ActivityView> {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final dashboardModel = Provider.of<ViewModel>(context);
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
@@ -66,21 +68,21 @@ class _ActivityViewState extends State<ActivityView> {
       backgroundColor: colorScheme.background,
       appBar: AppBar(
         elevation: 4,
-        toolbarHeight: 112.0,
+        toolbarHeight: 112.0 * scale,
         centerTitle: true,
         title: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(
-              height: 10,
+            SizedBox(
+              height: 10 * scale,
             ),
             Text(
               'Attività',
               style: textTheme.headline5,
             ),
-            const SizedBox(
-              height: 20,
+            SizedBox(
+              height: 20 * scale,
             ),
             InputChip(
               onSelected: (bool value) async {
@@ -96,14 +98,14 @@ class _ActivityViewState extends State<ActivityView> {
                 'Filtra attività valide per la challenge',
               ),
             ),
-            const SizedBox(
-              height: 30,
+            SizedBox(
+              height: 30 * scale,
             ),
           ],
         ),
       ),
       body: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 24.0),
+        margin: EdgeInsets.symmetric(horizontal: 24.0 * scale),
         child: ListView(
           controller: _controller,
           children: [
@@ -234,8 +236,9 @@ class _ActivityViewState extends State<ActivityView> {
               ),
             if (listUserActivity.isEmpty)
               Container(
-                height: 115.0,
-                padding: const EdgeInsets.only(left: 34.0, right: 27.0),
+                height: 115.0 * scale,
+                padding:
+                    EdgeInsets.only(left: 34.0 * scale, right: 27.0 * scale),
                 color: Colors.grey[200],
                 child: Center(
                   child: Text(
@@ -248,14 +251,14 @@ class _ActivityViewState extends State<ActivityView> {
                 ),
               ),
             if (dashboardModel.uiState.loading)
-              const Padding(
-                padding: EdgeInsets.only(top: 20),
-                child: Center(
+              Padding(
+                padding: EdgeInsets.only(top: 20 * scale),
+                child: const Center(
                   child: AppProgressIndicator(),
                 ),
               ),
-            const SizedBox(
-              height: 90.0,
+            SizedBox(
+              height: 90.0 * scale,
             ),
           ],
         ),

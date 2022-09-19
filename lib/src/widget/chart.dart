@@ -1,8 +1,11 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/chart_data.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'dart:math';
+
+import 'package:provider/provider.dart';
 
 enum ChartType {
   co2,
@@ -33,6 +36,7 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var maxValue =
         chartData.isNotEmpty ? chartData.map((x) => x.y).reduce(max) : 0;
     final formatterY = charts.BasicNumericTickFormatterSpec(
@@ -96,7 +100,7 @@ class Chart extends StatelessWidget {
 
     if (type == ChartType.speed || type == ChartType.altitude) {
       return SizedBox(
-        height: height,
+        height: height * scale,
         child: charts.TimeSeriesChart(
           _getChatTimeSeriesList(context, chartData, type),
           animate: true,
@@ -137,7 +141,7 @@ class Chart extends StatelessWidget {
     }
 
     return SizedBox(
-      height: height,
+      height: height * scale,
       child: charts.LineChart(
         _getChatSeriesList(context, chartData, type),
         animate: true,

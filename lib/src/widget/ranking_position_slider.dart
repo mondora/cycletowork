@@ -1,7 +1,9 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class RankingPositionSlider extends StatelessWidget {
   final int ranking;
@@ -17,6 +19,7 @@ class RankingPositionSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var textTheme = Theme.of(context).textTheme;
     var colorScheme = Theme.of(context).colorScheme;
     final colorSchemeExtension =
@@ -32,30 +35,31 @@ class RankingPositionSlider extends StatelessWidget {
             fontWeight: FontWeight.w400,
           ),
         ),
-        const SizedBox(
-          height: 8,
+        SizedBox(
+          height: 8 * scale,
         ),
         SizedBox(
-          height: 40,
+          height: 40 * scale,
           child: Stack(
             children: [
               Align(
                 alignment: Alignment.center,
                 child: Container(
-                  margin: const EdgeInsets.only(right: 25.0),
-                  height: 25,
+                  margin: EdgeInsets.only(right: 25.0 * scale),
+                  height: 25 * scale,
                   decoration: BoxDecoration(
-                      color: colorScheme.primary,
-                      gradient: LinearGradient(
-                        colors: [
-                          colorScheme.primary.withOpacity(0),
-                          colorScheme.primary,
-                        ],
-                      ),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(21.0),
-                        bottomLeft: Radius.circular(21.0),
-                      )),
+                    color: colorScheme.primary,
+                    gradient: LinearGradient(
+                      colors: [
+                        colorScheme.primary.withOpacity(0),
+                        colorScheme.primary,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(21.0 * scale),
+                      bottomLeft: Radius.circular(21.0 * scale),
+                    ),
+                  ),
                 ),
               ),
               Align(
@@ -64,7 +68,7 @@ class RankingPositionSlider extends StatelessWidget {
                   isEmpty || ranking <= 0 ? '--' : '$ranking°',
                   style: GoogleFonts.robotoCondensed(
                     textStyle: TextStyle(
-                      fontSize: 24,
+                      fontSize: 24 * scale,
                       letterSpacing: 0.15,
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w500,
@@ -77,8 +81,8 @@ class RankingPositionSlider extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: SvgPicture.asset(
                   'assets/icons/biking.svg',
-                  height: 40,
-                  width: 40,
+                  height: 40 * scale,
+                  width: 40 * scale,
                   color: colorScheme.onBackground,
                 ),
               ),

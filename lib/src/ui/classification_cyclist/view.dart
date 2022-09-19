@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/dashboard/view_model.dart';
 import 'package:cycletowork/src/widget/ranking_position_slider.dart';
@@ -44,6 +45,7 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final viewModel = Provider.of<ViewModel>(context);
     var colorScheme = Theme.of(context).colorScheme;
     final Locale appLocale = Localizations.localeOf(context);
@@ -76,14 +78,14 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
                   : firstColor.withOpacity(0.65)
               : null,
       child: ClipRRect(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(22),
+        borderRadius: BorderRadius.all(
+          Radius.circular(22 * scale),
         ),
         child: firstRankingCo2 != null && firstRankingCo2.photoURL != null
             ? Image.network(firstRankingCo2.photoURL!)
             : Icon(
                 Icons.star,
-                size: 18.0,
+                size: 18.0 * scale,
                 color:
                     firstRankingCo2 == null || firstRankingCo2.photoURL == null
                         ? firstRankingCo2 != null
@@ -106,14 +108,14 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
       backgroundColor:
           userValues.photoURL == null ? valueColor!.withOpacity(0.65) : null,
       child: ClipRRect(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(22),
+        borderRadius: BorderRadius.all(
+          Radius.circular(22 * scale),
         ),
         child: userValues.photoURL != null
             ? Image.network(userValues.photoURL!)
             : Icon(
                 Icons.star,
-                size: 18.0,
+                size: 18.0 * scale,
                 color: valueColor,
               ),
       ),
@@ -128,7 +130,7 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
                 1
             : 0;
 
-    var expandedHeight = 235.0;
+    var expandedHeight = 235.0 * scale;
     var isVisible = true;
 
     return NestedScrollView(
@@ -141,7 +143,7 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
           snap: true,
           floating: true,
           expandedHeight: expandedHeight,
-          collapsedHeight: 160.0,
+          collapsedHeight: 160.0 * scale,
           elevation: 1,
           forceElevated: true,
           flexibleSpace: LayoutBuilder(
@@ -156,12 +158,12 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
                 expandedTitleScale: 1,
                 collapseMode: CollapseMode.none,
                 title: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 24.0),
+                  margin: EdgeInsets.symmetric(horizontal: 24.0 * scale),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: 20 * scale,
                       ),
                       RankingSlider(
                         percent: firstRankingCo2 != null
@@ -190,8 +192,8 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
                           key: UniqueKey(),
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(
-                              height: 10,
+                            SizedBox(
+                              height: 10 * scale,
                             ),
                             RankingSlider(
                               percent: firstRankingCo2 != null
@@ -221,8 +223,8 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
                             ),
                           ],
                         ),
-                      const SizedBox(
-                        height: 10,
+                      SizedBox(
+                        height: 10 * scale,
                       ),
                       RankingPositionSlider(
                         ranking: userRankingCo2Finded,
@@ -242,12 +244,11 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
         color: colorScheme.secondary,
         displacement: 0,
         child: ListView.builder(
-          padding: const EdgeInsets.only(bottom: 80.0),
+          padding: EdgeInsets.only(bottom: 80.0 * scale),
           itemCount: listCyclistClassificationRankingCo2.length,
           itemBuilder: (context, index) {
             var item = listCyclistClassificationRankingCo2[index];
             return _Card(
-              // ranking: item.rankingCo2,
               ranking: index + 1,
               title: item.displayName ?? item.email,
               subtitle:
@@ -292,25 +293,26 @@ class _Card extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var textTheme = Theme.of(context).textTheme;
     var colorScheme = Theme.of(context).colorScheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24.0),
-      height: 70.0,
+      margin: EdgeInsets.symmetric(horizontal: 24.0 * scale),
+      height: 70.0 * scale,
       color: selected
           ? colorScheme.secondary.withOpacity(0.08)
           : colorScheme.background,
       child: Column(
         children: [
           SizedBox(
-            height: 69.0,
+            height: 69.0 * scale,
             child: Row(
               children: [
                 SizedBox(
-                  width: 60.0,
+                  width: 60.0 * scale,
                   child: Text(
                     ranking.toString(),
                     style: textTheme.bodyText1!.copyWith(
@@ -322,35 +324,35 @@ class _Card extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(
-                  width: 10,
+                SizedBox(
+                  width: 10 * scale,
                 ),
                 Container(
-                  height: 40,
-                  width: 40,
+                  height: 40 * scale,
+                  width: 40 * scale,
                   decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(40),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(40 * scale),
                     ),
                     color: color.withOpacity(0.65),
                   ),
                   child: Center(
                     child: ClipRRect(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(40),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(40 * scale),
                       ),
                       child: photoURL != null
                           ? Image.network(photoURL!)
                           : Icon(
                               Icons.star,
-                              size: 24.0,
+                              size: 24.0 * scale,
                               color: color,
                             ),
                     ),
                   ),
                 ),
-                const SizedBox(
-                  width: 10,
+                SizedBox(
+                  width: 10 * scale,
                 ),
                 Expanded(
                   child: Column(
@@ -385,16 +387,16 @@ class _Card extends StatelessWidget {
                           if (isRankingCo2)
                             Row(
                               children: [
-                                const SizedBox(
-                                  width: 10.0,
+                                SizedBox(
+                                  width: 10.0 * scale,
                                 ),
                                 SvgPicture.asset(
                                   'assets/icons/co2.svg',
-                                  height: 24.0,
-                                  width: 24.0,
+                                  height: 24.0 * scale,
+                                  width: 24.0 * scale,
                                 ),
-                                const SizedBox(
-                                  width: 5.0,
+                                SizedBox(
+                                  width: 5.0 * scale,
                                 ),
                                 Text(
                                   value,
@@ -407,14 +409,14 @@ class _Card extends StatelessWidget {
                                     color: colorSchemeExtension.info,
                                   ),
                                 ),
-                                const SizedBox(
-                                  width: 10.0,
+                                SizedBox(
+                                  width: 10.0 * scale,
                                 ),
                               ],
                             ),
                           if (!isRankingCo2)
                             SizedBox(
-                              width: 35.0,
+                              width: 35.0 * scale,
                               child: Text(
                                 value,
                                 overflow: TextOverflow.ellipsis,
@@ -435,9 +437,9 @@ class _Card extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(
-            height: 1,
-            thickness: 1,
+          Divider(
+            height: 1 * scale,
+            thickness: 1 * scale,
           ),
         ],
       ),

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/data/location_data.dart';
@@ -8,6 +9,7 @@ import 'package:cycletowork/src/widget/map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ShowMapTracking extends StatefulWidget {
@@ -47,6 +49,7 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var lastPosition = widget.listTrackingPosition.last;
     final trackingCo2 = widget.trackingUserActivity.co2.gramToKg();
     final isChallenge =
@@ -104,8 +107,8 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
             ),
             child: SlidingUpPanel(
               backdropColor: Theme.of(context).colorScheme.background,
-              maxHeight: 268.0,
-              minHeight: 155.0,
+              maxHeight: 268.0 * scale,
+              minHeight: 155.0 * scale,
               parallaxEnabled: true,
               parallaxOffset: 0.2,
               defaultPanelState: PanelState.OPEN,
@@ -114,27 +117,28 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
                 children: <Widget>[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const <Widget>[
+                    children: <Widget>[
                       Icon(
                         Icons.drag_handle,
                         color: Colors.grey,
+                        size: 20 * scale,
                       )
                     ],
                   ),
-                  const SizedBox(
-                    height: 20,
+                  SizedBox(
+                    height: 20 * scale,
                   ),
                   _Co2Tracking(
                     co2: numberFormat.format(trackingCo2),
                   ),
-                  const SizedBox(
-                    height: 20,
+                  SizedBox(
+                    height: 20 * scale,
                   ),
                   const Divider(
                     height: 1.0,
                   ),
-                  const SizedBox(
-                    height: 17,
+                  SizedBox(
+                    height: 17 * scale,
                   ),
                 ],
               ),
@@ -143,7 +147,7 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
                 topRight: Radius.circular(10.0),
               ),
               body: Container(
-                margin: const EdgeInsets.only(bottom: 120.0),
+                margin: EdgeInsets.only(bottom: 120.0 * scale),
                 child: AppMap(
                   key: _mapKey,
                   type: AppMapType.dynamic,
@@ -158,26 +162,26 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: 120.0,
+              height: 120.0 * scale,
               color: Theme.of(context).colorScheme.background,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 20.0,
+              padding: EdgeInsets.symmetric(
+                horizontal: 24.0 * scale,
+                vertical: 20.0 * scale,
               ),
               child: Stack(
                 children: [
                   Align(
                     alignment: Alignment.center,
                     child: SizedBox(
-                      height: 80.0,
-                      width: 80.0,
+                      height: 80.0 * scale,
+                      width: 80.0 * scale,
                       child: FittedBox(
                         child: FloatingActionButton(
                           onPressed: widget.pauseTracking,
                           child: Icon(
                             Icons.pause,
                             color: colorSchemeExtension.textPrimary,
-                            size: 26.0,
+                            size: 26.0 * scale,
                           ),
                         ),
                       ),
@@ -186,10 +190,13 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: Container(
-                      margin: const EdgeInsets.only(top: 10.0, right: 50.0),
+                      margin: EdgeInsets.only(
+                        top: 10.0 * scale,
+                        right: 50.0 * scale,
+                      ),
                       child: SizedBox(
-                        height: 60.0,
-                        width: 60.0,
+                        height: 60.0 * scale,
+                        width: 60.0 * scale,
                         child: FittedBox(
                           child: FloatingActionButton(
                             onPressed: widget.hiddenMap,
@@ -199,8 +206,8 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
                                   alignment: Alignment.center,
                                   child: SvgPicture.asset(
                                     'assets/icons/map.svg',
-                                    height: 32.0,
-                                    width: 27.0,
+                                    height: 32.0 * scale,
+                                    width: 27.0 * scale,
                                   ),
                                 ),
                                 Align(
@@ -211,12 +218,12 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
                                     child: Container(
                                       decoration: BoxDecoration(
                                         color: colorSchemeExtension.textPrimary,
-                                        borderRadius: const BorderRadius.all(
-                                          Radius.circular(8),
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(8 * scale),
                                         ),
                                       ),
-                                      height: 5.0,
-                                      width: 47.0,
+                                      height: 5.0 * scale,
+                                      width: 47.0 * scale,
                                     ),
                                   ),
                                 ),
@@ -246,6 +253,7 @@ class _Co2Tracking extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var textTheme = Theme.of(context).textTheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
@@ -259,8 +267,8 @@ class _Co2Tracking extends StatelessWidget {
             color: colorSchemeExtension.textSecondary,
           ),
         ),
-        const SizedBox(
-          width: 18.0,
+        SizedBox(
+          width: 18.0 * scale,
         ),
         Text(
           co2,
@@ -269,8 +277,8 @@ class _Co2Tracking extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(
-          width: 18.0,
+        SizedBox(
+          width: 18.0 * scale,
         ),
         Text(
           'Kg',

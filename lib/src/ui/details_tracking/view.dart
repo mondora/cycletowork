@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/chart_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/theme.dart';
@@ -21,6 +22,7 @@ class DetailsTrackingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<AppMapState> _mapKey = GlobalKey();
+    var scale = context.read<AppData>().scale;
 
     return ChangeNotifierProvider<ViewModel>(
       create: (_) => ViewModel.instance(userActivity),
@@ -64,28 +66,30 @@ class DetailsTrackingView extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               leading: IconButton(
-                splashRadius: 25.0,
+                splashRadius: 25.0 * scale,
                 icon: Icon(
                   Icons.arrow_back_ios,
                   color: colorScheme.onBackground,
-                  size: 20,
+                  size: 20 * scale,
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               ),
               actions: [
                 IconButton(
                   onPressed: () {},
-                  icon: const Icon(
+                  splashRadius: 25.0 * scale,
+                  icon: Icon(
                     Icons.more_vert,
+                    size: 20 * scale,
                   ),
                 ),
               ],
             ),
             body: SafeArea(
               child: ListView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24.0,
-                  vertical: 20.0,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 24.0 * scale,
+                  vertical: 20.0 * scale,
                 ),
                 children: [
                   Text(
@@ -105,18 +109,18 @@ class DetailsTrackingView extends StatelessWidget {
                     height: 10.0,
                   ),
                   Container(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: EdgeInsets.all(10.0 * scale),
                     decoration: BoxDecoration(
                       color: colorSchemeExtension.info,
-                      borderRadius: BorderRadius.circular(10.0),
+                      borderRadius: BorderRadius.circular(10.0 * scale),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         SvgPicture.asset(
                           'assets/icons/co2.svg',
-                          height: 46.0,
-                          width: 46.0,
+                          height: 46.0 * scale,
+                          width: 46.0 * scale,
                           color: colorScheme.onSecondary,
                         ),
                         const SizedBox(
@@ -150,7 +154,7 @@ class DetailsTrackingView extends StatelessWidget {
                       Radius.circular(10),
                     ),
                     child: SizedBox(
-                        height: 327.0,
+                        height: 327.0 * scale,
                         child: listLocationData.isNotEmpty && imageData == null
                             ? AppMap(
                                 key: _mapKey,
@@ -158,27 +162,27 @@ class DetailsTrackingView extends StatelessWidget {
                                 type: AppMapType.static,
                                 fit: BoxFit.fitWidth,
                                 isChallenge: isChallenge,
-                                height: 327.0,
+                                height: 327.0 * scale,
                               )
                             : imageData != null
                                 ? Image.memory(
                                     imageData,
                                     fit: BoxFit.fill,
-                                    height: 327.0,
-                                    width: 327.0,
+                                    height: 327.0 * scale,
+                                    width: 327.0 * scale,
                                   )
                                 : Image.asset(
                                     'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking_details.png',
                                     fit: BoxFit.cover,
-                                    height: 327.0,
-                                    width: 327.0,
+                                    height: 327.0 * scale,
+                                    width: 327.0 * scale,
                                   )),
                   ),
                   const SizedBox(
                     height: 20.0,
                   ),
                   SizedBox(
-                    height: 82.0,
+                    height: 82.0 * scale,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -218,7 +222,7 @@ class DetailsTrackingView extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    height: 82.0,
+                    height: 82.0 * scale,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -256,7 +260,7 @@ class DetailsTrackingView extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    height: 82.0,
+                    height: 82.0 * scale,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -417,19 +421,20 @@ class _Item extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var textTheme = Theme.of(context).textTheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     return SizedBox(
-      width: 160.0,
+      width: 160.0 * scale,
       child: Column(
         children: [
           ListTile(
             dense: true,
             leading: SvgPicture.asset(
               imagePath,
-              height: 37.0,
-              width: 37.0,
+              height: 37.0 * scale,
+              width: 37.0 * scale,
             ),
             title: Text(
               title,
@@ -447,8 +452,8 @@ class _Item extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(
-                  width: 9.0,
+                SizedBox(
+                  width: 9.0 * scale,
                 ),
                 Text(
                   unit ?? '',

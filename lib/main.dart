@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 
@@ -11,6 +12,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
 
@@ -34,7 +36,14 @@ void main() async {
     await AppColor.initialize();
     await Gps.initialize();
     await AppNotification.initialize();
-    runApp(const CycleToWorkApp());
+    runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => AppData()),
+        ],
+        child: const CycleToWorkApp(),
+      ),
+    );
   },
       (error, stack) =>
           FirebaseCrashlytics.instance.recordError(error, stack, fatal: true));

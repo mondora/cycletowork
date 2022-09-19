@@ -1,4 +1,6 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AppAlartDialog {
   final BuildContext context;
@@ -40,10 +42,12 @@ class AppAlartDialog {
   }) {
     var colorScheme = Theme.of(context).colorScheme;
     var textTheme = Theme.of(context).textTheme;
+    var scale = context.read<AppData>().scale;
+    var radius = 15.0 * scale;
 
     borderRadius = borderRadius ??
-        const BorderRadius.all(
-          Radius.circular(15.0),
+        BorderRadius.all(
+          Radius.circular(radius),
         );
     titleStyle = titleStyle ?? textTheme.headline6;
     subtitleStyle = subtitleStyle ?? textTheme.bodyText1;
@@ -57,7 +61,7 @@ class AppAlartDialog {
 
     confirmButtonStyle = confirmButtonStyle ??
         TextButton.styleFrom(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(radius),
           shape: RoundedRectangleBorder(
             borderRadius: borderRadius!,
           ),
@@ -75,7 +79,7 @@ class AppAlartDialog {
 
     cancelButtonStyle = cancelButtonStyle ??
         TextButton.styleFrom(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(radius),
           shape: RoundedRectangleBorder(
             borderRadius: borderRadius!,
           ),

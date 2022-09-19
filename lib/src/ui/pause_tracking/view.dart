@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/data/location_data.dart';
@@ -5,6 +6,7 @@ import 'package:cycletowork/src/widget/map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 
@@ -24,6 +26,7 @@ class PauseTrackingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final Locale appLocale = Localizations.localeOf(context);
@@ -50,8 +53,8 @@ class PauseTrackingView extends StatelessWidget {
             ),
             child: SlidingUpPanel(
               backdropColor: Theme.of(context).colorScheme.background,
-              maxHeight: 275.0,
-              minHeight: 155.0,
+              maxHeight: 275.08 * scale,
+              minHeight: 155.0 * scale,
               parallaxEnabled: true,
               parallaxOffset: 0.2,
               defaultPanelState: PanelState.OPEN,
@@ -60,10 +63,11 @@ class PauseTrackingView extends StatelessWidget {
                 children: <Widget>[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const <Widget>[
+                    children: <Widget>[
                       Icon(
                         Icons.drag_handle,
                         color: Colors.grey,
+                        size: 20 * scale,
                       )
                     ],
                   ),
@@ -82,7 +86,7 @@ class PauseTrackingView extends StatelessWidget {
                 topRight: Radius.circular(10.0),
               ),
               body: Container(
-                margin: const EdgeInsets.only(bottom: 150.0),
+                margin: EdgeInsets.only(bottom: 150.0 * scale),
                 child: AppMap(
                   type: AppMapType.static,
                   listTrackingPosition: listTrackingPosition,
@@ -96,61 +100,58 @@ class PauseTrackingView extends StatelessWidget {
             alignment: Alignment.bottomCenter,
             child: Container(
               color: Theme.of(context).colorScheme.background,
-              // color: Colors.blue,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 20.0,
+              padding: EdgeInsets.symmetric(
+                horizontal: 24.0 * scale,
+                vertical: 20.0 * scale,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                // crossAxisAlignment: CrossAxisAlignment.center,
-                // mainAxisSize: MainAxisSize.max,
                 children: [
                   SizedBox(
-                    height: 80.0,
-                    width: 80.0,
+                    height: 80.0 * scale,
+                    width: 80.0 * scale,
                     child: FittedBox(
                       child: FloatingActionButton(
                         onPressed: stopTracking,
                         child: Icon(
                           Icons.stop,
                           color: colorSchemeExtension.textPrimary,
-                          size: 30.0,
+                          size: 30.0 * scale,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 25.0,
+                  SizedBox(
+                    width: 25.0 * scale,
                   ),
                   SizedBox(
-                    height: 80.0,
-                    width: 80.0,
+                    height: 80.0 * scale,
+                    width: 80.0 * scale,
                     child: FittedBox(
                       child: FloatingActionButton(
                         onPressed: playTracking,
                         child: Icon(
                           Icons.play_arrow_rounded,
                           color: colorSchemeExtension.textPrimary,
-                          size: 30.0,
+                          size: 30.0 * scale,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 35.0,
+                  SizedBox(
+                    width: 35.0 * scale,
                   ),
                   SizedBox(
-                    height: 60.0,
-                    width: 60.0,
+                    height: 60.0 * scale,
+                    width: 60.0 * scale,
                     child: FittedBox(
                       child: FloatingActionButton(
                         backgroundColor: Colors.grey,
                         onPressed: null,
                         child: SvgPicture.asset(
                           'assets/icons/map.svg',
-                          height: 32.0,
-                          width: 27.0,
+                          height: 32.0 * scale,
+                          width: 27.0 * scale,
                           color: Colors.grey[600],
                         ),
                       ),
@@ -181,10 +182,12 @@ class _SummeryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
+
     return Column(
       children: [
-        const SizedBox(
-          height: 10.0,
+        SizedBox(
+          height: 10.0 * scale,
         ),
         _TimeTracking(
           time: time,
@@ -199,10 +202,10 @@ class _SummeryCard extends StatelessWidget {
           distance: distant,
         ),
         Container(
-          margin: const EdgeInsets.only(
-            top: 12.0,
-            right: 24.0,
-            left: 24.0,
+          margin: EdgeInsets.only(
+            top: 12.0 * scale,
+            right: 24.0 * scale,
+            left: 24.0 * scale,
           ),
           child: const Divider(
             height: 1,
@@ -222,6 +225,7 @@ class _TimeTracking extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var textTheme = Theme.of(context).textTheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
@@ -229,7 +233,7 @@ class _TimeTracking extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: 120,
+          width: 120 * scale,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -242,11 +246,11 @@ class _TimeTracking extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(
-          width: 18.0,
+        SizedBox(
+          width: 18.0 * scale,
         ),
         SizedBox(
-          width: 135.0,
+          width: 135.0 * scale,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -263,8 +267,8 @@ class _TimeTracking extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(
-          width: 50.0,
+        SizedBox(
+          width: 50.0 * scale,
         ),
       ],
     );
@@ -280,6 +284,7 @@ class _Co2Tracking extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var textTheme = Theme.of(context).textTheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
@@ -287,7 +292,7 @@ class _Co2Tracking extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: 120,
+          width: 120 * scale,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -300,11 +305,11 @@ class _Co2Tracking extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(
-          width: 18.0,
+        SizedBox(
+          width: 18.0 * scale,
         ),
         SizedBox(
-          width: 135.0,
+          width: 135.0 * scale,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -324,8 +329,8 @@ class _Co2Tracking extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(
-          width: 50.0,
+        SizedBox(
+          width: 50.0 * scale,
         ),
       ],
     );
@@ -341,6 +346,7 @@ class _DistanceTracking extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var textTheme = Theme.of(context).textTheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
@@ -348,7 +354,7 @@ class _DistanceTracking extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: 120,
+          width: 120 * scale,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -361,11 +367,11 @@ class _DistanceTracking extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(
-          width: 18.0,
+        SizedBox(
+          width: 18.0 * scale,
         ),
         SizedBox(
-          width: 135.0,
+          width: 135.0 * scale,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -382,8 +388,8 @@ class _DistanceTracking extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(
-          width: 50.0,
+        SizedBox(
+          width: 50.0 * scale,
         ),
       ],
     );
@@ -399,6 +405,7 @@ class _SpeedTracking extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var textTheme = Theme.of(context).textTheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
@@ -406,7 +413,7 @@ class _SpeedTracking extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: 120,
+          width: 120 * scale,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -419,11 +426,11 @@ class _SpeedTracking extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(
-          width: 18.0,
+        SizedBox(
+          width: 18.0 * scale,
         ),
         SizedBox(
-          width: 135.0,
+          width: 135.0 * scale,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -443,8 +450,8 @@ class _SpeedTracking extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(
-          width: 50.0,
+        SizedBox(
+          width: 50.0 * scale,
         ),
       ],
     );

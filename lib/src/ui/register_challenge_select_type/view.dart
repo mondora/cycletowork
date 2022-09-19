@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/register_challenge/view_model.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ class RegisterChallengSelectTypeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final viewModel = Provider.of<ViewModel>(context);
     var challengeName = viewModel.uiState.challenge!.name;
     var colorScheme = Theme.of(context).colorScheme;
@@ -30,11 +32,11 @@ class RegisterChallengSelectTypeView extends StatelessWidget {
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Padding(
-          padding: const EdgeInsets.only(
-            top: 20.0,
-            right: 35.0,
-            left: 35.0,
-            bottom: 30.0,
+          padding: EdgeInsets.only(
+            top: 20.0 * scale,
+            right: 35.0 * scale,
+            left: 35.0 * scale,
+            bottom: 30.0 * scale,
           ),
           child: Column(
             children: [
@@ -52,16 +54,16 @@ class RegisterChallengSelectTypeView extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(
-                height: 26.0,
+              SizedBox(
+                height: 26.0 * scale,
               ),
               SvgPicture.asset(
                 'assets/icons/biking.svg',
-                height: 75,
-                width: 75,
+                height: 75 * scale,
+                width: 75 * scale,
               ),
-              const SizedBox(
-                height: 29.0,
+              SizedBox(
+                height: 29.0 * scale,
               ),
               Text(
                 'Come ciclista, potrai sempre tracciare le tue attività personali. Se vuoi partecipare alla Bike Challenge e vedere le classifiche, seleziona la tua azienda nella prossima schermata.',
@@ -71,12 +73,12 @@ class RegisterChallengSelectTypeView extends StatelessWidget {
                 textAlign: TextAlign.start,
                 maxLines: 5,
               ),
-              const SizedBox(
-                height: 20,
+              SizedBox(
+                height: 20 * scale,
               ),
               SizedBox(
-                width: 250.0,
-                height: 36.0,
+                width: 250.0 * scale,
+                height: 36.0 * scale,
                 child: ElevatedButton(
                   onPressed: viewModel.gotoCyclistRegistration,
                   style: ButtonStyle(
@@ -98,33 +100,34 @@ class RegisterChallengSelectTypeView extends StatelessWidget {
                           color: colorScheme.onSecondary,
                         ),
                       ),
-                      const SizedBox(
-                        width: 10,
+                      SizedBox(
+                        width: 10 * scale,
                       ),
-                      const Icon(
+                      Icon(
                         Icons.arrow_forward_outlined,
-                      )
+                        size: 20 * scale,
+                      ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 34,
+              SizedBox(
+                height: 34 * scale,
               ),
               const Divider(
                 height: 1,
                 thickness: 1,
               ),
-              const SizedBox(
-                height: 30.0,
+              SizedBox(
+                height: 30.0 * scale,
               ),
               SvgPicture.asset(
                 'assets/icons/group_biking.svg',
-                height: 80,
-                width: 483,
+                height: 80 * scale,
+                width: 483 * scale,
               ),
-              const SizedBox(
-                height: 20.0,
+              SizedBox(
+                height: 20.0 * scale,
               ),
               RichText(
                 text: TextSpan(
@@ -150,7 +153,7 @@ class RegisterChallengSelectTypeView extends StatelessWidget {
                               padding: const EdgeInsets.all(1.0),
                               child: Icon(
                                 Icons.info,
-                                size: 15,
+                                size: 15 * scale,
                                 color: colorSchemeExtension.info,
                               ),
                             ),
@@ -161,12 +164,12 @@ class RegisterChallengSelectTypeView extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 15,
+              SizedBox(
+                height: 15 * scale,
               ),
               SizedBox(
-                width: 250.0,
-                height: 36.0,
+                width: 250.0 * scale,
+                height: 36.0 * scale,
                 child: ElevatedButton(
                   onPressed: viewModel.gotoChampionRegistration,
                   style: ButtonStyle(
@@ -188,11 +191,12 @@ class RegisterChallengSelectTypeView extends StatelessWidget {
                           color: colorScheme.onSecondary,
                         ),
                       ),
-                      const SizedBox(
-                        width: 10,
+                      SizedBox(
+                        width: 10 * scale,
                       ),
-                      const Icon(
+                      Icon(
                         Icons.arrow_forward_outlined,
+                        size: 20 * scale,
                       ),
                     ],
                   ),

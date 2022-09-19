@@ -84,6 +84,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final dashboardModel = Provider.of<ViewModel>(context);
     final initialLatitude = dashboardModel.uiState.currentPosition != null
         ? dashboardModel.uiState.currentPosition!.latitude
@@ -131,7 +132,7 @@ class _HomeViewState extends State<HomeView> {
           children: [
             Container(
               color: Theme.of(context).colorScheme.background,
-              height: 115.0,
+              height: 115.0 * scale,
               child: ListView(
                 controller: _controller,
                 scrollDirection: Axis.horizontal,
@@ -173,7 +174,7 @@ class _HomeViewState extends State<HomeView> {
                   if (dashboardModel.uiState.loading)
                     Container(
                       color: Theme.of(context).colorScheme.background,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 20 * scale),
                       child: const Center(
                         child: AppProgressIndicator(),
                       ),
@@ -188,8 +189,8 @@ class _HomeViewState extends State<HomeView> {
                 bottomRight: Radius.circular(10.0),
               ),
               child: SlidingUpPanel(
-                maxHeight: 168.0,
-                minHeight: 30.0,
+                maxHeight: 168.0 * scale,
+                minHeight: 30.0 * scale,
                 defaultPanelState: PanelState.OPEN,
                 color: Theme.of(context).colorScheme.background,
                 boxShadow: const [],
@@ -197,9 +198,9 @@ class _HomeViewState extends State<HomeView> {
                 panelBuilder: (sc) => Column(
                   children: <Widget>[
                     Container(
-                      margin: const EdgeInsets.only(
-                        right: 24.0,
-                        left: 24.0,
+                      margin: EdgeInsets.only(
+                        right: 24.0 * scale,
+                        left: 24.0 * scale,
                       ),
                       child: Container(
                         height: 1,
@@ -213,10 +214,11 @@ class _HomeViewState extends State<HomeView> {
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const <Widget>[
+                      children: <Widget>[
                         Icon(
                           Icons.drag_handle,
                           color: Colors.grey,
+                          size: 20 * scale,
                         ),
                       ],
                     ),

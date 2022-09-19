@@ -1,7 +1,9 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/ui/milan_bike_challenge_regulations/view.dart';
 import 'package:cycletowork/src/ui/personal_data_management/view.dart';
 import 'package:cycletowork/src/ui/privacy_policy/view.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class InformationView extends StatelessWidget {
   const InformationView({Key? key}) : super(key: key);
@@ -67,12 +69,13 @@ class _InformationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var colorScheme = Theme.of(context).colorScheme;
     var textTheme = Theme.of(context).textTheme;
     return Column(
       children: [
         SizedBox(
-          height: 63.0,
+          height: 63.0 * scale,
           child: ListTile(
             leading: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -89,6 +92,7 @@ class _InformationItem extends StatelessWidget {
                 Icon(
                   Icons.arrow_forward_ios,
                   color: colorScheme.onBackground,
+                  size: 25 * scale,
                 ),
               ],
             ),

@@ -31,6 +31,7 @@ class DashboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final landingModel = Provider.of<landing_view_model.ViewModel>(context);
     var textTheme = Theme.of(context).textTheme;
     var colorScheme = Theme.of(context).colorScheme;
@@ -161,11 +162,13 @@ class DashboardView extends StatelessWidget {
                 );
               }
               var isCenter = viewModel.uiState.appMenuOption.index == 0;
-              var floatingActionButtonSize = isCenter ? 100.0 : 50.0;
+              var floatingActionButtonSize = (isCenter ? 100.0 : 50.0) * scale;
               return Scaffold(
                 appBar: AppBar(
-                  toolbarHeight:
-                      AppData.user!.userType == UserType.other ? 60.0 : 80.0,
+                  iconTheme: IconThemeData(size: 25.0 * scale),
+                  toolbarHeight: AppData.user!.userType == UserType.other
+                      ? 60.0 * scale
+                      : 80.0 * scale,
                   elevation: 0.0,
                   centerTitle: true,
                   title: AppGpsIcon(
@@ -188,8 +191,8 @@ class DashboardView extends StatelessWidget {
                           viewModel.uiState.refreshLocationLoading,
                       visible: viewModel.uiState.showAppBarAction,
                     ),
-                    const SizedBox(
-                      width: 10.0,
+                    SizedBox(
+                      width: 10.0 * scale,
                     ),
                   ],
                 ),
@@ -207,7 +210,6 @@ class DashboardView extends StatelessWidget {
                   fit: StackFit.expand,
                   children: [
                     tabs.elementAt(viewModel.uiState.appMenuOption.index),
-                    // ClassificationView(),
                     Positioned(
                       bottom: 0.0,
                       right: 0,
@@ -229,16 +231,16 @@ class DashboardView extends StatelessWidget {
                       ),
                     ),
                     Positioned(
-                      bottom: isCenter ? 80.0 : 0.0,
+                      bottom: isCenter ? 80.0 * scale : 0.0,
                       right: 0,
                       left: isCenter ? 0 : null,
                       child: Container(
                         width: floatingActionButtonSize,
                         height: floatingActionButtonSize,
-                        margin: const EdgeInsets.only(
-                          right: 20.0,
-                          left: 20.0,
-                          bottom: 20.0,
+                        margin: EdgeInsets.only(
+                          right: 20.0 * scale,
+                          left: 20.0 * scale,
+                          bottom: 20.0 * scale,
                         ),
                         child: FittedBox(
                           child: FloatingActionButton(
@@ -251,7 +253,7 @@ class DashboardView extends StatelessWidget {
                             child: Column(
                               children: [
                                 SizedBox(
-                                  height: isCenter ? 8 : 11,
+                                  height: (isCenter ? 9 : 12) * scale,
                                 ),
                                 Text(
                                   'IN',

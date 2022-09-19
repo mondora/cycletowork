@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/utility/share.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_static_maps_controller/google_static_maps_controller.dart'
     as static_map;
+import 'package:provider/provider.dart';
 
 enum AppMapType {
   static,
@@ -215,9 +217,10 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
     _lightMapStyle =
         await rootBundle.loadString('assets/maps/light_theme.json');
     if (_markerIcon == null) {
+      var scale = context.read<AppData>().scale;
       final Uint8List markerIcon = await getBytesFromAsset(
         'assets/images/marker_image.png',
-        80,
+        (80 * scale).toInt(),
       );
       _markerIcon = BitmapDescriptor.fromBytes(markerIcon);
     }

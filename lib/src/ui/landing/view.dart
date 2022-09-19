@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/ui/dashboard/view.dart';
 import 'package:cycletowork/src/ui/landing/ui_state.dart';
 import 'package:cycletowork/src/ui/landing/view_model.dart';
@@ -19,13 +20,29 @@ class _LandingViewState extends State<LandingView> {
   void initState() {
     super.initState();
     AppNotification.requestPermission();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _configScreen(context),
+    );
+  }
+
+  _configScreen(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    if (width < 375.0) {
+      var scale = width / 375.0;
+      context.read<AppData>().setScaleThemeData(scale);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
     var textTheme = Theme.of(context).textTheme;
-
+    var width = MediaQuery.of(context).size.width;
+    var scale = 1.0;
+    if (width < 375.0) {
+      scale = width / 375.0;
+    }
+    var currenScreenScale = context.read<AppData>().scale;
     return Scaffold(
       body: ChangeNotifierProvider<ViewModel>(
         create: (_) => ViewModel.instance(),
@@ -68,7 +85,8 @@ class _LandingViewState extends State<LandingView> {
               );
             }
 
-            if (viewModel.uiState.pageOption == PageOption.loading) {
+            if (viewModel.uiState.pageOption == PageOption.loading ||
+                currenScreenScale != scale) {
               return Scaffold(
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 body: Stack(

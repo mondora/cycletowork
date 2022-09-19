@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/ui/landing/view_model.dart';
 import 'package:cycletowork/src/ui/login_email/view.dart';
 import 'package:cycletowork/src/ui/signup/view.dart';
@@ -18,6 +19,7 @@ class LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final landingModel = Provider.of<ViewModel>(context);
     var isIos = defaultTargetPlatform == TargetPlatform.iOS;
 
@@ -33,8 +35,8 @@ class LoginView extends StatelessWidget {
               fit: BoxFit.cover,
             ),
             Container(
-              margin: const EdgeInsets.symmetric(
-                horizontal: 25.0,
+              margin: EdgeInsets.symmetric(
+                horizontal: 25.0 * scale,
               ),
               child: Stack(
                 children: [
@@ -46,15 +48,15 @@ class LoginView extends StatelessWidget {
                   Column(
                     children: [
                       Container(
-                        margin: const EdgeInsets.only(top: 20.0),
+                        margin: EdgeInsets.only(top: 20.0 * scale),
                         child: Text(
                           'Hai già un account?'.toUpperCase(),
                           style: Theme.of(context).textTheme.caption,
                         ),
                       ),
                       Container(
-                        margin: const EdgeInsets.only(
-                          top: 10.0,
+                        margin: EdgeInsets.only(
+                          top: 10.0 * scale,
                         ),
                         child: AppButton(
                           loading: loading,
@@ -70,20 +72,20 @@ class LoginView extends StatelessWidget {
                           title: AppLocalizations.of(context)!.login,
                           textUpperCase: true,
                           type: ButtonType.secondary,
-                          maxWidth: 95,
-                          radius: 8.0,
+                          maxWidth: 95 * scale,
+                          radius: 8.0 * scale,
                         ),
                       ),
                       Container(
-                        margin: const EdgeInsets.only(top: 24.0),
+                        margin: EdgeInsets.only(top: 24.0 * scale),
                         child: Text(
                           'Oppure:'.toUpperCase(),
                           style: Theme.of(context).textTheme.caption,
                         ),
                       ),
                       // Container(
-                      //   margin: const EdgeInsets.only(
-                      //     top: 10.0,
+                      //   margin: EdgeInsets.only(
+                      //     top: 10.0*scale,
                       //   ),
                       //   child: AppButton(
                       //     loading: loading,
@@ -92,12 +94,12 @@ class LoginView extends StatelessWidget {
                       //         AppLocalizations.of(context)!.signupWithFacebook,
                       //     textUpperCase: true,
                       //     type: ButtonType.facebookLogin,
-                      //     radius: 8.0,
+                      //     radius: 8.0*scale,
                       //   ),
                       // ),
                       Container(
-                        margin: const EdgeInsets.only(
-                          top: 14.0,
+                        margin: EdgeInsets.only(
+                          top: 14.0 * scale,
                         ),
                         child: AppButton(
                           loading: loading,
@@ -105,13 +107,13 @@ class LoginView extends StatelessWidget {
                           title: AppLocalizations.of(context)!.signupWithGoogle,
                           textUpperCase: true,
                           type: ButtonType.googleLogin,
-                          radius: 8.0,
+                          radius: 8.0 * scale,
                         ),
                       ),
                       isIos
                           ? Container(
-                              margin: const EdgeInsets.only(
-                                top: 14.0,
+                              margin: EdgeInsets.only(
+                                top: 14.0 * scale,
                               ),
                               child: AppButton(
                                 loading: loading,
@@ -119,13 +121,13 @@ class LoginView extends StatelessWidget {
                                 title: 'Accedi con Apple',
                                 textUpperCase: true,
                                 type: ButtonType.appleLogin,
-                                radius: 8.0,
+                                radius: 8.0 * scale,
                               ),
                             )
                           : Container(),
                       Container(
-                        margin: const EdgeInsets.only(
-                          top: 14.0,
+                        margin: EdgeInsets.only(
+                          top: 14.0 * scale,
                         ),
                         child: AppButton(
                           loading: loading,
@@ -141,11 +143,11 @@ class LoginView extends StatelessWidget {
                           title: AppLocalizations.of(context)!.signupWithEmail,
                           textUpperCase: true,
                           type: ButtonType.emailLogin,
-                          radius: 8.0,
+                          radius: 8.0 * scale,
                         ),
                       ),
-                      const SizedBox(
-                        height: 20.0,
+                      SizedBox(
+                        height: 20.0 * scale,
                       ),
                     ],
                   ),

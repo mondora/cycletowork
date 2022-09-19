@@ -1,5 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 enum ButtonType {
   primary,
@@ -20,6 +22,7 @@ class AppButton extends StatelessWidget {
   final double height;
   final bool textUpperCase;
   final bool loading;
+
   const AppButton({
     Key? key,
     required this.title,
@@ -35,15 +38,16 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var buttonStyle = _ButtonStyle(context, type);
     return Container(
-      height: height,
+      height: height * scale,
       margin: EdgeInsets.symmetric(
         horizontal: horizontalMargin,
       ),
       child: ButtonTheme(
-        minWidth: maxWidth,
-        height: height,
+        minWidth: maxWidth * scale,
+        height: height * scale,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radius),
         ),
@@ -51,7 +55,7 @@ class AppButton extends StatelessWidget {
           color: buttonStyle.backgroundColor,
           disabledColor: buttonStyle.backgroundColor.withOpacity(0.75),
           onPressed: loading == true ? null : onPressed,
-          height: height,
+          height: height * scale,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,

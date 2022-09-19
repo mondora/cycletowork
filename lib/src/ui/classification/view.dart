@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/classification_cyclist/view.dart';
 import 'package:cycletowork/src/ui/classification_department/view.dart';
@@ -17,6 +18,7 @@ class ClassificationView extends StatefulWidget {
 class _ClassificationViewState extends State<ClassificationView> {
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final viewModel = Provider.of<ViewModel>(context);
     var textTheme = Theme.of(context).textTheme;
     var colorScheme = Theme.of(context).colorScheme;
@@ -51,11 +53,11 @@ class _ClassificationViewState extends State<ClassificationView> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          toolbarHeight: 90.0,
+          toolbarHeight: 90.0 * scale,
           title: Column(
             children: [
-              const SizedBox(
-                height: 10,
+              SizedBox(
+                height: 10 * scale,
               ),
               Text(
                 'Classifica',
@@ -121,6 +123,7 @@ class _EmptyChallenge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     var colorScheme = Theme.of(context).colorScheme;
     var textTheme = Theme.of(context).textTheme;
     return Scaffold(
@@ -129,8 +132,8 @@ class _EmptyChallenge extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(
-            height: 10.0,
+          SizedBox(
+            height: 10.0 * scale,
           ),
           Center(
             child: Text(
@@ -138,16 +141,16 @@ class _EmptyChallenge extends StatelessWidget {
               style: textTheme.headline5,
             ),
           ),
-          const SizedBox(
-            height: 30.0,
+          SizedBox(
+            height: 30.0 * scale,
           ),
           Container(
-            height: (MediaQuery.of(context).size.height / 3) * 2,
-            margin: const EdgeInsets.symmetric(horizontal: 24.0),
-            padding: const EdgeInsets.only(left: 23.0, right: 19.0),
+            height: (MediaQuery.of(context).size.height / 3) * 2 * scale,
+            margin: EdgeInsets.symmetric(horizontal: 24.0 * scale),
+            padding: EdgeInsets.only(left: 23.0 * scale, right: 19.0 * scale),
             decoration: BoxDecoration(
               color: colorScheme.primary,
-              borderRadius: BorderRadius.circular(20.0),
+              borderRadius: BorderRadius.circular(20.0 * scale),
             ),
             child: Center(
               child: Text(
