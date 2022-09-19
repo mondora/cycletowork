@@ -125,7 +125,7 @@ class Repository {
     );
 
     var stopDateChalleng = challengeRegistry.stopTimeChallenge;
-    var dateNow = DateTime.now().microsecond;
+    var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localListCompanyClassification.isNotEmpty &&
         stopDateChalleng < dateNow &&
         localListCompanyClassification.first.updateDate > stopDateChalleng) {
@@ -166,7 +166,7 @@ class Repository {
     );
 
     var stopDateChalleng = challengeRegistry.stopTimeChallenge;
-    var dateNow = DateTime.now().microsecond;
+    var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localListCompanyClassification.isNotEmpty &&
         stopDateChalleng < dateNow &&
         localListCompanyClassification.first.updateDate > stopDateChalleng) {
@@ -205,7 +205,7 @@ class Repository {
     );
 
     var stopDateChalleng = challengeRegistry.stopTimeChallenge;
-    var dateNow = DateTime.now().microsecond;
+    var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localListCyclistClassification.isNotEmpty &&
         stopDateChalleng < dateNow &&
         localListCyclistClassification.first.updateDate > stopDateChalleng) {
@@ -239,7 +239,7 @@ class Repository {
       challengeRegistry.companySizeCategory,
     );
     var stopDateChalleng = challengeRegistry.stopTimeChallenge;
-    var dateNow = DateTime.now().microsecond;
+    var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localUserCompanyClassification != null &&
         stopDateChalleng < dateNow &&
         localUserCompanyClassification.updateDate > stopDateChalleng) {
@@ -271,7 +271,7 @@ class Repository {
       challengeRegistry.challengeId,
     );
     var stopDateChalleng = challengeRegistry.stopTimeChallenge;
-    var dateNow = DateTime.now().microsecond;
+    var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localUserCyclistClassification != null &&
         stopDateChalleng < dateNow &&
         localUserCyclistClassification.updateDate > stopDateChalleng) {
@@ -304,7 +304,7 @@ class Repository {
       challengeRegistry.departmentName,
     );
     var stopDateChalleng = challengeRegistry.stopTimeChallenge;
-    var dateNow = DateTime.now().microsecond;
+    var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localUserDepartmentClassification != null &&
         stopDateChalleng < dateNow &&
         localUserDepartmentClassification.updateDate > stopDateChalleng) {
@@ -345,7 +345,7 @@ class Repository {
     );
 
     var stopDateChalleng = challengeRegistry.stopTimeChallenge;
-    var dateNow = DateTime.now().microsecond;
+    var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localListDepartmentClassification.isNotEmpty &&
         stopDateChalleng < dateNow &&
         localListDepartmentClassification.first.updateDate > stopDateChalleng) {

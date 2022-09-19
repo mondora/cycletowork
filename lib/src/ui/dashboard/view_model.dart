@@ -49,6 +49,7 @@ class ViewModel extends ChangeNotifier {
 
   void getter() async {
     _uiState.refreshLocationLoading = true;
+    _uiState.refreshClassificationLoading = true;
     notifyListeners();
     try {
       _initAppNotification();
@@ -450,7 +451,7 @@ class ViewModel extends ChangeNotifier {
       return;
     }
 
-    _uiState.refreshLocationLoading = true;
+    _uiState.refreshClassificationLoading = true;
     notifyListeners();
     try {
       var challengeRegistry = _uiState.challengeRegistrySelected!;
@@ -496,7 +497,7 @@ class ViewModel extends ChangeNotifier {
       _uiState.error = true;
       Logger.error(e);
     } finally {
-      _uiState.refreshLocationLoading = false;
+      _uiState.refreshClassificationLoading = false;
       notifyListeners();
     }
   }
@@ -509,7 +510,7 @@ class ViewModel extends ChangeNotifier {
       return;
     }
 
-    _uiState.refreshLocationLoading = true;
+    _uiState.refreshClassificationLoading = true;
     notifyListeners();
     try {
       var challengeRegistry = _uiState.challengeRegistrySelected!;
@@ -554,7 +555,7 @@ class ViewModel extends ChangeNotifier {
       _uiState.error = true;
       Logger.error(e);
     } finally {
-      _uiState.refreshLocationLoading = false;
+      _uiState.refreshClassificationLoading = false;
       notifyListeners();
     }
   }
@@ -567,7 +568,7 @@ class ViewModel extends ChangeNotifier {
       return;
     }
 
-    _uiState.refreshLocationLoading = true;
+    _uiState.refreshClassificationLoading = true;
     notifyListeners();
     try {
       var challengeRegistry = _uiState.challengeRegistrySelected!;
@@ -650,7 +651,7 @@ class ViewModel extends ChangeNotifier {
       _uiState.error = true;
       Logger.error(e);
     } finally {
-      _uiState.refreshLocationLoading = false;
+      _uiState.refreshClassificationLoading = false;
       notifyListeners();
     }
   }

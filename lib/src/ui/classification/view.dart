@@ -4,6 +4,7 @@ import 'package:cycletowork/src/ui/classification_cyclist/view.dart';
 import 'package:cycletowork/src/ui/classification_department/view.dart';
 import 'package:cycletowork/src/ui/dashboard/view_model.dart';
 import 'package:cycletowork/src/ui/classification_company/view.dart';
+import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -39,6 +40,20 @@ class _ClassificationViewState extends State<ClassificationView> {
         challengeRegistrySelected.departmentName != '';
     var isEmptyDepartment =
         hasDepartment && userDepartmentClassification == null;
+    var refreshClassificationLoading =
+        viewModel.uiState.refreshClassificationLoading;
+
+    if (refreshClassificationLoading &&
+        (!registeredToChalleng ||
+            userCompanyClassification == null ||
+            userCyclistClassification == null ||
+            isEmptyDepartment)) {
+      return const Scaffold(
+        body: Center(
+          child: AppProgressIndicator(),
+        ),
+      );
+    }
 
     if (!registeredToChalleng ||
         userCompanyClassification == null ||

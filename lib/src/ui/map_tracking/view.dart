@@ -63,7 +63,7 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
       appLocale.languageCode,
     );
 
-    Timer(const Duration(microseconds: 500), () async {
+    Timer(const Duration(milliseconds: 200), () async {
       if (lastPositionPassed == null ||
           lastPositionPassed!.latitude != lastPosition.latitude ||
           lastPositionPassed!.longitude != lastPosition.longitude) {

@@ -34,6 +34,7 @@ enum AppMenuOption {
 class UiState {
   bool loading = false;
   bool refreshLocationLoading = false;
+  bool refreshClassificationLoading = false;
   bool error = false;
   bool showAppBarAction = true;
   String errorMessage = '';

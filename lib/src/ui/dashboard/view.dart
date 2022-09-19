@@ -188,7 +188,8 @@ class DashboardView extends StatelessWidget {
                         viewModel.changePageFromMenu(AppMenuOption.profile);
                       },
                       loading: viewModel.uiState.loading ||
-                          viewModel.uiState.refreshLocationLoading,
+                          viewModel.uiState.refreshLocationLoading ||
+                          viewModel.uiState.refreshClassificationLoading,
                       visible: viewModel.uiState.showAppBarAction,
                     ),
                     SizedBox(
