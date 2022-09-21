@@ -1,12 +1,15 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/camera/view.dart';
 import 'package:cycletowork/src/ui/profile_edit/view_model.dart';
+import 'package:cycletowork/src/widget/alart_dialog.dart';
 import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:cycletowork/src/widget/selection_dialog.dart';
 import 'package:flutter/material.dart';
-// import 'package:image_picker/image_picker.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class ProfileEditView extends StatefulWidget {
@@ -206,98 +209,87 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                         SizedBox(
                           height: 5.0 * scale,
                         ),
-                        // TextButton(
-                        //   style: TextButton.styleFrom(
-                        //     padding: EdgeInsets.all(16.0 * scale),
-                        //     shape: RoundedRectangleBorder(
-                        //       borderRadius: BorderRadius.all(
-                        //         Radius.circular(15.0 * scale),
-                        //       ),
-                        //     ),
-                        //     foregroundColor: colorScheme.secondary,
-                        //   ),
-                        //   onPressed: () async {
-                        //     var select = await AppSelectionDialog(
-                        //       context: context,
-                        //       listLabel: [
-                        //         'Scatta una foto',
-                        //         'Scegli dalla libreria',
-                        //         'Annulla',
-                        //       ],
-                        //       barrierDismissible: true,
-                        //     ).show();
-                        //     if (select == null || select == 'Annulla') {
-                        //       return;
-                        //     }
-                        //     if (select == 'Scatta una foto') {
-                        //       String? imagePath =
-                        //           await Navigator.of(context).push(
-                        //         MaterialPageRoute(
-                        //           builder: (context) => const CameraView(),
-                        //         ),
-                        //       );
-                        //       if (imagePath != null) {
-                        //         var result =
-                        //             await viewModel.changePhotoURL(imagePath);
-                        //         Navigator.pop(context, result);
-                        //       }
-                        //       // var status = await Permission.camera.status;
-                        //       // if (status.isGranted) {
-                        //       //   String? imagePath =
-                        //       //       await Navigator.of(context).push(
-                        //       //     MaterialPageRoute(
-                        //       //       builder: (context) => const CameraView(),
-                        //       //     ),
-                        //       //   );
-                        //       //   if (imagePath != null) {
-                        //       //     var result =
-                        //       //         await viewModel.changePhotoURL(imagePath);
-                        //       //     Navigator.pop(context, result);
-                        //       //   }
-                        //       // } else {
-                        //       //   await AppAlartDialog(
-                        //       //     context: context,
-                        //       //     title: 'Attenzione!',
-                        //       //     subtitle:
-                        //       //         "È necessario acconsentire all'utilizzo della fotocamera",
-                        //       //     body: '',
-                        //       //     confirmLabel: 'Ho capito',
-                        //       //   ).show();
-                        //       //   await AppSettings.openAppSettings();
-                        //       // }
-                        //     } else {
-                        //       // final ImagePicker _picker = ImagePicker();
-                        //       // final XFile? image = await _picker.pickImage(
-                        //       //   source: ImageSource.gallery,
-                        //       // );
-                        //       // if (image != null) {
-                        //       //   var result =
-                        //       //       await viewModel.changePhotoURL(image.path);
-                        //       //   Navigator.pop(context, result);
-                        //       // }
-                        //     }
-                        //   },
-                        //   child: Row(
-                        //     mainAxisAlignment: MainAxisAlignment.center,
-                        //     mainAxisSize: MainAxisSize.min,
-                        //     children: [
-                        //       Icon(
-                        //         Icons.edit,
-                        //         color: colorScheme.secondary,
-                        //         size: 20 * scale,
-                        //       ),
-                        //       SizedBox(
-                        //         width: 5 * scale,
-                        //       ),
-                        //       Text(
-                        //         'Modifica immagine',
-                        //         style: textTheme.bodyText1!.copyWith(
-                        //           color: colorScheme.secondary,
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.all(16.0 * scale),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(15.0 * scale),
+                              ),
+                            ),
+                            foregroundColor: colorScheme.secondary,
+                          ),
+                          onPressed: () async {
+                            var select = await AppSelectionDialog(
+                              context: context,
+                              listLabel: [
+                                'Scatta una foto',
+                                'Scegli dalla libreria',
+                                'Annulla',
+                              ],
+                              barrierDismissible: true,
+                            ).show();
+                            if (select == null || select == 'Annulla') {
+                              return;
+                            }
+                            if (select == 'Scatta una foto') {
+                              var status = await Permission.camera.request();
+                              if (status.isGranted) {
+                                String? imagePath =
+                                    await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => const CameraView(),
+                                  ),
+                                );
+                                if (imagePath != null) {
+                                  var result =
+                                      await viewModel.changePhotoURL(imagePath);
+                                  Navigator.pop(context, result);
+                                }
+                              } else {
+                                await AppAlartDialog(
+                                  context: context,
+                                  title: 'Attenzione!',
+                                  subtitle:
+                                      "È necessario acconsentire all'utilizzo della fotocamera",
+                                  body: '',
+                                  confirmLabel: 'Ho capito',
+                                ).show();
+                                await AppSettings.openAppSettings();
+                              }
+                            } else {
+                              final ImagePicker _picker = ImagePicker();
+                              final XFile? image = await _picker.pickImage(
+                                source: ImageSource.gallery,
+                              );
+                              if (image != null) {
+                                var result =
+                                    await viewModel.changePhotoURL(image.path);
+                                Navigator.pop(context, result);
+                              }
+                            }
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.edit,
+                                color: colorScheme.secondary,
+                                size: 20 * scale,
+                              ),
+                              SizedBox(
+                                width: 5 * scale,
+                              ),
+                              Text(
+                                'Modifica immagine',
+                                style: textTheme.bodyText1!.copyWith(
+                                  color: colorScheme.secondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(
@@ -670,52 +662,52 @@ class _ProfileEditViewState extends State<ProfileEditView> {
 //   }
 // }
 
-class _ListChallengeItem extends StatelessWidget {
-  final String title;
-  final GestureTapCancelCallback? onPressed;
-  const _ListChallengeItem({
-    Key? key,
-    required this.title,
-    required this.onPressed,
-  }) : super(key: key);
+// class _ListChallengeItem extends StatelessWidget {
+//   final String title;
+//   final GestureTapCancelCallback? onPressed;
+//   const _ListChallengeItem({
+//     Key? key,
+//     required this.title,
+//     required this.onPressed,
+//   }) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
-    var colorScheme = Theme.of(context).colorScheme;
-    var textTheme = Theme.of(context).textTheme;
-    return Column(
-      children: [
-        SizedBox(
-          height: 63.0 * scale,
-          child: ListTile(
-            leading: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: textTheme.bodyText1,
-                ),
-              ],
-            ),
-            trailing: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.arrow_forward_ios,
-                  color: colorScheme.onBackground,
-                  size: 25 * scale,
-                ),
-              ],
-            ),
-            onTap: onPressed,
-          ),
-        ),
-        Container(
-          height: 1.5,
-          color: const Color.fromRGBO(0, 0, 0, 0.12),
-        ),
-      ],
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     var scale = context.read<AppData>().scale;
+//     var colorScheme = Theme.of(context).colorScheme;
+//     var textTheme = Theme.of(context).textTheme;
+//     return Column(
+//       children: [
+//         SizedBox(
+//           height: 63.0 * scale,
+//           child: ListTile(
+//             leading: Column(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 Text(
+//                   title,
+//                   style: textTheme.bodyText1,
+//                 ),
+//               ],
+//             ),
+//             trailing: Column(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 Icon(
+//                   Icons.arrow_forward_ios,
+//                   color: colorScheme.onBackground,
+//                   size: 25 * scale,
+//                 ),
+//               ],
+//             ),
+//             onTap: onPressed,
+//           ),
+//         ),
+//         Container(
+//           height: 1.5,
+//           color: const Color.fromRGBO(0, 0, 0, 0.12),
+//         ),
+//       ],
+//     );
+//   }
+// }

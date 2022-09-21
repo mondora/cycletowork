@@ -45,6 +45,10 @@
 	<string>Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Per poter cambiare l'immagine del tuo profilo Cycle2Work è necessario acconsentire all'utilizzo della fotocamera</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Per poter cambiare l'immagine del tuo profilo Cycle2Work è necessario acconsentire all'utilizzo della galleria imaggini</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
@@ -72,7 +76,6 @@
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-	  <string>mailto</string>
 	  <string>https</string>
 	</array>
 </dict>
