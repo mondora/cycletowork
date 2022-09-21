@@ -97,7 +97,7 @@ class Repository {
     if (result == true && name != null && name != '' && isAuthenticated) {
       Timer(const Duration(seconds: 3), () async {
         try {
-          await _remoteService.updateUserName(name);
+          await _remoteService.updateUserDisplayName(name);
         } catch (e) {
           Logger.error(e);
         }

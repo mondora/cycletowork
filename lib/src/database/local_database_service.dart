@@ -153,12 +153,6 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
   }
 
   @override
-  Future<void> updateUserName(String name) {
-    // TODO: implement updateUserName
-    throw UnimplementedError();
-  }
-
-  @override
   Future<List<ChallengeRegistry>> getListActiveRegisterChallenge() async {
     var now = DateTime.now();
     String whereCondition =

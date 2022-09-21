@@ -20,6 +20,7 @@ class AppAlartDialog {
   TextStyle? cancelLabelStyle;
   ButtonStyle? cancelButtonStyle;
   final bool iscCancelDestructiveAction;
+  final bool actionsAlignmentCenter;
 
   AppAlartDialog({
     required this.context,
@@ -39,6 +40,7 @@ class AppAlartDialog {
     this.cancelLabelStyle,
     this.cancelButtonStyle,
     this.iscCancelDestructiveAction = false,
+    this.actionsAlignmentCenter = true,
   }) {
     var colorScheme = Theme.of(context).colorScheme;
     var textTheme = Theme.of(context).textTheme;
@@ -119,8 +121,9 @@ class AppAlartDialog {
               ],
             ),
           ),
-          actionsAlignment:
-              cancelLabel != null ? MainAxisAlignment.center : null,
+          actionsAlignment: cancelLabel != null && actionsAlignmentCenter
+              ? MainAxisAlignment.center
+              : null,
           actions: <Widget>[
             if (cancelLabel != null)
               TextButton(

@@ -1,3 +1,4 @@
+import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/app_service.dart';
 import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/classification.dart';
@@ -7,6 +8,7 @@ import 'package:cycletowork/src/data/survey.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/service/remote.dart';
+import 'package:cycletowork/src/service/storage.dart';
 
 class RemoteService
     implements AppService, AppServiceOnlyRemote, AppAdminService {
@@ -53,8 +55,8 @@ class RemoteService
   }
 
   @override
-  Future<void> updateUserName(String name) async {
-    var arg = {'displayName': name};
+  Future<void> updateUserDisplayName(String displayName) async {
+    var arg = {'displayName': displayName};
     await Remote.callFirebaseFunctions('updateUserInfo', arg);
   }
 
@@ -483,5 +485,23 @@ class RemoteService
   Future<bool?> deleteAccount() async {
     await Remote.callFirebaseFunctions('deleteAccount', null);
     return true;
+  }
+
+  @override
+  Future<String?> updateUserPhotoURL(
+    String imagePath,
+    String fileName,
+  ) async {
+    Map<String, String> customMetadata = {
+      'uid': AppData.user!.uid,
+    };
+    var photoURL = await Storage.saveImageInStorage(
+      imagePath,
+      fileName,
+      customMetadata: customMetadata,
+    );
+    var arg = {'photoURL': photoURL};
+    await Remote.callFirebaseFunctions('updateUserInfo', arg);
+    return photoURL;
   }
 }

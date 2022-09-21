@@ -45,9 +45,6 @@ class Gps {
 
       location.PermissionStatus permissionStatus =
           await location.getPermissionStatus();
-      if (permissionStatus == location.PermissionStatus.notDetermined) {
-        permissionStatus = await location.requestPermission();
-      }
       if (permissionStatus == location.PermissionStatus.authorizedAlways ||
           permissionStatus == location.PermissionStatus.authorizedWhenInUse) {
         return GpsStatus.granted;
@@ -72,7 +69,11 @@ class Gps {
   static Future<location_data.LocationData?> getCurrentPosition() async {
     try {
       var result = await location.getLocation(
-        settings: location.LocationSettings(ignoreLastKnownPosition: true),
+        settings: location.LocationSettings(
+          ignoreLastKnownPosition: true,
+          useGooglePlayServices: false,
+          askForGooglePlayServices: false,
+        ),
       );
       return location_data.LocationData(
         latitude: result.latitude ?? 0,
@@ -100,11 +101,14 @@ class Gps {
         : location.LocationAccuracy.high;
     await location.setLocationSettings(
       interval: 1000,
-      fastestInterval: 1000,
+      fastestInterval: 9500,
       accuracy: accuracy,
       smallestDisplacement: smallestDisplacement,
       rationaleMessageForPermissionRequest: permissionRequestMessage,
       rationaleMessageForGPSRequest: permissionRequestMessage,
+      useGooglePlayServices: false,
+      askForGooglePlayServices: false,
+      // fallbackToGPS: false,
     );
   }
 

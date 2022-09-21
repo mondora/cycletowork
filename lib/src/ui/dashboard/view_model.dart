@@ -149,6 +149,22 @@ class ViewModel extends ChangeNotifier {
     }
   }
 
+  void getUserInfo() async {
+    _uiState.loading = true;
+    notifyListeners();
+    try {
+      AppData.user = await _repository.getUserInfo();
+      AppData.isUserUsedEmailProvider = _repository.isUserUsedEmailProvider();
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+    } finally {
+      _uiState.loading = false;
+      notifyListeners();
+    }
+  }
+
   void getActiveChallengeListAndClassification() async {
     _uiState.loading = true;
     notifyListeners();
@@ -767,6 +783,8 @@ class ViewModel extends ChangeNotifier {
     if (result.isNotEmpty) {
       _uiState.listChallengeRegistred = result;
       _uiState.challengeRegistrySelected = result.first;
+    } else {
+      _uiState.refreshClassificationLoading = false;
     }
     notifyListeners();
   }

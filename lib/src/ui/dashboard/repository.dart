@@ -428,15 +428,6 @@ class Repository {
     }
   }
 
-  Future<bool> isGpsGranted() async {
-    var status = await Gps.getGpsStatus();
-    if (status == GpsStatus.granted) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   Future<GpsStatus> getGpsStatus() async {
     return await Gps.getGpsStatus();
   }

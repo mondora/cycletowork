@@ -166,7 +166,8 @@ class DashboardView extends StatelessWidget {
               return Scaffold(
                 appBar: AppBar(
                   iconTheme: IconThemeData(size: 25.0 * scale),
-                  toolbarHeight: AppData.user!.userType == UserType.other
+                  toolbarHeight: AppData.user!.userType == UserType.other ||
+                          !viewModel.uiState.showAppBarAction
                       ? 60.0 * scale
                       : 80.0 * scale,
                   elevation: 0.0,
@@ -236,54 +237,63 @@ class DashboardView extends StatelessWidget {
                       right: 0,
                       left: isCenter ? 0 : null,
                       child: Container(
-                        width: floatingActionButtonSize,
-                        height: floatingActionButtonSize,
+                        // width: floatingActionButtonSize,
+                        // height: floatingActionButtonSize,
                         margin: EdgeInsets.only(
                           right: 20.0 * scale,
                           left: 20.0 * scale,
                           bottom: 20.0 * scale,
                         ),
-                        child: FittedBox(
-                          child: FloatingActionButton(
-                            onPressed: () async {
-                              var check = await _checkGpsAndPermission(context);
-                              if (check) {
-                                viewModel.startCounter(context);
-                              }
-                            },
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: (isCenter ? 9 : 12) * scale,
-                                ),
-                                Text(
-                                  'IN',
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline5!
-                                      .copyWith(
-                                        fontWeight: FontWeight.w900,
-                                        fontStyle: FontStyle.italic,
-                                        fontSize: isCenter ? 14 : 12,
-                                      ),
-                                ),
-                                Text(
-                                  'SELLA!',
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline5!
-                                      .copyWith(
-                                        fontWeight: FontWeight.w900,
-                                        fontStyle: FontStyle.italic,
-                                        fontSize: isCenter ? 13 : 12,
-                                      ),
-                                ),
-                              ],
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            var check = await _checkGpsAndPermission(context);
+                            if (check) {
+                              viewModel.startCounter(context);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: const CircleBorder(),
+                            backgroundColor: colorScheme.primary,
+                            fixedSize: Size(
+                              floatingActionButtonSize,
+                              floatingActionButtonSize,
                             ),
+                          ),
+                          child: Column(
+                            // mainAxisSize: MainAxisSize.max,
+                            // crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // SizedBox(
+                              //   height: (isCenter ? 9 : 12) * scale,
+                              // ),
+                              Text(
+                                'IN',
+                                textAlign: TextAlign.center,
+                                maxLines: 1,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline5!
+                                    .copyWith(
+                                      fontWeight: FontWeight.w900,
+                                      fontStyle: FontStyle.italic,
+                                      fontSize: (isCenter ? 22 : 10) * scale,
+                                    ),
+                              ),
+                              Text(
+                                'SELLA!',
+                                textAlign: TextAlign.center,
+                                maxLines: 1,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline5!
+                                    .copyWith(
+                                      fontWeight: FontWeight.w900,
+                                      fontStyle: FontStyle.italic,
+                                      fontSize: (isCenter ? 22 : 10) * scale,
+                                    ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -300,6 +310,10 @@ class DashboardView extends StatelessWidget {
 
   Future<bool> _checkGpsAndPermission(BuildContext context) async {
     var gpsStatus = await Gps.getGpsStatus();
+    if (gpsStatus == GpsStatus.granted) {
+      return true;
+    }
+
     if (gpsStatus == GpsStatus.turnOff) {
       await AppAlartDialog(
         context: context,
@@ -311,32 +325,46 @@ class DashboardView extends StatelessWidget {
       await AppSettings.openDeviceSettings();
       return false;
     }
-    var permissionStatus = await Gps.getPermissionStatus();
-    if (permissionStatus == PermissionStatus.denied) {
-      await AppAlartDialog(
-        context: context,
-        title: 'Attenzione!',
-        subtitle: 'Cycle2Work non è in grado di rilevare la tua posizione.',
-        body:
-            'Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione. Puoi farlo nelle impostazioni di sistema.',
-        confirmLabel: 'Ho capito',
-      ).show();
-      await AppSettings.openLocationSettings();
-      return false;
+    var confirm = await AppAlartDialog(
+      context: context,
+      title: 'Attenzione!',
+      subtitle:
+          "L'app Cycle2Work rileva la tua posizione (location) per calcolare il percorso effettuato in bici corrispondente alla quantità di CO\u2082 risparmiata anche quando questa app non è in uso ma è in background.",
+      body: '',
+      confirmLabel: 'ACCETTO',
+      cancelLabel: 'RIFIUTO',
+      barrierDismissible: true,
+      actionsAlignmentCenter: false,
+    ).show();
+    if (confirm == true) {
+      var permissionStatus = await Gps.getPermissionStatus();
+      if (permissionStatus == PermissionStatus.denied) {
+        await AppAlartDialog(
+          context: context,
+          title: 'Attenzione!',
+          subtitle: 'Cycle2Work non è in grado di rilevare la tua posizione.',
+          body:
+              'Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione. Puoi farlo nelle impostazioni di sistema.',
+          confirmLabel: 'Ho capito',
+        ).show();
+        await AppSettings.openLocationSettings();
+        return false;
+      }
+      if (permissionStatus == PermissionStatus.restricted) {
+        await AppAlartDialog(
+          context: context,
+          title: 'Attenzione!',
+          subtitle:
+              'Cycle2Work non è in grado di rilevare la tua posizione in modo preciso.',
+          body:
+              'Per poter usare al meglio Cycle2Work è necessario abilitare il rilevamento preciso della posizione. Puoi farlo nelle impostazioni di sistema.',
+          confirmLabel: 'Ho capito',
+        ).show();
+        await AppSettings.openLocationSettings();
+        return false;
+      }
+      return true;
     }
-    if (permissionStatus == PermissionStatus.restricted) {
-      await AppAlartDialog(
-        context: context,
-        title: 'Attenzione!',
-        subtitle:
-            'Cycle2Work non è in grado di rilevare la tua posizione in modo preciso.',
-        body:
-            'Per poter usare al meglio Cycle2Work è necessario abilitare il rilevamento preciso della posizione. Puoi farlo nelle impostazioni di sistema.',
-        confirmLabel: 'Ho capito',
-      ).show();
-      await AppSettings.openLocationSettings();
-      return false;
-    }
-    return true;
+    return false;
   }
 }

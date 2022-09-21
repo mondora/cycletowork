@@ -74,7 +74,7 @@ class AppAvatar extends StatelessWidget {
               Align(
                 alignment: Alignment.topRight,
                 child: CircleAvatar(
-                  radius: avatarEditionRadius,
+                  radius: avatarEditionRadius * scale,
                   backgroundColor: Colors.transparent,
                   child: _getEditionImage(userType),
                 ),

@@ -16,8 +16,6 @@ abstract class AppService {
 
   Future<void> removeDeviceToken(String deviceToken);
 
-  Future<void> updateUserName(String name);
-
   Future<bool> registerChallenge(ChallengeRegistry challengeRegistry);
 
   Future<List<ChallengeRegistry>> getListRegisterdChallenge();
@@ -151,6 +149,8 @@ abstract class AppServiceOnlyLocal {
 abstract class AppServiceOnlyRemote {
   Future<User> getUserInfo();
 
+  Future<void> updateUserDisplayName(String displayName);
+
   Future<List<UserActivity>> getListUserActivity({
     int pageSize = 50,
     String? startTime,
@@ -213,4 +213,6 @@ abstract class AppServiceOnlyRemote {
     String challengeId,
     int pageSize,
   );
+
+  Future<String?> updateUserPhotoURL(String imagePath, String fileName);
 }
