@@ -171,6 +171,20 @@ class ViewModel extends ChangeNotifier {
     }
   }
 
+  Future<bool?> passwordReset(String email) async {
+    debugPrint('passwordReset');
+    clearError();
+    try {
+      return await _repository.passwordReset(email);
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      Logger.error(e);
+      _uiState.error = true;
+      notifyListeners();
+      return false;
+    }
+  }
+
   void logout() async {
     debugPrint('logout');
     _uiState.pageOption = PageOption.loading;

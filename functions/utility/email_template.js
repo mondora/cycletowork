@@ -300,7 +300,7 @@ const sendVerifiyCode = (code) => {
           <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
               <tr>
               <td valign="middle" class="hero bg_white" style="padding: 0;">
-                <img src="https://i.ibb.co/MRDFch7/emai-header.png" alt="image" style="width: 300px; max-width: 600px; height: auto; margin: auto; display: block;">
+                <img src="https://fmansigh.sirv.com/emai_header.png" alt="image" style="width: 300px; max-width: 600px; height: auto; margin: auto; display: block;">
               </td>
               </tr><!-- end tr -->
                     <tr>

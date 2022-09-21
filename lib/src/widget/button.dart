@@ -10,6 +10,7 @@ enum ButtonType {
   appleLogin,
   googleLogin,
   emailLogin,
+  text,
 }
 
 class AppButton extends StatelessWidget {
@@ -40,6 +41,25 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     var scale = context.read<AppData>().scale;
     var buttonStyle = _ButtonStyle(context, type);
+
+    if (type == ButtonType.text) {
+      return TextButton(
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.all(16.0 * scale),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radius),
+          ),
+          foregroundColor: buttonStyle.backgroundColor,
+        ),
+        onPressed: loading == true ? null : onPressed,
+        child: Text(
+          textUpperCase ? title.toUpperCase() : title,
+          style: buttonStyle.textStyle,
+          maxLines: 1,
+        ),
+      );
+    }
+
     return Container(
       height: height * scale,
       margin: EdgeInsets.symmetric(
@@ -143,6 +163,13 @@ class _ButtonStyle {
       icon = Container(
         margin: EdgeInsets.only(right: _marginRight),
         child: Image.asset('assets/images/email_icon.png'),
+      );
+    }
+
+    if (type == ButtonType.text) {
+      backgroundColor = Theme.of(context).colorScheme.secondary;
+      textStyle = buttonStyle.apply(
+        color: Theme.of(context).colorScheme.secondary,
       );
     }
   }

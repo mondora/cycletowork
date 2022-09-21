@@ -1,5 +1,6 @@
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/ui/landing/ui_state.dart';
+import 'package:cycletowork/src/ui/login_email_reset_password/view.dart';
 import 'package:cycletowork/src/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -116,6 +117,26 @@ class LoginEmailView extends StatelessWidget {
                     }
                   },
                   type: ButtonType.secondary,
+                  maxWidth: 95 * scale,
+                  horizontalMargin: 0.0,
+                  radius: 8.0 * scale,
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 20.0 * scale),
+                child: AppButton(
+                  title: 'recupera password',
+                  textUpperCase: true,
+                  onPressed: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => LoginEmailResetPasswordView(
+                          landingModel: landingModel,
+                        ),
+                      ),
+                    );
+                  },
+                  type: ButtonType.text,
                   maxWidth: 95 * scale,
                   horizontalMargin: 0.0,
                   radius: 8.0 * scale,

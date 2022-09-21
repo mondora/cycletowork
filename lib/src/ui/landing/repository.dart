@@ -116,4 +116,8 @@ class Repository {
   Future<bool> isAdmin() async {
     return await UserAuth.isAdmin();
   }
+
+  Future<bool?> passwordReset(String email) async {
+    return await UserAuth.passwordReset(email);
+  }
 }

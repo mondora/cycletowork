@@ -122,6 +122,13 @@ class UserAuth {
     return true;
   }
 
+  static Future<bool?> passwordReset(String email) async {
+    await FirebaseAuth.instance.sendPasswordResetEmail(
+      email: email,
+    );
+    return true;
+  }
+
   static Future logout() async {
     try {
       await FirebaseAuth.instance.signOut();
