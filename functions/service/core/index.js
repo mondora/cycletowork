@@ -22,13 +22,19 @@ const recursiveDeleteDocs = async () => {
     const data = snapshot.docs[0].data();
     const id = data.id;
     const path = data.path;
+    const isStorageFile = data.isStorageFile;
 
-    await firebase_tools.firestore.delete(path, {
-        project: process.env.GCLOUD_PROJECT,
-        recursive: true,
-        force: true,
-        token: FB_TOKEN,
-    });
+    if (isStorageFile) {
+        await admin.storage().bucket().file(path).delete();
+    } else {
+        await firebase_tools.firestore.delete(path, {
+            project: process.env.GCLOUD_PROJECT,
+            recursive: true,
+            force: true,
+            token: FB_TOKEN,
+        });
+    }
+
     await admin
         .firestore()
         .collection(Constant.deleteDocsCollectionName)

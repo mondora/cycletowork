@@ -60,6 +60,29 @@ const { recursiveDeleteDocs } = require('./service/core');
 
 admin.initializeApp();
 
+exports.onCreateUser = functions
+    .region(Constant.appRegion)
+    .auth.user()
+    .onCreate(async (user) => {
+        await createUser(user);
+    });
+
+exports.onCreateUserPhoto = functions
+    .region(Constant.appRegion)
+    .storage.object()
+    .onFinalize(async (object) => {
+        const uid = object.metadata.uid;
+        const name = object.name;
+        const dataUser = {
+            listFile: admin.firestore.FieldValue.arrayUnion(...[name]),
+        };
+        await admin
+            .firestore()
+            .collection(Constant.usersCollectionName)
+            .doc(uid)
+            .update(dataUser, { merge: true });
+    });
+
 exports.scheduledFunction = functions
     .region(Constant.appRegion)
     .runWith({

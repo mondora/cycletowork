@@ -86,6 +86,26 @@ const deleteAccount = async (uid) => {
             deleteAccountRef.doc(userActivityToDelete.id),
             userActivityToDelete
         );
+        const listFile = userInfoData.listFile;
+        if (listFile && listFile.length) {
+            for (let index = 0; index < listFile.length; index++) {
+                const file = listFile[index];
+
+                const userFileToDelete = {
+                    id: uuidv4(),
+                    path: file,
+                    isDone: false,
+                    isStorageFile: true,
+                    requestDate: Date.now(),
+                };
+
+                t.create(
+                    deleteAccountRef.doc(userFileToDelete.id),
+                    userFileToDelete
+                );
+            }
+        }
+
         const listRegisterdChallenge = userInfoData.listChallengeIdRegister;
         if (listRegisterdChallenge && listRegisterdChallenge.length) {
             for (
@@ -136,11 +156,41 @@ const getUserInfo = async (uid) => {
 };
 
 const updateUserInfo = async (uid, data) => {
-    await admin
+    let userInfoData;
+    const userRef = admin
         .firestore()
         .collection(Constant.usersCollectionName)
-        .doc(uid)
-        .update(data, { merge: true });
+        .doc(uid);
+
+    await admin.firestore().runTransaction(async (t) => {
+        const userInfo = await t.get(userRef);
+        if (userInfo.exists) {
+            userInfoData = userInfo.data();
+        } else {
+            throw new Error(Constant.userNotFoundError);
+        }
+
+        t.update(userRef, data, { merge: true });
+
+        const listRegisterdChallenge = userInfoData.listChallengeIdRegister;
+        if (listRegisterdChallenge && listRegisterdChallenge.length) {
+            for (
+                let index = 0;
+                index < listRegisterdChallenge.length;
+                index++
+            ) {
+                const challengeId = listRegisterdChallenge[index];
+                const userInChallengeRef = admin
+                    .firestore()
+                    .collection(Constant.challengeCollectionName)
+                    .doc(challengeId)
+                    .collection(Constant.usersCollectionName)
+                    .doc(uid);
+
+                t.update(userInChallengeRef, data, { merge: true });
+            }
+        }
+    });
 };
 
 const sendEmailVerificationCode = async (uid, email, displayName) => {
@@ -180,7 +230,13 @@ const sendEmailVerificationCode = async (uid, email, displayName) => {
             expireCode: expireCode,
         });
     }
-    await updateUserInfo(uid, dataCode);
+
+    await admin
+        .firestore()
+        .collection(Constant.usersCollectionName)
+        .doc(uid)
+        .update(dataCode, { merge: true });
+
     const msg = {
         from: 'info@sataspes.net',
         to: email,
@@ -229,7 +285,12 @@ const verifiyEmailCode = async (uid, email, code) => {
         email: email,
         verified: true,
     };
-    await updateUserInfo(uid, dataCode);
+
+    await admin
+        .firestore()
+        .collection(Constant.usersCollectionName)
+        .doc(uid)
+        .update(dataCode, { merge: true });
 };
 
 const randomInteger = (min, max) => {
