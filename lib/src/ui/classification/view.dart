@@ -33,7 +33,7 @@ class _ClassificationViewState extends State<ClassificationView> {
 
     var challengeRegistrySelected = viewModel.uiState.challengeRegistrySelected;
     var userCompanyClassification = viewModel.uiState.userCompanyClassification;
-    var userCyclistClassification = viewModel.uiState.userCompanyClassification;
+    var userCyclistClassification = viewModel.uiState.userCyclistClassification;
     var userDepartmentClassification =
         viewModel.uiState.userDepartmentClassification;
     var hasDepartment = challengeRegistrySelected != null &&

@@ -127,6 +127,7 @@ class Repository {
     var stopDateChalleng = challengeRegistry.stopTimeChallenge;
     var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localListCompanyClassification.isNotEmpty &&
+        localListCompanyClassification.length > 1 &&
         stopDateChalleng < dateNow &&
         localListCompanyClassification.first.updateDate > stopDateChalleng) {
       return localListCompanyClassification;
@@ -168,6 +169,7 @@ class Repository {
     var stopDateChalleng = challengeRegistry.stopTimeChallenge;
     var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localListCompanyClassification.isNotEmpty &&
+        localListCompanyClassification.length > 1 &&
         stopDateChalleng < dateNow &&
         localListCompanyClassification.first.updateDate > stopDateChalleng) {
       return localListCompanyClassification;
@@ -207,6 +209,7 @@ class Repository {
     var stopDateChalleng = challengeRegistry.stopTimeChallenge;
     var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localListCyclistClassification.isNotEmpty &&
+        localListCyclistClassification.length > 1 &&
         stopDateChalleng < dateNow &&
         localListCyclistClassification.first.updateDate > stopDateChalleng) {
       return localListCyclistClassification;
@@ -347,6 +350,7 @@ class Repository {
     var stopDateChalleng = challengeRegistry.stopTimeChallenge;
     var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localListDepartmentClassification.isNotEmpty &&
+        localListDepartmentClassification.length > 1 &&
         stopDateChalleng < dateNow &&
         localListDepartmentClassification.first.updateDate > stopDateChalleng) {
       return localListDepartmentClassification;
