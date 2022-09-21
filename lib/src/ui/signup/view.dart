@@ -186,7 +186,7 @@ class SignupView extends StatelessWidget {
                   title: AppLocalizations.of(context)!.login,
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      var email = emailController.text;
+                      var email = emailController.text.toLowerCase().trim();
                       var password = passwordController.text;
                       var name = nameController.text;
                       var result =

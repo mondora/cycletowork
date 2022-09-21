@@ -106,7 +106,7 @@ class LoginEmailView extends StatelessWidget {
                   title: AppLocalizations.of(context)!.login,
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      var email = emailController.text;
+                      var email = emailController.text.toLowerCase().trim();
                       var password = passwordController.text;
                       var result =
                           await landingModel.loginEmail(email, password);

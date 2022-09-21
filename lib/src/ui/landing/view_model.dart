@@ -146,8 +146,14 @@ class ViewModel extends ChangeNotifier {
       } else if (e == 'wrong-password') {
         _uiState.errorMessage = "Password errata, riprova.";
         _uiState.error = true;
+      } else if (e == 'invalid-email') {
+        _uiState.errorMessage =
+            "L'email non è valida o contiene i caratteri non accettabile.";
+        _uiState.error = true;
       } else {
+        _uiState.errorMessage = e.toString();
         Logger.error(e);
+        _uiState.error = true;
       }
 
       _uiState.pageOption = PageOption.logout;
@@ -189,8 +195,14 @@ class ViewModel extends ChangeNotifier {
       } else if (e == 'email-already-in-use') {
         _uiState.errorMessage = "L'account esiste già per quello email.";
         _uiState.error = true;
+      } else if (e == 'invalid-email') {
+        _uiState.errorMessage =
+            "L'email non è valida o contiene i caratteri non accettabile.";
+        _uiState.error = true;
       } else {
+        _uiState.errorMessage = e.toString();
         Logger.error(e);
+        _uiState.error = true;
       }
 
       _uiState.pageOption = PageOption.logout;
