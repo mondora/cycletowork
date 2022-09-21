@@ -58,17 +58,7 @@ class ViewModel extends ChangeNotifier {
       await _repository.loginApple();
       var isAuthenticated = _repository.isAuthenticated();
       if (isAuthenticated) {
-        Timer(const Duration(seconds: 4), () async {
-          try {
-            await _getInitialInfo();
-            _uiState.pageOption = PageOption.home;
-            notifyListeners();
-          } catch (e) {
-            Logger.error(e);
-            _uiState.pageOption = PageOption.logout;
-            notifyListeners();
-          }
-        });
+        _tryGetUserInfo();
       } else {
         _uiState.pageOption = PageOption.logout;
         notifyListeners();
@@ -90,17 +80,7 @@ class ViewModel extends ChangeNotifier {
       await _repository.loginGoogleSignIn();
       var isAuthenticated = _repository.isAuthenticated();
       if (isAuthenticated) {
-        Timer(const Duration(seconds: 4), () async {
-          try {
-            await _getInitialInfo();
-            _uiState.pageOption = PageOption.home;
-            notifyListeners();
-          } catch (e) {
-            Logger.error(e);
-            _uiState.pageOption = PageOption.logout;
-            notifyListeners();
-          }
-        });
+        _tryGetUserInfo();
       } else {
         _uiState.pageOption = PageOption.logout;
         notifyListeners();
@@ -122,17 +102,7 @@ class ViewModel extends ChangeNotifier {
       await _repository.loginEmail(email, password);
       var isAuthenticated = _repository.isAuthenticated();
       if (isAuthenticated) {
-        Timer(const Duration(seconds: 4), () async {
-          try {
-            await _getInitialInfo();
-            _uiState.pageOption = PageOption.home;
-            notifyListeners();
-          } catch (e) {
-            Logger.error(e);
-            _uiState.pageOption = PageOption.logout;
-            notifyListeners();
-          }
-        });
+        _tryGetUserInfo();
         return true;
       } else {
         _uiState.pageOption = PageOption.logout;
@@ -171,17 +141,7 @@ class ViewModel extends ChangeNotifier {
       displayName = name;
       var isAuthenticated = _repository.isAuthenticated();
       if (isAuthenticated) {
-        Timer(const Duration(seconds: 4), () async {
-          try {
-            await _getInitialInfo();
-            _uiState.pageOption = PageOption.home;
-            notifyListeners();
-          } catch (e) {
-            Logger.error(e);
-            _uiState.pageOption = PageOption.logout;
-            notifyListeners();
-          }
-        });
+        _tryGetUserInfo();
         return true;
       } else {
         _uiState.pageOption = PageOption.logout;
@@ -231,6 +191,29 @@ class ViewModel extends ChangeNotifier {
     _uiState.error = false;
     _uiState.errorMessage = '';
     notifyListeners();
+  }
+
+  _tryGetUserInfo() {
+    int _counterTryGetUserInfo = 4;
+    Timer? _timer;
+    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) async {
+      try {
+        debugPrint('_tryGetUserInfo');
+        await _getInitialInfo();
+        _uiState.pageOption = PageOption.home;
+        _timer?.cancel();
+        notifyListeners();
+      } catch (e) {
+        if (_counterTryGetUserInfo == 0) {
+          Logger.error(e);
+          _uiState.pageOption = PageOption.logout;
+          _timer?.cancel();
+          notifyListeners();
+        }
+      } finally {
+        _counterTryGetUserInfo--;
+      }
+    });
   }
 
   Future<void> _getInitialInfo() async {
