@@ -463,6 +463,7 @@ class ViewModel extends ChangeNotifier {
     _uiState.challengeRegistry.companyToAdd!.hasMoreDepartment = true;
     _uiState.challengeRegistry.companyToAdd!.listDepartment = [
       Department(id: const Uuid().v4(), name: ''),
+      Department(id: const Uuid().v4(), name: ''),
     ];
     notifyListeners();
   }

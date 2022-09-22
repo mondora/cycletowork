@@ -563,25 +563,16 @@ class _RegisterChallengChampionViewState
                                 keyboardType: TextInputType.text,
                                 textInputAction: TextInputAction.next,
                                 decoration: InputDecoration(
-                                  labelText: 'Sede e/o dipartimento ',
+                                  labelText:
+                                      'Sede e/o dipartimento ${index + 1}',
                                   suffixIcon: Material(
                                     color: Colors.transparent,
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        if (index + 1 ==
-                                            companyListDepartment.length)
-                                          IconButton(
-                                            splashRadius: 20 * scale,
-                                            onPressed: () => viewModel
-                                                .setCompanyToAddAddDepartment(),
-                                            icon: Icon(
-                                              Icons.add_circle_outline,
-                                              color: colorScheme.secondary,
-                                              size: 20 * scale,
-                                            ),
-                                          ),
-                                        if (index != 0)
+                                        if (index > 1 &&
+                                            index + 1 ==
+                                                companyListDepartment.length)
                                           IconButton(
                                             splashRadius: 20 * scale,
                                             onPressed: () => viewModel
@@ -604,7 +595,7 @@ class _RegisterChallengChampionViewState
                                     .setCompanyToAddDepartment(index, value),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Inserire sede e/o dipartimento ';
+                                    return 'Inserire sede e/o dipartimento ${index + 1}';
                                   }
 
                                   return null;
@@ -612,6 +603,32 @@ class _RegisterChallengChampionViewState
                               ),
                             );
                           },
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 30 * scale),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                'Aggiungi un’altra sede o dipartimento',
+                                style: textTheme.bodyText2,
+                              ),
+                              ElevatedButton(
+                                onPressed: () =>
+                                    viewModel.setCompanyToAddAddDepartment(),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.0,
+                                  shape: const CircleBorder(),
+                                  backgroundColor: Colors.transparent,
+                                ),
+                                child: Icon(
+                                  Icons.add_circle_outline,
+                                  color: colorScheme.secondary,
+                                  size: 20 * scale,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
