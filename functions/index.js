@@ -514,24 +514,7 @@ exports.getActiveChallengeList = functions
         if (uid) {
             loggerLog('getActiveChallengeList UID:', uid, 'data: ', data);
             try {
-                const result = await getActiveChallengeList();
-                if (result && result.length) {
-                    const user = await getUserInfo(uid);
-                    if (
-                        user &&
-                        user.listChallengeIdRegister &&
-                        user.listChallengeIdRegister.length
-                    ) {
-                        const addedChallenges = user.listChallengeIdRegister;
-                        return result.filter(
-                            (el) => addedChallenges.indexOf(el.id) < 0
-                        );
-                    } else {
-                        return result;
-                    }
-                } else {
-                    return [];
-                }
+                return await getActiveChallengeList(uid);
             } catch (error) {
                 loggerError(
                     'getActiveChallengeList Error, UID:',

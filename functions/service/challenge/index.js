@@ -3,7 +3,7 @@ const { Constant } = require('../../utility/constant');
 const { saveChallengeUser, getUserInfo } = require('../user');
 const { saveCompany } = require('../company');
 
-const getActiveChallengeList = async () => {
+const getActiveChallengeList = async (uid) => {
     const snapshot = await admin
         .firestore()
         .collection(Constant.challengeCollectionName)
@@ -12,11 +12,28 @@ const getActiveChallengeList = async () => {
         .limit(100)
         .get();
 
-    if (!snapshot.empty) {
-        return snapshot.docs.map((doc) => doc.data());
-    } else {
+    if (snapshot.empty) {
         return [];
     }
+
+    const user = await getUserInfo(uid);
+    const listChallengeIdRegister = user.listChallengeIdRegister || [];
+    const listActiveChallenge = [];
+
+    for (let index = 0; index < snapshot.docs.length; index++) {
+        const challenge = snapshot.docs[index].data();
+        if (!listChallengeIdRegister.includes(challenge.id)) {
+            if (challenge.isWhitelisted) {
+                if (challenge.listUserUid.includes(uid)) {
+                    listActiveChallenge.push(challenge);
+                }
+            } else {
+                listActiveChallenge.push(challenge);
+            }
+        }
+    }
+
+    return listActiveChallenge;
 };
 
 const registerChallenge = async (uid, challengeRegistry) => {
@@ -123,6 +140,12 @@ const registerChallenge = async (uid, challengeRegistry) => {
         );
         if (!businessEmailInChallenge.empty) {
             throw new Error(Constant.userAlreadyRegisteredError);
+        }
+
+        if (challengeInfoData.isWhitelisted) {
+            if (!challengeInfoData.listUserUid.includes(uid)) {
+                throw new Error(Constant.userNotHavePermissionError);
+            }
         }
 
         if (isCyclist) {
