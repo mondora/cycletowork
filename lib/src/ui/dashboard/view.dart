@@ -271,13 +271,8 @@ class DashboardView extends StatelessWidget {
                             ),
                           ),
                           child: Column(
-                            // mainAxisSize: MainAxisSize.max,
-                            // crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              // SizedBox(
-                              //   height: (isCenter ? 9 : 12) * scale,
-                              // ),
                               Text(
                                 'IN',
                                 textAlign: TextAlign.center,
@@ -288,7 +283,8 @@ class DashboardView extends StatelessWidget {
                                     .copyWith(
                                       fontWeight: FontWeight.w900,
                                       fontStyle: FontStyle.italic,
-                                      fontSize: (isCenter ? 22 : 10) * scale,
+                                      letterSpacing: (isCenter ? 0.46 : 0.4),
+                                      fontSize: (isCenter ? 23 : 9) * scale,
                                     ),
                               ),
                               Text(
@@ -301,7 +297,8 @@ class DashboardView extends StatelessWidget {
                                     .copyWith(
                                       fontWeight: FontWeight.w900,
                                       fontStyle: FontStyle.italic,
-                                      fontSize: (isCenter ? 22 : 10) * scale,
+                                      letterSpacing: (isCenter ? 0.46 : 0.4),
+                                      fontSize: (isCenter ? 23 : 9) * scale,
                                     ),
                               ),
                             ],
