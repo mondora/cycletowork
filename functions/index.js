@@ -24,7 +24,6 @@ const {
 } = require('./service/notification');
 const { loggerError, loggerLog, loggerDebug } = require('./utility/logger');
 const { getString } = require('./localization');
-// const { elasticSearch } = require('./utility/elastic_search');
 const {
     saveCompany,
     getCompanyListNameSearchForChalleng,
@@ -1746,7 +1745,7 @@ exports.publishChallengeAdmin = functions
             );
         }
 
-        if (!challenge || challenge == '') {
+        if (!challenge || !challenge.id) {
             throw new functions.https.HttpsError(
                 Constant.badRequestDeniedMessage
             );
@@ -1754,80 +1753,6 @@ exports.publishChallengeAdmin = functions
 
         try {
             await publishChallenge(challenge);
-
-            let sentToAllUser = false;
-            let nextPageToken;
-            const UserSlot = 1000;
-            while (!sentToAllUser) {
-                try {
-                    const result = await getListUserAdmin(
-                        nextPageToken,
-                        UserSlot
-                    );
-
-                    if (result) {
-                        if (
-                            result.pagination &&
-                            result.pagination.hasNextPage
-                        ) {
-                            nextPageToken = result.pagination.nextPageToken;
-                        } else {
-                            sentToAllUser = true;
-                        }
-
-                        const allUserSlot = result.users;
-                        for (
-                            let index = 0;
-                            index < allUserSlot.length;
-                            index++
-                        ) {
-                            const userUid = allUserSlot[index].uid;
-
-                            const user = await getUserInfo(userUid);
-                            const listDeviceToken = await getListDeviceToken(
-                                userUid
-                            );
-                            if (
-                                user &&
-                                listDeviceToken &&
-                                listDeviceToken.length
-                            ) {
-                                const language = user.language;
-                                const title = getString(
-                                    language,
-                                    'new_challenge_opened'
-                                );
-                                const signUpNow = getString(
-                                    language,
-                                    'sign_up_now'
-                                );
-                                const description = `${signUpNow} ${
-                                    user.displayName ? user.displayName : '!'
-                                }`;
-
-                                const data = {
-                                    type: 'new_challenge',
-                                };
-
-                                await sendNotification(
-                                    listDeviceToken,
-                                    title,
-                                    description,
-                                    data
-                                );
-                            }
-                        }
-                    }
-                } catch (error) {
-                    loggerError(
-                        'publishChallengeAdmin SendNotification Error, UID:',
-                        adminUid,
-                        'error:',
-                        error
-                    );
-                }
-            }
-
             return true;
         } catch (error) {
             loggerError(
