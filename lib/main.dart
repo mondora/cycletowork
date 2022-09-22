@@ -39,7 +39,7 @@ void main() async {
     runApp(
       MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (_) => AppData()),
+          ChangeNotifierProvider(create: (_) => AppData.instance()),
         ],
         child: const CycleToWorkApp(),
       ),

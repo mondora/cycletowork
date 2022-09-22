@@ -26,7 +26,7 @@ enum AppMenuOption {
   activity,
   classification,
   profile,
-  // settings,
+  settings,
   information,
   logout,
 }

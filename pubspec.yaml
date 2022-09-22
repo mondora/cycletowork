@@ -1,7 +1,7 @@
 name: cycletowork
 description: A new open source app for track bicycle.
 publish_to: 'https://github.com/mondora/cycletowork'
-version: 1.0.3+28
+version: 1.0.4+29
 
 environment:
     sdk: '>=2.18.0 <3.0.0'
@@ -54,6 +54,7 @@ dependencies:
     camera: ^0.10.0+1
     permission_handler: ^10.0.0
     image_picker: ^0.8.5+3
+    wakelock: ^0.6.2
 
 dev_dependencies:
     flutter_test:

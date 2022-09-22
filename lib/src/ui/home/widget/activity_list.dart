@@ -51,7 +51,9 @@ class ActivityList extends StatelessWidget {
           Container(
             margin: EdgeInsets.only(left: 24.0 * scale),
             child: Text(
-              'Ultime attività',
+              listChallengeActive.isEmpty
+                  ? 'Ultime attività'
+                  : 'Nuova Challenge!',
               style: Theme.of(context).textTheme.caption!.apply(
                     color: textSecondaryColor,
                   ),

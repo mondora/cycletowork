@@ -64,11 +64,14 @@ class _ActivityViewState extends State<ActivityView> {
     var userActivtyDistanceChartData =
         dashboardModel.uiState.userActivityChartData.listDistanceChartData;
 
+    var isRegistredToChallenge =
+        dashboardModel.uiState.listChallengeRegistred.isNotEmpty;
+
     return Scaffold(
       backgroundColor: colorScheme.background,
       appBar: AppBar(
         elevation: 4,
-        toolbarHeight: 112.0 * scale,
+        toolbarHeight: isRegistredToChallenge ? 112.0 * scale : 60.0 * scale,
         centerTitle: true,
         title: Column(
           mainAxisSize: MainAxisSize.max,
@@ -82,25 +85,29 @@ class _ActivityViewState extends State<ActivityView> {
               style: textTheme.headline5,
             ),
             SizedBox(
-              height: 20 * scale,
+              height: 10 * scale,
             ),
-            InputChip(
-              onSelected: (bool value) async {
-                await dashboardModel.getListUserActivityFilterd(
-                  justChallenges: value,
-                );
-              },
-              selected: justChallenges,
-              side: ChipTheme.of(context).shape!.side.copyWith(
-                    color: justChallenges ? Colors.transparent : null,
+            if (isRegistredToChallenge)
+              Container(
+                margin: EdgeInsets.only(
+                  top: 10.0 * scale,
+                  bottom: 30.0 * scale,
+                ),
+                child: InputChip(
+                  onSelected: (bool value) async {
+                    await dashboardModel.getListUserActivityFilterd(
+                      justChallenges: value,
+                    );
+                  },
+                  selected: justChallenges,
+                  side: ChipTheme.of(context).shape!.side.copyWith(
+                        color: justChallenges ? Colors.transparent : null,
+                      ),
+                  label: const Text(
+                    'Filtra attività valide per la challenge',
                   ),
-              label: const Text(
-                'Filtra attività valide per la challenge',
+                ),
               ),
-            ),
-            SizedBox(
-              height: 30 * scale,
-            ),
           ],
         ),
       ),

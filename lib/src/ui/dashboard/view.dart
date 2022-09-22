@@ -18,6 +18,7 @@ import 'package:cycletowork/src/ui/map_tracking/view.dart';
 import 'package:cycletowork/src/ui/pause_tracking/view.dart';
 import 'package:cycletowork/src/ui/profile/view.dart';
 import 'package:cycletowork/src/ui/dashboard/widget/gps_icon.dart';
+import 'package:cycletowork/src/ui/settings/view.dart';
 import 'package:cycletowork/src/ui/stop_tracking/view.dart';
 import 'package:cycletowork/src/ui/tracking/view.dart';
 import 'package:cycletowork/src/utility/gps.dart';
@@ -44,7 +45,7 @@ class DashboardView extends StatelessWidget {
       ActivityView(),
       ClassificationView(),
       ProfileView(),
-      // SettingsView(),
+      SettingsView(),
       InformationView(),
     ];
 
@@ -227,7 +228,12 @@ class DashboardView extends StatelessWidget {
                         onPressed: () async {
                           var check = await _checkGpsAndPermission(context);
                           if (check) {
-                            viewModel.startCounter(context);
+                            var isWakelockModeEnable =
+                                context.read<AppData>().isWakelockModeEnable;
+                            viewModel.startCounter(
+                              context,
+                              isWakelockModeEnable,
+                            );
                           }
                         },
                       ),
@@ -248,7 +254,12 @@ class DashboardView extends StatelessWidget {
                           onPressed: () async {
                             var check = await _checkGpsAndPermission(context);
                             if (check) {
-                              viewModel.startCounter(context);
+                              var isWakelockModeEnable =
+                                  context.read<AppData>().isWakelockModeEnable;
+                              viewModel.startCounter(
+                                context,
+                                isWakelockModeEnable,
+                              );
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -327,9 +338,9 @@ class DashboardView extends StatelessWidget {
     }
     var confirm = await AppAlartDialog(
       context: context,
-      title: 'Attenzione!',
+      title: 'Permessi di localizzazione!',
       subtitle:
-          "L'app Cycle2Work rileva la tua posizione (location) per calcolare il percorso effettuato in bici corrispondente alla quantità di CO\u2082 risparmiata anche quando questa app non è in uso ma è in background.",
+          "Per poter funzionare, Cycle2Work rileva la tua posizione (location) per registrare il percorso che hai effettuato in bicicletta e calcolare la quantità di CO\u2082 che hai risparmiato. Questo anche quando l'app sta funzionando in background.",
       body: '',
       confirmLabel: 'ACCETTO',
       cancelLabel: 'RIFIUTO',
@@ -364,6 +375,15 @@ class DashboardView extends StatelessWidget {
         return false;
       }
       return true;
+    } else {
+      await AppAlartDialog(
+        context: context,
+        title: 'Permessi di localizzazione!',
+        subtitle:
+            "Ricorda che Cycle2Work non può funzionare senza rilevare la tua posizione (location), se desideri usare Cycle2Work in futuro devi assegnare i permessi all'app nelle impostazioni di localizzazione del tuo smartphone.",
+        body: '',
+        confirmLabel: 'CHIUDI',
+      ).show();
     }
     return false;
   }

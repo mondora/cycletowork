@@ -14,6 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
+import 'package:wakelock/wakelock.dart';
 
 class ViewModel extends ChangeNotifier {
   final initialLatitude = 45.50315189900018;
@@ -78,12 +79,15 @@ class ViewModel extends ChangeNotifier {
     }
   }
 
-  void startCounter(context) async {
+  void startCounter(context, bool isWakelockModeEnable) async {
     _uiState.loading = true;
     notifyListeners();
     _uiState.counter = 5;
     _trackingPaused = false;
     _startedAfterPaused = false;
+    if (isWakelockModeEnable) {
+      await Wakelock.enabled;
+    }
     _challengeActive = await _repository.isChallengeActivity();
     _trackingUserActivity = UserActivity(
       userActivityId: const Uuid().v4(),
@@ -412,6 +416,7 @@ class ViewModel extends ChangeNotifier {
     _timer?.cancel();
     await _locationSubscription?.cancel();
     _locationSubscription = null;
+    await Wakelock.disable();
 
     _locationSubscription = null;
     _trackingUserActivity!.stopTime =

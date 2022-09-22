@@ -213,14 +213,14 @@ class _ItemInfo {
           width: iconSize,
         );
         break;
-      // case AppMenuOption.settings:
-      //   title = 'Impostazioni';
-      //   icon = SvgPicture.asset(
-      //     'assets/icons/settings.svg',
-      //     height: iconSize,
-      //     width: iconSize,
-      //   );
-      //   break;
+      case AppMenuOption.settings:
+        title = 'Impostazioni';
+        icon = SvgPicture.asset(
+          'assets/icons/settings.svg',
+          height: iconSize,
+          width: iconSize,
+        );
+        break;
       case AppMenuOption.information:
         title = 'Info';
         icon = SvgPicture.asset(

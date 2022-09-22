@@ -242,7 +242,7 @@ class _SurveyViewState extends State<SurveyView> {
           Column(
             children: [
               SizedBox(
-                width: 75 * scale,
+                width: 155.0 * scale,
                 height: 36.0 * scale,
                 child: ElevatedButton(
                   onPressed: saveButtonIsEnabled
