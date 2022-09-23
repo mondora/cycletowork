@@ -745,6 +745,17 @@ const getChallengeRegistryFromBusinessEmail = async (
     }
 };
 
+const updateUserInfoInChallenge = async (uid, data) => {
+    const challengeId = data.challengeId;
+    await admin
+        .firestore()
+        .collection(Constant.challengeCollectionName)
+        .doc(challengeId)
+        .collection(Constant.usersCollectionName)
+        .doc(uid)
+        .update(data, { merge: true });
+};
+
 module.exports = {
     getActiveChallengeList,
     registerChallenge,
@@ -762,4 +773,5 @@ module.exports = {
     getUserDepartmentClassification,
     updateCompanyPercentRegistered,
     getChallengeRegistryFromBusinessEmail,
+    updateUserInfoInChallenge,
 };

@@ -54,6 +54,7 @@ const {
     getUserDepartmentClassification,
     getChallengeRegistryFromBusinessEmail,
     updateCompanyPercentRegistered,
+    updateUserInfoInChallenge,
 } = require('./service/challenge');
 const { recursiveDeleteDocs } = require('./service/core');
 
@@ -1283,6 +1284,45 @@ exports.updateUserInfo = functions
             } catch (error) {
                 loggerError(
                     'updateUserInfo Error, UID:',
+                    uid,
+                    'data:',
+                    data,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.updateUserInfoInChallenge = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+        if (uid) {
+            if (!data || !data.challengeId) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+            try {
+                loggerLog(
+                    'updateUserInfoInChallenge, UID:',
+                    uid,
+                    'data:',
+                    data
+                );
+                await updateUserInfoInChallenge(uid, data);
+                return true;
+            } catch (error) {
+                loggerError(
+                    'updateUserInfoInChallenge Error, UID:',
                     uid,
                     'data:',
                     data,
