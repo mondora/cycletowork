@@ -30,6 +30,8 @@ class Repository {
   ) async {
     await _remoteService.updateUserInfoInChallenge(
       challengeRegistry.challengeId,
+      challengeRegistry.name,
+      challengeRegistry.lastName,
       challengeRegistry.zipCode,
       challengeRegistry.city,
       challengeRegistry.address,

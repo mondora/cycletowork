@@ -41,7 +41,7 @@ class LoginEmailResetPasswordView extends StatelessWidget {
                 margin: EdgeInsets.only(top: 30.0 * scale),
                 child: Center(
                   child: Text(
-                    'Recuperare password',
+                    'Recupera password',
                     style: Theme.of(context).textTheme.headline6,
                   ),
                 ),

@@ -508,12 +508,16 @@ class RemoteService
   @override
   Future<bool?> updateUserInfoInChallenge(
     String challengeId,
+    String newName,
+    String newLastName,
     String newZipCode,
     String newCity,
     String newAddress,
   ) async {
     var arg = {
       'challengeId': challengeId,
+      'name': newName,
+      'lastName': newLastName,
       'zipCode': newZipCode,
       'city': newCity,
       'address': newAddress,

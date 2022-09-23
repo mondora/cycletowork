@@ -22,6 +22,8 @@ class ProfileChallengeEditView extends StatefulWidget {
 
 class _ProfileChallengeEditViewState extends State<ProfileChallengeEditView> {
   var formKey = GlobalKey<FormState>();
+  var nameController = TextEditingController();
+  var lastNameController = TextEditingController();
   var zipCodeController = TextEditingController();
   var cityController = TextEditingController();
   var addressController = TextEditingController();
@@ -38,6 +40,8 @@ class _ProfileChallengeEditViewState extends State<ProfileChallengeEditView> {
         builder: (context, viewModel, child) {
           var textTheme = Theme.of(context).textTheme;
           var colorScheme = Theme.of(context).colorScheme;
+          nameController.text = widget.challengeRegistry.name;
+          lastNameController.text = widget.challengeRegistry.lastName;
           zipCodeController.text = widget.challengeRegistry.zipCode;
           cityController.text = widget.challengeRegistry.city;
           addressController.text = widget.challengeRegistry.address;
@@ -133,6 +137,11 @@ class _ProfileChallengeEditViewState extends State<ProfileChallengeEditView> {
                             ),
                             onPressed: () async {
                               if (formKey.currentState!.validate()) {
+                                var name = widget.challengeRegistry.name;
+                                var lastName =
+                                    widget.challengeRegistry.lastName;
+                                var newName = nameController.text;
+                                var newLastName = lastNameController.text;
                                 var zipCode = widget.challengeRegistry.zipCode;
                                 var city = widget.challengeRegistry.city;
                                 var address = widget.challengeRegistry.address;
@@ -141,7 +150,12 @@ class _ProfileChallengeEditViewState extends State<ProfileChallengeEditView> {
                                 var newAddress = addressController.text;
                                 if (newZipCode != zipCode ||
                                     newCity != city ||
-                                    newAddress != address) {
+                                    newAddress != address ||
+                                    newName != name ||
+                                    newLastName != lastName) {
+                                  widget.challengeRegistry.name = newName;
+                                  widget.challengeRegistry.lastName =
+                                      newLastName;
                                   widget.challengeRegistry.zipCode = newZipCode;
                                   widget.challengeRegistry.city = newCity;
                                   widget.challengeRegistry.address = newAddress;
@@ -217,23 +231,85 @@ class _ProfileChallengeEditViewState extends State<ProfileChallengeEditView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: 20.0 * scale,
+                            height: 30.0 * scale,
+                          ),
+                          TextFormField(
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
+                            readOnly: true,
+                            enabled: false,
+                            decoration: const InputDecoration(
+                              labelText: 'Indirizzo email aziendale*',
+                              filled: true,
+                            ),
+                            initialValue:
+                                widget.challengeRegistry.businessEmail,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Inserire email';
+                              }
+
+                              return null;
+                            },
+                          ),
+                          SizedBox(
+                            height: 20 * scale,
+                          ),
+                          TextFormField(
+                            // maxLength: 40,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.next,
+                            readOnly: true,
+                            enabled: false,
+                            decoration: const InputDecoration(
+                              labelText: 'Azienda',
+                              filled: true,
+                            ),
+                            initialValue: widget.challengeRegistry.companyName,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Inserire nome azienda';
+                              }
+
+                              return null;
+                            },
+                          ),
+                          SizedBox(
+                            height: 20 * scale,
+                          ),
+                          if (widget
+                              .challengeRegistry.departmentName.isNotEmpty)
+                            TextFormField(
+                              maxLength: 40,
+                              keyboardType: TextInputType.text,
+                              textInputAction: TextInputAction.next,
+                              readOnly: true,
+                              enabled: false,
+                              decoration: const InputDecoration(
+                                labelText: 'Dipartimento',
+                                filled: true,
+                              ),
+                              initialValue:
+                                  widget.challengeRegistry.departmentName,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Inserire dipartimento';
+                                }
+
+                                return null;
+                              },
+                            ),
+                          SizedBox(
+                            height: 20 * scale,
                           ),
                           TextFormField(
                             maxLength: 40,
                             keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.next,
-                            readOnly: true,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: 'Nome*',
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  width: 0.0,
-                                  color: colorScheme.background,
-                                ),
-                              ),
                             ),
-                            initialValue: widget.challengeRegistry.name,
+                            controller: nameController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Inserire nome';
@@ -249,17 +325,10 @@ class _ProfileChallengeEditViewState extends State<ProfileChallengeEditView> {
                             maxLength: 40,
                             keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.next,
-                            readOnly: true,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: 'Cognome*',
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  width: 0.0,
-                                  color: colorScheme.background,
-                                ),
-                              ),
                             ),
-                            initialValue: widget.challengeRegistry.lastName,
+                            controller: lastNameController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Inserire cognome';
@@ -268,89 +337,6 @@ class _ProfileChallengeEditViewState extends State<ProfileChallengeEditView> {
                               return null;
                             },
                           ),
-                          SizedBox(
-                            height: 10 * scale,
-                          ),
-                          TextFormField(
-                            maxLength: 40,
-                            keyboardType: TextInputType.emailAddress,
-                            textInputAction: TextInputAction.next,
-                            readOnly: true,
-                            decoration: InputDecoration(
-                              labelText: 'Indirizzo email aziendale*',
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  width: 0.0,
-                                  color: colorScheme.background,
-                                ),
-                              ),
-                            ),
-                            initialValue:
-                                widget.challengeRegistry.businessEmail,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Inserire email';
-                              }
-
-                              return null;
-                            },
-                          ),
-                          SizedBox(
-                            height: 10 * scale,
-                          ),
-                          TextFormField(
-                            maxLength: 40,
-                            keyboardType: TextInputType.text,
-                            textInputAction: TextInputAction.next,
-                            readOnly: true,
-                            decoration: InputDecoration(
-                              labelText: 'Nome azienda',
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  width: 0.0,
-                                  color: colorScheme.background,
-                                ),
-                              ),
-                            ),
-                            initialValue: widget.challengeRegistry.companyName,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Inserire nome azienda';
-                              }
-
-                              return null;
-                            },
-                          ),
-                          SizedBox(
-                            height: 10 * scale,
-                          ),
-                          if (widget
-                              .challengeRegistry.departmentName.isNotEmpty)
-                            TextFormField(
-                              maxLength: 40,
-                              keyboardType: TextInputType.text,
-                              textInputAction: TextInputAction.next,
-                              readOnly: true,
-                              focusNode: null,
-                              decoration: InputDecoration(
-                                labelText: 'Dipartimento',
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    width: 0.0,
-                                    color: colorScheme.background,
-                                  ),
-                                ),
-                              ),
-                              initialValue:
-                                  widget.challengeRegistry.departmentName,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Inserire dipartimento';
-                                }
-
-                                return null;
-                              },
-                            ),
                           SizedBox(
                             height: 10 * scale,
                           ),

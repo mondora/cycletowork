@@ -48,6 +48,7 @@ class AppTheme {
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
+        fillColor: Colors.grey[200],
         errorBorder: OutlineInputBorder(
           borderSide: BorderSide(
             color: colorScheme.error,
@@ -60,9 +61,9 @@ class AppTheme {
             color: colorScheme.textSecondary,
           ),
         ),
-        disabledBorder: OutlineInputBorder(
+        disabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(
-            width: 1.0,
+            width: 2.0,
             color: colorScheme.textDisabled,
           ),
         ),

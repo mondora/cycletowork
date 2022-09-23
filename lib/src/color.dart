@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cycletowork/src/utility/logger.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 
@@ -83,31 +84,40 @@ class AppColor {
   };
 
   static Future initialize() async {
-    final remoteConfig = FirebaseRemoteConfig.instance;
-    await remoteConfig.setDefaults(
-        <String, dynamic>{_lightColorSchemeKey: jsonEncode(colorMap)});
+    try {
+      final remoteConfig = FirebaseRemoteConfig.instance;
+      await remoteConfig.setDefaults(
+          <String, dynamic>{_lightColorSchemeKey: jsonEncode(colorMap)});
 
-    await remoteConfig.setConfigSettings(
-      RemoteConfigSettings(
-        fetchTimeout: const Duration(seconds: 10),
-        minimumFetchInterval: const Duration(minutes: 1),
-      ),
-    );
-    await remoteConfig.fetchAndActivate();
+      await remoteConfig.setConfigSettings(
+        RemoteConfigSettings(
+          fetchTimeout: const Duration(seconds: 10),
+          minimumFetchInterval: const Duration(minutes: 1),
+        ),
+      );
+      await remoteConfig.fetchAndActivate();
+    } catch (e) {
+      Logger.error(e);
+    }
   }
 
   static LightColors getLightColors(bool justLocal) {
     if (justLocal) {
       return LightColors.fromJson(colorMap);
     } else {
-      final remoteConfig = FirebaseRemoteConfig.instance;
-      return LightColors.fromJson(
-        jsonDecode(
-          remoteConfig.getString(
-            _lightColorSchemeKey,
+      try {
+        final remoteConfig = FirebaseRemoteConfig.instance;
+        return LightColors.fromJson(
+          jsonDecode(
+            remoteConfig.getString(
+              _lightColorSchemeKey,
+            ),
           ),
-        ),
-      );
+        );
+      } catch (e) {
+        Logger.error(e);
+        return LightColors.fromJson(colorMap);
+      }
     }
   }
 }

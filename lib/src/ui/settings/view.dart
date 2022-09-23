@@ -25,7 +25,7 @@ class SettingsView extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: 10 * scale,
+            height: 20 * scale,
           ),
           // SizedBox(
           //   height: 63.0,
@@ -81,32 +81,23 @@ class SettingsView extends StatelessWidget {
           //   color: const Color.fromRGBO(0, 0, 0, 0.12),
           // ),
           SizedBox(
-            height: 63.0,
+            height: 80.0,
             child: ListTile(
-              leading: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Wakelock mode',
-                    style: textTheme.bodyText1,
-                  ),
-                ],
+              title: Padding(
+                padding: EdgeInsets.only(bottom: 10.0 * scale),
+                child: Text(
+                  'Schermo sempre attivo',
+                  style: textTheme.bodyText1,
+                ),
+              ),
+              subtitle: Text(
+                'Questa opzione, se attiva, impedisce allo schermo di spegnersi durante la registrazione di una pedalata.',
+                style: textTheme.caption,
               ),
               trailing: Switch(
                 value: isWakelockModeEnable,
                 onChanged: (value) async {
                   await appData.setWakelockModeEnable(value);
-                  // if (value == true) {
-                  //   await Wakelock.enable();
-                  //   setState(() {
-                  //     wakelockEnabled = true;
-                  //   });
-                  // } else {
-                  //   await Wakelock.disable();
-                  //   setState(() {
-                  //     wakelockEnabled = false;
-                  //   });
-                  // }
                 },
               ),
               onTap: () {},

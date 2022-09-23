@@ -185,6 +185,7 @@ class _ChallengeRegisterdData extends StatelessWidget {
                 right: 0,
                 bottom: 0,
                 child: FloatingActionButton(
+                  heroTag: null,
                   mini: true,
                   onPressed: isChallengeOpen
                       ? () async {
@@ -245,7 +246,7 @@ class _ChallengeRegisterdData extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  'Sei champione per la tua azienda',
+                  'Sei il Champion della tua azienda',
                   style: textTheme.bodyText2,
                 ),
                 SizedBox(

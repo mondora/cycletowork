@@ -218,6 +218,8 @@ abstract class AppServiceOnlyRemote {
 
   Future<bool?> updateUserInfoInChallenge(
     String challengeId,
+    String newName,
+    String newLastName,
     String newZipCode,
     String newCity,
     String newAddress,

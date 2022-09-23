@@ -125,7 +125,7 @@ class LoginEmailView extends StatelessWidget {
               Container(
                 margin: EdgeInsets.only(top: 20.0 * scale),
                 child: AppButton(
-                  title: 'recupera password',
+                  title: 'HAI DIMENTICATO LA PASSWORD?',
                   textUpperCase: true,
                   onPressed: () async {
                     await Navigator.of(context).push(

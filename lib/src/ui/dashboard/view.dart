@@ -25,6 +25,7 @@ import 'package:cycletowork/src/utility/gps.dart';
 import 'package:cycletowork/src/widget/alart_dialog.dart';
 import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class DashboardView extends StatelessWidget {
@@ -174,7 +175,12 @@ class DashboardView extends StatelessWidget {
                   elevation: 0.0,
                   centerTitle: true,
                   title: AppGpsIcon(
-                    onPressed: viewModel.refreshLocation,
+                    onPressed: () async {
+                      var check = await _checkGpsAndPermission(context);
+                      if (check) {
+                        viewModel.refreshLocation();
+                      }
+                    },
                     gpsStatus: viewModel.uiState.gpsStatus,
                     visible:
                         viewModel.uiState.appMenuOption == AppMenuOption.home,
@@ -243,14 +249,14 @@ class DashboardView extends StatelessWidget {
                       right: 0,
                       left: isCenter ? 0 : null,
                       child: Container(
-                        // width: floatingActionButtonSize,
-                        // height: floatingActionButtonSize,
+                        width: floatingActionButtonSize,
+                        height: floatingActionButtonSize,
                         margin: EdgeInsets.only(
                           right: 20.0 * scale,
                           left: 20.0 * scale,
                           bottom: 20.0 * scale,
                         ),
-                        child: ElevatedButton(
+                        child: FloatingActionButton(
                           onPressed: () async {
                             var check = await _checkGpsAndPermission(context);
                             if (check) {
@@ -262,46 +268,10 @@ class DashboardView extends StatelessWidget {
                               );
                             }
                           },
-                          style: ElevatedButton.styleFrom(
-                            shape: const CircleBorder(),
-                            backgroundColor: colorScheme.primary,
-                            fixedSize: Size(
-                              floatingActionButtonSize,
-                              floatingActionButtonSize,
-                            ),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'IN',
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline5!
-                                    .copyWith(
-                                      fontWeight: FontWeight.w900,
-                                      fontStyle: FontStyle.italic,
-                                      letterSpacing: (isCenter ? 0.46 : 0.4),
-                                      fontSize: (isCenter ? 23 : 9) * scale,
-                                    ),
-                              ),
-                              Text(
-                                'SELLA!',
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline5!
-                                    .copyWith(
-                                      fontWeight: FontWeight.w900,
-                                      fontStyle: FontStyle.italic,
-                                      letterSpacing: (isCenter ? 0.46 : 0.4),
-                                      fontSize: (isCenter ? 23 : 9) * scale,
-                                    ),
-                              ),
-                            ],
+                          child: SvgPicture.asset(
+                            'assets/icons/start.svg',
+                            height: floatingActionButtonSize,
+                            width: floatingActionButtonSize,
                           ),
                         ),
                       ),
