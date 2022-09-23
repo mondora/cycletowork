@@ -5,7 +5,6 @@ import 'package:cycletowork/src/data/repository_service_locator.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/database/local_database_service.dart';
 import 'package:cycletowork/src/service/remote_service.dart';
-import 'package:cycletowork/src/utility/logger.dart';
 import 'package:cycletowork/src/utility/notification.dart';
 import 'package:cycletowork/src/utility/user_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -91,18 +90,12 @@ class Repository {
     await _localDatabase.saveDeviceToken(deviceToken);
   }
 
-  Future<void> signupEmail(String email, String password, String? name) async {
-    var result = await UserAuth.signupEmail(email, password);
-    var isAuthenticated = this.isAuthenticated();
-    if (result == true && name != null && name != '' && isAuthenticated) {
-      Timer(const Duration(seconds: 3), () async {
-        try {
-          await _remoteService.updateUserDisplayName(name);
-        } catch (e) {
-          Logger.error(e);
-        }
-      });
-    }
+  Future<bool?> signupEmail(String email, String password) async {
+    return await UserAuth.signupEmail(email, password);
+  }
+
+  Future<void> updateUserDisplayName(String name) async {
+    await _remoteService.updateUserDisplayName(name);
   }
 
   Future<void> loginEmail(String email, String password) async {

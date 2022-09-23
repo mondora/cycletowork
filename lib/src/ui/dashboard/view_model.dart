@@ -59,7 +59,7 @@ class ViewModel extends ChangeNotifier {
       await getListUserActivity();
       await getListUserActivityFilterd();
       await _getActiveChallengeList();
-      await _getListChallengeRegistred();
+      await getListChallengeRegistred();
       _uiState.listCompanyClassificationOrderByRankingCo2 = false;
       await refreshCompanyClassification();
       _uiState.listCompanyClassificationOrderByRankingCo2 = true;
@@ -175,7 +175,7 @@ class ViewModel extends ChangeNotifier {
     try {
       AppData.user = await _repository.getUserInfo();
       await _getActiveChallengeList();
-      await _getListChallengeRegistred();
+      await getListChallengeRegistred();
       _uiState.listCompanyClassificationOrderByRankingCo2 = false;
       await refreshCompanyClassification();
       _uiState.listCompanyClassificationOrderByRankingCo2 = true;
@@ -783,7 +783,7 @@ class ViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _getListChallengeRegistred() async {
+  Future<void> getListChallengeRegistred() async {
     var result = await _repository.getListChallengeRegistred();
     if (result.isNotEmpty) {
       _uiState.listChallengeRegistred = result;

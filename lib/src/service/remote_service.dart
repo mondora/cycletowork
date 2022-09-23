@@ -504,4 +504,20 @@ class RemoteService
     await Remote.callFirebaseFunctions('updateUserInfo', arg);
     return photoURL;
   }
+
+  @override
+  Future<bool?> updateUserInfoInChallenge(
+    String challengeId,
+    String newZipCode,
+    String newCity,
+    String newAddress,
+  ) async {
+    var arg = {
+      'challengeId': challengeId,
+      'zipCode': newZipCode,
+      'city': newCity,
+      'address': newAddress,
+    };
+    return await Remote.callFirebaseFunctions('updateUserInfoInChallenge', arg);
+  }
 }

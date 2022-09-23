@@ -1,5 +1,4 @@
 import 'package:cycletowork/src/data/app_data.dart';
-import 'package:cycletowork/src/ui/landing/ui_state.dart';
 import 'package:cycletowork/src/widget/alart_dialog.dart';
 import 'package:cycletowork/src/widget/button.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +19,6 @@ class LoginEmailResetPasswordView extends StatelessWidget {
     final onBackgroundColor = Theme.of(context).colorScheme.onBackground;
     var formKey = GlobalKey<FormState>();
     var emailController = TextEditingController();
-    var loading = landingModel.uiState.pageOption == PageOption.loading;
 
     return Scaffold(
       appBar: AppBar(

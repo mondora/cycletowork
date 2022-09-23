@@ -215,4 +215,11 @@ abstract class AppServiceOnlyRemote {
   );
 
   Future<String?> updateUserPhotoURL(String imagePath, String fileName);
+
+  Future<bool?> updateUserInfoInChallenge(
+    String challengeId,
+    String newZipCode,
+    String newCity,
+    String newAddress,
+  );
 }

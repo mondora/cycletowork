@@ -137,8 +137,8 @@ class ViewModel extends ChangeNotifier {
     _uiState.pageOption = PageOption.loading;
     clearError();
     try {
-      await _repository.signupEmail(email, password, name);
       displayName = name;
+      await _repository.signupEmail(email, password);
       var isAuthenticated = _repository.isAuthenticated();
       if (isAuthenticated) {
         _tryGetUserInfo();
@@ -208,20 +208,20 @@ class ViewModel extends ChangeNotifier {
   }
 
   _tryGetUserInfo() {
-    int _counterTryGetUserInfo = 4;
-    Timer? _timer;
-    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) async {
+    int _counterTryGetUserInfo = 5;
+    Timer.periodic(const Duration(seconds: 4), (timer) async {
       try {
         debugPrint('_tryGetUserInfo');
+        debugPrint(_counterTryGetUserInfo.toString());
         await _getInitialInfo();
         _uiState.pageOption = PageOption.home;
-        _timer?.cancel();
+        timer.cancel();
         notifyListeners();
       } catch (e) {
         if (_counterTryGetUserInfo == 0) {
           Logger.error(e);
           _uiState.pageOption = PageOption.logout;
-          _timer?.cancel();
+          timer.cancel();
           notifyListeners();
         }
       } finally {
@@ -242,6 +242,8 @@ class ViewModel extends ChangeNotifier {
       await _repository.saveDeviceToken();
       if (displayName != null && displayName != '') {
         AppData.user!.displayName = displayName;
+        await _repository.updateUserDisplayName(displayName!);
+        displayName = null;
       }
     }
   }

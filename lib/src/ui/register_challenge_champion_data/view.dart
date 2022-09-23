@@ -383,7 +383,7 @@ class _RegisterChallengCompanyDataViewState
                             key: _mapKey,
                             readOnly: !isOtherRole,
                             maxLength: 40,
-                            keyboardType: TextInputType.emailAddress,
+                            keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.next,
                             controller: otherRoleController,
                             decoration: InputDecoration(
