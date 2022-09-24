@@ -7,6 +7,7 @@ import 'package:cycletowork/src/ui/details_tracking/view_model.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 import 'package:cycletowork/src/widget/chart.dart';
 import 'package:cycletowork/src/widget/map.dart';
+import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
@@ -63,6 +64,14 @@ class DetailsTrackingView extends StatelessWidget {
           final imageData = userActivity.imageData;
           final city = userActivity.city;
 
+          if (viewModel.uiState.loading) {
+            return const Scaffold(
+              body: Center(
+                child: AppProgressIndicator(),
+              ),
+            );
+          }
+
           return Scaffold(
             appBar: AppBar(
               leading: IconButton(
@@ -74,16 +83,6 @@ class DetailsTrackingView extends StatelessWidget {
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               ),
-              actions: [
-                IconButton(
-                  onPressed: () {},
-                  splashRadius: 25.0 * scale,
-                  icon: Icon(
-                    Icons.more_vert,
-                    size: 20 * scale,
-                  ),
-                ),
-              ],
             ),
             body: SafeArea(
               child: ListView(
@@ -154,29 +153,33 @@ class DetailsTrackingView extends StatelessWidget {
                       Radius.circular(10),
                     ),
                     child: SizedBox(
-                        height: 327.0 * scale,
-                        child: listLocationData.isNotEmpty && imageData == null
-                            ? AppMap(
-                                key: _mapKey,
-                                listTrackingPosition: listLocationData,
-                                type: AppMapType.static,
-                                fit: BoxFit.fitWidth,
-                                isChallenge: isChallenge,
-                                height: 327.0 * scale,
-                              )
-                            : imageData != null
-                                ? Image.memory(
-                                    imageData,
-                                    fit: BoxFit.fill,
-                                    height: 327.0 * scale,
-                                    width: 327.0 * scale,
-                                  )
-                                : Image.asset(
-                                    'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking_details.png',
-                                    fit: BoxFit.cover,
-                                    height: 327.0 * scale,
-                                    width: 327.0 * scale,
-                                  )),
+                      height: 327.0 * scale,
+                      child: listLocationData.isNotEmpty && imageData == null
+                          ? AppMap(
+                              key: _mapKey,
+                              listTrackingPosition: listLocationData,
+                              fit: BoxFit.fitWidth,
+                              isChallenge: isChallenge,
+                              height: 327.0 * scale,
+                              initialLatitude: listLocationData.first.latitude,
+                              initialLongitude:
+                                  listLocationData.first.longitude,
+                              isStatic: true,
+                            )
+                          : imageData != null
+                              ? Image.memory(
+                                  imageData,
+                                  fit: BoxFit.fill,
+                                  height: 327.0 * scale,
+                                  width: 327.0 * scale,
+                                )
+                              : Image.asset(
+                                  'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking_details.png',
+                                  fit: BoxFit.cover,
+                                  height: 327.0 * scale,
+                                  width: 327.0 * scale,
+                                ),
+                    ),
                   ),
                   const SizedBox(
                     height: 20.0,
@@ -433,8 +436,8 @@ class _Item extends StatelessWidget {
             dense: true,
             leading: SvgPicture.asset(
               imagePath,
-              height: 37.0 * scale,
-              width: 37.0 * scale,
+              height: 30.0 * scale,
+              width: 30.0 * scale,
             ),
             title: Text(
               title,
@@ -453,7 +456,7 @@ class _Item extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  width: 9.0 * scale,
+                  width: 8.0 * scale,
                 ),
                 Text(
                   unit ?? '',

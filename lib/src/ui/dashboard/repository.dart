@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/chart_data.dart';
@@ -14,7 +12,6 @@ import 'package:cycletowork/src/ui/dashboard/ui_state.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 import 'package:cycletowork/src/utility/gps.dart';
 import 'package:cycletowork/src/utility/logger.dart';
-import 'package:cycletowork/src/utility/tracking_drawing.dart';
 import 'package:cycletowork/src/utility/user_auth.dart';
 import 'package:cycletowork/src/widget/chart.dart';
 import 'package:flutter/material.dart';
@@ -484,18 +481,6 @@ class Repository {
     );
   }
 
-  Future<Uint8List?> getMapImageData(
-    List<LocationData> listTrackingPosition,
-    BuildContext context,
-    bool isChallenge,
-  ) async {
-    return await TrackingDrawing.getTrackingDrawing(
-      listTrackingPosition: listTrackingPosition,
-      context: context,
-      isChallenge: isChallenge,
-    );
-  }
-
   Future<List<Challenge>> getActiveChallengeList() async {
     var listChallenge = await _remoteService.getActiveChallengeList();
     if (listChallenge.isNotEmpty) {
@@ -634,17 +619,6 @@ class Repository {
     return UserActivityChartData.instance(
       listCo2ChartData,
       listDistanceChartData,
-    );
-  }
-
-  Future<String> getCityNameFromLocation(
-    LocationData locationData, {
-    String? localeIdentifier,
-  }) async {
-    return await Gps.getCityName(
-      locationData.latitude,
-      locationData.longitude,
-      localeIdentifier: localeIdentifier,
     );
   }
 

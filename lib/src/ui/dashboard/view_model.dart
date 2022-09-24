@@ -104,6 +104,7 @@ class ViewModel extends ChangeNotifier {
       isChallenge: _challengeActive != null ? 1 : 0,
       challengeId: _challengeActive?.challengeId,
       companyId: _challengeActive?.companyId,
+      city: '',
     );
     _listTrackingPosition = [];
     await _getCurrentLocation();
@@ -232,26 +233,19 @@ class ViewModel extends ChangeNotifier {
     });
   }
 
+  setUserActivityImageData(Uint8List? value) {
+    _trackingUserActivity!.imageData = value;
+  }
+
+  setUserActivityCity(String value) {
+    _trackingUserActivity!.city = value;
+  }
+
   Future<bool> saveTracking(BuildContext context) async {
     _uiState.loading = true;
     notifyListeners();
     try {
-      var localeIdentifier = Localizations.localeOf(context).languageCode;
       var userActivity = _trackingUserActivity!;
-      userActivity.imageData = await _repository.getMapImageData(
-        _listTrackingPosition,
-        context,
-        userActivity.isChallenge == 1,
-      );
-      if (_listTrackingPosition.isNotEmpty) {
-        var firstLocation = _listTrackingPosition.first;
-        userActivity.city = await _repository.getCityNameFromLocation(
-          firstLocation,
-          localeIdentifier: localeIdentifier,
-        );
-      } else {
-        userActivity.city = '';
-      }
       AppData.user!.calorie += userActivity.calorie;
       AppData.user!.co2 += userActivity.co2;
       AppData.user!.distance += userActivity.distance;

@@ -74,7 +74,7 @@ class _HomeViewState extends State<HomeView> {
     double bearing,
   ) async {
     if (_mapKey.currentState != null) {
-      await _mapKey.currentState!.changeCamera(
+      await _mapKey.currentState!.changeCameraWithMarker(
         latitude,
         longitude,
         bearing: bearing,
@@ -121,7 +121,6 @@ class _HomeViewState extends State<HomeView> {
         Container(
           margin: const EdgeInsets.only(top: 100.0),
           child: AppMap(
-            type: AppMapType.dynamic,
             key: _mapKey,
             initialLatitude: initialLatitude,
             initialLongitude: initialLongitude,

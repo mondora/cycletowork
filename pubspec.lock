@@ -511,13 +511,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.10.0+5"
-  google_static_maps_controller:
-    dependency: "direct main"
-    description:
-      name: google_static_maps_controller
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
   html:
     dependency: transitive
     description:

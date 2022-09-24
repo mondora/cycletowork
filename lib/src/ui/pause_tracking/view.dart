@@ -86,12 +86,14 @@ class PauseTrackingView extends StatelessWidget {
                 topRight: Radius.circular(10.0),
               ),
               body: Container(
-                margin: EdgeInsets.only(bottom: 150.0 * scale),
+                margin: EdgeInsets.only(bottom: 210.0 * scale),
                 child: AppMap(
-                  type: AppMapType.static,
                   listTrackingPosition: listTrackingPosition,
                   isChallenge: isChallenge,
-                  fit: BoxFit.cover,
+                  initialLatitude: listTrackingPosition.first.latitude,
+                  initialLongitude: listTrackingPosition.first.longitude,
+                  isStatic: true,
+                  padding: 150.0,
                 ),
               ),
             ),

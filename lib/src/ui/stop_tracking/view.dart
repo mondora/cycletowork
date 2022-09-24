@@ -2,6 +2,7 @@ import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/chart_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/theme.dart';
+import 'package:cycletowork/src/ui/dashboard/view_model.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 import 'package:cycletowork/src/utility/gps.dart';
 import 'package:cycletowork/src/data/location_data.dart';
@@ -64,7 +65,7 @@ class _StopTrackingViewState extends State<StopTrackingView> {
       firstPosition.longitude,
       localeIdentifier: appLocale.languageCode,
     );
-
+    context.read<ViewModel>().setUserActivityCity(result);
     setState(() {
       city = result;
     });
@@ -169,15 +170,24 @@ class _StopTrackingViewState extends State<StopTrackingView> {
           SizedBox(
             height: 10.0 * scale,
           ),
-          SizedBox(
-            height: 327.0 * scale,
-            child: AppMap(
-              key: _mapKey,
-              listTrackingPosition: widget.listTrackingPosition,
-              type: AppMapType.static,
-              fit: BoxFit.fitWidth,
-              isChallenge: isChallenge,
+          ClipRRect(
+            borderRadius: const BorderRadius.all(
+              Radius.circular(10),
+            ),
+            child: SizedBox(
               height: 327.0 * scale,
+              child: AppMap(
+                listTrackingPosition: widget.listTrackingPosition,
+                isChallenge: isChallenge,
+                initialLatitude: widget.listTrackingPosition.first.latitude,
+                initialLongitude: widget.listTrackingPosition.first.longitude,
+                isStatic: true,
+                padding: 100.0,
+                height: 327.0 * scale,
+                onSnapshot: (value) {
+                  context.read<ViewModel>().setUserActivityImageData(value);
+                },
+              ),
             ),
           ),
           SizedBox(
@@ -513,8 +523,8 @@ class _Item extends StatelessWidget {
             dense: true,
             leading: SvgPicture.asset(
               imagePath,
-              height: 37.0 * scale,
-              width: 37.0 * scale,
+              height: 30.0 * scale,
+              width: 30.0 * scale,
             ),
             title: Text(
               title,

@@ -1,11 +1,6 @@
-import 'dart:io';
 import 'dart:typed_data';
-import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'package:flutter/material.dart';
-import 'package:google_static_maps_controller/google_static_maps_controller.dart';
 
 extension AppDateTime on DateTime {
   String toDayInterval(BuildContext context) {
@@ -60,21 +55,6 @@ extension DurationExtensions on Duration {
   String _toTwoDigits(int n) {
     if (n >= 10) return "$n";
     return "0$n";
-  }
-}
-
-extension StaticMapControllerExtensions on StaticMapController {
-  Future<String> saveFileAndGetPath() async {
-    var response = await http.get(this.url);
-    Directory documentDirectory = await getApplicationDocumentsDirectory();
-    File file = File(join(documentDirectory.path, 'share.png'));
-    await file.writeAsBytes(response.bodyBytes);
-    return file.path;
-  }
-
-  Future<Uint8List> getUint8List() async {
-    var response = await http.get(this.url);
-    return response.bodyBytes;
   }
 }
 

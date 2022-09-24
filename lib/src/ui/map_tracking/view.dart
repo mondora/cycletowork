@@ -82,7 +82,9 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
           widget.listTrackingPosition,
         );
 
-        _mapKey.currentState?.setMarker(
+        _mapKey.currentState?.setStartAndCurrentMarker(
+          widget.listTrackingPosition.first.latitude,
+          widget.listTrackingPosition.first.longitude,
           lastPosition.latitude,
           lastPosition.longitude,
         );
@@ -150,7 +152,6 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
                 margin: EdgeInsets.only(bottom: 120.0 * scale),
                 child: AppMap(
                   key: _mapKey,
-                  type: AppMapType.dynamic,
                   listTrackingPosition: widget.listTrackingPosition,
                   isChallenge: isChallenge,
                   initialLatitude: lastPosition.latitude,
