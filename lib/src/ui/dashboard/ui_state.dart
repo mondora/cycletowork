@@ -10,7 +10,7 @@ enum DashboardPageOption {
   home,
   startCounter,
   startTracking,
-  showMapTracking,
+  mapTracking,
   pauseTracking,
   stopTracking,
 }

@@ -1,7 +1,7 @@
 import 'package:cycletowork/src/data/app_data.dart';
-import 'package:cycletowork/src/ui/landing/ui_state.dart';
-import 'package:cycletowork/src/ui/login_email_reset_password/view.dart';
+import 'package:cycletowork/src/ui/landing_email_reset_password/view.dart';
 import 'package:cycletowork/src/widget/button.dart';
+import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:cycletowork/src/ui/landing/view_model.dart';
@@ -9,23 +9,51 @@ import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 import 'package:provider/provider.dart';
 
-class LoginEmailView extends StatelessWidget {
-  final ViewModel landingModel;
-
+class LoginEmailView extends StatefulWidget {
   const LoginEmailView({
     Key? key,
-    required this.landingModel,
   }) : super(key: key);
+
+  @override
+  State<LoginEmailView> createState() => _LoginEmailViewState();
+}
+
+class _LoginEmailViewState extends State<LoginEmailView> {
+  var emailController = TextEditingController();
+  var passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     var scale = context.read<AppData>().scale;
+    final landingModel = Provider.of<ViewModel>(context);
     final onBackgroundColor = Theme.of(context).colorScheme.onBackground;
     var formKey = GlobalKey<FormState>();
-    var emailController = TextEditingController();
-    var passwordController = TextEditingController();
-    var loading = landingModel.uiState.pageOption == PageOption.loading;
+
+    var loading = landingModel.uiState.loading;
     var isIos = defaultTargetPlatform == TargetPlatform.iOS;
+
+    if (loading) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        body: Stack(
+          children: const [
+            Align(
+              alignment: Alignment.topCenter,
+              child: Image(
+                image: AssetImage(
+                  'assets/images/login.png',
+                ),
+                fit: BoxFit.cover,
+              ),
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: AppProgressIndicator(),
+            )
+          ],
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -34,7 +62,7 @@ class LoginEmailView extends StatelessWidget {
             Icons.arrow_back_ios,
             color: onBackgroundColor,
           ),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => landingModel.gotoLogout(),
         ),
       ),
       body: Form(
@@ -109,11 +137,8 @@ class LoginEmailView extends StatelessWidget {
                     if (formKey.currentState!.validate()) {
                       var email = emailController.text.toLowerCase().trim();
                       var password = passwordController.text;
-                      var result =
-                          await landingModel.loginEmail(email, password);
-                      if (result) {
-                        Navigator.pop(context);
-                      }
+
+                      await landingModel.loginEmail(email, password);
                     }
                   },
                   type: ButtonType.secondary,
@@ -169,10 +194,7 @@ class LoginEmailView extends StatelessWidget {
                 ),
                 child: AppButton(
                   loading: loading,
-                  onPressed: () {
-                    landingModel.loginGoogleSignIn();
-                    Navigator.pop(context);
-                  },
+                  onPressed: () => landingModel.loginGoogleSignIn(),
                   title: 'Accedi con Google',
                   textUpperCase: true,
                   type: ButtonType.googleLogin,
@@ -186,10 +208,7 @@ class LoginEmailView extends StatelessWidget {
                       ),
                       child: AppButton(
                         loading: loading,
-                        onPressed: () {
-                          landingModel.loginApple();
-                          Navigator.pop(context);
-                        },
+                        onPressed: () => landingModel.loginApple(),
                         title: 'Accedi con Apple',
                         textUpperCase: true,
                         type: ButtonType.appleLogin,

@@ -41,6 +41,10 @@ class ActivityList extends StatelessWidget {
       appLocale.languageCode,
     );
 
+    if (userActivity.isEmpty && listChallengeActive.isEmpty) {
+      return Container();
+    }
+
     return Container(
       color: colorScheme.background,
       height: 115.0 * scale,

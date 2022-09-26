@@ -15,9 +15,6 @@ class AppMap extends StatefulWidget {
   final double? markerLongitude;
   final List<LocationData> listTrackingPosition;
   final bool isChallenge;
-  final BoxFit fit;
-  final double? width;
-  final double? height;
   final bool canScroll;
   final bool isStatic;
   final double padding;
@@ -25,16 +22,13 @@ class AppMap extends StatefulWidget {
 
   const AppMap({
     Key? key,
-    this.zoom = 16.0,
-    this.initialLatitude,
-    this.initialLongitude,
+    required this.initialLatitude,
+    required this.initialLongitude,
+    required this.listTrackingPosition,
     this.markerLatitude,
     this.markerLongitude,
-    required this.listTrackingPosition,
+    this.zoom = 16.0,
     this.isChallenge = false,
-    this.fit = BoxFit.fill,
-    this.height,
-    this.width,
     this.canScroll = true,
     this.isStatic = false,
     this.padding = 100.0,
@@ -85,25 +79,6 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
     );
     await controller.animateCamera(camera);
     setMarker(latitude, longitude);
-  }
-
-  Future changeCameraFromPath(
-    double latitudeSource,
-    double longitudeSource,
-    double latitudeDestination,
-    double longitudeDestination,
-  ) async {
-    final GoogleMapController controller = await _controller.future;
-    LatLngBounds bounds = getBounds(
-      latitudeSource,
-      longitudeSource,
-      latitudeDestination,
-      longitudeDestination,
-    );
-
-    var camera = CameraUpdate.newLatLngBounds(bounds, widget.padding);
-
-    await controller.animateCamera(camera);
   }
 
   void setMarker(double latitude, double longitude) {
@@ -310,16 +285,11 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
             infoWindow: InfoWindow.noText,
           );
           _markers.add(stopMark);
-          LatLngBounds bounds = getBounds(
-            firstPosition.latitude,
-            firstPosition.longitude,
-            lastPosition.latitude,
-            lastPosition.longitude,
-          );
-          CameraUpdate cameraUpdate =
-              CameraUpdate.newLatLngBounds(bounds, widget.padding);
-          controller.moveCamera(cameraUpdate);
           Timer(const Duration(milliseconds: 500), () async {
+            var bounds = _boundsFromLatLngList(widget.listTrackingPosition);
+            CameraUpdate cameraUpdate =
+                CameraUpdate.newLatLngBounds(bounds, widget.padding);
+            controller.moveCamera(cameraUpdate);
             final uin8list = await controller.takeSnapshot();
             if (widget.onSnapshot != null) {
               widget.onSnapshot!(uin8list);
@@ -375,5 +345,25 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
     }
 
     return bounds;
+  }
+
+  LatLngBounds _boundsFromLatLngList(List<LocationData> list) {
+    assert(list.isNotEmpty);
+    double? x0, x1, y0, y1;
+    for (var latLng in list) {
+      if (x0 == null) {
+        x0 = x1 = latLng.latitude;
+        y0 = y1 = latLng.longitude;
+      } else {
+        if (latLng.latitude > x1!) x1 = latLng.latitude;
+        if (latLng.latitude < x0) x0 = latLng.latitude;
+        if (latLng.longitude > y1!) y1 = latLng.longitude;
+        if (latLng.longitude < y0!) y0 = latLng.longitude;
+      }
+    }
+    return LatLngBounds(
+      northeast: LatLng(x1!, y1!),
+      southwest: LatLng(x0!, y0!),
+    );
   }
 }

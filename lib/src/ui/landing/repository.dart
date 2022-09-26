@@ -48,9 +48,21 @@ class Repository {
     return UserAuth.isAuthenticated();
   }
 
-  Future<User> getUserInfo() async {
-    var user = await _remoteService.getUserInfo();
-    var localUser = await _localDatabase.getUserInfo(user.uid);
+  Future<User?> getUserInfoFromLocal() async {
+    var uid = UserAuth.getUserUid();
+    if (uid == null) {
+      return null;
+    }
+    return await _localDatabase.getUserInfo(uid);
+  }
+
+  Future<User?> getUserInfo() async {
+    var uid = UserAuth.getUserUid();
+    if (uid == null) {
+      return null;
+    }
+
+    var localUser = await _localDatabase.getUserInfo(uid);
     if (localUser == null) {
       var listUserActivity = await _remoteService.getListUserActivity(
         pageSize: 200,
@@ -59,8 +71,9 @@ class Repository {
         await _localDatabase.saveUserActivity(userActivity, []);
       }
     }
+    var user = await _remoteService.getUserInfo();
     await _localDatabase.saveUserInfo(user);
-    FirebaseCrashlytics.instance.setUserIdentifier(user.uid);
+    FirebaseCrashlytics.instance.setUserIdentifier(uid);
     return user;
   }
 

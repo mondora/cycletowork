@@ -2,8 +2,8 @@ import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/chart_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/theme.dart';
-import 'package:cycletowork/src/ui/details_tracking/ui_state.dart';
-import 'package:cycletowork/src/ui/details_tracking/view_model.dart';
+import 'package:cycletowork/src/ui/tracking_details/ui_state.dart';
+import 'package:cycletowork/src/ui/tracking_details/view_model.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 import 'package:cycletowork/src/widget/chart.dart';
 import 'package:cycletowork/src/widget/map.dart';
@@ -13,9 +13,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class DetailsTrackingView extends StatelessWidget {
+class TrackingDetailsView extends StatelessWidget {
   final UserActivity userActivity;
-  const DetailsTrackingView({
+
+  const TrackingDetailsView({
     Key? key,
     required this.userActivity,
   }) : super(key: key);
@@ -158,13 +159,12 @@ class DetailsTrackingView extends StatelessWidget {
                           ? AppMap(
                               key: _mapKey,
                               listTrackingPosition: listLocationData,
-                              fit: BoxFit.fitWidth,
                               isChallenge: isChallenge,
-                              height: 327.0 * scale,
                               initialLatitude: listLocationData.first.latitude,
                               initialLongitude:
                                   listLocationData.first.longitude,
                               isStatic: true,
+                              canScroll: false,
                             )
                           : imageData != null
                               ? Image.memory(

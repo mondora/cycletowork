@@ -6,20 +6,21 @@ import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 import 'package:cycletowork/src/widget/map.dart';
+import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-class ShowMapTracking extends StatefulWidget {
+class TrackingMapView extends StatefulWidget {
   final List<LocationData> listTrackingPosition;
   final LocationData currentPosition;
   final UserActivity trackingUserActivity;
   final GestureTapCancelCallback? pauseTracking;
   final GestureTapCancelCallback? hiddenMap;
 
-  const ShowMapTracking({
+  const TrackingMapView({
     Key? key,
     required this.listTrackingPosition,
     required this.trackingUserActivity,
@@ -29,10 +30,10 @@ class ShowMapTracking extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ShowMapTracking> createState() => _ShowMapTrackingState();
+  State<TrackingMapView> createState() => _TrackingMapViewState();
 }
 
-class _ShowMapTrackingState extends State<ShowMapTracking> {
+class _TrackingMapViewState extends State<TrackingMapView> {
   final GlobalKey<AppMapState> _mapKey = GlobalKey();
   LocationData? lastPositionPassed;
 
@@ -50,6 +51,15 @@ class _ShowMapTrackingState extends State<ShowMapTracking> {
   @override
   Widget build(BuildContext context) {
     var scale = context.read<AppData>().scale;
+
+    if (widget.listTrackingPosition.isEmpty) {
+      return const Scaffold(
+        body: Center(
+          child: AppProgressIndicator(),
+        ),
+      );
+    }
+
     var lastPosition = widget.listTrackingPosition.last;
     final trackingCo2 = widget.trackingUserActivity.co2.gramToKg();
     final isChallenge =

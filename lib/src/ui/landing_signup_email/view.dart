@@ -1,32 +1,58 @@
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/ui/privacy_policy/view.dart';
 import 'package:cycletowork/src/widget/button.dart';
+import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:cycletowork/src/ui/landing/view_model.dart';
 import 'package:provider/provider.dart';
 
-class SignupView extends StatelessWidget {
-  final ViewModel landingModel;
-  const SignupView({
+class SignupEmailView extends StatefulWidget {
+  const SignupEmailView({
     Key? key,
-    required this.landingModel,
   }) : super(key: key);
+
+  @override
+  State<SignupEmailView> createState() => _SignupEmailViewState();
+}
+
+class _SignupEmailViewState extends State<SignupEmailView> {
+  var formKey = GlobalKey<FormState>();
+  var nameController = TextEditingController();
+  var emailController = TextEditingController();
+  var passwordController = TextEditingController();
+  var rePasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     var scale = context.read<AppData>().scale;
     final onBackgroundColor = Theme.of(context).colorScheme.onBackground;
-    var formKey = GlobalKey<FormState>();
-    var nameController = TextEditingController();
-    var emailController = TextEditingController();
-    var passwordController = TextEditingController();
-    var rePasswordController = TextEditingController();
+    final landingModel = Provider.of<ViewModel>(context);
+    var loading = landingModel.uiState.loading;
 
-    // RegExp regExpNumber = RegExp(r'^(?=.*\d)[a-zA-Z\d]');
-    // RegExp regExpLowerCase = RegExp(r'^(?=.*[a-z])');
-    // RegExp regExpUpperCase = RegExp(r'^(?=.*[A-Z])');
+    if (loading) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        body: Stack(
+          children: const [
+            Align(
+              alignment: Alignment.topCenter,
+              child: Image(
+                image: AssetImage(
+                  'assets/images/login.png',
+                ),
+                fit: BoxFit.cover,
+              ),
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: AppProgressIndicator(),
+            )
+          ],
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -35,7 +61,7 @@ class SignupView extends StatelessWidget {
             Icons.arrow_back_ios,
             color: onBackgroundColor,
           ),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => landingModel.gotoLogout(),
         ),
       ),
       body: Form(
@@ -106,15 +132,7 @@ class SignupView extends StatelessWidget {
                     if (value.length < 8) {
                       return 'La password deve contenere almeno 8 caratteri';
                     }
-                    // if (!regExpNumber.hasMatch(value)) {
-                    //   return 'La password deve contenere almeno un numero';
-                    // }
-                    // if (!regExpLowerCase.hasMatch(value)) {
-                    //   return 'La password deve contenere almeno uno minuscolo';
-                    // }
-                    // if (!regExpUpperCase.hasMatch(value)) {
-                    //   return 'La password deve contenere almeno uno maiuscolo';
-                    // }
+
                     return null;
                   },
                 ),
@@ -189,11 +207,7 @@ class SignupView extends StatelessWidget {
                       var email = emailController.text.toLowerCase().trim();
                       var password = passwordController.text;
                       var name = nameController.text;
-                      var result =
-                          await landingModel.signupEmail(email, password, name);
-                      if (result) {
-                        Navigator.pop(context);
-                      }
+                      await landingModel.signupEmail(email, password, name);
                     }
                   },
                   type: ButtonType.secondary,

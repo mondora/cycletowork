@@ -34,7 +34,9 @@ class LocationData {
         userActivityId = map['userActivityId'],
         latitude = map['latitude'],
         longitude = map['longitude'],
-        accuracy = map['accuracy'],
+        accuracy = map['accuracy'] != null
+            ? double.parse(map['accuracy'].toString())
+            : 0.0,
         altitude = map['altitude'],
         speed = map['speed'],
         speedAccuracy = map['speedAccuracy'],

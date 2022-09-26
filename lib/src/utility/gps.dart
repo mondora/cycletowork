@@ -66,13 +66,21 @@ class Gps {
         .firstWhere((element) => element.name == permissionStatus.name);
   }
 
-  static Future<location_data.LocationData?> getCurrentPosition() async {
+  static Future<location_data.LocationData?> getCurrentPosition({
+    required String permissionRequestMessage,
+  }) async {
     try {
+      var accuracy = defaultTargetPlatform == TargetPlatform.iOS
+          ? location.LocationAccuracy.navigation
+          : location.LocationAccuracy.high;
       var result = await location.getLocation(
         settings: location.LocationSettings(
           ignoreLastKnownPosition: true,
           useGooglePlayServices: false,
           askForGooglePlayServices: false,
+          accuracy: accuracy,
+          rationaleMessageForPermissionRequest: permissionRequestMessage,
+          rationaleMessageForGPSRequest: permissionRequestMessage,
         ),
       );
       return location_data.LocationData(

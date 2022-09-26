@@ -23,13 +23,13 @@ enum TrackingOption {
   maxSpeed,
 }
 
-class StopTrackingView extends StatefulWidget {
+class TrackingStopView extends StatefulWidget {
   final List<LocationData> listTrackingPosition;
   final UserActivity trackingUserActivity;
   final GestureTapCancelCallback saveTracking;
   final GestureTapCancelCallback removeTracking;
 
-  const StopTrackingView({
+  const TrackingStopView({
     Key? key,
     required this.listTrackingPosition,
     required this.trackingUserActivity,
@@ -38,10 +38,10 @@ class StopTrackingView extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<StopTrackingView> createState() => _StopTrackingViewState();
+  State<TrackingStopView> createState() => _TrackingStopViewState();
 }
 
-class _StopTrackingViewState extends State<StopTrackingView> {
+class _TrackingStopViewState extends State<TrackingStopView> {
   String city = '';
   final GlobalKey<AppMapState> _mapKey = GlobalKey();
 
@@ -58,6 +58,9 @@ class _StopTrackingViewState extends State<StopTrackingView> {
   }
 
   _getCityName() async {
+    if (widget.listTrackingPosition.isEmpty) {
+      return;
+    }
     var firstPosition = widget.listTrackingPosition.first;
     final Locale appLocale = Localizations.localeOf(context);
     var result = await Gps.getCityName(
@@ -74,6 +77,7 @@ class _StopTrackingViewState extends State<StopTrackingView> {
   @override
   Widget build(BuildContext context) {
     var scale = context.read<AppData>().scale;
+
     var textTheme = Theme.of(context).textTheme;
     var colorScheme = Theme.of(context).colorScheme;
     final colorSchemeExtension =
@@ -105,6 +109,13 @@ class _StopTrackingViewState extends State<StopTrackingView> {
         : 0;
     final isChallenge =
         widget.trackingUserActivity.isChallenge == 1 ? true : false;
+
+    final initialLatitude = widget.listTrackingPosition.isNotEmpty
+        ? widget.listTrackingPosition.first.latitude
+        : context.read<ViewModel>().uiState.currentPosition!.latitude;
+    final initialLongitude = widget.listTrackingPosition.isNotEmpty
+        ? widget.listTrackingPosition.first.longitude
+        : context.read<ViewModel>().uiState.currentPosition!.longitude;
 
     return Scaffold(
       body: ListView(
@@ -179,14 +190,14 @@ class _StopTrackingViewState extends State<StopTrackingView> {
               child: AppMap(
                 listTrackingPosition: widget.listTrackingPosition,
                 isChallenge: isChallenge,
-                initialLatitude: widget.listTrackingPosition.first.latitude,
-                initialLongitude: widget.listTrackingPosition.first.longitude,
-                isStatic: true,
+                initialLatitude: initialLatitude,
+                initialLongitude: initialLongitude,
+                isStatic: widget.listTrackingPosition.isNotEmpty ? true : false,
                 padding: 100.0,
-                height: 327.0 * scale,
                 onSnapshot: (value) {
                   context.read<ViewModel>().setUserActivityImageData(value);
                 },
+                canScroll: false,
               ),
             ),
           ),
@@ -383,8 +394,14 @@ class _StopTrackingViewState extends State<StopTrackingView> {
                         Radius.circular(15 * scale),
                       ),
                     ),
-                    backgroundColor: colorSchemeExtension.success,
-                    onPressed: widget.saveTracking,
+                    backgroundColor: widget.listTrackingPosition.isNotEmpty &&
+                            widget.listTrackingPosition.length > 1
+                        ? colorSchemeExtension.success
+                        : colorSchemeExtension.textDisabled,
+                    onPressed: widget.listTrackingPosition.isNotEmpty &&
+                            widget.listTrackingPosition.length > 1
+                        ? () => widget.saveTracking()
+                        : null,
                     label: Text(
                       'Salva'.toUpperCase(),
                     ),

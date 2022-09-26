@@ -1,7 +1,7 @@
 name: cycletowork
 description: A new open source app for track bicycle.
 publish_to: 'https://github.com/mondora/cycletowork'
-version: 1.0.7+32
+version: 1.0.8+36
 
 environment:
     sdk: '>=2.18.0 <3.0.0'

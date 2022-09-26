@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:cycletowork/src/data/app_data.dart';
-import 'package:cycletowork/src/ui/details_tracking/view.dart';
+import 'package:cycletowork/src/ui/tracking_details/view.dart';
 import 'package:cycletowork/src/ui/home/widget/confirm_challenge.dart';
 import 'package:cycletowork/src/ui/register_challenge/view.dart';
 import 'package:cycletowork/src/utility/convert.dart';
@@ -105,6 +105,12 @@ class _HomeViewState extends State<HomeView> {
     final distance = user.distance.meterToKm();
     final averageSpeed = user.averageSpeed.meterPerSecondToKmPerHour();
 
+    final listActivityHeight =
+        dashboardModel.uiState.listUserActivity.isEmpty &&
+                dashboardModel.uiState.listChallengeActive.isEmpty
+            ? 0.0
+            : 115.0 * scale;
+
     if (dashboardModel.uiState.currentPosition != null) {
       Timer(const Duration(seconds: 1), () {
         _updateCamera(
@@ -119,7 +125,7 @@ class _HomeViewState extends State<HomeView> {
       fit: StackFit.expand,
       children: [
         Container(
-          margin: const EdgeInsets.only(top: 100.0),
+          margin: EdgeInsets.only(top: 25.0 * scale),
           child: AppMap(
             key: _mapKey,
             initialLatitude: initialLatitude,
@@ -129,58 +135,6 @@ class _HomeViewState extends State<HomeView> {
         ),
         Column(
           children: [
-            Container(
-              color: Theme.of(context).colorScheme.background,
-              height: 115.0 * scale,
-              child: ListView(
-                controller: _controller,
-                scrollDirection: Axis.horizontal,
-                children: [
-                  ActivityList(
-                    userActivity: dashboardModel.uiState.listUserActivity,
-                    listChallengeActive:
-                        dashboardModel.uiState.listChallengeActive,
-                    onUserActivityClick: (userActivity) async {
-                      await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => DetailsTrackingView(
-                            userActivity: userActivity,
-                          ),
-                        ),
-                      );
-                    },
-                    onChallengeActiveClick: (challenge) async {
-                      var title = challenge.name;
-                      var isConfirmed = await ConfirmChallengeDialog(
-                        context: context,
-                        title: title,
-                        confirmButton: 'Mi interessa'.toUpperCase(),
-                        cancelButton: 'Questa volta passo'.toUpperCase(),
-                      ).show();
-                      if (isConfirmed == true) {
-                        await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => RegisterChallengeView(
-                              challenge: challenge,
-                            ),
-                          ),
-                        );
-                        dashboardModel
-                            .getActiveChallengeListAndClassification();
-                      }
-                    },
-                  ),
-                  if (dashboardModel.uiState.loading)
-                    Container(
-                      color: Theme.of(context).colorScheme.background,
-                      padding: EdgeInsets.symmetric(horizontal: 20 * scale),
-                      child: const Center(
-                        child: AppProgressIndicator(),
-                      ),
-                    ),
-                ],
-              ),
-            ),
             Material(
               elevation: 4,
               borderRadius: const BorderRadius.only(
@@ -188,7 +142,7 @@ class _HomeViewState extends State<HomeView> {
                 bottomRight: Radius.circular(10.0),
               ),
               child: SlidingUpPanel(
-                maxHeight: 168.0 * scale,
+                maxHeight: 168.0 * scale + listActivityHeight,
                 minHeight: 30.0 * scale,
                 defaultPanelState: PanelState.OPEN,
                 color: Theme.of(context).colorScheme.background,
@@ -197,15 +151,72 @@ class _HomeViewState extends State<HomeView> {
                 panelBuilder: (sc) => Column(
                   children: <Widget>[
                     Container(
-                      margin: EdgeInsets.only(
-                        right: 24.0 * scale,
-                        left: 24.0 * scale,
-                      ),
-                      child: Container(
-                        height: 1,
-                        color: const Color.fromRGBO(0, 0, 0, 0.12),
+                      color: Theme.of(context).colorScheme.background,
+                      height: listActivityHeight,
+                      child: ListView(
+                        controller: _controller,
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          ActivityList(
+                            userActivity:
+                                dashboardModel.uiState.listUserActivity,
+                            listChallengeActive:
+                                dashboardModel.uiState.listChallengeActive,
+                            onUserActivityClick: (userActivity) async {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => TrackingDetailsView(
+                                    userActivity: userActivity,
+                                  ),
+                                ),
+                              );
+                            },
+                            onChallengeActiveClick: (challenge) async {
+                              var title = challenge.name;
+                              var isConfirmed = await ConfirmChallengeDialog(
+                                context: context,
+                                title: title,
+                                confirmButton: 'Mi interessa'.toUpperCase(),
+                                cancelButton:
+                                    'Questa volta passo'.toUpperCase(),
+                              ).show();
+                              if (isConfirmed == true) {
+                                await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => RegisterChallengeView(
+                                      challenge: challenge,
+                                    ),
+                                  ),
+                                );
+                                dashboardModel
+                                    .getActiveChallengeListAndClassification();
+                              }
+                            },
+                          ),
+                          if (dashboardModel.uiState.loading)
+                            Container(
+                              color: Theme.of(context).colorScheme.background,
+                              padding:
+                                  EdgeInsets.symmetric(horizontal: 20 * scale),
+                              child: const Center(
+                                child: AppProgressIndicator(),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
+                    if (dashboardModel.uiState.listUserActivity.isNotEmpty ||
+                        dashboardModel.uiState.listChallengeActive.isNotEmpty)
+                      Container(
+                        margin: EdgeInsets.only(
+                          right: 24.0 * scale,
+                          left: 24.0 * scale,
+                        ),
+                        child: Container(
+                          height: 1,
+                          color: const Color.fromRGBO(0, 0, 0, 0.12),
+                        ),
+                      ),
                     SummeryCard(
                       co2: '${numberFormat.format(co2)} Kg',
                       distance: '${numberFormat.format(distance)} km',

@@ -2,7 +2,7 @@ import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/activity/widget/activity_list.dart';
 import 'package:cycletowork/src/ui/dashboard/view_model.dart';
-import 'package:cycletowork/src/ui/details_tracking/view.dart';
+import 'package:cycletowork/src/ui/tracking_details/view.dart';
 import 'package:cycletowork/src/widget/chart.dart';
 import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
@@ -234,7 +234,7 @@ class _ActivityViewState extends State<ActivityView> {
                 onUserActivityClick: (userActivity) async {
                   await Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => DetailsTrackingView(
+                      builder: (context) => TrackingDetailsView(
                         userActivity: userActivity,
                       ),
                     ),

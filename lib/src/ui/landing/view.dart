@@ -2,7 +2,9 @@ import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/ui/dashboard/view.dart';
 import 'package:cycletowork/src/ui/landing/ui_state.dart';
 import 'package:cycletowork/src/ui/landing/view_model.dart';
-import 'package:cycletowork/src/ui/login/view.dart';
+import 'package:cycletowork/src/ui/landing_login/view.dart';
+import 'package:cycletowork/src/ui/landing_login_email/view.dart';
+import 'package:cycletowork/src/ui/landing_signup_email/view.dart';
 import 'package:cycletowork/src/utility/notification.dart';
 import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
@@ -85,7 +87,15 @@ class _LandingViewState extends State<LandingView> {
               );
             }
 
-            if (viewModel.uiState.pageOption == PageOption.loading ||
+            if (viewModel.uiState.pageOption == PageOption.loginEmail) {
+              return const LoginEmailView();
+            }
+
+            if (viewModel.uiState.pageOption == PageOption.signupEmail) {
+              return const SignupEmailView();
+            }
+
+            if (viewModel.uiState.loading == true ||
                 currenScreenScale != scale) {
               return Scaffold(
                 backgroundColor: Theme.of(context).colorScheme.primary,

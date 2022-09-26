@@ -2,6 +2,7 @@ import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/data/location_data.dart';
+import 'package:cycletowork/src/ui/dashboard/view_model.dart';
 import 'package:cycletowork/src/widget/map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -10,13 +11,13 @@ import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 
-class PauseTrackingView extends StatelessWidget {
+class TrackingPauseView extends StatelessWidget {
   final List<LocationData> listTrackingPosition;
   final UserActivity trackingUserActivity;
   final GestureTapCancelCallback? playTracking;
   final GestureTapCancelCallback? stopTracking;
 
-  const PauseTrackingView({
+  const TrackingPauseView({
     Key? key,
     required this.listTrackingPosition,
     required this.trackingUserActivity,
@@ -27,6 +28,7 @@ class PauseTrackingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var scale = context.read<AppData>().scale;
+
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final Locale appLocale = Localizations.localeOf(context);
@@ -41,6 +43,13 @@ class PauseTrackingView extends StatelessWidget {
         trackingUserActivity.averageSpeed.meterPerSecondToKmPerHour();
     final trackingDistanceInKm = trackingUserActivity.distance.meterToKm();
     final isChallenge = trackingUserActivity.isChallenge == 1 ? true : false;
+
+    final initialLatitude = listTrackingPosition.isNotEmpty
+        ? listTrackingPosition.first.latitude
+        : context.read<ViewModel>().uiState.currentPosition!.latitude;
+    final initialLongitude = listTrackingPosition.isNotEmpty
+        ? listTrackingPosition.first.longitude
+        : context.read<ViewModel>().uiState.currentPosition!.longitude;
 
     return Scaffold(
       body: Stack(
@@ -90,9 +99,9 @@ class PauseTrackingView extends StatelessWidget {
                 child: AppMap(
                   listTrackingPosition: listTrackingPosition,
                   isChallenge: isChallenge,
-                  initialLatitude: listTrackingPosition.first.latitude,
-                  initialLongitude: listTrackingPosition.first.longitude,
-                  isStatic: true,
+                  initialLatitude: initialLatitude,
+                  initialLongitude: initialLongitude,
+                  isStatic: listTrackingPosition.isNotEmpty ? true : false,
                   padding: 150.0,
                 ),
               ),

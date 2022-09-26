@@ -433,8 +433,12 @@ class Repository {
     return await Gps.getGpsStatus();
   }
 
-  Future<LocationData?> getCurrentPosition() async {
-    return await Gps.getCurrentPosition();
+  Future<LocationData?> getCurrentPosition(
+    String permissionRequestMessage,
+  ) async {
+    return await Gps.getCurrentPosition(
+      permissionRequestMessage: permissionRequestMessage,
+    );
   }
 
   Future setGpsConfig(

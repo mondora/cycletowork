@@ -1,7 +1,5 @@
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/ui/landing/view_model.dart';
-import 'package:cycletowork/src/ui/login_email/view.dart';
-import 'package:cycletowork/src/ui/signup/view.dart';
 import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -60,15 +58,7 @@ class LoginView extends StatelessWidget {
                         ),
                         child: AppButton(
                           loading: loading,
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => LoginEmailView(
-                                  landingModel: landingModel,
-                                ),
-                              ),
-                            );
-                          },
+                          onPressed: () => landingModel.gotoLoginEmail(),
                           title: AppLocalizations.of(context)!.login,
                           textUpperCase: true,
                           type: ButtonType.secondary,
@@ -131,15 +121,7 @@ class LoginView extends StatelessWidget {
                         ),
                         child: AppButton(
                           loading: loading,
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => SignupView(
-                                  landingModel: landingModel,
-                                ),
-                              ),
-                            );
-                          },
+                          onPressed: () => landingModel.gotoSignupEmail(),
                           title: AppLocalizations.of(context)!.signupWithEmail,
                           textUpperCase: true,
                           type: ButtonType.emailLogin,

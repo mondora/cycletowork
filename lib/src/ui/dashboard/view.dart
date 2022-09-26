@@ -14,12 +14,12 @@ import 'package:cycletowork/src/ui/dashboard/widget/drawer.dart';
 import 'package:cycletowork/src/ui/information/view.dart';
 import 'package:cycletowork/src/ui/landing/view_model.dart'
     as landing_view_model;
-import 'package:cycletowork/src/ui/map_tracking/view.dart';
-import 'package:cycletowork/src/ui/pause_tracking/view.dart';
+import 'package:cycletowork/src/ui/tracking_map/view.dart';
+import 'package:cycletowork/src/ui/tracking_pause/view.dart';
 import 'package:cycletowork/src/ui/profile/view.dart';
 import 'package:cycletowork/src/ui/dashboard/widget/gps_icon.dart';
 import 'package:cycletowork/src/ui/settings/view.dart';
-import 'package:cycletowork/src/ui/stop_tracking/view.dart';
+import 'package:cycletowork/src/ui/tracking_stop/view.dart';
 import 'package:cycletowork/src/ui/tracking/view.dart';
 import 'package:cycletowork/src/utility/gps.dart';
 import 'package:cycletowork/src/widget/alart_dialog.dart';
@@ -93,7 +93,7 @@ class DashboardView extends StatelessWidget {
 
               if (viewModel.uiState.dashboardPageOption ==
                   DashboardPageOption.pauseTracking) {
-                return PauseTrackingView(
+                return TrackingPauseView(
                   listTrackingPosition: viewModel.listTrackingPosition,
                   trackingUserActivity: viewModel.trackingUserActivity!,
                   playTracking: viewModel.playTracking,
@@ -103,7 +103,7 @@ class DashboardView extends StatelessWidget {
 
               if (viewModel.uiState.dashboardPageOption ==
                   DashboardPageOption.stopTracking) {
-                return StopTrackingView(
+                return TrackingStopView(
                   listTrackingPosition: viewModel.listTrackingPosition,
                   trackingUserActivity: viewModel.trackingUserActivity!,
                   saveTracking: () async {
@@ -154,8 +154,8 @@ class DashboardView extends StatelessWidget {
               }
 
               if (viewModel.uiState.dashboardPageOption ==
-                  DashboardPageOption.showMapTracking) {
-                return ShowMapTracking(
+                  DashboardPageOption.mapTracking) {
+                return TrackingMapView(
                   listTrackingPosition: viewModel.listTrackingPosition,
                   trackingUserActivity: viewModel.trackingUserActivity!,
                   currentPosition: viewModel.uiState.currentPosition!,

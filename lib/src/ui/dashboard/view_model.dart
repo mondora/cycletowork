@@ -21,6 +21,8 @@ class ViewModel extends ChangeNotifier {
   final initialLongitude = 9.198330425060847;
   final _minDistanceInMeterToAdd = 3;
   final _minDistanceFromLineInMeterToAdd = 2;
+  final _minAccuracyToAdd = 20;
+  final _delayForAverageSpeed = 10;
   final _ignoreAppBarActionPages = [
     AppMenuOption.profile,
   ];
@@ -217,17 +219,8 @@ class ViewModel extends ChangeNotifier {
       _uiState.currentPosition = locationData;
       if (_uiState.counter == 0 && !_trackingPaused) {
         _addToListTrackingPosition(locationData);
-        if (_uiState.dashboardPageOption ==
-            DashboardPageOption.showMapTracking) {
+        if (_uiState.dashboardPageOption == DashboardPageOption.mapTracking) {
           notifyListeners();
-        }
-      } else {
-        if (_listTrackingPosition.isEmpty) {
-          _addToListTrackingPosition(locationData);
-          if (_uiState.dashboardPageOption ==
-              DashboardPageOption.showMapTracking) {
-            notifyListeners();
-          }
         }
       }
     });
@@ -383,7 +376,7 @@ class ViewModel extends ChangeNotifier {
   }
 
   void showMapTracking() {
-    _uiState.dashboardPageOption = DashboardPageOption.showMapTracking;
+    _uiState.dashboardPageOption = DashboardPageOption.mapTracking;
     notifyListeners();
   }
 
@@ -686,7 +679,9 @@ class ViewModel extends ChangeNotifier {
   Future<LocationData?> _getCurrentLocation() async {
     _uiState.gpsStatus = await _repository.getGpsStatus();
     if (_uiState.gpsStatus == _repository.gpsGranted) {
-      return await _repository.getCurrentPosition();
+      var permissionRequestMessage =
+          'Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione';
+      return await _repository.getCurrentPosition(permissionRequestMessage);
     }
     return null;
   }
@@ -698,7 +693,7 @@ class ViewModel extends ChangeNotifier {
   bool _isTrackingStarted() {
     return _uiState.dashboardPageOption == DashboardPageOption.startTracking ||
         _uiState.dashboardPageOption == DashboardPageOption.pauseTracking ||
-        _uiState.dashboardPageOption == DashboardPageOption.showMapTracking ||
+        _uiState.dashboardPageOption == DashboardPageOption.mapTracking ||
         _uiState.dashboardPageOption == DashboardPageOption.stopTracking;
   }
 
@@ -715,6 +710,15 @@ class ViewModel extends ChangeNotifier {
       _trackingUserActivity!.averageSpeed = locationData.speed;
       return;
     }
+
+    if (locationData.accuracy < 0) {
+      return;
+    }
+
+    if (locationData.accuracy > _minAccuracyToAdd) {
+      return;
+    }
+
     var lastPosition = _listTrackingPosition.last;
     var distance = _trackingUserActivity!.distance;
     // var calorie = _trackingUserActivity!.calorie;
@@ -726,6 +730,10 @@ class ViewModel extends ChangeNotifier {
           locationData,
         )
         .abs();
+
+    if (newDistance < locationData.accuracy) {
+      return;
+    }
 
     // var newCalorie = newDistance.toCalorieFromDistanceInMeter();
     var newCo2 = newDistance.distanceInMeterToCo2g();
@@ -754,8 +762,11 @@ class ViewModel extends ChangeNotifier {
     if (_listTrackingPosition.length < 2) {
       _listTrackingPosition.add(locationData);
 
-      _trackingUserActivity!.averageSpeed =
-          _listTrackingPosition.map((e) => e.speed).reduce((a, b) => a + b) / 2;
+      if (_trackingUserActivity!.duration > _delayForAverageSpeed) {
+        _trackingUserActivity!.averageSpeed =
+            _listTrackingPosition.map((e) => e.speed).reduce((a, b) => a + b) /
+                2;
+      }
     } else {
       var point = lastPosition;
       var endPont = locationData;
@@ -768,7 +779,9 @@ class ViewModel extends ChangeNotifier {
       }
       var totalDistance = _trackingUserActivity!.distance;
       var totalDuration = _trackingUserActivity!.duration;
-      _trackingUserActivity!.averageSpeed = totalDistance / totalDuration;
+      if (_trackingUserActivity!.duration > _delayForAverageSpeed) {
+        _trackingUserActivity!.averageSpeed = totalDistance / totalDuration;
+      }
     }
   }
 

@@ -259,7 +259,7 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                                   context: context,
                                   title: 'Attenzione!',
                                   subtitle:
-                                      "È necessario acconsentire all'utilizzo della fotocamera",
+                                      "Per poter cambiare l'immagine del tuo profilo devi consentire a Cycle2Work di accedere alla fotocamera del tuo dispositivo",
                                   body: '',
                                   confirmLabel: 'Ho capito',
                                 ).show();

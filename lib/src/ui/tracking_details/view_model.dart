@@ -1,6 +1,6 @@
 import 'package:cycletowork/src/data/user_activity.dart';
-import 'package:cycletowork/src/ui/details_tracking/repository.dart';
-import 'package:cycletowork/src/ui/details_tracking/ui_state.dart';
+import 'package:cycletowork/src/ui/tracking_details/repository.dart';
+import 'package:cycletowork/src/ui/tracking_details/ui_state.dart';
 import 'package:cycletowork/src/utility/logger.dart';
 import 'package:flutter/material.dart';
 

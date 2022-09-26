@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 class ViewModel extends ChangeNotifier {
   final bool isAdmin;
+  bool _isWatingForGetUserInfo = false;
   final _repository = Repository();
 
   final _uiState = UiState();
@@ -22,26 +23,31 @@ class ViewModel extends ChangeNotifier {
   }
 
   getter() async {
-    _uiState.pageOption = PageOption.loading;
+    _uiState.loading = true;
     notifyListeners();
     try {
       var isAuthenticated = _repository.isAuthenticated();
       if (isAuthenticated) {
         await _getInitialInfo();
         _uiState.pageOption = PageOption.home;
+        _uiState.loading = false;
         notifyListeners();
       } else {
         _uiState.pageOption = PageOption.logout;
+        _uiState.loading = false;
         notifyListeners();
       }
       _repository.isAuthenticatedStateChanges().listen((isAuthenticated) async {
         if (!isAuthenticated) {
           _uiState.pageOption = PageOption.logout;
+          _uiState.loading = false;
           notifyListeners();
           return;
         }
       });
     } catch (e) {
+      await _repository.logout();
+      _uiState.loading = false;
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
       Logger.error(e);
@@ -52,60 +58,62 @@ class ViewModel extends ChangeNotifier {
 
   void loginApple() async {
     debugPrint('loginApple');
-    _uiState.pageOption = PageOption.loading;
+    _uiState.loading = true;
     clearError();
     try {
       await _repository.loginApple();
       var isAuthenticated = _repository.isAuthenticated();
       if (isAuthenticated) {
-        _tryGetUserInfo();
+        await _tryGetUserInfo();
       } else {
-        _uiState.pageOption = PageOption.logout;
+        _uiState.loading = false;
         notifyListeners();
       }
     } catch (e) {
+      await _repository.logout();
+      _uiState.loading = false;
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
       Logger.error(e);
-      _uiState.pageOption = PageOption.logout;
       notifyListeners();
     }
   }
 
   void loginGoogleSignIn() async {
     debugPrint('loginGoogleSignIn');
-    _uiState.pageOption = PageOption.loading;
+    _uiState.loading = true;
     clearError();
     try {
       await _repository.loginGoogleSignIn();
       var isAuthenticated = _repository.isAuthenticated();
       if (isAuthenticated) {
-        _tryGetUserInfo();
+        await _tryGetUserInfo();
       } else {
-        _uiState.pageOption = PageOption.logout;
+        _uiState.loading = false;
         notifyListeners();
       }
     } catch (e) {
+      await _repository.logout();
+      _uiState.loading = false;
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
       Logger.error(e);
-      _uiState.pageOption = PageOption.logout;
       notifyListeners();
     }
   }
 
   Future<bool> loginEmail(String email, String password) async {
     debugPrint('loginEmail');
-    _uiState.pageOption = PageOption.loading;
+    _uiState.loading = true;
     clearError();
     try {
       await _repository.loginEmail(email, password);
       var isAuthenticated = _repository.isAuthenticated();
       if (isAuthenticated) {
-        _tryGetUserInfo();
+        await _tryGetUserInfo();
         return true;
       } else {
-        _uiState.pageOption = PageOption.logout;
+        _uiState.loading = false;
         notifyListeners();
         return false;
       }
@@ -125,8 +133,8 @@ class ViewModel extends ChangeNotifier {
         Logger.error(e);
         _uiState.error = true;
       }
-
-      _uiState.pageOption = PageOption.logout;
+      await _repository.logout();
+      _uiState.loading = false;
       notifyListeners();
       return false;
     }
@@ -134,17 +142,17 @@ class ViewModel extends ChangeNotifier {
 
   Future<bool> signupEmail(String email, String password, String? name) async {
     debugPrint('signupEmail');
-    _uiState.pageOption = PageOption.loading;
+    _uiState.loading = true;
     clearError();
     try {
       displayName = name;
       await _repository.signupEmail(email, password);
       var isAuthenticated = _repository.isAuthenticated();
       if (isAuthenticated) {
-        _tryGetUserInfo();
+        await _tryGetUserInfo();
         return true;
       } else {
-        _uiState.pageOption = PageOption.logout;
+        _uiState.loading = false;
         notifyListeners();
         return false;
       }
@@ -164,11 +172,26 @@ class ViewModel extends ChangeNotifier {
         Logger.error(e);
         _uiState.error = true;
       }
-
-      _uiState.pageOption = PageOption.logout;
+      await _repository.logout();
+      _uiState.loading = false;
       notifyListeners();
       return false;
     }
+  }
+
+  void gotoLoginEmail() {
+    _uiState.pageOption = PageOption.loginEmail;
+    clearError();
+  }
+
+  void gotoLogout() {
+    _uiState.pageOption = PageOption.logout;
+    clearError();
+  }
+
+  void gotoSignupEmail() {
+    _uiState.pageOption = PageOption.signupEmail;
+    clearError();
   }
 
   Future<bool?> passwordReset(String email) async {
@@ -187,8 +210,8 @@ class ViewModel extends ChangeNotifier {
 
   void logout() async {
     debugPrint('logout');
-    _uiState.pageOption = PageOption.loading;
-    notifyListeners();
+    _uiState.loading = true;
+    clearError();
     try {
       await _repository.logout();
     } catch (e) {
@@ -197,6 +220,7 @@ class ViewModel extends ChangeNotifier {
       Logger.error(e);
     } finally {
       _uiState.pageOption = PageOption.logout;
+      _uiState.loading = false;
       notifyListeners();
     }
   }
@@ -207,24 +231,44 @@ class ViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  _tryGetUserInfo() {
-    int _counterTryGetUserInfo = 5;
-    Timer.periodic(const Duration(seconds: 4), (timer) async {
+  Future<void> _tryGetUserInfo() async {
+    var userInfoLocal = await _repository.getUserInfoFromLocal();
+    if (userInfoLocal != null) {
+      await _getInitialInfo();
+      _uiState.pageOption = PageOption.home;
+      _uiState.loading = false;
+      notifyListeners();
+      return;
+    }
+
+    int _counterTryGetUserInfo = 10;
+    _isWatingForGetUserInfo = false;
+    Timer.periodic(const Duration(seconds: 1), (timer) async {
+      if (_isWatingForGetUserInfo) {
+        return;
+      }
+      _isWatingForGetUserInfo = true;
       try {
         debugPrint('_tryGetUserInfo');
         debugPrint(_counterTryGetUserInfo.toString());
         await _getInitialInfo();
         _uiState.pageOption = PageOption.home;
+        _uiState.loading = false;
         timer.cancel();
+        _isWatingForGetUserInfo = false;
         notifyListeners();
       } catch (e) {
         if (_counterTryGetUserInfo == 0) {
+          await _repository.logout();
           Logger.error(e);
           _uiState.pageOption = PageOption.logout;
           timer.cancel();
           notifyListeners();
+          _isWatingForGetUserInfo = false;
+          _uiState.loading = false;
         }
       } finally {
+        _isWatingForGetUserInfo = false;
         _counterTryGetUserInfo--;
       }
     });
@@ -238,7 +282,12 @@ class ViewModel extends ChangeNotifier {
         throw ('Non Sei un utente admin');
       }
     } else {
-      AppData.user = await _repository.getUserInfo();
+      var result = await _repository.getUserInfo();
+      if (result == null) {
+        await _repository.logout();
+        throw ('È stata una anomalia, riprova.');
+      }
+      AppData.user = result;
       await _repository.saveDeviceToken();
       if (displayName != null && displayName != '') {
         AppData.user!.displayName = displayName;

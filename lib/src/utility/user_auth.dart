@@ -169,7 +169,7 @@ class UserAuth {
     }
   }
 
-  static Future<String?> getUserUid() async {
+  static String? getUserUid() {
     var user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       return user.uid;

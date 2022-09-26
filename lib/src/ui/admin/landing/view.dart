@@ -48,7 +48,7 @@ class AdminLandingView extends StatelessWidget {
                 },
               );
             }
-            if (viewModel.uiState.pageOption == PageOption.loading) {
+            if (viewModel.uiState.loading) {
               return const AdminLoginView(loading: true);
             }
 
