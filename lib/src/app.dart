@@ -36,7 +36,9 @@ class _CycleToWorkAppState extends State<CycleToWorkApp> {
         Locale('it', ''),
       ],
       title: 'Cycle2Work',
-      theme: context.watch<AppData>().themeData,
+      theme: context.watch<AppData>().lightThemeData,
+      darkTheme: context.watch<AppData>().darkThemeData,
+      themeMode: context.watch<AppData>().themeMode,
       home: const LandingView(),
     );
   }

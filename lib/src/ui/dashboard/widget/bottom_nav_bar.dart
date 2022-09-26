@@ -22,7 +22,8 @@ class AppBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
+    final scale = context.read<AppData>().scale;
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       mainAxisAlignment:
           isCenter ? MainAxisAlignment.center : MainAxisAlignment.start,
@@ -35,7 +36,9 @@ class AppBottomNavBar extends StatelessWidget {
           ),
           padding: EdgeInsets.all(5 * scale),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
+            color: colorScheme.brightness == Brightness.light
+                ? colorScheme.background
+                : Colors.black,
             borderRadius: BorderRadius.circular(15.0 * scale),
             boxShadow: const [
               BoxShadow(color: Color.fromRGBO(0, 0, 0, .25), blurRadius: 16.0)
@@ -52,7 +55,13 @@ class AppBottomNavBar extends StatelessWidget {
                 for (var item in AppBottomNavBarOption.values)
                   _BottomNavBarItem(
                     selected: bottomNavBarOption == item,
-                    icon: _ItemInfo(item, scale).icon,
+                    icon: _ItemInfo(
+                      item,
+                      scale,
+                      bottomNavBarOption == item
+                          ? Colors.black
+                          : colorScheme.onBackground,
+                    ).icon,
                     onPressed: () {
                       onChange(item);
                     },
@@ -79,14 +88,19 @@ class _BottomNavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
+    final scale = context.read<AppData>().scale;
+    final colorScheme = Theme.of(context).colorScheme;
+    final backgroundColor = selected
+        ? colorScheme.primary
+        : colorScheme.brightness == Brightness.light
+            ? colorScheme.background
+            : Colors.black;
+
     return SizedBox(
       height: 40.0 * scale,
       width: 40.0 * scale,
       child: Material(
-        color: selected
-            ? Theme.of(context).colorScheme.primary
-            : Theme.of(context).colorScheme.background,
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(10.0 * scale),
         child: InkWell(
           borderRadius: BorderRadius.circular(10.0 * scale),
@@ -101,7 +115,8 @@ class _BottomNavBarItem extends StatelessWidget {
 class _ItemInfo {
   late Widget icon;
 
-  _ItemInfo(AppBottomNavBarOption bottomNavBarOption, double scale) {
+  _ItemInfo(
+      AppBottomNavBarOption bottomNavBarOption, double scale, Color color) {
     final iconSize = 32.0 * scale;
     switch (bottomNavBarOption) {
       case AppBottomNavBarOption.home:
@@ -109,6 +124,7 @@ class _ItemInfo {
           'assets/icons/home_32x32.svg',
           height: iconSize,
           width: iconSize,
+          color: color,
         );
         break;
       case AppBottomNavBarOption.activity:
@@ -116,6 +132,7 @@ class _ItemInfo {
           'assets/icons/activity_32x32.svg',
           height: iconSize,
           width: iconSize,
+          color: color,
         );
         break;
       case AppBottomNavBarOption.classification:
@@ -123,6 +140,7 @@ class _ItemInfo {
           'assets/icons/classification_32x32.svg',
           height: iconSize,
           width: iconSize,
+          color: color,
         );
         break;
     }

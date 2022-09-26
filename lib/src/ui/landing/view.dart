@@ -45,6 +45,7 @@ class _LandingViewState extends State<LandingView> {
       scale = width / 375.0;
     }
     var currenScreenScale = context.read<AppData>().scale;
+
     return Scaffold(
       body: ChangeNotifierProvider<ViewModel>(
         create: (_) => ViewModel.instance(),
@@ -100,8 +101,8 @@ class _LandingViewState extends State<LandingView> {
               return Scaffold(
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 body: Stack(
-                  children: const [
-                    Align(
+                  children: [
+                    const Align(
                       alignment: Alignment.topCenter,
                       child: Image(
                         image: AssetImage(
@@ -112,7 +113,9 @@ class _LandingViewState extends State<LandingView> {
                     ),
                     Align(
                       alignment: Alignment.center,
-                      child: AppProgressIndicator(),
+                      child: AppProgressIndicator(
+                        color: colorScheme.secondary,
+                      ),
                     )
                   ],
                 ),

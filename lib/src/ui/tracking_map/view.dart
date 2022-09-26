@@ -64,9 +64,6 @@ class _TrackingMapViewState extends State<TrackingMapView> {
     final trackingCo2 = widget.trackingUserActivity.co2.gramToKg();
     final isChallenge =
         widget.trackingUserActivity.isChallenge == 1 ? true : false;
-
-    final colorSchemeExtension =
-        Theme.of(context).extension<ColorSchemeExtension>()!;
     final Locale appLocale = Localizations.localeOf(context);
     final numberFormat = NumberFormat(
       '##0.00',
@@ -191,7 +188,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
                           onPressed: widget.pauseTracking,
                           child: Icon(
                             Icons.pause,
-                            color: colorSchemeExtension.textPrimary,
+                            color: Colors.black,
                             size: 26.0 * scale,
                           ),
                         ),
@@ -228,7 +225,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
                                         const AlwaysStoppedAnimation(45 / 360),
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        color: colorSchemeExtension.textPrimary,
+                                        color: Colors.black,
                                         borderRadius: BorderRadius.all(
                                           Radius.circular(8 * scale),
                                         ),

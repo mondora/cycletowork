@@ -30,13 +30,14 @@ class _SignupEmailViewState extends State<SignupEmailView> {
     final onBackgroundColor = Theme.of(context).colorScheme.onBackground;
     final landingModel = Provider.of<ViewModel>(context);
     var loading = landingModel.uiState.loading;
+    final colorScheme = Theme.of(context).colorScheme;
 
     if (loading) {
       return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primary,
         body: Stack(
-          children: const [
-            Align(
+          children: [
+            const Align(
               alignment: Alignment.topCenter,
               child: Image(
                 image: AssetImage(
@@ -47,7 +48,9 @@ class _SignupEmailViewState extends State<SignupEmailView> {
             ),
             Align(
               alignment: Alignment.center,
-              child: AppProgressIndicator(),
+              child: AppProgressIndicator(
+                color: colorScheme.secondary,
+              ),
             )
           ],
         ),

@@ -31,12 +31,16 @@ class _ProfileEditViewState extends State<ProfileEditView> {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
+    final scale = context.read<AppData>().scale;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final actionColor = colorSchemeExtension.action;
     final userImageUrl = AppData.user != null ? AppData.user!.photoURL : null;
     final displayName = AppData.user != null ? AppData.user!.displayName : null;
+    final colorScheme = Theme.of(context).colorScheme;
+    final color = colorScheme.brightness == Brightness.light
+        ? colorScheme.secondary
+        : colorScheme.primary;
 
     return ChangeNotifierProvider<ViewModel>(
       create: (_) => ViewModel.instance(),
@@ -115,13 +119,13 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                                   Radius.circular(15.0 * scale),
                                 ),
                               ),
-                              foregroundColor: colorScheme.secondary,
+                              foregroundColor: color,
                             ),
                             onPressed: () => Navigator.pop(context),
                             child: Text(
                               'Annulla',
                               style: textTheme.caption!.copyWith(
-                                color: colorScheme.secondary,
+                                color: color,
                               ),
                             ),
                           ),
@@ -133,7 +137,7 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                                   Radius.circular(15.0 * scale),
                                 ),
                               ),
-                              foregroundColor: colorScheme.secondary,
+                              foregroundColor: color,
                             ),
                             onPressed: () async {
                               if (formKey.currentState!.validate()) {
@@ -185,7 +189,7 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                             child: Text(
                               'Salva',
                               style: textTheme.caption!.copyWith(
-                                color: colorScheme.secondary,
+                                color: color,
                               ),
                             ),
                           ),
@@ -219,7 +223,7 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                                 Radius.circular(15.0 * scale),
                               ),
                             ),
-                            foregroundColor: colorScheme.secondary,
+                            foregroundColor: color,
                           ),
                           onPressed: () async {
                             var select = await AppSelectionDialog(
@@ -283,7 +287,7 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                             children: [
                               Icon(
                                 Icons.edit,
-                                color: colorScheme.secondary,
+                                color: color,
                                 size: 20 * scale,
                               ),
                               SizedBox(
@@ -292,7 +296,7 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                               Text(
                                 'Modifica immagine',
                                 style: textTheme.bodyText1!.copyWith(
-                                  color: colorScheme.secondary,
+                                  color: color,
                                 ),
                               ),
                             ],

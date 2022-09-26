@@ -28,9 +28,6 @@ class TrackingPauseView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var scale = context.read<AppData>().scale;
-
-    final colorSchemeExtension =
-        Theme.of(context).extension<ColorSchemeExtension>()!;
     final Locale appLocale = Localizations.localeOf(context);
     final numberFormat = NumberFormat(
       '##0.00',
@@ -126,7 +123,7 @@ class TrackingPauseView extends StatelessWidget {
                         onPressed: stopTracking,
                         child: Icon(
                           Icons.stop,
-                          color: colorSchemeExtension.textPrimary,
+                          color: Colors.black,
                           size: 30.0 * scale,
                         ),
                       ),
@@ -143,7 +140,7 @@ class TrackingPauseView extends StatelessWidget {
                         onPressed: playTracking,
                         child: Icon(
                           Icons.play_arrow_rounded,
-                          color: colorSchemeExtension.textPrimary,
+                          color: Colors.black,
                           size: 30.0 * scale,
                         ),
                       ),

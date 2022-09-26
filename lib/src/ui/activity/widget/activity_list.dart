@@ -19,6 +19,7 @@ class ActivityList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var scale = context.read<AppData>().scale;
     final Locale appLocale = Localizations.localeOf(context);
     final numberFormat = NumberFormat(
       '##0.00',
@@ -53,6 +54,8 @@ class ActivityList extends StatelessWidget {
             ? Image.memory(
                 activity.imageData!,
                 fit: BoxFit.cover,
+                height: 93 * scale,
+                width: 93 * scale,
               )
             : null;
         var isChallenge = activity.isChallenge == 1;
@@ -210,7 +213,7 @@ class _ActivityCard extends StatelessWidget {
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 15.0 * scale),
                 height: 1,
-                color: const Color.fromRGBO(0, 0, 0, 0.12),
+                color: Colors.grey[300],
               ),
             ],
           ),

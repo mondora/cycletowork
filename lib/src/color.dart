@@ -29,6 +29,8 @@ import 'package:flutter/material.dart';
 // 0% — 00
 class AppColor {
   static const String _lightColorSchemeKey = 'lightColorScheme';
+  static const String _darkColorSchemeKey = 'darkColorScheme';
+
   static get lightPrimary => 0xFFFFDA03;
   static get lightOnPrimary => 0xFFFFFFFF;
   static get lightPrimaryContainer => 0xFFFFF34F;
@@ -55,7 +57,33 @@ class AppColor {
   static get lightInfo => 0xFF2196F3;
   static get lightActionSelected => 0x1A000000;
 
-  static final colorMap = {
+  static get darkPrimary => 0xFFFFDA03;
+  static get darkOnPrimary => 0xFFFFFFFF;
+  static get darkPrimaryContainer => 0xFFFFF34F;
+  static get darkOnPrimaryContainer => 0xFFFFC803;
+  static get darkSecondary => 0xFF006AA7;
+  static get darkOnSecondary => 0xFFFFFFFF;
+  static get darkSecondaryContainer => 0xFFB2CFDF;
+  static get darkOnSecondaryContainer => 0xFF003350;
+  static get darkError => 0xFFF44336;
+  static get darkOnError => 0xFFFFFFFF;
+  static get darkErrorContainer => 0xFFE31B0C;
+  static get darkOnErrorContainer => 0xFFF88078;
+  static get darkBackground => 0xFF212121;
+  static get darkOnBackground => 0xFFFFFFFF;
+  static get darkSurface => 0xFF212121;
+  static get darkOnSurface => 0xFFFFFFFF;
+  static get darkText => 0xFFFAFAFA;
+  static get darkTextPrimary => 0xD99E9E9E;
+  static get darkTextSecondary => 0x999E9E9E;
+  static get darkTextDisabled => 0xFF9E9E9E;
+  static get darkSuccess => 0xFF4CAF50;
+  static get darkWarrning => 0xFFED6C02;
+  static get darkAction => 0x8C9E9E9E;
+  static get darkInfo => 0xFF2196F3;
+  static get darkActionSelected => 0x1A9E9E9E;
+
+  static final lightColorMap = {
     'primary': lightPrimary,
     'onPrimary': lightOnPrimary,
     'primaryContainer': lightPrimaryContainer,
@@ -83,15 +111,47 @@ class AppColor {
     'actionSelected': lightActionSelected,
   };
 
+  static final darkColorMap = {
+    'primary': darkPrimary,
+    'onPrimary': darkOnPrimary,
+    'primaryContainer': darkPrimaryContainer,
+    'onPrimaryContainer': darkOnPrimaryContainer,
+    'secondary': darkSecondary,
+    'onSecondary': darkOnSecondary,
+    'secondaryContainer': darkSecondaryContainer,
+    'onSecondaryContainer': darkOnSecondaryContainer,
+    'error': darkError,
+    'onError': darkOnError,
+    'errorContainer': darkErrorContainer,
+    'onErrorContainer': darkOnErrorContainer,
+    'background': darkBackground,
+    'onBackground': darkOnBackground,
+    'surface': darkSurface,
+    'onSurface': darkOnSurface,
+    'text': darkText,
+    'textPrimary': darkTextPrimary,
+    'textSecondary': darkTextSecondary,
+    'textDisabled': darkTextDisabled,
+    'success': darkSuccess,
+    'warrning': darkWarrning,
+    'action': darkAction,
+    'info': darkInfo,
+    'actionSelected': darkActionSelected,
+  };
+
   static Future initialize() async {
     try {
       final remoteConfig = FirebaseRemoteConfig.instance;
       await remoteConfig.setDefaults(
-          <String, dynamic>{_lightColorSchemeKey: jsonEncode(colorMap)});
+        <String, dynamic>{
+          _lightColorSchemeKey: jsonEncode(lightColorMap),
+          _darkColorSchemeKey: jsonEncode(darkColorMap)
+        },
+      );
 
       await remoteConfig.setConfigSettings(
         RemoteConfigSettings(
-          fetchTimeout: const Duration(seconds: 10),
+          fetchTimeout: const Duration(seconds: 3),
           minimumFetchInterval: const Duration(minutes: 1),
         ),
       );
@@ -103,20 +163,36 @@ class AppColor {
 
   static LightColors getLightColors(bool justLocal) {
     if (justLocal) {
-      return LightColors.fromJson(colorMap);
+      return LightColors.fromJson(lightColorMap);
     } else {
       try {
         final remoteConfig = FirebaseRemoteConfig.instance;
-        return LightColors.fromJson(
-          jsonDecode(
-            remoteConfig.getString(
-              _lightColorSchemeKey,
-            ),
-          ),
+        final lightColorString = remoteConfig.getString(
+          _lightColorSchemeKey,
         );
+        final map = jsonDecode(lightColorString);
+        return LightColors.fromJson(map);
       } catch (e) {
         Logger.error(e);
-        return LightColors.fromJson(colorMap);
+        return LightColors.fromJson(lightColorMap);
+      }
+    }
+  }
+
+  static DarkColors getDarkColors(bool justLocal) {
+    if (justLocal) {
+      return DarkColors.fromJson(darkColorMap);
+    } else {
+      try {
+        final remoteConfig = FirebaseRemoteConfig.instance;
+        final darkColorString = remoteConfig.getString(
+          _darkColorSchemeKey,
+        );
+        final map = jsonDecode(darkColorString);
+        return DarkColors.fromJson(map);
+      } catch (e) {
+        Logger.error(e);
+        return DarkColors.fromJson(darkColorMap);
       }
     }
   }
@@ -213,4 +289,95 @@ class LightColors {
         info = Color(json['info'] ?? AppColor.lightInfo),
         actionSelected =
             Color(json['actionSelected'] ?? AppColor.lightActionSelected);
+}
+
+class DarkColors {
+  final Color primary;
+  final Color onPrimary;
+  final Color primaryContainer;
+  final Color onPrimaryContainer;
+  final Color secondary;
+  final Color onSecondary;
+  final Color secondaryContainer;
+  final Color onSecondaryContainer;
+  final Color error;
+  final Color onError;
+  final Color errorContainer;
+  final Color onErrorContainer;
+  final Color background;
+  final Color onBackground;
+  final Color surface;
+  final Color onSurface;
+  final Color text;
+  final Color textPrimary;
+  final Color textSecondary;
+  final Color textDisabled;
+  final Color success;
+  final Color warrning;
+  final Color action;
+  final Color info;
+  final Color actionSelected;
+
+  DarkColors({
+    required this.primary,
+    required this.onPrimary,
+    required this.primaryContainer,
+    required this.onPrimaryContainer,
+    required this.secondary,
+    required this.onSecondary,
+    required this.secondaryContainer,
+    required this.onSecondaryContainer,
+    required this.error,
+    required this.onError,
+    required this.errorContainer,
+    required this.onErrorContainer,
+    required this.background,
+    required this.onBackground,
+    required this.surface,
+    required this.onSurface,
+    required this.text,
+    required this.textPrimary,
+    required this.textSecondary,
+    required this.textDisabled,
+    required this.success,
+    required this.warrning,
+    required this.action,
+    required this.info,
+    required this.actionSelected,
+  });
+
+  DarkColors.fromJson(Map<String, dynamic> json)
+      : primary = Color(json['primary'] ?? AppColor.darkPrimary),
+        onPrimary = Color(json['onPrimary'] ?? AppColor.darkOnPrimary),
+        primaryContainer =
+            Color(json['primaryContainer'] ?? AppColor.darkPrimaryContainer),
+        onPrimaryContainer = Color(
+            json['onPrimaryContainer'] ?? AppColor.darkOnPrimaryContainer),
+        secondary = Color(json['secondary'] ?? AppColor.darkSecondary),
+        onSecondary = Color(json['onSecondary'] ?? AppColor.darkOnSecondary),
+        secondaryContainer = Color(
+            json['secondaryContainer'] ?? AppColor.darkSecondaryContainer),
+        onSecondaryContainer = Color(
+            json['onSecondaryContainer'] ?? AppColor.darkOnSecondaryContainer),
+        error = Color(json['error'] ?? AppColor.darkError),
+        onError = Color(json['onError'] ?? AppColor.darkOnError),
+        errorContainer =
+            Color(json['errorContainer'] ?? AppColor.darkErrorContainer),
+        onErrorContainer =
+            Color(json['onErrorContainer'] ?? AppColor.darkOnErrorContainer),
+        background = Color(json['background'] ?? AppColor.darkBackground),
+        onBackground = Color(json['onBackground'] ?? AppColor.darkOnBackground),
+        surface = Color(json['surface'] ?? AppColor.darkSurface),
+        onSurface = Color(json['onSurface'] ?? AppColor.darkOnSurface),
+        text = Color(json['text'] ?? AppColor.darkText),
+        textPrimary = Color(json['textPrimary'] ?? AppColor.darkTextPrimary),
+        textSecondary =
+            Color(json['textSecondary'] ?? AppColor.darkTextSecondary),
+        textDisabled = Color(json['textDisabled'] ?? AppColor.darkTextDisabled),
+        success = Color(json['success'] ?? AppColor.darkSuccess),
+        warrning = Color(json['warrning'] ?? AppColor.darkWarrning),
+        action = Color(json['action'] ?? AppColor.darkAction),
+        info = Color(json['info'] ?? AppColor.darkInfo),
+        actionSelected =
+            Color(json['actionSelected'] ?? AppColor.darkActionSelected);
 }

@@ -43,6 +43,13 @@ class _RegisterChallengChampionViewState
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     var textTheme = Theme.of(context).textTheme;
+    final color = colorScheme.brightness == Brightness.light
+        ? colorScheme.secondary
+        : colorScheme.primary;
+    final backgroundColor = colorScheme.brightness == Brightness.light
+        ? const Color.fromRGBO(239, 239, 239, 1)
+        : Colors.grey[800];
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -85,7 +92,7 @@ class _RegisterChallengChampionViewState
                 ),
                 Container(
                   height: 185 * scale,
-                  color: const Color.fromRGBO(249, 249, 249, 1),
+                  color: backgroundColor,
                   padding: EdgeInsets.only(
                     right: 24.0 * scale,
                     left: 24.0 * scale,
@@ -120,6 +127,7 @@ class _RegisterChallengChampionViewState
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Checkbox(
+                                      activeColor: color,
                                       value: isFiabMember,
                                       onChanged: (value) {
                                         viewModel.setFiabMember(value!);
@@ -153,6 +161,7 @@ class _RegisterChallengChampionViewState
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Checkbox(
+                                      activeColor: color,
                                       value: !isFiabMember,
                                       onChanged: (value) {
                                         viewModel.setFiabMember(!value!);
@@ -192,7 +201,7 @@ class _RegisterChallengChampionViewState
                                 ),
                               ),
                               overlayColor: MaterialStateProperty.all<Color>(
-                                colorScheme.secondary.withOpacity(0.40),
+                                color.withOpacity(0.20),
                               ),
                             ),
                             child: Row(
@@ -200,7 +209,7 @@ class _RegisterChallengChampionViewState
                                 AutoSizeText(
                                   'Scopri come diventarlo'.toUpperCase(),
                                   style: textTheme.button!.copyWith(
-                                    color: colorScheme.secondary,
+                                    color: color,
                                   ),
                                   maxLines: 1,
                                 ),
@@ -209,7 +218,7 @@ class _RegisterChallengChampionViewState
                                 ),
                                 Icon(
                                   Icons.call_made_outlined,
-                                  color: colorScheme.secondary,
+                                  color: color,
                                   size: 20.0 * scale,
                                 ),
                               ],
@@ -396,7 +405,7 @@ class _RegisterChallengChampionViewState
                   height: 20.0 * scale,
                 ),
                 Container(
-                  color: colorGrey,
+                  color: backgroundColor,
                   padding: EdgeInsets.symmetric(horizontal: 24.0 * scale),
                   height: 82 * scale,
                   width: double.infinity,
@@ -443,7 +452,7 @@ class _RegisterChallengChampionViewState
                         companyEmployessNumberCategory,
                         style: textTheme.bodyText1!.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: colorScheme.secondary,
+                          color: color,
                         ),
                       ),
                     ],
@@ -475,6 +484,7 @@ class _RegisterChallengChampionViewState
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Checkbox(
+                                activeColor: color,
                                 value: !companyHasMoreDepartment,
                                 onChanged: (value) =>
                                     viewModel.setCompanyToAddNoDepartment(),
@@ -502,6 +512,7 @@ class _RegisterChallengChampionViewState
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Checkbox(
+                                activeColor: color,
                                 value: companyHasMoreDepartment,
                                 onChanged: (value) =>
                                     viewModel.setCompanyToAddHasDepartment(),
@@ -533,7 +544,7 @@ class _RegisterChallengChampionViewState
                       left: 24.0 * scale,
                       right: 24.0 * scale,
                     ),
-                    color: colorGrey,
+                    color: backgroundColor,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -623,7 +634,7 @@ class _RegisterChallengChampionViewState
                                 ),
                                 child: Icon(
                                   Icons.add_circle_outline,
-                                  color: colorScheme.secondary,
+                                  color: color,
                                   size: 20 * scale,
                                 ),
                               ),

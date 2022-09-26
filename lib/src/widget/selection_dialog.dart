@@ -19,10 +19,14 @@ class AppSelectionDialog {
     this.labelButtonStyle,
     this.barrierDismissible = false,
   }) {
-    var colorScheme = Theme.of(context).colorScheme;
-    var textTheme = Theme.of(context).textTheme;
-    var scale = context.read<AppData>().scale;
-    var radius = 15.0 * scale;
+    final colorScheme = Theme.of(context).colorScheme;
+    final color = colorScheme.brightness == Brightness.light
+        ? colorScheme.secondary
+        : colorScheme.primary;
+
+    final textTheme = Theme.of(context).textTheme;
+    final scale = context.read<AppData>().scale;
+    final radius = 15.0 * scale;
 
     borderRadius = borderRadius ??
         BorderRadius.all(
@@ -30,7 +34,7 @@ class AppSelectionDialog {
         );
     labelStyle = labelStyle ??
         textTheme.bodyText1!.copyWith(
-          color: colorScheme.secondary,
+          color: color,
         );
 
     labelButtonStyle = labelButtonStyle ??
@@ -39,7 +43,7 @@ class AppSelectionDialog {
           shape: RoundedRectangleBorder(
             borderRadius: borderRadius!,
           ),
-          foregroundColor: colorScheme.secondary,
+          foregroundColor: color,
           minimumSize: const Size(double.infinity, 40.0),
         );
   }

@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 class AppTheme {
   static ThemeData getLightTheme(bool justLocal, {double scale = 1.0}) {
     final colorScheme = AppColor.getLightColors(justLocal);
-    final textTheme = _getTextTheme(colorScheme, scale);
+    final textTheme = _getTextTheme(colorScheme.text, scale);
     return ThemeData(
       textTheme: textTheme,
       colorScheme: ColorScheme(
@@ -126,7 +126,130 @@ class AppTheme {
     );
   }
 
-  static TextTheme _getTextTheme(LightColors colorScheme, double scale) {
+  static ThemeData getDarkTheme(bool justLocal, {double scale = 1.0}) {
+    final colorScheme = AppColor.getDarkColors(justLocal);
+    final textTheme = _getTextTheme(colorScheme.text, scale);
+    return ThemeData(
+      textTheme: textTheme,
+      colorScheme: ColorScheme(
+        brightness: Brightness.dark,
+        primary: colorScheme.primary,
+        onPrimary: colorScheme.onPrimary,
+        primaryContainer: colorScheme.primaryContainer,
+        onPrimaryContainer: colorScheme.onPrimaryContainer,
+        secondary: colorScheme.secondary,
+        onSecondary: colorScheme.onSecondary,
+        secondaryContainer: colorScheme.secondaryContainer,
+        onSecondaryContainer: colorScheme.onSecondaryContainer,
+        error: colorScheme.error,
+        onError: colorScheme.onError,
+        errorContainer: colorScheme.errorContainer,
+        onErrorContainer: colorScheme.onErrorContainer,
+        background: colorScheme.background,
+        onBackground: colorScheme.onBackground,
+        surface: colorScheme.surface,
+        onSurface: colorScheme.onSurface,
+      ),
+      scaffoldBackgroundColor: colorScheme.background,
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: colorScheme.primary,
+      ),
+      appBarTheme: AppBarTheme(
+        elevation: 1,
+        backgroundColor: colorScheme.background,
+        iconTheme: IconThemeData(
+          color: colorScheme.onBackground,
+        ),
+        toolbarTextStyle: TextStyle(
+          color: colorScheme.onBackground,
+        ),
+        titleTextStyle: TextStyle(
+          color: colorScheme.onBackground,
+        ),
+        actionsIconTheme: IconThemeData(
+          color: colorScheme.onBackground,
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        fillColor: Colors.grey[800],
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: colorScheme.error,
+            width: 2.0,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            width: 2.0,
+            color: colorScheme.textSecondary,
+          ),
+        ),
+        disabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            width: 2.0,
+            color: colorScheme.textDisabled,
+          ),
+        ),
+        errorStyle: TextStyle(
+          color: colorScheme.error,
+        ),
+        labelStyle: textTheme.subtitle1!.apply(
+          color: colorScheme.textSecondary,
+        ),
+        helperMaxLines: 3,
+        helperStyle: textTheme.caption!.apply(
+          color: colorScheme.textSecondary,
+        ),
+        counterStyle: textTheme.caption!.apply(
+          color: colorScheme.textSecondary,
+        ),
+        floatingLabelStyle: textTheme.caption!.apply(
+          color: colorScheme.textSecondary,
+        ),
+        hintStyle: textTheme.caption!.apply(
+          color: colorScheme.textSecondary,
+        ),
+      ),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: colorScheme.secondary,
+      ),
+      drawerTheme: const DrawerThemeData(
+        elevation: 2.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(15),
+            bottomRight: Radius.circular(15),
+          ),
+        ),
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: colorScheme.background,
+        selectedColor: colorScheme.actionSelected,
+        shape: RoundedRectangleBorder(
+          borderRadius: const BorderRadius.all(
+            Radius.circular(8),
+          ),
+          side: BorderSide(
+            color: colorScheme.actionSelected,
+          ),
+        ),
+        labelStyle: textTheme.caption,
+      ),
+      extensions: {
+        ColorSchemeExtension(
+          warrning: colorScheme.warrning,
+          success: colorScheme.success,
+          action: colorScheme.action,
+          textSecondary: colorScheme.textSecondary,
+          info: colorScheme.info,
+          textDisabled: colorScheme.textDisabled,
+          textPrimary: colorScheme.text,
+        ),
+      },
+    );
+  }
+
+  static TextTheme _getTextTheme(Color text, double scale) {
     return TextTheme(
       headline1: GoogleFonts.lato(
         textStyle: TextStyle(
@@ -134,7 +257,7 @@ class AppTheme {
           letterSpacing: -1.5,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w300,
-          color: colorScheme.text,
+          color: text,
         ),
       ),
       headline2: GoogleFonts.lato(
@@ -143,7 +266,7 @@ class AppTheme {
           letterSpacing: -0.5,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w300,
-          color: colorScheme.text,
+          color: text,
         ),
       ),
       headline3: GoogleFonts.lato(
@@ -152,7 +275,7 @@ class AppTheme {
           letterSpacing: 0,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w400,
-          color: colorScheme.text,
+          color: text,
         ),
       ),
       headline4: GoogleFonts.lato(
@@ -161,7 +284,7 @@ class AppTheme {
           letterSpacing: 0.25,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w400,
-          color: colorScheme.text,
+          color: text,
         ),
       ),
       headline5: GoogleFonts.lato(
@@ -170,7 +293,7 @@ class AppTheme {
           letterSpacing: 0,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w400,
-          color: colorScheme.text,
+          color: text,
         ),
       ),
       headline6: GoogleFonts.lato(
@@ -179,7 +302,7 @@ class AppTheme {
           letterSpacing: 0.15,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w500,
-          color: colorScheme.text,
+          color: text,
         ),
       ),
       subtitle1: GoogleFonts.lato(
@@ -188,7 +311,7 @@ class AppTheme {
           letterSpacing: 0.15,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w400,
-          color: colorScheme.text,
+          color: text,
         ),
       ),
       subtitle2: GoogleFonts.lato(
@@ -197,7 +320,7 @@ class AppTheme {
           letterSpacing: 0.1,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w500,
-          color: colorScheme.text,
+          color: text,
         ),
       ),
       bodyText1: GoogleFonts.lato(
@@ -206,7 +329,7 @@ class AppTheme {
           letterSpacing: 0.15,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w400,
-          color: colorScheme.text,
+          color: text,
         ),
       ),
       bodyText2: GoogleFonts.lato(
@@ -215,7 +338,7 @@ class AppTheme {
           letterSpacing: 0.15,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w400,
-          color: colorScheme.text,
+          color: text,
         ),
       ),
       caption: GoogleFonts.lato(
@@ -224,7 +347,7 @@ class AppTheme {
           letterSpacing: 0.4,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w400,
-          color: colorScheme.text,
+          color: text,
         ),
       ),
       button: GoogleFonts.lato(
@@ -233,7 +356,7 @@ class AppTheme {
           letterSpacing: 0.4,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w500,
-          color: colorScheme.text,
+          color: text,
         ),
       ),
       overline: GoogleFonts.lato(
@@ -242,7 +365,7 @@ class AppTheme {
           letterSpacing: 1.0,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w400,
-          color: colorScheme.text,
+          color: text,
         ),
       ),
     );

@@ -100,8 +100,8 @@ class _InformationItem extends StatelessWidget {
           ),
         ),
         Container(
-          height: 1.5,
-          color: const Color.fromRGBO(0, 0, 0, 0.12),
+          height: 1,
+          color: Colors.grey[300],
         ),
       ],
     );

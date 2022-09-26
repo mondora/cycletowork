@@ -17,9 +17,10 @@ class LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
+    final scale = context.read<AppData>().scale;
     final landingModel = Provider.of<ViewModel>(context);
-    var isIos = defaultTargetPlatform == TargetPlatform.iOS;
+    final isIos = defaultTargetPlatform == TargetPlatform.iOS;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
@@ -39,9 +40,11 @@ class LoginView extends StatelessWidget {
               child: Stack(
                 children: [
                   if (loading == true)
-                    const Align(
+                    Align(
                       alignment: FractionalOffset.center,
-                      child: AppProgressIndicator(),
+                      child: AppProgressIndicator(
+                        color: colorScheme.secondary,
+                      ),
                     ),
                   Column(
                     children: [

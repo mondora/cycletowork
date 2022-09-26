@@ -17,6 +17,10 @@ class RegisterChallengSelectTypeView extends StatelessWidget {
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     var textTheme = Theme.of(context).textTheme;
+    final color = colorScheme.brightness == Brightness.light
+        ? colorScheme.secondary
+        : colorScheme.primary;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -61,6 +65,7 @@ class RegisterChallengSelectTypeView extends StatelessWidget {
                 'assets/icons/biking.svg',
                 height: 75 * scale,
                 width: 75 * scale,
+                color: color,
               ),
               SizedBox(
                 height: 29.0 * scale,
@@ -125,6 +130,7 @@ class RegisterChallengSelectTypeView extends StatelessWidget {
                 'assets/icons/group_biking.svg',
                 height: 80 * scale,
                 width: 483 * scale,
+                color: color,
               ),
               SizedBox(
                 height: 20.0 * scale,

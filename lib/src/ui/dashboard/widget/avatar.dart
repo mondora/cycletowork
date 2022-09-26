@@ -89,6 +89,10 @@ class AppAvatar extends StatelessWidget {
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final actionColor = colorSchemeExtension.action;
+    final colorScheme = Theme.of(context).colorScheme;
+    final color = colorScheme.brightness == Brightness.light
+        ? colorScheme.secondary
+        : colorScheme.primary;
 
     return Stack(
       children: [
@@ -109,7 +113,7 @@ class AppAvatar extends StatelessWidget {
             height: smallSize * scale,
             width: smallSize * scale,
             child: CircularProgressIndicator(
-              color: Theme.of(context).colorScheme.secondary,
+              color: color,
               strokeWidth: progressStrokeWidth,
             ),
           ),

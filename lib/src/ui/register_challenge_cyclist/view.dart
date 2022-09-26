@@ -52,6 +52,13 @@ class _RegisterChallengCyclistViewState
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     var textTheme = Theme.of(context).textTheme;
+    final color = colorScheme.brightness == Brightness.light
+        ? colorScheme.secondary
+        : colorScheme.primary;
+    final backgroundColor = colorScheme.brightness == Brightness.light
+        ? const Color.fromRGBO(239, 239, 239, 1)
+        : Colors.grey[800];
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -94,7 +101,7 @@ class _RegisterChallengCyclistViewState
                 ),
                 Container(
                   height: 185 * scale,
-                  color: const Color.fromRGBO(249, 249, 249, 1),
+                  color: backgroundColor,
                   padding: EdgeInsets.only(
                     right: 24.0 * scale,
                     left: 24.0 * scale,
@@ -129,6 +136,7 @@ class _RegisterChallengCyclistViewState
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Checkbox(
+                                      activeColor: color,
                                       value: isFiabMember,
                                       onChanged: (value) {
                                         viewModel.setFiabMember(value!);
@@ -162,6 +170,7 @@ class _RegisterChallengCyclistViewState
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Checkbox(
+                                      activeColor: color,
                                       value: !isFiabMember,
                                       onChanged: (value) {
                                         viewModel.setFiabMember(!value!);
@@ -201,7 +210,7 @@ class _RegisterChallengCyclistViewState
                                 ),
                               ),
                               overlayColor: MaterialStateProperty.all<Color>(
-                                colorScheme.secondary.withOpacity(0.40),
+                                color.withOpacity(0.20),
                               ),
                             ),
                             child: Row(
@@ -209,7 +218,7 @@ class _RegisterChallengCyclistViewState
                                 AutoSizeText(
                                   'Scopri come diventarlo'.toUpperCase(),
                                   style: textTheme.button!.copyWith(
-                                    color: colorScheme.secondary,
+                                    color: color,
                                   ),
                                   maxLines: 1,
                                 ),
@@ -218,7 +227,7 @@ class _RegisterChallengCyclistViewState
                                 ),
                                 Icon(
                                   Icons.call_made_outlined,
-                                  color: colorScheme.secondary,
+                                  color: color,
                                   size: 20.0 * scale,
                                 ),
                               ],
@@ -315,15 +324,31 @@ class _RegisterChallengCyclistViewState
                             hideSelectedTextCount: true,
                             barrierDismissible: true,
                             hideCloseIcon: true,
+                            backgroundColor: colorScheme.background,
                             themeData: FilterListThemeData(context).copyWith(
                               borderRadius: 15.0 * scale,
                               headerTheme: HeaderThemeData(
                                 searchFieldBorderRadius: 15.0 * scale,
+                                searchFieldInputBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(15.0 * scale),
+                                  ),
+                                ),
                                 searchFieldHintText:
                                     'Cerca la tua azienda qua ...',
+                                backgroundColor: colorScheme.background,
+                                searchFieldBackgroundColor:
+                                    colorScheme.brightness == Brightness.dark
+                                        ? Colors.grey[800]
+                                        : null,
                               ),
+                              backgroundColor: colorScheme.background,
                               choiceChipTheme: ChoiceChipThemeData(
-                                selectedBackgroundColor: colorScheme.secondary,
+                                selectedBackgroundColor: color,
+                                backgroundColor:
+                                    colorScheme.brightness == Brightness.dark
+                                        ? Colors.grey[800]
+                                        : null,
                                 labelPadding: EdgeInsets.symmetric(
                                   horizontal: 15.0 * scale,
                                 ),
@@ -334,9 +359,12 @@ class _RegisterChallengCyclistViewState
                                 padding: EdgeInsets.symmetric(
                                   horizontal: 10.0 * scale,
                                 ),
+                                backgroundColor:
+                                    colorScheme.brightness == Brightness.light
+                                        ? colorScheme.background
+                                        : Colors.black,
                                 controlButtonTheme: ControlButtonThemeData(
-                                  primaryButtonBackgroundColor:
-                                      colorScheme.secondary,
+                                  primaryButtonBackgroundColor: color,
                                   textStyle: textTheme.button,
                                 ),
                               ),
@@ -465,6 +493,7 @@ class _RegisterChallengCyclistViewState
                                 style: textTheme.headline6!.copyWith(
                                   fontWeight: FontWeight.w800,
                                   fontSize: 18 * scale,
+                                  color: Colors.black,
                                 ),
                                 textAlign: TextAlign.center,
                                 maxLines: 1,
@@ -495,24 +524,28 @@ class _RegisterChallengCyclistViewState
                                         text: 'Chiedi al tuo ',
                                         style: textTheme.subtitle1!.copyWith(
                                           fontWeight: FontWeight.w400,
+                                          color: Colors.black,
                                         ),
                                       ),
                                       TextSpan(
                                         text: 'Mobility Manager',
                                         style: textTheme.subtitle1!.copyWith(
                                           fontWeight: FontWeight.w800,
+                                          color: Colors.black,
                                         ),
                                       ),
                                       TextSpan(
                                         text: ', oppure alle ',
                                         style: textTheme.subtitle1!.copyWith(
                                           fontWeight: FontWeight.w400,
+                                          color: Colors.black,
                                         ),
                                       ),
                                       TextSpan(
                                         text: 'Risorse Umane',
                                         style: textTheme.subtitle1!.copyWith(
                                           fontWeight: FontWeight.w800,
+                                          color: Colors.black,
                                         ),
                                       ),
                                       TextSpan(
@@ -520,6 +553,7 @@ class _RegisterChallengCyclistViewState
                                             ', di contattarci all’indirizzo email:',
                                         style: textTheme.subtitle1!.copyWith(
                                           fontWeight: FontWeight.w400,
+                                          color: Colors.black,
                                         ),
                                       ),
                                     ],

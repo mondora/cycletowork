@@ -21,12 +21,16 @@ class _ProfileChangePasswordViewState extends State<ProfileChangePasswordView> {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
+    final scale = context.read<AppData>().scale;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final actionColor = colorSchemeExtension.action;
     final userImageUrl = AppData.user != null ? AppData.user!.photoURL : null;
     final displayName = AppData.user != null ? AppData.user!.displayName : null;
+    final colorScheme = Theme.of(context).colorScheme;
+    final color = colorScheme.brightness == Brightness.light
+        ? colorScheme.secondary
+        : colorScheme.primary;
 
     return ChangeNotifierProvider<ViewModel>(
       create: (_) => ViewModel.instance(),
@@ -104,13 +108,13 @@ class _ProfileChangePasswordViewState extends State<ProfileChangePasswordView> {
                                   Radius.circular(15.0 * scale),
                                 ),
                               ),
-                              foregroundColor: colorScheme.secondary,
+                              foregroundColor: color,
                             ),
                             onPressed: () => Navigator.pop(context),
                             child: Text(
                               'Annulla',
                               style: textTheme.caption!.copyWith(
-                                color: colorScheme.secondary,
+                                color: color,
                               ),
                             ),
                           ),
@@ -122,7 +126,7 @@ class _ProfileChangePasswordViewState extends State<ProfileChangePasswordView> {
                                   Radius.circular(15.0 * scale),
                                 ),
                               ),
-                              foregroundColor: colorScheme.secondary,
+                              foregroundColor: color,
                             ),
                             onPressed: () async {
                               if (formKey.currentState!.validate()) {
@@ -175,7 +179,7 @@ class _ProfileChangePasswordViewState extends State<ProfileChangePasswordView> {
                             child: Text(
                               'Salva',
                               style: textTheme.caption!.copyWith(
-                                color: colorScheme.secondary,
+                                color: color,
                               ),
                             ),
                           ),

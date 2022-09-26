@@ -31,6 +31,13 @@ class _RegisterChallengEmailVerifyViewState
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     var textTheme = Theme.of(context).textTheme;
+    final color = colorScheme.brightness == Brightness.light
+        ? colorScheme.secondary
+        : colorScheme.primary;
+    final backgroundColor = colorScheme.brightness == Brightness.light
+        ? const Color.fromRGBO(239, 239, 239, 1)
+        : Colors.grey[800];
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -90,33 +97,27 @@ class _RegisterChallengEmailVerifyViewState
                 ),
                 SizedBox(
                   width: 165.0 * scale,
-                  height: 36.0 * scale,
                   child: TextButton(
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.all(16.0 * scale),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(15.0 * scale),
+                        ),
+                      ),
+                      foregroundColor: colorScheme.secondary,
+                    ),
                     onPressed: !emailIsVerified
                         ? viewModel.sendEmailVerificationCode
                         : null,
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        colorScheme.onSecondary,
-                      ),
-                      overlayColor: MaterialStateProperty.all<Color>(
-                        colorScheme.secondary.withOpacity(0.40),
-                      ),
-                    ),
-                    child: AutoSizeText(
+                    child: Text(
                       'Invia di nuovo'.toUpperCase(),
-                      style: textTheme.button!.copyWith(
+                      style: textTheme.caption!.copyWith(
                         color: !emailIsVerified
                             ? colorScheme.secondary
                             : colorSchemeExtension.textDisabled
-                                .withOpacity(0.12),
+                                .withOpacity(0.40),
                       ),
-                      maxLines: 1,
                     ),
                   ),
                 ),
@@ -142,12 +143,11 @@ class _RegisterChallengEmailVerifyViewState
                         )
                       : OtpTextField(
                           numberOfFields: 6,
-                          borderColor: colorScheme.secondary,
-                          cursorColor: colorScheme.secondary,
-                          fillColor: const Color.fromRGBO(242, 242, 242, 1),
-                          enabledBorderColor:
-                              const Color.fromRGBO(242, 242, 242, 1),
-                          focusedBorderColor: colorScheme.secondary,
+                          borderColor: color,
+                          cursorColor: color,
+                          fillColor: backgroundColor!,
+                          enabledBorderColor: backgroundColor,
+                          focusedBorderColor: color,
                           filled: true,
                           showFieldAsBox: true,
                           onSubmit: (code) => viewModel.verifiyEmailCode(code),

@@ -210,6 +210,7 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _setMapStyle();
   }
 
   Future _setMapStyle() async {

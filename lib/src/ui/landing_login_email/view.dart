@@ -31,13 +31,14 @@ class _LoginEmailViewState extends State<LoginEmailView> {
 
     var loading = landingModel.uiState.loading;
     var isIos = defaultTargetPlatform == TargetPlatform.iOS;
+    final colorScheme = Theme.of(context).colorScheme;
 
     if (loading) {
       return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primary,
         body: Stack(
-          children: const [
-            Align(
+          children: [
+            const Align(
               alignment: Alignment.topCenter,
               child: Image(
                 image: AssetImage(
@@ -48,7 +49,9 @@ class _LoginEmailViewState extends State<LoginEmailView> {
             ),
             Align(
               alignment: Alignment.center,
-              child: AppProgressIndicator(),
+              child: AppProgressIndicator(
+                color: colorScheme.secondary,
+              ),
             )
           ],
         ),

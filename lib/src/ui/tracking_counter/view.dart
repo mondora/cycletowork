@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-class CounterView extends StatelessWidget {
+class TrackingCounterView extends StatelessWidget {
   final int counter;
   final Function(int) setCounter;
   final Key dismissKey;
 
-  const CounterView({
+  const TrackingCounterView({
     Key? key,
     required this.counter,
     required this.setCounter,
@@ -19,19 +19,22 @@ class CounterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
-    var colorScheme = Theme.of(context).colorScheme;
-    var textTheme = Theme.of(context).textTheme;
+    final scale = context.read<AppData>().scale;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final actionColor = colorSchemeExtension.action;
+    final color = colorScheme.brightness == Brightness.light
+        ? colorScheme.secondary
+        : colorScheme.primary;
 
     return Scaffold(
       body: Center(
         child: Text(
           counter != 0 ? counter.toString() : 'VAI!',
           style: textTheme.headline1!.copyWith(
-            color: colorScheme.secondary,
+            color: color,
             fontSize: 128.0 * scale,
             fontWeight: FontWeight.w900,
             fontStyle: FontStyle.italic,

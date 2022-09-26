@@ -214,7 +214,7 @@ class _HomeViewState extends State<HomeView> {
                         ),
                         child: Container(
                           height: 1,
-                          color: const Color.fromRGBO(0, 0, 0, 0.12),
+                          color: Colors.grey[300],
                         ),
                       ),
                     SummeryCard(
@@ -227,7 +227,7 @@ class _HomeViewState extends State<HomeView> {
                       children: <Widget>[
                         Icon(
                           Icons.drag_handle,
-                          color: Colors.grey,
+                          color: Colors.grey[700],
                           size: 20 * scale,
                         ),
                       ],

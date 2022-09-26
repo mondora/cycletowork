@@ -25,6 +25,9 @@ class ProfileView extends StatelessWidget {
     final displayName = AppData.user != null ? AppData.user!.displayName : null;
     final email = AppData.user != null ? AppData.user!.email : null;
     final isUserUsedEmailProvider = AppData.isUserUsedEmailProvider;
+    final color = colorScheme.brightness == Brightness.light
+        ? colorScheme.secondary
+        : colorScheme.primary;
 
     return Scaffold(
       body: ListView(
@@ -44,7 +47,7 @@ class ProfileView extends StatelessWidget {
                       Radius.circular(15.0 * scale),
                     ),
                   ),
-                  foregroundColor: colorScheme.secondary,
+                  foregroundColor: color,
                 ),
                 onPressed: () async {
                   bool? haveToRefresh = await Navigator.of(context).push(
@@ -59,7 +62,7 @@ class ProfileView extends StatelessWidget {
                 child: Text(
                   'Modifica',
                   style: textTheme.caption!.copyWith(
-                    color: colorScheme.secondary,
+                    color: color,
                   ),
                 ),
               ),
@@ -118,7 +121,7 @@ class ProfileView extends StatelessWidget {
                         Radius.circular(15.0 * scale),
                       ),
                     ),
-                    foregroundColor: colorScheme.secondary,
+                    foregroundColor: color,
                   ),
                   onPressed: () async {
                     await Navigator.of(context).push(
@@ -130,7 +133,7 @@ class ProfileView extends StatelessWidget {
                   child: Text(
                     'Modifica Password',
                     style: textTheme.caption!.copyWith(
-                      color: colorScheme.secondary,
+                      color: color,
                     ),
                   ),
                 ),
@@ -164,19 +167,26 @@ class _ChallengeRegisterdData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
+    final scale = context.read<AppData>().scale;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
-    var colorScheme = Theme.of(context).colorScheme;
-    var textTheme = Theme.of(context).textTheme;
-    var now = DateTime.now().millisecondsSinceEpoch;
-    var isChallengeOpen = challengeRegistry.stopTimeChallenge > now;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final isChallengeOpen = challengeRegistry.stopTimeChallenge > now;
+    final color = colorScheme.brightness == Brightness.light
+        ? colorScheme.secondary
+        : colorScheme.primary;
+    final backgroundColor = colorScheme.brightness == Brightness.light
+        ? const Color.fromRGBO(239, 239, 239, 1)
+        : Colors.grey[800];
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          color: const Color.fromRGBO(239, 239, 239, 1),
+          color: backgroundColor,
           height: 100 * scale,
           width: double.infinity,
           child: Stack(
@@ -211,7 +221,7 @@ class _ChallengeRegisterdData extends StatelessWidget {
                         ? Icons.edit_outlined
                         : Icons.edit_off_outlined,
                     color: isChallengeOpen
-                        ? colorScheme.secondary
+                        ? color
                         : colorSchemeExtension.textDisabled,
                     size: 20 * scale,
                   ),

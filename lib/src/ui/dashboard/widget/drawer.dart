@@ -18,10 +18,11 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
-    var screenWidth = MediaQuery.of(context).size.width;
-
+    final scale = context.read<AppData>().scale;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final colorScheme = Theme.of(context).colorScheme;
     return Drawer(
+      backgroundColor: colorScheme.background,
       width: screenWidth * 0.85,
       child: Stack(
         children: [
@@ -51,6 +52,7 @@ class AppDrawer extends StatelessWidget {
                           'assets/icons/close.svg',
                           height: closeSize,
                           width: closeSize,
+                          color: colorScheme.onBackground,
                         ),
                       ),
                     ),
@@ -65,8 +67,30 @@ class AppDrawer extends StatelessWidget {
                     for (var item in AppMenuOption.values)
                       _AppDrawerItem(
                         selected: menuOption == item,
-                        title: _ItemInfo(item, scale).title,
-                        icon: _ItemInfo(item, scale).icon,
+                        title: _ItemInfo(
+                          item,
+                          scale,
+                          menuOption == item
+                              ? Colors.black
+                              : colorScheme.onBackground,
+                          Theme.of(context).textTheme.bodyText1!.apply(
+                                color: menuOption == item
+                                    ? Colors.black
+                                    : colorScheme.onBackground,
+                              ),
+                        ).title,
+                        icon: _ItemInfo(
+                          item,
+                          scale,
+                          menuOption == item
+                              ? Colors.black
+                              : colorScheme.onBackground,
+                          Theme.of(context).textTheme.bodyText1!.apply(
+                                color: menuOption == item
+                                    ? Colors.black
+                                    : colorScheme.onBackground,
+                              ),
+                        ).icon,
                         onPressed: () {
                           onPressed(item);
                           Navigator.pop(context);
@@ -117,7 +141,10 @@ class AppDrawer extends StatelessWidget {
                 left: 24.0 * scale,
                 bottom: 20.0 * scale,
               ),
-              child: Image.asset('assets/images/mondora_logo.png'),
+              child: Image.asset(
+                'assets/images/mondora_logo.png',
+                color: colorScheme.onBackground,
+              ),
             ),
           ),
         ],
@@ -128,7 +155,7 @@ class AppDrawer extends StatelessWidget {
 
 class _AppDrawerItem extends StatelessWidget {
   final bool selected;
-  final String title;
+  final Widget title;
   final Widget icon;
   final GestureTapCallback? onPressed;
   const _AppDrawerItem({
@@ -162,10 +189,7 @@ class _AppDrawerItem extends StatelessWidget {
             SizedBox(
               width: 12 * scale,
             ),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
+            title,
           ],
         ),
         onTap: onPressed,
@@ -175,66 +199,99 @@ class _AppDrawerItem extends StatelessWidget {
 }
 
 class _ItemInfo {
-  late String title;
+  late Widget title;
   late Widget icon;
 
-  _ItemInfo(AppMenuOption appMenuOption, double scale) {
+  _ItemInfo(
+    AppMenuOption appMenuOption,
+    double scale,
+    Color color,
+    TextStyle textStyle,
+  ) {
     final iconSize = 24.0 * scale;
     switch (appMenuOption) {
       case AppMenuOption.home:
-        title = 'Home';
+        title = Text(
+          'Home',
+          style: textStyle,
+        );
         icon = SvgPicture.asset(
           'assets/icons/home.svg',
           height: iconSize,
           width: iconSize,
+          color: color,
         );
         break;
       case AppMenuOption.classification:
-        title = 'Classifica';
+        title = Text(
+          'Classifica',
+          style: textStyle,
+        );
         icon = SvgPicture.asset(
           'assets/icons/classification.svg',
           height: iconSize,
           width: iconSize,
+          color: color,
         );
         break;
       case AppMenuOption.activity:
-        title = 'Attività';
+        title = Text(
+          'Attività',
+          style: textStyle,
+        );
         icon = SvgPicture.asset(
           'assets/icons/activity.svg',
           height: iconSize,
           width: iconSize,
+          color: color,
         );
         break;
       case AppMenuOption.profile:
-        title = 'Profilo';
+        title = Text(
+          'Profilo',
+          style: textStyle,
+        );
         icon = SvgPicture.asset(
           'assets/icons/profile.svg',
           height: iconSize,
           width: iconSize,
+          color: color,
         );
         break;
       case AppMenuOption.settings:
-        title = 'Impostazioni';
+        title = Text(
+          'Impostazioni',
+          style: textStyle,
+        );
         icon = SvgPicture.asset(
           'assets/icons/settings.svg',
           height: iconSize,
           width: iconSize,
+          color: color,
         );
         break;
       case AppMenuOption.information:
-        title = 'Info';
+        title = Text(
+          'Info',
+          style: textStyle,
+        );
         icon = SvgPicture.asset(
           'assets/icons/information.svg',
           height: iconSize,
           width: iconSize,
+          color: color,
         );
         break;
       case AppMenuOption.logout:
-        title = 'Esci';
+        title = Text(
+          'Esci',
+          style: textStyle,
+        );
         icon = SvgPicture.asset(
           'assets/icons/logout.svg',
           height: iconSize,
           width: iconSize,
+          color: color,
         );
         break;
     }

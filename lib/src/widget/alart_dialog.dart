@@ -42,10 +42,13 @@ class AppAlartDialog {
     this.iscCancelDestructiveAction = false,
     this.actionsAlignmentCenter = true,
   }) {
-    var colorScheme = Theme.of(context).colorScheme;
-    var textTheme = Theme.of(context).textTheme;
-    var scale = context.read<AppData>().scale;
-    var radius = 15.0 * scale;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final color = colorScheme.brightness == Brightness.light
+        ? colorScheme.secondary
+        : colorScheme.primary;
+    final scale = context.read<AppData>().scale;
+    final radius = 15.0 * scale;
 
     borderRadius = borderRadius ??
         BorderRadius.all(
@@ -56,9 +59,7 @@ class AppAlartDialog {
     bodyStyle = bodyStyle ?? textTheme.bodyText2;
     confirmLabelStyle = confirmLabelStyle ??
         textTheme.caption!.copyWith(
-          color: iscConfirmDestructiveAction
-              ? colorScheme.error
-              : colorScheme.secondary,
+          color: iscConfirmDestructiveAction ? colorScheme.error : color,
         );
 
     confirmButtonStyle = confirmButtonStyle ??
@@ -67,16 +68,13 @@ class AppAlartDialog {
           shape: RoundedRectangleBorder(
             borderRadius: borderRadius!,
           ),
-          foregroundColor: iscConfirmDestructiveAction
-              ? colorScheme.error
-              : colorScheme.secondary,
+          foregroundColor:
+              iscConfirmDestructiveAction ? colorScheme.error : color,
         );
 
     cancelLabelStyle = cancelLabelStyle ??
         textTheme.caption!.copyWith(
-          color: iscCancelDestructiveAction
-              ? colorScheme.error
-              : colorScheme.secondary,
+          color: iscCancelDestructiveAction ? colorScheme.error : color,
         );
 
     cancelButtonStyle = cancelButtonStyle ??
@@ -85,9 +83,8 @@ class AppAlartDialog {
           shape: RoundedRectangleBorder(
             borderRadius: borderRadius!,
           ),
-          foregroundColor: iscCancelDestructiveAction
-              ? colorScheme.error
-              : colorScheme.secondary,
+          foregroundColor:
+              iscCancelDestructiveAction ? colorScheme.error : color,
         );
   }
 

@@ -26,12 +26,19 @@ class SliderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
+    final scale = context.read<AppData>().scale;
+    final colorScheme = Theme.of(context).colorScheme;
+    final color = colorScheme.brightness == Brightness.light
+        ? colorScheme.secondary
+        : colorScheme.primary;
+
     return Container(
       height: 54.0 * scale,
       margin: EdgeInsets.symmetric(horizontal: 27.0 * scale),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
+        color: colorScheme.brightness == Brightness.light
+            ? const Color(0xFFF5F5F5)
+            : Colors.grey[800],
         borderRadius: BorderRadius.circular(30.0),
         border: Border.all(
           width: 1.0,
@@ -83,7 +90,7 @@ class SliderButton extends StatelessWidget {
             key: dismissKey,
             onDismissed: onDismissed,
             child: FloatingActionButton(
-              backgroundColor: Theme.of(context).colorScheme.secondary,
+              backgroundColor: color,
               onPressed: null,
             ),
           ),

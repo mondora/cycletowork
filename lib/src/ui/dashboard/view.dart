@@ -4,7 +4,7 @@ import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/activity/view.dart';
 import 'package:cycletowork/src/ui/classification/view.dart';
-import 'package:cycletowork/src/ui/counter/view.dart';
+import 'package:cycletowork/src/ui/tracking_counter/view.dart';
 import 'package:cycletowork/src/ui/dashboard/ui_state.dart';
 import 'package:cycletowork/src/ui/dashboard/view_model.dart';
 import 'package:cycletowork/src/ui/home/view.dart';
@@ -69,7 +69,7 @@ class DashboardView extends StatelessWidget {
 
               if (viewModel.uiState.dashboardPageOption ==
                   DashboardPageOption.startCounter) {
-                return CounterView(
+                return TrackingCounterView(
                   dismissKey: dismissKey,
                   counter: viewModel.uiState.counter,
                   setCounter: (value) {

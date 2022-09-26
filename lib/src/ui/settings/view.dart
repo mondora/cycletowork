@@ -1,4 +1,5 @@
 import 'package:cycletowork/src/data/app_data.dart';
+import 'package:cycletowork/src/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,7 +11,15 @@ class SettingsView extends StatelessWidget {
     var appData = context.read<AppData>();
     var scale = appData.scale;
     var isWakelockModeEnable = context.watch<AppData>().isWakelockModeEnable;
+    var themeMode = context.watch<AppData>().themeMode;
     var textTheme = Theme.of(context).textTheme;
+    final colorSchemeExtension =
+        Theme.of(context).extension<ColorSchemeExtension>()!;
+    final listThemeMode = [
+      'Light',
+      'Dark',
+      'Automatico',
+    ];
 
     return Scaffold(
       body: ListView(
@@ -27,61 +36,59 @@ class SettingsView extends StatelessWidget {
           SizedBox(
             height: 20 * scale,
           ),
-          // SizedBox(
-          //   height: 63.0,
-          //   child: ListTile(
-          //     leading: Column(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          //         Text(
-          //           'Unità di misura',
-          //           style: textTheme.bodyText1,
-          //         ),
-          //       ],
-          //     ),
-          //     trailing: Column(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          //         Icon(
-          //           Icons.arrow_forward_ios,
-          //           color: colorScheme.onBackground,
-          //         ),
-          //       ],
-          //     ),
-          //     onTap: () {},
-          //   ),
-          // ),
-          // Container(
-          //   height: 1.5,
-          //   color: const Color.fromRGBO(0, 0, 0, 0.12),
-          // ),
-          // SizedBox(
-          //   height: 63.0,
-          //   child: ListTile(
-          //     // dense: true,
-          //     // visualDensity: VisualDensity(vertical: 3),
-          //     leading: Column(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          //         Text(
-          //           'Dark mode',
-          //           style: textTheme.bodyText1,
-          //         ),
-          //       ],
-          //     ),
-          //     trailing: Switch(
-          //       value: false,
-          //       onChanged: (value) {},
-          //     ),
-          //     onTap: () {},
-          //   ),
-          // ),
-          // Container(
-          //   height: 1.5,
-          //   color: const Color.fromRGBO(0, 0, 0, 0.12),
-          // ),
           SizedBox(
-            height: 80.0,
+            child: ListTile(
+              title: Padding(
+                padding: EdgeInsets.only(bottom: 10.0 * scale),
+                child: Text(
+                  'Dark mode',
+                  style: textTheme.bodyText1,
+                ),
+              ),
+              trailing: SizedBox(
+                width: 300.0 * scale,
+                child: DropdownButtonFormField<String>(
+                  isExpanded: true,
+                  hint: Text(
+                    'Seleziona dark mode',
+                    style: textTheme.bodyText1!.copyWith(
+                      fontWeight: FontWeight.w400,
+                      color: colorSchemeExtension.textDisabled,
+                    ),
+                  ),
+                  items: listThemeMode.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        style: textTheme.caption,
+                      ),
+                    );
+                  }).toList(),
+                  value: listThemeMode.firstWhere(
+                    (ele) => ele.toLowerCase() == themeMode.name.toString(),
+                    orElse: () => 'Automatico',
+                  ),
+                  onChanged: (value) async {
+                    if (value != null) {
+                      await appData.setThemeMode(value);
+                    }
+                  },
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 10 * scale,
+          ),
+          Container(
+            height: 1 * scale,
+            color: Colors.grey[300],
+          ),
+          SizedBox(
+            height: 5 * scale,
+          ),
+          SizedBox(
             child: ListTile(
               title: Padding(
                 padding: EdgeInsets.only(bottom: 10.0 * scale),
@@ -100,12 +107,14 @@ class SettingsView extends StatelessWidget {
                   await appData.setWakelockModeEnable(value);
                 },
               ),
-              onTap: () {},
             ),
           ),
+          SizedBox(
+            height: 10 * scale,
+          ),
           Container(
-            height: 1.5,
-            color: const Color.fromRGBO(0, 0, 0, 0.12),
+            height: 1 * scale,
+            color: Colors.grey[300],
           ),
         ],
       ),

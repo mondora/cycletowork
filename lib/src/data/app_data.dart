@@ -11,12 +11,6 @@ enum AppMeasurementUnit {
   imperial,
 }
 
-enum AppThemeBrightness {
-  light,
-  dark,
-  system,
-}
-
 class AppData with ChangeNotifier, DiagnosticableTreeMixin {
   double _scale = 1.0;
   double get scale => _scale;
@@ -39,6 +33,9 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
   String? _lightMapStyle;
   String? get lightMapStyle => _lightMapStyle;
 
+  ThemeMode _themeMode = ThemeMode.system;
+  ThemeMode get themeMode => _themeMode;
+
   AppData() : this.instance();
 
   AppData.instance() {
@@ -52,21 +49,48 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
         ) ??
         false;
 
+    var result = sharedPreferences.getString(
+      'appThemeMode',
+    );
+    switch (result) {
+      case null:
+        _themeMode = ThemeMode.system;
+        break;
+      case 'dark':
+        _themeMode = ThemeMode.dark;
+        break;
+      case 'light':
+        _themeMode = ThemeMode.light;
+        break;
+      case 'system':
+      case 'automatico':
+        _themeMode = ThemeMode.system;
+        break;
+      default:
+        _themeMode = ThemeMode.system;
+        break;
+    }
+
     await _getMarkers();
     _darkMapStyle = await rootBundle.loadString('assets/maps/dark_theme.json');
     _lightMapStyle =
         await rootBundle.loadString('assets/maps/light_theme.json');
+    notifyListeners();
   }
 
-  ThemeData _themeData = AppTheme.getLightTheme(false, scale: 1.0);
-  ThemeData get themeData => _themeData;
+  ThemeData _lightThemeData = AppTheme.getLightTheme(false, scale: 1.0);
+  ThemeData get lightThemeData => _lightThemeData;
+
+  ThemeData _darkThemeData = AppTheme.getDarkTheme(false, scale: 1.0);
+  ThemeData get darkThemeData => _darkThemeData;
 
   static User? user;
   static bool isUserUsedEmailProvider = false;
 
   setScaleThemeData(double scale) async {
     _scale = scale;
-    _themeData = AppTheme.getLightTheme(false, scale: scale);
+    _lightThemeData = AppTheme.getLightTheme(false, scale: scale);
+    _darkThemeData = AppTheme.getDarkTheme(false, scale: scale);
     await _getMarkers();
     notifyListeners();
   }
@@ -77,6 +101,30 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
     await sharedPreferences.setBool(
       'isWakelockModeEnable',
       value,
+    );
+    notifyListeners();
+  }
+
+  setThemeMode(String value) async {
+    switch (value.toLowerCase()) {
+      case 'dark':
+        _themeMode = ThemeMode.dark;
+        break;
+      case 'light':
+        _themeMode = ThemeMode.light;
+        break;
+      case 'system':
+      case 'automatico':
+        _themeMode = ThemeMode.system;
+        break;
+      default:
+        _themeMode = ThemeMode.system;
+        break;
+    }
+    final sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.setString(
+      'appThemeMode',
+      value.toLowerCase(),
     );
     notifyListeners();
   }

@@ -17,10 +17,11 @@ class SummeryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
+    final scale = context.read<AppData>().scale;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final infoColor = colorSchemeExtension.info;
+    final textTheme = Theme.of(context).textTheme;
 
     return Column(
       children: [
@@ -42,10 +43,10 @@ class SummeryCard extends StatelessWidget {
             ),
             Text(
               co2,
-              style: Theme.of(context).textTheme.headline4!.copyWith(
-                    color: infoColor,
-                    fontWeight: FontWeight.w700,
-                  ),
+              style: textTheme.headline4!.copyWith(
+                color: infoColor,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ],
         ),
@@ -56,11 +57,12 @@ class SummeryCard extends StatelessWidget {
           height: 48.0 * scale,
           child: Stack(
             children: [
-              const Align(
+              Align(
                 alignment: Alignment.center,
                 child: VerticalDivider(
                   thickness: 1.0,
                   width: 1.0,
+                  color: Colors.grey[300],
                 ),
               ),
               Stack(
@@ -72,7 +74,7 @@ class SummeryCard extends StatelessWidget {
                         child: Center(
                           child: Text(
                             distance,
-                            style: Theme.of(context).textTheme.headline5,
+                            style: textTheme.headline5,
                           ),
                         ),
                       ),
@@ -84,11 +86,13 @@ class SummeryCard extends StatelessWidget {
                             children: [
                               Text(
                                 averageSpeed,
-                                style: Theme.of(context).textTheme.headline5,
+                                style: textTheme.headline5,
                               ),
                               Text(
                                 'VEL. MEDIA',
-                                style: Theme.of(context).textTheme.caption,
+                                style: textTheme.caption!.apply(
+                                  color: colorSchemeExtension.textDisabled,
+                                ),
                               ),
                             ],
                           ),

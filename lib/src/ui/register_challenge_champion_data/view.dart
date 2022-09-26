@@ -53,6 +53,10 @@ class _RegisterChallengCompanyDataViewState
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     var textTheme = Theme.of(context).textTheme;
+    final color = colorScheme.brightness == Brightness.light
+        ? colorScheme.secondary
+        : colorScheme.primary;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -258,6 +262,7 @@ class _RegisterChallengCompanyDataViewState
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Checkbox(
+                                activeColor: color,
                                 value:
                                     role == iAmMobilityManager && !isOtherRole,
                                 onChanged: (value) {
@@ -304,6 +309,7 @@ class _RegisterChallengCompanyDataViewState
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Checkbox(
+                                activeColor: color,
                                 value:
                                     role == iAmHumanResources && !isOtherRole,
                                 onChanged: (value) {
@@ -349,6 +355,7 @@ class _RegisterChallengCompanyDataViewState
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Checkbox(
+                                activeColor: color,
                                 value: isOtherRole,
                                 onChanged: (value) {
                                   setState(() {
@@ -549,6 +556,7 @@ class _RegisterChallengCompanyDataViewState
                                             MainAxisAlignment.start,
                                         children: [
                                           Checkbox(
+                                            activeColor: color,
                                             value: _getCheckBoxValue(
                                               surveyResponse
                                                   .listAnswer[index].answers,
@@ -607,6 +615,7 @@ class _RegisterChallengCompanyDataViewState
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Checkbox(
+                            activeColor: color,
                             value: acceptPrivacy,
                             onChanged: (value) =>
                                 viewModel.setAcceptPrivacy(value),

@@ -40,6 +40,10 @@ class _RegisterChallengCyclistDataViewState
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     var textTheme = Theme.of(context).textTheme;
+    final color = colorScheme.brightness == Brightness.light
+        ? colorScheme.secondary
+        : colorScheme.primary;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -314,6 +318,7 @@ class _RegisterChallengCyclistDataViewState
                                             MainAxisAlignment.start,
                                         children: [
                                           Checkbox(
+                                            activeColor: color,
                                             value: _getCheckBoxValue(
                                               surveyResponse
                                                   .listAnswer[index].answers,
@@ -374,6 +379,7 @@ class _RegisterChallengCyclistDataViewState
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Checkbox(
+                            activeColor: color,
                             value: acceptPrivacy,
                             onChanged: (value) {
                               viewModel.setAcceptPrivacy(value);
