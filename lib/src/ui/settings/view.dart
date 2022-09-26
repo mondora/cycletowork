@@ -45,41 +45,38 @@ class SettingsView extends StatelessWidget {
                   style: textTheme.bodyText1,
                 ),
               ),
-              trailing: SizedBox(
-                width: 300.0 * scale,
-                child: DropdownButtonFormField<String>(
-                  isExpanded: true,
-                  hint: Text(
-                    'Seleziona dark mode',
-                    style: textTheme.bodyText1!.copyWith(
-                      fontWeight: FontWeight.w400,
-                      color: colorSchemeExtension.textDisabled,
-                    ),
+              subtitle: DropdownButtonFormField<String>(
+                isExpanded: true,
+                hint: Text(
+                  'Seleziona dark mode',
+                  style: textTheme.bodyText1!.copyWith(
+                    fontWeight: FontWeight.w400,
+                    color: colorSchemeExtension.textDisabled,
                   ),
-                  items: listThemeMode.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: textTheme.caption,
-                      ),
-                    );
-                  }).toList(),
-                  value: listThemeMode.firstWhere(
-                    (ele) => ele.toLowerCase() == themeMode.name.toString(),
-                    orElse: () => 'Automatico',
-                  ),
-                  onChanged: (value) async {
-                    if (value != null) {
-                      await appData.setThemeMode(value);
-                    }
-                  },
                 ),
+                items: listThemeMode.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: textTheme.caption,
+                    ),
+                  );
+                }).toList(),
+                value: listThemeMode.firstWhere(
+                  (ele) => ele.toLowerCase() == themeMode.name.toString(),
+                  orElse: () => 'Automatico',
+                ),
+                onChanged: (value) async {
+                  if (value != null) {
+                    await appData.setThemeMode(value);
+                  }
+                },
               ),
             ),
           ),
           SizedBox(
-            height: 10 * scale,
+            height: 15 * scale,
           ),
           Container(
             height: 1 * scale,
