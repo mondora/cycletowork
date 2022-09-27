@@ -12,6 +12,7 @@ class SettingsView extends StatelessWidget {
     var scale = appData.scale;
     var isWakelockModeEnable = context.watch<AppData>().isWakelockModeEnable;
     var themeMode = context.watch<AppData>().themeMode;
+    var measurementUnit = context.watch<AppData>().measurementUnit;
     var textTheme = Theme.of(context).textTheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
@@ -19,6 +20,10 @@ class SettingsView extends StatelessWidget {
       'Light',
       'Dark',
       'Automatico',
+    ];
+    final listMeasurementUnit = [
+      'Metriche (Km)',
+      'Imperiali (mi)',
     ];
 
     return Scaffold(
@@ -70,6 +75,57 @@ class SettingsView extends StatelessWidget {
                 onChanged: (value) async {
                   if (value != null) {
                     await appData.setThemeMode(value);
+                  }
+                },
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 15 * scale,
+          ),
+          Container(
+            height: 1 * scale,
+            color: Colors.grey[300],
+          ),
+          SizedBox(
+            height: 5 * scale,
+          ),
+          SizedBox(
+            child: ListTile(
+              title: Padding(
+                padding: EdgeInsets.only(bottom: 10.0 * scale),
+                child: Text(
+                  'Unità di misura',
+                  style: textTheme.bodyText1,
+                ),
+              ),
+              subtitle: DropdownButtonFormField<String>(
+                isExpanded: true,
+                hint: Text(
+                  'Seleziona unità di misura',
+                  style: textTheme.bodyText1!.copyWith(
+                    fontWeight: FontWeight.w400,
+                    color: colorSchemeExtension.textDisabled,
+                  ),
+                ),
+                items: listMeasurementUnit.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: textTheme.caption,
+                    ),
+                  );
+                }).toList(),
+                value: measurementUnit == AppMeasurementUnit.metric
+                    ? 'Metriche (Km)'
+                    : 'Imperiali (mi)',
+                onChanged: (value) async {
+                  if (value != null) {
+                    var unit = value == 'Metriche (Km)'
+                        ? AppMeasurementUnit.metric
+                        : AppMeasurementUnit.imperial;
+                    await appData.setMeasurementUnit(unit.name);
                   }
                 },
               ),

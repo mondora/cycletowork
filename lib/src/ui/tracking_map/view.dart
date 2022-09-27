@@ -50,7 +50,8 @@ class _TrackingMapViewState extends State<TrackingMapView> {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
+    final scale = context.read<AppData>().scale;
+    final measurementUnit = context.read<AppData>().measurementUnit;
 
     if (widget.listTrackingPosition.isEmpty) {
       return const Scaffold(
@@ -61,7 +62,11 @@ class _TrackingMapViewState extends State<TrackingMapView> {
     }
 
     var lastPosition = widget.listTrackingPosition.last;
-    final trackingCo2 = widget.trackingUserActivity.co2.gramToKg();
+    final trackingCo2Kg = widget.trackingUserActivity.co2.gramToKg();
+    final trackingCo2Pound = widget.trackingUserActivity.co2.gramToPound();
+    final trackingCo2 = measurementUnit == AppMeasurementUnit.metric
+        ? trackingCo2Kg
+        : trackingCo2Pound;
     final isChallenge =
         widget.trackingUserActivity.isChallenge == 1 ? true : false;
     final Locale appLocale = Localizations.localeOf(context);
@@ -261,10 +266,12 @@ class _Co2Tracking extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
-    var textTheme = Theme.of(context).textTheme;
+    final scale = context.read<AppData>().scale;
+    final measurementUnit = context.read<AppData>().measurementUnit;
+    final textTheme = Theme.of(context).textTheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -289,7 +296,7 @@ class _Co2Tracking extends StatelessWidget {
           width: 18.0 * scale,
         ),
         Text(
-          'Kg',
+          measurementUnit == AppMeasurementUnit.metric ? 'Kg' : 'lb',
           style: textTheme.caption!.apply(
             color: colorSchemeExtension.textSecondary,
           ),

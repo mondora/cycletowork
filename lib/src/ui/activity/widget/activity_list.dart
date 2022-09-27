@@ -19,7 +19,8 @@ class ActivityList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
+    final scale = context.read<AppData>().scale;
+    final measurementUnit = context.read<AppData>().measurementUnit;
     final Locale appLocale = Localizations.localeOf(context);
     final numberFormat = NumberFormat(
       '##0.00',
@@ -46,10 +47,12 @@ class ActivityList extends StatelessWidget {
           'HH:mm',
           appLocale.languageCode,
         ).format(date)}';
-        var co2String =
-            '${numberFormat.format(activity.co2.gramToKg())} Kg CO\u2082';
-        var moreString =
-            '${numberFormat.format(activity.distance.meterToKm())} km | velocità media ${numberFormatInt.format(activity.averageSpeed.meterPerSecondToKmPerHour())} km/h';
+        final co2String = measurementUnit == AppMeasurementUnit.metric
+            ? '${numberFormat.format(activity.co2.gramToKg())} Kg CO\u2082'
+            : '${numberFormat.format(activity.co2.gramToPound())} lb CO\u2082';
+        var moreString = measurementUnit == AppMeasurementUnit.metric
+            ? '${numberFormat.format(activity.distance.meterToKm())} km | velocità media ${numberFormatInt.format(activity.averageSpeed.meterPerSecondToKmPerHour())} km/h'
+            : '${numberFormat.format(activity.distance.meterToMile())} mi | velocità media ${numberFormatInt.format(activity.averageSpeed.meterPerSecondToMilePerHour())} mi/h';
         var map = activity.imageData != null
             ? Image.memory(
                 activity.imageData!,
@@ -92,7 +95,7 @@ class _ActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
+    final scale = context.read<AppData>().scale;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final textSecondaryColor = colorSchemeExtension.textSecondary;

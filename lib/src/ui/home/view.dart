@@ -9,7 +9,7 @@ import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:cycletowork/src/ui/dashboard/view_model.dart';
 import 'package:cycletowork/src/ui/home/widget/activity_list.dart';
-import 'package:cycletowork/src/ui/home/widget/summery_card.dart';
+import 'package:cycletowork/src/ui/home/widget/summary_card.dart';
 import 'package:cycletowork/src/widget/map.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -84,7 +84,8 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
+    final scale = context.read<AppData>().scale;
+    final measurementUnit = context.read<AppData>().measurementUnit;
     final dashboardModel = Provider.of<ViewModel>(context);
     final initialLatitude = dashboardModel.uiState.currentPosition != null
         ? dashboardModel.uiState.currentPosition!.latitude
@@ -101,9 +102,22 @@ class _HomeViewState extends State<HomeView> {
     );
 
     final user = AppData.user!;
-    final co2 = user.co2.gramToKg();
-    final distance = user.distance.meterToKm();
-    final averageSpeed = user.averageSpeed.meterPerSecondToKmPerHour();
+    final co2Kg = user.co2.gramToKg();
+    final co2Pound = user.co2.gramToPound();
+    final distanceKm = user.distance.meterToKm();
+    final distanceMile = user.distance.meterToMile();
+    final averageSpeedKmPerHour = user.averageSpeed.meterPerSecondToKmPerHour();
+    final averageSpeedMilePerHour =
+        user.averageSpeed.meterPerSecondToMilePerHour();
+    final co2Summary = measurementUnit == AppMeasurementUnit.metric
+        ? '${numberFormat.format(co2Kg)} Kg'
+        : '${numberFormat.format(co2Pound)} lb';
+    final distanceSummary = measurementUnit == AppMeasurementUnit.metric
+        ? '${numberFormat.format(distanceKm)} km'
+        : '${numberFormat.format(distanceMile)} mi';
+    final averageSpeedSummary = measurementUnit == AppMeasurementUnit.metric
+        ? '${numberFormat.format(averageSpeedKmPerHour)} km/h'
+        : '${numberFormat.format(averageSpeedMilePerHour)} mi/h';
 
     final listActivityHeight =
         dashboardModel.uiState.listUserActivity.isEmpty &&
@@ -217,10 +231,10 @@ class _HomeViewState extends State<HomeView> {
                           color: Colors.grey[300],
                         ),
                       ),
-                    SummeryCard(
-                      co2: '${numberFormat.format(co2)} Kg',
-                      distance: '${numberFormat.format(distance)} km',
-                      averageSpeed: '${numberFormat.format(averageSpeed)} km/h',
+                    SummaryCard(
+                      co2: co2Summary,
+                      distance: distanceSummary,
+                      averageSpeed: averageSpeedSummary,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

@@ -76,10 +76,10 @@ class _TrackingStopViewState extends State<TrackingStopView> {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
-
-    var textTheme = Theme.of(context).textTheme;
-    var colorScheme = Theme.of(context).colorScheme;
+    final scale = context.read<AppData>().scale;
+    final measurementUnit = context.read<AppData>().measurementUnit;
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final Locale appLocale = Localizations.localeOf(context);
@@ -96,26 +96,41 @@ class _TrackingStopViewState extends State<TrackingStopView> {
       widget.trackingUserActivity.stopTime,
     );
     final trackingDurationInSeconds = widget.trackingUserActivity.duration;
-    final trackingCo2 = widget.trackingUserActivity.co2.gramToKg();
-    final trackingAvarageSpeed =
+    final trackingCo2Kg = widget.trackingUserActivity.co2.gramToKg();
+    final trackingCo2Pound = widget.trackingUserActivity.co2.gramToPound();
+    final trackingCo2 = measurementUnit == AppMeasurementUnit.metric
+        ? trackingCo2Kg
+        : trackingCo2Pound;
+    final trackingAvarageSpeedKmPerHour =
         widget.trackingUserActivity.averageSpeed.meterPerSecondToKmPerHour();
-    final trackingMaxSpeed =
+    final trackingAvarageSpeedMilePerHour =
+        widget.trackingUserActivity.averageSpeed.meterPerSecondToMilePerHour();
+    final trackingAvarageSpeed = measurementUnit == AppMeasurementUnit.metric
+        ? trackingAvarageSpeedKmPerHour
+        : trackingAvarageSpeedMilePerHour;
+    final trackingMaxSpeedKmPerHour =
         widget.trackingUserActivity.maxSpeed.meterPerSecondToKmPerHour();
+    final trackingMaxSpeedMilePerHour =
+        widget.trackingUserActivity.maxSpeed.meterPerSecondToMilePerHour();
+    final trackingMaxSpeed = measurementUnit == AppMeasurementUnit.metric
+        ? trackingMaxSpeedKmPerHour
+        : trackingMaxSpeedMilePerHour;
     final trackingCalorie = widget.trackingUserActivity.calorie;
     final trackingDistanceInKm =
         widget.trackingUserActivity.distance.meterToKm();
+    final trackingDistanceInMile =
+        widget.trackingUserActivity.distance.meterToMile();
+    final trackingDistance = measurementUnit == AppMeasurementUnit.metric
+        ? trackingDistanceInKm
+        : trackingDistanceInMile;
     final trackingPace = trackingAvarageSpeed > 2 && trackingDistanceInKm > 0.1
         ? 60 / trackingAvarageSpeed
         : 0;
     final isChallenge =
         widget.trackingUserActivity.isChallenge == 1 ? true : false;
-
-    final initialLatitude = widget.listTrackingPosition.isNotEmpty
-        ? widget.listTrackingPosition.first.latitude
-        : context.read<ViewModel>().uiState.currentPosition!.latitude;
-    final initialLongitude = widget.listTrackingPosition.isNotEmpty
-        ? widget.listTrackingPosition.first.longitude
-        : context.read<ViewModel>().uiState.currentPosition!.longitude;
+    final listLocationData = widget.listTrackingPosition;
+    final imageData = widget.trackingUserActivity.imageData;
+    final city = widget.trackingUserActivity.city;
 
     return Scaffold(
       body: ListView(
@@ -132,19 +147,19 @@ class _TrackingStopViewState extends State<TrackingStopView> {
             style: textTheme.headline6,
           ),
           Text(
-            city,
+            city ?? '',
             style: textTheme.bodyText1!.apply(
               color: colorSchemeExtension.textSecondary,
             ),
           ),
-          SizedBox(
-            height: 10.0 * scale,
+          const SizedBox(
+            height: 10.0,
           ),
           Container(
             padding: EdgeInsets.all(10.0 * scale),
             decoration: BoxDecoration(
               color: colorSchemeExtension.info,
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(10.0 * scale),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -155,8 +170,8 @@ class _TrackingStopViewState extends State<TrackingStopView> {
                   width: 46.0 * scale,
                   color: colorScheme.onSecondary,
                 ),
-                SizedBox(
-                  width: 10 * scale,
+                const SizedBox(
+                  width: 10,
                 ),
                 Text(
                   numberFormat.format(trackingCo2),
@@ -165,11 +180,11 @@ class _TrackingStopViewState extends State<TrackingStopView> {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                SizedBox(
-                  width: 10 * scale,
+                const SizedBox(
+                  width: 10,
                 ),
                 Text(
-                  'Kg CO\u2082',
+                  '${measurementUnit == AppMeasurementUnit.metric ? 'Kg' : 'lb'} CO\u2082',
                   style: textTheme.headline4!.copyWith(
                     color: colorScheme.onSecondary,
                     fontWeight: FontWeight.w400,
@@ -178,8 +193,8 @@ class _TrackingStopViewState extends State<TrackingStopView> {
               ],
             ),
           ),
-          SizedBox(
-            height: 10.0 * scale,
+          const SizedBox(
+            height: 10.0,
           ),
           ClipRRect(
             borderRadius: const BorderRadius.all(
@@ -187,22 +202,33 @@ class _TrackingStopViewState extends State<TrackingStopView> {
             ),
             child: SizedBox(
               height: 327.0 * scale,
-              child: AppMap(
-                listTrackingPosition: widget.listTrackingPosition,
-                isChallenge: isChallenge,
-                initialLatitude: initialLatitude,
-                initialLongitude: initialLongitude,
-                isStatic: widget.listTrackingPosition.isNotEmpty ? true : false,
-                padding: 100.0,
-                onSnapshot: (value) {
-                  context.read<ViewModel>().setUserActivityImageData(value);
-                },
-                canScroll: false,
-              ),
+              child: listLocationData.isNotEmpty && imageData == null
+                  ? AppMap(
+                      key: _mapKey,
+                      listTrackingPosition: listLocationData,
+                      isChallenge: isChallenge,
+                      initialLatitude: listLocationData.first.latitude,
+                      initialLongitude: listLocationData.first.longitude,
+                      isStatic: true,
+                      canScroll: false,
+                    )
+                  : imageData != null
+                      ? Image.memory(
+                          imageData,
+                          fit: BoxFit.fill,
+                          height: 327.0 * scale,
+                          width: 327.0 * scale,
+                        )
+                      : Image.asset(
+                          'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking_details.png',
+                          fit: BoxFit.cover,
+                          height: 327.0 * scale,
+                          width: 327.0 * scale,
+                        ),
             ),
           ),
-          SizedBox(
-            height: 20.0 * scale,
+          const SizedBox(
+            height: 20.0,
           ),
           SizedBox(
             height: 82.0 * scale,
@@ -212,25 +238,30 @@ class _TrackingStopViewState extends State<TrackingStopView> {
                 _Item(
                   imagePath: _getItemInfo(
                     TrackingOption.distance,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).iconPath,
                   title: _getItemInfo(
                     TrackingOption.distance,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).title,
-                  value: numberFormat.format(trackingDistanceInKm),
+                  value: numberFormat.format(trackingDistance),
                   unit: _getItemInfo(
                     TrackingOption.distance,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).unit,
                 ),
                 _Item(
                   imagePath: _getItemInfo(
                     TrackingOption.duration,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).iconPath,
                   title: _getItemInfo(
                     TrackingOption.duration,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).title,
                   value: Duration(
@@ -238,6 +269,7 @@ class _TrackingStopViewState extends State<TrackingStopView> {
                   ).toHoursMinutesSeconds(),
                   unit: _getItemInfo(
                     TrackingOption.duration,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).unit,
                 ),
@@ -252,30 +284,36 @@ class _TrackingStopViewState extends State<TrackingStopView> {
                 _Item(
                   imagePath: _getItemInfo(
                     TrackingOption.avarageSpeed,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).iconPath,
                   title: _getItemInfo(
                     TrackingOption.avarageSpeed,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).title,
                   value: numberFormat.format(trackingAvarageSpeed),
                   unit: _getItemInfo(
                     TrackingOption.avarageSpeed,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).unit,
                 ),
                 _Item(
                   imagePath: _getItemInfo(
                     TrackingOption.calorie,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).iconPath,
                   title: _getItemInfo(
                     TrackingOption.calorie,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).title,
                   value: trackingCalorie.toString(),
                   unit: _getItemInfo(
                     TrackingOption.calorie,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).unit,
                 ),
@@ -290,73 +328,83 @@ class _TrackingStopViewState extends State<TrackingStopView> {
                 _Item(
                   imagePath: _getItemInfo(
                     TrackingOption.steps,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).iconPath,
                   title: _getItemInfo(
                     TrackingOption.steps,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).title,
                   value: numberPaceFormat.format(trackingPace),
                   unit: _getItemInfo(
                     TrackingOption.steps,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).unit,
                 ),
                 _Item(
                   imagePath: _getItemInfo(
                     TrackingOption.maxSpeed,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).iconPath,
                   title: _getItemInfo(
                     TrackingOption.maxSpeed,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).title,
                   value: numberFormat.format(trackingMaxSpeed),
                   unit: _getItemInfo(
                     TrackingOption.maxSpeed,
+                    measurementUnit,
                     isChallenge: isChallenge,
                   ).unit,
                 ),
               ],
             ),
           ),
-          SizedBox(
-            height: 25.0 * scale,
+          const SizedBox(
+            height: 25.0,
           ),
           Text(
-            'Velocità (km/h)',
+            'Velocità (${measurementUnit == AppMeasurementUnit.metric ? 'km/h' : 'mi/h'})',
             style: textTheme.caption,
           ),
           Chart(
             type: ChartType.speed,
-            chartData: widget.listTrackingPosition
+            chartData: listLocationData
                 .map(
                   (position) => ChartData(
                     DateTime.fromMillisecondsSinceEpoch(
                       position.time.toInt(),
                     ),
-                    position.speed.meterPerSecondToKmPerHour(),
+                    measurementUnit == AppMeasurementUnit.metric
+                        ? position.speed.meterPerSecondToKmPerHour()
+                        : position.speed.meterPerSecondToMilePerHour(),
                   ),
                 )
                 .toList(),
             scaleType: ChartScaleType.time,
           ),
-          SizedBox(
-            height: 30.0 * scale,
+          const SizedBox(
+            height: 30.0,
           ),
           Text(
-            'Quota (m)',
+            'Quota (${measurementUnit == AppMeasurementUnit.metric ? 'm' : 'ft'})',
             style: textTheme.caption,
           ),
           Chart(
             type: ChartType.altitude,
-            chartData: widget.listTrackingPosition
+            chartData: listLocationData
                 .map(
                   (position) => ChartData(
                     DateTime.fromMillisecondsSinceEpoch(
                       position.time.toInt(),
                     ),
-                    position.altitude,
+                    measurementUnit == AppMeasurementUnit.metric
+                        ? position.altitude
+                        : position.altitude.meterToFoot(),
                   ),
                 )
                 .toList(),
@@ -456,7 +504,8 @@ class _TrackingStopViewState extends State<TrackingStopView> {
   }
 
   _ItemInfo _getItemInfo(
-    TrackingOption trackingOption, {
+    TrackingOption trackingOption,
+    AppMeasurementUnit measurementUnit, {
     bool isChallenge = false,
   }) {
     String initialPath = 'assets/icons/';
@@ -466,7 +515,7 @@ class _TrackingStopViewState extends State<TrackingStopView> {
         return _ItemInfo(
           iconPath: '${initialPath}distance$endPath',
           title: 'Distance',
-          unit: 'km',
+          unit: measurementUnit == AppMeasurementUnit.metric ? 'km' : 'mi',
         );
       case TrackingOption.duration:
         return _ItemInfo(
@@ -477,7 +526,7 @@ class _TrackingStopViewState extends State<TrackingStopView> {
         return _ItemInfo(
           iconPath: '${initialPath}average_speed$endPath',
           title: 'Velocità media',
-          unit: 'km/h',
+          unit: measurementUnit == AppMeasurementUnit.metric ? 'km/h' : 'mi/h',
         );
       case TrackingOption.calorie:
         return _ItemInfo(
@@ -489,13 +538,15 @@ class _TrackingStopViewState extends State<TrackingStopView> {
         return _ItemInfo(
           iconPath: '${initialPath}average_steps$endPath',
           title: 'Passo medio',
-          unit: 'min/km',
+          unit: measurementUnit == AppMeasurementUnit.metric
+              ? 'min/km'
+              : 'min/mi',
         );
       case TrackingOption.maxSpeed:
         return _ItemInfo(
           iconPath: '${initialPath}max_speed$endPath',
           title: 'Velocità Max',
-          unit: 'km/h',
+          unit: measurementUnit == AppMeasurementUnit.metric ? 'km/h' : 'mi/h',
         );
     }
   }

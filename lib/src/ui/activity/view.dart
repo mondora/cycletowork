@@ -1,4 +1,5 @@
 import 'package:cycletowork/src/data/app_data.dart';
+import 'package:cycletowork/src/data/chart_data.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/activity/widget/activity_list.dart';
 import 'package:cycletowork/src/ui/dashboard/view_model.dart';
@@ -7,6 +8,7 @@ import 'package:cycletowork/src/widget/chart.dart';
 import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cycletowork/src/utility/convert.dart';
 
 class ActivityView extends StatefulWidget {
   const ActivityView({Key? key}) : super(key: key);
@@ -44,27 +46,35 @@ class _ActivityViewState extends State<ActivityView> {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
+    final scale = context.read<AppData>().scale;
+    final measurementUnit = context.read<AppData>().measurementUnit;
     final dashboardModel = Provider.of<ViewModel>(context);
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
-    var colorScheme = Theme.of(context).colorScheme;
-    var textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
-    var listUserActivity = dashboardModel.uiState.listUserActivityFiltered;
-    var listUserActivityAll = dashboardModel.uiState.listUserActivity;
-    bool isNotEmptyList = listUserActivityAll.isNotEmpty;
-    bool justChallenges = isNotEmptyList &&
+    final listUserActivity = dashboardModel.uiState.listUserActivityFiltered;
+    final listUserActivityAll = dashboardModel.uiState.listUserActivity;
+    final isNotEmptyList = listUserActivityAll.isNotEmpty;
+    final justChallenges = isNotEmptyList &&
         dashboardModel.uiState.userActivityFilteredJustChallenges;
-    ChartScaleType chartScaleType =
+    final chartScaleType =
         dashboardModel.uiState.userActivityFilteredChartScaleType;
 
-    var userActivtyCo2ChartData =
+    final userActivtyCo2KgChartData =
         dashboardModel.uiState.userActivityChartData.listCo2ChartData;
-    var userActivtyDistanceChartData =
+    final userActivtyCo2PoundChartData = dashboardModel
+        .uiState.userActivityChartData.listCo2ChartData
+        .map((e) => ChartData(e.x, e.y.toDouble().kgToPound()))
+        .toList();
+    final userActivtyDistanceKmChartData =
         dashboardModel.uiState.userActivityChartData.listDistanceChartData;
-
-    var isRegistredToChallenge =
+    final userActivtyDistanceMileChartData = dashboardModel
+        .uiState.userActivityChartData.listDistanceChartData
+        .map((e) => ChartData(e.x, e.y.toDouble().kmToMile()))
+        .toList();
+    final isRegistredToChallenge =
         dashboardModel.uiState.listChallengeRegistred.isNotEmpty;
 
     return Scaffold(
@@ -198,24 +208,28 @@ class _ActivityViewState extends State<ActivityView> {
               height: 25.0,
             ),
             Text(
-              'Risparmio di CO\u2082(Kg)',
+              'Risparmio di CO\u2082(${measurementUnit == AppMeasurementUnit.metric ? 'Kg' : 'lb'})',
               style: textTheme.caption,
             ),
             Chart(
               type: ChartType.co2,
-              chartData: userActivtyCo2ChartData,
+              chartData: measurementUnit == AppMeasurementUnit.metric
+                  ? userActivtyCo2KgChartData
+                  : userActivtyCo2PoundChartData,
               scaleType: chartScaleType,
             ),
             const SizedBox(
               height: 20.0,
             ),
             Text(
-              'Chilometri percorsi',
+              '${measurementUnit == AppMeasurementUnit.metric ? 'Chilometri' : 'Miglia'} percorsi',
               style: textTheme.caption,
             ),
             Chart(
               type: ChartType.distant,
-              chartData: userActivtyDistanceChartData,
+              chartData: measurementUnit == AppMeasurementUnit.metric
+                  ? userActivtyDistanceKmChartData
+                  : userActivtyDistanceMileChartData,
               scaleType: chartScaleType,
             ),
             const SizedBox(

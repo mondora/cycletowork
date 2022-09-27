@@ -36,6 +36,9 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
   ThemeMode _themeMode = ThemeMode.system;
   ThemeMode get themeMode => _themeMode;
 
+  AppMeasurementUnit _measurementUnit = AppMeasurementUnit.metric;
+  AppMeasurementUnit get measurementUnit => _measurementUnit;
+
   AppData() : this.instance();
 
   AppData.instance() {
@@ -75,6 +78,14 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
     _darkMapStyle = await rootBundle.loadString('assets/maps/dark_theme.json');
     _lightMapStyle =
         await rootBundle.loadString('assets/maps/light_theme.json');
+
+    final resultUnit = sharedPreferences.getString(
+          'appMeasurementUnit',
+        ) ??
+        AppMeasurementUnit.metric.name;
+    _measurementUnit = AppMeasurementUnit.values.firstWhere(
+      (element) => element.name == resultUnit,
+    );
     notifyListeners();
   }
 
@@ -125,6 +136,18 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
     await sharedPreferences.setString(
       'appThemeMode',
       value.toLowerCase(),
+    );
+    notifyListeners();
+  }
+
+  setMeasurementUnit(String value) async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.setString(
+      'appMeasurementUnit',
+      value,
+    );
+    _measurementUnit = AppMeasurementUnit.values.firstWhere(
+      (element) => element.name == value,
     );
     notifyListeners();
   }

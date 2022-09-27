@@ -45,9 +45,10 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
+    final scale = context.read<AppData>().scale;
+    final measurementUnit = context.read<AppData>().measurementUnit;
     final viewModel = Provider.of<ViewModel>(context);
-    var colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
     final Locale appLocale = Localizations.localeOf(context);
     final distanceNumberFormat = NumberFormat(
       '##0',
@@ -58,19 +59,19 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
       appLocale.languageCode,
     );
 
-    var firstColor = const Color.fromRGBO(57, 73, 171, 1);
+    const firstColor = Color.fromRGBO(57, 73, 171, 1);
 
-    var listCyclistClassificationRankingCo2 =
+    final listCyclistClassificationRankingCo2 =
         viewModel.uiState.listCyclistClassification;
 
-    var firstRankingCo2 = listCyclistClassificationRankingCo2.isNotEmpty
+    final firstRankingCo2 = listCyclistClassificationRankingCo2.isNotEmpty
         ? listCyclistClassificationRankingCo2.first
         : null;
 
-    var userValues = viewModel.uiState.userCyclistClassification!;
-    var userRankingCo2 = userValues.rankingCo2;
+    final userValues = viewModel.uiState.userCyclistClassification!;
+    final userRankingCo2 = userValues.rankingCo2;
 
-    var maxValueWidget = CircleAvatar(
+    final maxValueWidget = CircleAvatar(
       backgroundColor:
           firstRankingCo2 == null || firstRankingCo2.photoURL == null
               ? firstRankingCo2 != null
@@ -96,7 +97,7 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
       ),
     );
 
-    var valueColor = userValues.photoURL == null
+    final valueColor = userValues.photoURL == null
         ? listCyclistClassificationRankingCo2.isEmpty
             ? userValues.color
             : listCyclistClassificationRankingCo2
@@ -104,7 +105,7 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
                 .color
         : null;
 
-    var valueWidget = CircleAvatar(
+    final valueWidget = CircleAvatar(
       backgroundColor:
           userValues.photoURL == null ? valueColor!.withOpacity(0.65) : null,
       child: ClipRRect(
@@ -121,7 +122,7 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
       ),
     );
 
-    var userRankingCo2Finded = userRankingCo2 != 0
+    final userRankingCo2Finded = userRankingCo2 != 0
         ? userRankingCo2
         : listCyclistClassificationRankingCo2.isNotEmpty
             ? listCyclistClassificationRankingCo2.indexWhere(
@@ -130,7 +131,7 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
                 1
             : 0;
 
-    var expandedHeight = 235.0 * scale;
+    final expandedHeight = 235.0 * scale;
     var isVisible = true;
 
     return NestedScrollView(
@@ -170,12 +171,18 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
                             ? userValues.co2 / firstRankingCo2.co2
                             : 0,
                         maxValue: firstRankingCo2 != null
-                            ? co2NumberFormat
-                                .format(firstRankingCo2.co2.gramToKg())
+                            ? co2NumberFormat.format(
+                                measurementUnit == AppMeasurementUnit.metric
+                                    ? firstRankingCo2.co2.gramToKg()
+                                    : firstRankingCo2.co2.gramToPound())
                             : '',
-                        value:
-                            co2NumberFormat.format(userValues.co2.gramToKg()),
-                        title: 'CO\u2082 risparmiata (Kg)',
+                        value: co2NumberFormat.format(
+                          measurementUnit == AppMeasurementUnit.metric
+                              ? userValues.co2.gramToKg()
+                              : userValues.co2.gramToPound(),
+                        ),
+                        title:
+                            'CO\u2082 risparmiata (${measurementUnit == AppMeasurementUnit.metric ? 'Kg' : 'lb'})',
                         isEmpty: firstRankingCo2 == null ||
                             firstRankingCo2.co2.gramToKg() < 0.01,
                         maxValueWidget: maxValueWidget,
@@ -202,13 +209,20 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
                                   : 0,
                               maxValue: firstRankingCo2 != null
                                   ? distanceNumberFormat.format(
-                                      firstRankingCo2.distance.meterToKm(),
+                                      measurementUnit ==
+                                              AppMeasurementUnit.metric
+                                          ? firstRankingCo2.distance.meterToKm()
+                                          : firstRankingCo2.distance
+                                              .meterToMile(),
                                     )
                                   : '',
                               value: distanceNumberFormat.format(
-                                userValues.distance.meterToKm(),
+                                measurementUnit == AppMeasurementUnit.metric
+                                    ? userValues.distance.meterToKm()
+                                    : userValues.distance.meterToMile(),
                               ),
-                              title: 'Chilometri percorsi',
+                              title:
+                                  '${measurementUnit == AppMeasurementUnit.metric ? 'Chilometri' : 'Miglia'} percorsi',
                               isEmpty: firstRankingCo2 == null ||
                                   firstRankingCo2.distance.meterToKm() < 0.9,
                               maxValueWidget: maxValueWidget,
@@ -247,14 +261,18 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
           padding: EdgeInsets.only(bottom: 80.0 * scale),
           itemCount: listCyclistClassificationRankingCo2.length,
           itemBuilder: (context, index) {
-            var item = listCyclistClassificationRankingCo2[index];
+            final item = listCyclistClassificationRankingCo2[index];
+            final subtitle = measurementUnit == AppMeasurementUnit.metric
+                ? '${distanceNumberFormat.format(item.distance.meterToKm())} km'
+                : '${distanceNumberFormat.format(item.distance.meterToMile())} mi';
+            final value = measurementUnit == AppMeasurementUnit.metric
+                ? '${co2NumberFormat.format(item.co2.gramToKg())} Kg CO\u2082'
+                : '${co2NumberFormat.format(item.co2.gramToPound())} lb CO\u2082';
             return _Card(
               ranking: index + 1,
               title: item.displayName ?? item.email,
-              subtitle:
-                  '${distanceNumberFormat.format(item.distance.meterToKm())} km',
-              value:
-                  '${co2NumberFormat.format(item.co2.gramToKg())} Kg CO\u2082',
+              subtitle: subtitle,
+              value: value,
               isRankingCo2: true,
               selected: item.rankingCo2 != 0
                   ? item.rankingCo2 == userRankingCo2

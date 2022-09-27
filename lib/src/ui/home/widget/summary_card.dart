@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-class SummeryCard extends StatelessWidget {
+class SummaryCard extends StatelessWidget {
   final String co2;
   final String distance;
   final String averageSpeed;
-  const SummeryCard({
+  const SummaryCard({
     Key? key,
     required this.co2,
     required this.distance,

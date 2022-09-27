@@ -91,6 +91,30 @@ extension DoubleExtensions on double {
   double meterPerSecondToKmPerHour() {
     return this * 3.6;
   }
+
+  double kgToPound() {
+    return this * 2.20462;
+  }
+
+  double gramToPound() {
+    return (this / 1000) * 2.20462;
+  }
+
+  double kmToMile() {
+    return this / 1.60934;
+  }
+
+  double meterToMile() {
+    return this / 1609.34;
+  }
+
+  double meterPerSecondToMilePerHour() {
+    return this * 2.23694;
+  }
+
+  double meterToFoot() {
+    return this * 3.28084;
+  }
 }
 
 extension IntExtensions on int {

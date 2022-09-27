@@ -25,19 +25,36 @@ class TrackingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scale = context.read<AppData>().scale;
+    final measurementUnit = context.read<AppData>().measurementUnit;
     final Locale appLocale = Localizations.localeOf(context);
     final numberFormat = NumberFormat(
       '##0.00',
       appLocale.languageCode,
     );
     final trackingDurationInSeconds = trackingUserActivity.duration;
-    final trackingCo2 = trackingUserActivity.co2.gramToKg();
-    final trackingAvarageSpeed =
+    final trackingCo2Kg = trackingUserActivity.co2.gramToKg();
+    final trackingCo2Pound = trackingUserActivity.co2.gramToPound();
+    final trackingCo2 = measurementUnit == AppMeasurementUnit.metric
+        ? trackingCo2Kg
+        : trackingCo2Pound;
+    final trackingAvarageSpeedKmPerHour =
         trackingUserActivity.averageSpeed.meterPerSecondToKmPerHour();
+    final trackingAvarageSpeedMilePerHour =
+        trackingUserActivity.averageSpeed.meterPerSecondToMilePerHour();
+    final trackingAvarageSpeed = measurementUnit == AppMeasurementUnit.metric
+        ? trackingAvarageSpeedKmPerHour
+        : trackingAvarageSpeedMilePerHour;
+
     final trackingSpeed = lastLocation != null
-        ? lastLocation!.speed.meterPerSecondToKmPerHour().abs()
+        ? measurementUnit == AppMeasurementUnit.metric
+            ? lastLocation!.speed.meterPerSecondToKmPerHour().abs()
+            : lastLocation!.speed.meterPerSecondToMilePerHour().abs()
         : 0.0;
     final trackingDistanceInKm = trackingUserActivity.distance.meterToKm();
+    final trackingDistanceInMile = trackingUserActivity.distance.meterToMile();
+    final trackingDistance = measurementUnit == AppMeasurementUnit.metric
+        ? trackingDistanceInKm
+        : trackingDistanceInMile;
 
     return Scaffold(
       body: Container(
@@ -61,7 +78,7 @@ class TrackingView extends StatelessWidget {
             ),
             const _Divider(),
             _DistanceTracking(
-              distance: numberFormat.format(trackingDistanceInKm),
+              distance: numberFormat.format(trackingDistance),
             ),
             const _Divider(),
             _SpeedTracking(
@@ -153,9 +170,10 @@ class _TimeTracking extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var textTheme = Theme.of(context).textTheme;
+    final textTheme = Theme.of(context).textTheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
+
     return Column(
       children: [
         Text(
@@ -188,9 +206,11 @@ class _Co2Tracking extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var textTheme = Theme.of(context).textTheme;
+    final measurementUnit = context.read<AppData>().measurementUnit;
+    final textTheme = Theme.of(context).textTheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
+
     return Column(
       children: [
         Text(
@@ -207,7 +227,7 @@ class _Co2Tracking extends StatelessWidget {
           ),
         ),
         Text(
-          'Kg',
+          measurementUnit == AppMeasurementUnit.metric ? 'Kg' : 'lb',
           style: textTheme.caption!.apply(
             color: colorSchemeExtension.textSecondary,
           ),
@@ -226,9 +246,11 @@ class _DistanceTracking extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var textTheme = Theme.of(context).textTheme;
+    final measurementUnit = context.read<AppData>().measurementUnit;
+    final textTheme = Theme.of(context).textTheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
+
     return Column(
       children: [
         Text(
@@ -244,7 +266,7 @@ class _DistanceTracking extends StatelessWidget {
           ),
         ),
         Text(
-          'km',
+          measurementUnit == AppMeasurementUnit.metric ? 'km' : 'mi',
           style: textTheme.caption!.apply(
             color: colorSchemeExtension.textSecondary,
           ),
@@ -265,9 +287,11 @@ class _SpeedTracking extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var textTheme = Theme.of(context).textTheme;
+    final measurementUnit = context.read<AppData>().measurementUnit;
+    final textTheme = Theme.of(context).textTheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -284,7 +308,7 @@ class _SpeedTracking extends StatelessWidget {
               style: textTheme.headline4,
             ),
             Text(
-              'km/h',
+              measurementUnit == AppMeasurementUnit.metric ? 'km/h' : 'mi/h',
               style: textTheme.caption!.apply(
                 color: colorSchemeExtension.textSecondary,
               ),
@@ -304,7 +328,7 @@ class _SpeedTracking extends StatelessWidget {
               style: textTheme.headline4,
             ),
             Text(
-              'km/h',
+              measurementUnit == AppMeasurementUnit.metric ? 'km/h' : 'mi/h',
               style: textTheme.caption!.apply(
                 color: colorSchemeExtension.textSecondary,
               ),

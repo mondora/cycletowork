@@ -24,7 +24,8 @@ class TrackingDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<AppMapState> _mapKey = GlobalKey();
-    var scale = context.read<AppData>().scale;
+    final scale = context.read<AppData>().scale;
+    final measurementUnit = context.read<AppData>().measurementUnit;
 
     return ChangeNotifierProvider<ViewModel>(
       create: (_) => ViewModel.instance(userActivity),
@@ -48,13 +49,32 @@ class TrackingDetailsView extends StatelessWidget {
             userActivity.stopTime,
           );
           final trackingDurationInSeconds = userActivity.duration;
-          final trackingCo2 = userActivity.co2.gramToKg();
-          final trackingAvarageSpeed =
+          final trackingCo2Kg = userActivity.co2.gramToKg();
+          final trackingCo2Pound = userActivity.co2.gramToPound();
+          final trackingCo2 = measurementUnit == AppMeasurementUnit.metric
+              ? trackingCo2Kg
+              : trackingCo2Pound;
+          final trackingAvarageSpeedKmPerHour =
               userActivity.averageSpeed.meterPerSecondToKmPerHour();
-          final trackingMaxSpeed =
+          final trackingAvarageSpeedMilePerHour =
+              userActivity.averageSpeed.meterPerSecondToMilePerHour();
+          final trackingAvarageSpeed =
+              measurementUnit == AppMeasurementUnit.metric
+                  ? trackingAvarageSpeedKmPerHour
+                  : trackingAvarageSpeedMilePerHour;
+          final trackingMaxSpeedKmPerHour =
               userActivity.maxSpeed.meterPerSecondToKmPerHour();
+          final trackingMaxSpeedMilePerHour =
+              userActivity.maxSpeed.meterPerSecondToMilePerHour();
+          final trackingMaxSpeed = measurementUnit == AppMeasurementUnit.metric
+              ? trackingMaxSpeedKmPerHour
+              : trackingMaxSpeedMilePerHour;
           final trackingCalorie = userActivity.calorie;
           final trackingDistanceInKm = userActivity.distance.meterToKm();
+          final trackingDistanceInMile = userActivity.distance.meterToMile();
+          final trackingDistance = measurementUnit == AppMeasurementUnit.metric
+              ? trackingDistanceInKm
+              : trackingDistanceInMile;
           final trackingPace =
               trackingAvarageSpeed > 2 && trackingDistanceInKm > 0.1
                   ? 60 / trackingAvarageSpeed
@@ -137,7 +157,7 @@ class TrackingDetailsView extends StatelessWidget {
                           width: 10,
                         ),
                         Text(
-                          'Kg CO\u2082',
+                          '${measurementUnit == AppMeasurementUnit.metric ? 'Kg' : 'lb'} CO\u2082',
                           style: textTheme.headline4!.copyWith(
                             color: colorScheme.onSecondary,
                             fontWeight: FontWeight.w400,
@@ -192,25 +212,30 @@ class TrackingDetailsView extends StatelessWidget {
                         _Item(
                           imagePath: _getItemInfo(
                             TrackingOption.distance,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).iconPath,
                           title: _getItemInfo(
                             TrackingOption.distance,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).title,
-                          value: numberFormat.format(trackingDistanceInKm),
+                          value: numberFormat.format(trackingDistance),
                           unit: _getItemInfo(
                             TrackingOption.distance,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).unit,
                         ),
                         _Item(
                           imagePath: _getItemInfo(
                             TrackingOption.duration,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).iconPath,
                           title: _getItemInfo(
                             TrackingOption.duration,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).title,
                           value: Duration(
@@ -218,6 +243,7 @@ class TrackingDetailsView extends StatelessWidget {
                           ).toHoursMinutesSeconds(),
                           unit: _getItemInfo(
                             TrackingOption.duration,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).unit,
                         ),
@@ -232,30 +258,36 @@ class TrackingDetailsView extends StatelessWidget {
                         _Item(
                           imagePath: _getItemInfo(
                             TrackingOption.avarageSpeed,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).iconPath,
                           title: _getItemInfo(
                             TrackingOption.avarageSpeed,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).title,
                           value: numberFormat.format(trackingAvarageSpeed),
                           unit: _getItemInfo(
                             TrackingOption.avarageSpeed,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).unit,
                         ),
                         _Item(
                           imagePath: _getItemInfo(
                             TrackingOption.calorie,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).iconPath,
                           title: _getItemInfo(
                             TrackingOption.calorie,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).title,
                           value: trackingCalorie.toString(),
                           unit: _getItemInfo(
                             TrackingOption.calorie,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).unit,
                         ),
@@ -270,30 +302,36 @@ class TrackingDetailsView extends StatelessWidget {
                         _Item(
                           imagePath: _getItemInfo(
                             TrackingOption.steps,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).iconPath,
                           title: _getItemInfo(
                             TrackingOption.steps,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).title,
                           value: numberPaceFormat.format(trackingPace),
                           unit: _getItemInfo(
                             TrackingOption.steps,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).unit,
                         ),
                         _Item(
                           imagePath: _getItemInfo(
                             TrackingOption.maxSpeed,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).iconPath,
                           title: _getItemInfo(
                             TrackingOption.maxSpeed,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).title,
                           value: numberFormat.format(trackingMaxSpeed),
                           unit: _getItemInfo(
                             TrackingOption.maxSpeed,
+                            measurementUnit,
                             isChallenge: isChallenge,
                           ).unit,
                         ),
@@ -304,7 +342,7 @@ class TrackingDetailsView extends StatelessWidget {
                     height: 25.0,
                   ),
                   Text(
-                    'Velocità (km/h)',
+                    'Velocità (${measurementUnit == AppMeasurementUnit.metric ? 'km/h' : 'mi/h'})',
                     style: textTheme.caption,
                   ),
                   Chart(
@@ -315,7 +353,9 @@ class TrackingDetailsView extends StatelessWidget {
                             DateTime.fromMillisecondsSinceEpoch(
                               position.time.toInt(),
                             ),
-                            position.speed.meterPerSecondToKmPerHour(),
+                            measurementUnit == AppMeasurementUnit.metric
+                                ? position.speed.meterPerSecondToKmPerHour()
+                                : position.speed.meterPerSecondToMilePerHour(),
                           ),
                         )
                         .toList(),
@@ -325,7 +365,7 @@ class TrackingDetailsView extends StatelessWidget {
                     height: 30.0,
                   ),
                   Text(
-                    'Quota (m)',
+                    'Quota (${measurementUnit == AppMeasurementUnit.metric ? 'm' : 'ft'})',
                     style: textTheme.caption,
                   ),
                   Chart(
@@ -336,7 +376,9 @@ class TrackingDetailsView extends StatelessWidget {
                             DateTime.fromMillisecondsSinceEpoch(
                               position.time.toInt(),
                             ),
-                            position.altitude,
+                            measurementUnit == AppMeasurementUnit.metric
+                                ? position.altitude
+                                : position.altitude.meterToFoot(),
                           ),
                         )
                         .toList(),
@@ -353,7 +395,8 @@ class TrackingDetailsView extends StatelessWidget {
 }
 
 _ItemInfo _getItemInfo(
-  TrackingOption trackingOption, {
+  TrackingOption trackingOption,
+  AppMeasurementUnit measurementUnit, {
   bool isChallenge = false,
 }) {
   String initialPath = 'assets/icons/';
@@ -363,7 +406,7 @@ _ItemInfo _getItemInfo(
       return _ItemInfo(
         iconPath: '${initialPath}distance$endPath',
         title: 'Distance',
-        unit: 'km',
+        unit: measurementUnit == AppMeasurementUnit.metric ? 'km' : 'mi',
       );
     case TrackingOption.duration:
       return _ItemInfo(
@@ -374,7 +417,7 @@ _ItemInfo _getItemInfo(
       return _ItemInfo(
         iconPath: '${initialPath}average_speed$endPath',
         title: 'Velocità media',
-        unit: 'km/h',
+        unit: measurementUnit == AppMeasurementUnit.metric ? 'km/h' : 'mi/h',
       );
     case TrackingOption.calorie:
       return _ItemInfo(
@@ -386,13 +429,14 @@ _ItemInfo _getItemInfo(
       return _ItemInfo(
         iconPath: '${initialPath}average_steps$endPath',
         title: 'Passo medio',
-        unit: 'min/km',
+        unit:
+            measurementUnit == AppMeasurementUnit.metric ? 'min/km' : 'min/mi',
       );
     case TrackingOption.maxSpeed:
       return _ItemInfo(
         iconPath: '${initialPath}max_speed$endPath',
         title: 'Velocità Max',
-        unit: 'km/h',
+        unit: measurementUnit == AppMeasurementUnit.metric ? 'km/h' : 'mi/h',
       );
   }
 }

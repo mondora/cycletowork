@@ -46,9 +46,10 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
+    final scale = context.read<AppData>().scale;
+    final measurementUnit = context.read<AppData>().measurementUnit;
     final viewModel = Provider.of<ViewModel>(context);
-    var colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
     final Locale appLocale = Localizations.localeOf(context);
     final distanceNumberFormat = NumberFormat(
       '##0',
@@ -63,9 +64,9 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
       appLocale.languageCode,
     );
 
-    var selectedColor = const Color.fromRGBO(199, 21, 172, 1);
-    var firstColor = const Color.fromRGBO(57, 73, 171, 1);
-    var maxValueWidget = CircleAvatar(
+    const selectedColor = Color.fromRGBO(199, 21, 172, 1);
+    const firstColor = Color.fromRGBO(57, 73, 171, 1);
+    final maxValueWidget = CircleAvatar(
       backgroundColor: firstColor,
       child: SvgPicture.asset(
         'assets/icons/build.svg',
@@ -74,7 +75,7 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
         color: colorScheme.onPrimary,
       ),
     );
-    var valueWidget = CircleAvatar(
+    final valueWidget = CircleAvatar(
       backgroundColor: selectedColor,
       child: SvgPicture.asset(
         'assets/icons/build.svg',
@@ -83,27 +84,27 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
         color: colorScheme.onPrimary,
       ),
     );
-    var isRankingCo2 =
+    final isRankingCo2 =
         viewModel.uiState.listCompanyClassificationOrderByRankingCo2;
 
-    var listCompanyClassificationRankingCo2 =
+    final listCompanyClassificationRankingCo2 =
         viewModel.uiState.listCompanyClassificationRankingCo2;
 
-    var listCompanyClassificationRankingRegistered =
+    final listCompanyClassificationRankingRegistered =
         viewModel.uiState.listCompanyClassificationRankingRegistered;
-    var firstRankingPercent =
+    final firstRankingPercent =
         listCompanyClassificationRankingRegistered.isNotEmpty
             ? listCompanyClassificationRankingRegistered.first
             : null;
 
-    var firstRankingCo2 = listCompanyClassificationRankingCo2.isNotEmpty
+    final firstRankingCo2 = listCompanyClassificationRankingCo2.isNotEmpty
         ? listCompanyClassificationRankingCo2.first
         : null;
 
-    var userValues = viewModel.uiState.userCompanyClassification!;
-    var userRankingCo2 = userValues.rankingCo2;
-    var userRankingPercent = userValues.rankingPercentRegistered;
-    var userRankingCo2Finded = userRankingCo2 != 0
+    final userValues = viewModel.uiState.userCompanyClassification!;
+    final userRankingCo2 = userValues.rankingCo2;
+    final userRankingPercent = userValues.rankingPercentRegistered;
+    final userRankingCo2Finded = userRankingCo2 != 0
         ? userRankingCo2
         : listCompanyClassificationRankingCo2.isNotEmpty
             ? listCompanyClassificationRankingCo2.indexWhere(
@@ -111,7 +112,7 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                 ) +
                 1
             : 0;
-    var userRankingRegisteredFinded = userRankingPercent != 0
+    final userRankingRegisteredFinded = userRankingPercent != 0
         ? userRankingPercent
         : listCompanyClassificationRankingRegistered.isNotEmpty
             ? listCompanyClassificationRankingRegistered.indexWhere(
@@ -119,7 +120,7 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                 ) +
                 1
             : 0;
-    var expandedHeight = (isRankingCo2 ? 275.0 : 225.0) * scale;
+    final expandedHeight = (isRankingCo2 ? 275.0 : 225.0) * scale;
     var isVisible = true;
 
     return NestedScrollView(
@@ -188,8 +189,8 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                                   );
                                 },
                                 selected: isRankingCo2,
-                                label: const Text(
-                                  'km e CO\u2082 risparmiata',
+                                label: Text(
+                                  '${measurementUnit == AppMeasurementUnit.metric ? 'km' : 'mi'} e CO\u2082 risparmiata',
                                 ),
                                 side:
                                     ChipTheme.of(context).shape!.side.copyWith(
@@ -213,12 +214,17 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                               ? userValues.co2 / firstRankingCo2.co2
                               : 0,
                           maxValue: firstRankingCo2 != null
-                              ? co2NumberFormat
-                                  .format(firstRankingCo2.co2.gramToKg())
+                              ? co2NumberFormat.format(
+                                  measurementUnit == AppMeasurementUnit.metric
+                                      ? firstRankingCo2.co2.gramToKg()
+                                      : firstRankingCo2.co2.gramToPound())
                               : '',
-                          value:
-                              co2NumberFormat.format(userValues.co2.gramToKg()),
-                          title: 'CO\u2082 risparmiata (Kg)',
+                          value: co2NumberFormat.format(
+                              measurementUnit == AppMeasurementUnit.metric
+                                  ? userValues.co2.gramToKg()
+                                  : userValues.co2.gramToPound()),
+                          title:
+                              'CO\u2082 risparmiata (${measurementUnit == AppMeasurementUnit.metric ? 'Kg' : 'lb'})',
                           isEmpty: firstRankingCo2 == null ||
                               firstRankingCo2.co2.gramToKg() < 0.01,
                           maxValueWidget: maxValueWidget,
@@ -271,13 +277,21 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                                     : 0,
                                 maxValue: firstRankingCo2 != null
                                     ? distanceNumberFormat.format(
-                                        firstRankingCo2.distance.meterToKm(),
+                                        measurementUnit ==
+                                                AppMeasurementUnit.metric
+                                            ? firstRankingCo2.distance
+                                                .meterToKm()
+                                            : firstRankingCo2.distance
+                                                .meterToMile(),
                                       )
                                     : '',
                                 value: distanceNumberFormat.format(
-                                  userValues.distance.meterToKm(),
+                                  measurementUnit == AppMeasurementUnit.metric
+                                      ? userValues.distance.meterToKm()
+                                      : userValues.distance.meterToMile(),
                                 ),
-                                title: 'Chilometri percorsi',
+                                title:
+                                    '${measurementUnit == AppMeasurementUnit.metric ? 'Chilometri' : 'Miglia'} percorsi',
                                 isEmpty: firstRankingCo2 == null ||
                                     firstRankingCo2.distance.meterToKm() < 0.9,
                                 maxValueWidget: maxValueWidget,
@@ -319,14 +333,18 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                 padding: EdgeInsets.only(bottom: 80.0 * scale),
                 itemCount: listCompanyClassificationRankingCo2.length,
                 itemBuilder: (context, index) {
-                  var item = listCompanyClassificationRankingCo2[index];
+                  final item = listCompanyClassificationRankingCo2[index];
+                  final subtitle = measurementUnit == AppMeasurementUnit.metric
+                      ? '${distanceNumberFormat.format(item.distance.meterToKm())} km'
+                      : '${distanceNumberFormat.format(item.distance.meterToMile())} mi';
+                  final value = measurementUnit == AppMeasurementUnit.metric
+                      ? '${co2NumberFormat.format(item.co2.gramToKg())} Kg CO\u2082'
+                      : '${co2NumberFormat.format(item.co2.gramToPound())} lb CO\u2082';
                   return _Card(
                     ranking: index + 1,
                     title: item.name,
-                    subtitle:
-                        '${distanceNumberFormat.format(item.distance.meterToKm())} km',
-                    value:
-                        '${co2NumberFormat.format(item.co2.gramToKg())} Kg CO\u2082',
+                    subtitle: subtitle,
+                    value: value,
                     isRankingCo2: isRankingCo2,
                     selected: item.rankingCo2 != 0
                         ? item.rankingCo2 == userRankingCo2
