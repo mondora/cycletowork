@@ -21,6 +21,7 @@ import 'package:cycletowork/src/ui/dashboard/widget/gps_icon.dart';
 import 'package:cycletowork/src/ui/settings/view.dart';
 import 'package:cycletowork/src/ui/tracking_stop/view.dart';
 import 'package:cycletowork/src/ui/tracking/view.dart';
+import 'package:cycletowork/src/utility/activity_recognition.dart';
 import 'package:cycletowork/src/utility/gps.dart';
 import 'package:cycletowork/src/widget/alart_dialog.dart';
 import 'package:cycletowork/src/widget/progress_indicator.dart';
@@ -71,7 +72,7 @@ class DashboardView extends StatelessWidget {
                   DashboardPageOption.startCounter) {
                 return TrackingCounterView(
                   dismissKey: dismissKey,
-                  counter: viewModel.uiState.counter,
+                  counter: viewModel.uiState.workout!.countdown,
                   setCounter: (value) {
                     dismissKey = UniqueKey();
                     viewModel.setCounter(value);
@@ -82,20 +83,19 @@ class DashboardView extends StatelessWidget {
               if (viewModel.uiState.dashboardPageOption ==
                   DashboardPageOption.startTracking) {
                 return TrackingView(
-                  trackingUserActivity: viewModel.trackingUserActivity!,
                   showMap: viewModel.showMapTracking,
                   pauseTracking: viewModel.pauseTracking,
-                  lastLocation: viewModel.listTrackingPosition.isNotEmpty
-                      ? viewModel.listTrackingPosition.last
-                      : null,
+                  workout: viewModel.uiState.workout!,
                 );
               }
 
               if (viewModel.uiState.dashboardPageOption ==
                   DashboardPageOption.pauseTracking) {
                 return TrackingPauseView(
-                  listTrackingPosition: viewModel.listTrackingPosition,
-                  trackingUserActivity: viewModel.trackingUserActivity!,
+                  workout: viewModel.uiState.workout!,
+                  isChallenge: viewModel.trackingUserActivity!.isChallenge == 1
+                      ? true
+                      : false,
                   playTracking: viewModel.playTracking,
                   stopTracking: viewModel.stopTracking,
                 );
@@ -104,8 +104,12 @@ class DashboardView extends StatelessWidget {
               if (viewModel.uiState.dashboardPageOption ==
                   DashboardPageOption.stopTracking) {
                 return TrackingStopView(
-                  listTrackingPosition: viewModel.listTrackingPosition,
-                  trackingUserActivity: viewModel.trackingUserActivity!,
+                  workout: viewModel.uiState.workout!,
+                  isChallenge: viewModel.trackingUserActivity!.isChallenge == 1
+                      ? true
+                      : false,
+                  onSnapshot: (value) =>
+                      viewModel.setUserActivityImageData(value),
                   saveTracking: () async {
                     var result = await viewModel.saveTracking(context);
 
@@ -156,9 +160,10 @@ class DashboardView extends StatelessWidget {
               if (viewModel.uiState.dashboardPageOption ==
                   DashboardPageOption.mapTracking) {
                 return TrackingMapView(
-                  listTrackingPosition: viewModel.listTrackingPosition,
-                  trackingUserActivity: viewModel.trackingUserActivity!,
-                  currentPosition: viewModel.uiState.currentPosition!,
+                  workout: viewModel.uiState.workout!,
+                  isChallenge: viewModel.trackingUserActivity!.isChallenge == 1
+                      ? true
+                      : false,
                   pauseTracking: viewModel.pauseTracking,
                   hiddenMap: viewModel.hiddenMap,
                 );
@@ -289,7 +294,7 @@ class DashboardView extends StatelessWidget {
   Future<bool> _checkGpsAndPermission(BuildContext context) async {
     var gpsStatus = await Gps.getGpsStatus();
     if (gpsStatus == GpsStatus.granted) {
-      return true;
+      return await __checkActivityPermission(context);
     }
 
     if (gpsStatus == GpsStatus.turnOff) {
@@ -341,7 +346,8 @@ class DashboardView extends StatelessWidget {
         await AppSettings.openLocationSettings();
         return false;
       }
-      return true;
+
+      return await __checkActivityPermission(context);
     } else {
       await AppAlartDialog(
         context: context,
@@ -352,6 +358,32 @@ class DashboardView extends StatelessWidget {
         confirmLabel: 'CHIUDI',
       ).show();
     }
+    return false;
+  }
+
+  Future<bool> __checkActivityPermission(BuildContext context) async {
+    var activityRecognitionStatus = await ActivityRecognition.checkPermission();
+
+    if (activityRecognitionStatus == PermissionRequestResult.granted) {
+      return true;
+    }
+
+    if (activityRecognitionStatus == PermissionRequestResult.denied) {
+      activityRecognitionStatus = await ActivityRecognition.requestPermission();
+      if (activityRecognitionStatus == PermissionRequestResult.granted) {
+        return true;
+      }
+    }
+
+    await AppAlartDialog(
+      context: context,
+      title: 'Attenzione!',
+      subtitle:
+          'Per poter usare Cycle2Work è necessario il permesso di rilevare le informazioni sulle tue attività. Puoi farlo nelle impostazioni di sistema.',
+      body: '',
+      confirmLabel: 'Ho capito',
+    ).show();
+    await AppSettings.openLocationSettings();
     return false;
   }
 }

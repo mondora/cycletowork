@@ -1,11 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/chart_data.dart';
-import 'package:cycletowork/src/data/user_activity.dart';
+import 'package:cycletowork/src/data/workout.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/ui/dashboard/view_model.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 import 'package:cycletowork/src/utility/gps.dart';
-import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/widget/alart_dialog.dart';
 import 'package:cycletowork/src/widget/chart.dart';
 import 'package:cycletowork/src/widget/map.dart';
@@ -24,17 +25,19 @@ enum TrackingOption {
 }
 
 class TrackingStopView extends StatefulWidget {
-  final List<LocationData> listTrackingPosition;
-  final UserActivity trackingUserActivity;
+  final Workout workout;
+  final bool isChallenge;
   final GestureTapCancelCallback saveTracking;
   final GestureTapCancelCallback removeTracking;
+  final Function(Uint8List?) onSnapshot;
 
   const TrackingStopView({
     Key? key,
-    required this.listTrackingPosition,
-    required this.trackingUserActivity,
+    required this.workout,
+    required this.isChallenge,
     required this.saveTracking,
     required this.removeTracking,
+    required this.onSnapshot,
   }) : super(key: key);
 
   @override
@@ -58,10 +61,10 @@ class _TrackingStopViewState extends State<TrackingStopView> {
   }
 
   _getCityName() async {
-    if (widget.listTrackingPosition.isEmpty) {
+    if (widget.workout.listLocationData.isEmpty) {
       return;
     }
-    var firstPosition = widget.listTrackingPosition.first;
+    var firstPosition = widget.workout.listLocationData.first;
     final Locale appLocale = Localizations.localeOf(context);
     var result = await Gps.getCityName(
       firstPosition.latitude,
@@ -93,44 +96,40 @@ class _TrackingStopViewState extends State<TrackingStopView> {
     );
 
     final endTrackingDate = DateTime.fromMillisecondsSinceEpoch(
-      widget.trackingUserActivity.stopTime,
+      widget.workout.stopDateInMilliSeconds,
     );
-    final trackingDurationInSeconds = widget.trackingUserActivity.duration;
-    final trackingCo2Kg = widget.trackingUserActivity.co2.gramToKg();
-    final trackingCo2Pound = widget.trackingUserActivity.co2.gramToPound();
+    final trackingDurationInSeconds = widget.workout.durationInSecond;
+    final trackingCo2Kg = widget.workout.co2InGram.gramToKg();
+    final trackingCo2Pound = widget.workout.co2InGram.gramToPound();
     final trackingCo2 = measurementUnit == AppMeasurementUnit.metric
         ? trackingCo2Kg
         : trackingCo2Pound;
     final trackingAvarageSpeedKmPerHour =
-        widget.trackingUserActivity.averageSpeed.meterPerSecondToKmPerHour();
-    final trackingAvarageSpeedMilePerHour =
-        widget.trackingUserActivity.averageSpeed.meterPerSecondToMilePerHour();
+        widget.workout.averageSpeedInMeterPerSecond.meterPerSecondToKmPerHour();
+    final trackingAvarageSpeedMilePerHour = widget
+        .workout.averageSpeedInMeterPerSecond
+        .meterPerSecondToMilePerHour();
     final trackingAvarageSpeed = measurementUnit == AppMeasurementUnit.metric
         ? trackingAvarageSpeedKmPerHour
         : trackingAvarageSpeedMilePerHour;
     final trackingMaxSpeedKmPerHour =
-        widget.trackingUserActivity.maxSpeed.meterPerSecondToKmPerHour();
+        widget.workout.maxSpeedInMeterPerSecond.meterPerSecondToKmPerHour();
     final trackingMaxSpeedMilePerHour =
-        widget.trackingUserActivity.maxSpeed.meterPerSecondToMilePerHour();
+        widget.workout.maxSpeedInMeterPerSecond.meterPerSecondToMilePerHour();
     final trackingMaxSpeed = measurementUnit == AppMeasurementUnit.metric
         ? trackingMaxSpeedKmPerHour
         : trackingMaxSpeedMilePerHour;
-    final trackingCalorie = widget.trackingUserActivity.calorie;
-    final trackingDistanceInKm =
-        widget.trackingUserActivity.distance.meterToKm();
-    final trackingDistanceInMile =
-        widget.trackingUserActivity.distance.meterToMile();
+    final trackingCalorie = widget.workout.calorie;
+    final trackingDistanceInKm = widget.workout.distanceInMeter.meterToKm();
+    final trackingDistanceInMile = widget.workout.distanceInMeter.meterToMile();
     final trackingDistance = measurementUnit == AppMeasurementUnit.metric
         ? trackingDistanceInKm
         : trackingDistanceInMile;
     final trackingPace = trackingAvarageSpeed > 2 && trackingDistanceInKm > 0.1
         ? 60 / trackingAvarageSpeed
         : 0;
-    final isChallenge =
-        widget.trackingUserActivity.isChallenge == 1 ? true : false;
-    final listLocationData = widget.listTrackingPosition;
-    final imageData = widget.trackingUserActivity.imageData;
-    final city = widget.trackingUserActivity.city;
+
+    final listLocationData = widget.workout.listLocationData;
 
     return Scaffold(
       body: ListView(
@@ -147,7 +146,7 @@ class _TrackingStopViewState extends State<TrackingStopView> {
             style: textTheme.headline6,
           ),
           Text(
-            city ?? '',
+            city,
             style: textTheme.bodyText1!.apply(
               color: colorSchemeExtension.textSecondary,
             ),
@@ -202,29 +201,23 @@ class _TrackingStopViewState extends State<TrackingStopView> {
             ),
             child: SizedBox(
               height: 327.0 * scale,
-              child: listLocationData.isNotEmpty && imageData == null
+              child: listLocationData.isNotEmpty
                   ? AppMap(
                       key: _mapKey,
                       listTrackingPosition: listLocationData,
-                      isChallenge: isChallenge,
+                      isChallenge: widget.isChallenge,
                       initialLatitude: listLocationData.first.latitude,
                       initialLongitude: listLocationData.first.longitude,
                       isStatic: true,
                       canScroll: false,
+                      onSnapshot: (value) => widget.onSnapshot(value),
                     )
-                  : imageData != null
-                      ? Image.memory(
-                          imageData,
-                          fit: BoxFit.fill,
-                          height: 327.0 * scale,
-                          width: 327.0 * scale,
-                        )
-                      : Image.asset(
-                          'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking_details.png',
-                          fit: BoxFit.cover,
-                          height: 327.0 * scale,
-                          width: 327.0 * scale,
-                        ),
+                  : Image.asset(
+                      'assets/images/preview_${widget.isChallenge ? 'challenge_' : ''}tracking_details.png',
+                      fit: BoxFit.cover,
+                      height: 327.0 * scale,
+                      width: 327.0 * scale,
+                    ),
             ),
           ),
           const SizedBox(
@@ -239,30 +232,30 @@ class _TrackingStopViewState extends State<TrackingStopView> {
                   imagePath: _getItemInfo(
                     TrackingOption.distance,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).iconPath,
                   title: _getItemInfo(
                     TrackingOption.distance,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).title,
                   value: numberFormat.format(trackingDistance),
                   unit: _getItemInfo(
                     TrackingOption.distance,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).unit,
                 ),
                 _Item(
                   imagePath: _getItemInfo(
                     TrackingOption.duration,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).iconPath,
                   title: _getItemInfo(
                     TrackingOption.duration,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).title,
                   value: Duration(
                     seconds: trackingDurationInSeconds,
@@ -270,7 +263,7 @@ class _TrackingStopViewState extends State<TrackingStopView> {
                   unit: _getItemInfo(
                     TrackingOption.duration,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).unit,
                 ),
               ],
@@ -285,36 +278,36 @@ class _TrackingStopViewState extends State<TrackingStopView> {
                   imagePath: _getItemInfo(
                     TrackingOption.avarageSpeed,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).iconPath,
                   title: _getItemInfo(
                     TrackingOption.avarageSpeed,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).title,
                   value: numberFormat.format(trackingAvarageSpeed),
                   unit: _getItemInfo(
                     TrackingOption.avarageSpeed,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).unit,
                 ),
                 _Item(
                   imagePath: _getItemInfo(
                     TrackingOption.calorie,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).iconPath,
                   title: _getItemInfo(
                     TrackingOption.calorie,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).title,
                   value: trackingCalorie.toString(),
                   unit: _getItemInfo(
                     TrackingOption.calorie,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).unit,
                 ),
               ],
@@ -329,36 +322,36 @@ class _TrackingStopViewState extends State<TrackingStopView> {
                   imagePath: _getItemInfo(
                     TrackingOption.steps,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).iconPath,
                   title: _getItemInfo(
                     TrackingOption.steps,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).title,
                   value: numberPaceFormat.format(trackingPace),
                   unit: _getItemInfo(
                     TrackingOption.steps,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).unit,
                 ),
                 _Item(
                   imagePath: _getItemInfo(
                     TrackingOption.maxSpeed,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).iconPath,
                   title: _getItemInfo(
                     TrackingOption.maxSpeed,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).title,
                   value: numberFormat.format(trackingMaxSpeed),
                   unit: _getItemInfo(
                     TrackingOption.maxSpeed,
                     measurementUnit,
-                    isChallenge: isChallenge,
+                    isChallenge: widget.isChallenge,
                   ).unit,
                 ),
               ],
@@ -442,12 +435,13 @@ class _TrackingStopViewState extends State<TrackingStopView> {
                         Radius.circular(15 * scale),
                       ),
                     ),
-                    backgroundColor: widget.listTrackingPosition.isNotEmpty &&
-                            widget.listTrackingPosition.length > 1
-                        ? colorSchemeExtension.success
-                        : colorSchemeExtension.textDisabled,
-                    onPressed: widget.listTrackingPosition.isNotEmpty &&
-                            widget.listTrackingPosition.length > 1
+                    backgroundColor:
+                        widget.workout.listLocationData.isNotEmpty &&
+                                widget.workout.listLocationData.length > 1
+                            ? colorSchemeExtension.success
+                            : colorSchemeExtension.textDisabled,
+                    onPressed: widget.workout.listLocationData.isNotEmpty &&
+                            widget.workout.listLocationData.length > 1
                         ? () => widget.saveTracking()
                         : null,
                     label: Text(

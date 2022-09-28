@@ -1,7 +1,6 @@
 import 'package:cycletowork/src/data/app_data.dart';
-import 'package:cycletowork/src/data/user_activity.dart';
+import 'package:cycletowork/src/data/workout.dart';
 import 'package:cycletowork/src/theme.dart';
-import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/ui/dashboard/view_model.dart';
 import 'package:cycletowork/src/widget/map.dart';
 import 'package:flutter/material.dart';
@@ -12,15 +11,15 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 
 class TrackingPauseView extends StatelessWidget {
-  final List<LocationData> listTrackingPosition;
-  final UserActivity trackingUserActivity;
+  final Workout workout;
+  final bool isChallenge;
   final GestureTapCancelCallback? playTracking;
   final GestureTapCancelCallback? stopTracking;
 
   const TrackingPauseView({
     Key? key,
-    required this.listTrackingPosition,
-    required this.trackingUserActivity,
+    required this.workout,
+    required this.isChallenge,
     required this.playTracking,
     required this.stopTracking,
   }) : super(key: key);
@@ -35,34 +34,32 @@ class TrackingPauseView extends StatelessWidget {
       appLocale.languageCode,
     );
 
-    final trackingDurationInSeconds = trackingUserActivity.duration;
-    final trackingCo2Kg = trackingUserActivity.co2.gramToKg();
-    final trackingCo2Pound = trackingUserActivity.co2.gramToPound();
+    final trackingDurationInSeconds = workout.durationInSecond;
+    final trackingCo2Kg = workout.co2InGram.gramToKg();
+    final trackingCo2Pound = workout.co2InGram.gramToPound();
     final trackingCo2 = measurementUnit == AppMeasurementUnit.metric
         ? trackingCo2Kg
         : trackingCo2Pound;
 
     final trackingAvarageSpeedKmPerHour =
-        trackingUserActivity.averageSpeed.meterPerSecondToKmPerHour();
+        workout.averageSpeedInMeterPerSecond.meterPerSecondToKmPerHour();
     final trackingAvarageSpeedMilePerHour =
-        trackingUserActivity.averageSpeed.meterPerSecondToMilePerHour();
+        workout.averageSpeedInMeterPerSecond.meterPerSecondToMilePerHour();
     final trackingAvarageSpeed = measurementUnit == AppMeasurementUnit.metric
         ? trackingAvarageSpeedKmPerHour
         : trackingAvarageSpeedMilePerHour;
 
-    final trackingDistanceInKm = trackingUserActivity.distance.meterToKm();
-    final trackingDistanceInMile = trackingUserActivity.distance.meterToMile();
+    final trackingDistanceInKm = workout.distanceInMeter.meterToKm();
+    final trackingDistanceInMile = workout.distanceInMeter.meterToMile();
     final trackingDistance = measurementUnit == AppMeasurementUnit.metric
         ? trackingDistanceInKm
         : trackingDistanceInMile;
 
-    final isChallenge = trackingUserActivity.isChallenge == 1 ? true : false;
-
-    final initialLatitude = listTrackingPosition.isNotEmpty
-        ? listTrackingPosition.first.latitude
+    final initialLatitude = workout.listLocationData.isNotEmpty
+        ? workout.listLocationData.first.latitude
         : context.read<ViewModel>().uiState.currentPosition!.latitude;
-    final initialLongitude = listTrackingPosition.isNotEmpty
-        ? listTrackingPosition.first.longitude
+    final initialLongitude = workout.listLocationData.isNotEmpty
+        ? workout.listLocationData.first.longitude
         : context.read<ViewModel>().uiState.currentPosition!.longitude;
 
     return Scaffold(
@@ -111,11 +108,11 @@ class TrackingPauseView extends StatelessWidget {
               body: Container(
                 margin: EdgeInsets.only(bottom: 210.0 * scale),
                 child: AppMap(
-                  listTrackingPosition: listTrackingPosition,
+                  listTrackingPosition: workout.listLocationData,
                   isChallenge: isChallenge,
                   initialLatitude: initialLatitude,
                   initialLongitude: initialLongitude,
-                  isStatic: listTrackingPosition.isNotEmpty ? true : false,
+                  isStatic: workout.listLocationData.isNotEmpty ? true : false,
                   padding: 150.0,
                 ),
               ),

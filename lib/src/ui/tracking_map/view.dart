@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:cycletowork/src/data/app_data.dart';
-import 'package:cycletowork/src/data/user_activity.dart';
+import 'package:cycletowork/src/data/workout.dart';
 import 'package:cycletowork/src/theme.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/utility/convert.dart';
@@ -14,17 +14,15 @@ import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class TrackingMapView extends StatefulWidget {
-  final List<LocationData> listTrackingPosition;
-  final LocationData currentPosition;
-  final UserActivity trackingUserActivity;
+  final Workout workout;
+  final bool isChallenge;
   final GestureTapCancelCallback? pauseTracking;
   final GestureTapCancelCallback? hiddenMap;
 
   const TrackingMapView({
     Key? key,
-    required this.listTrackingPosition,
-    required this.trackingUserActivity,
-    required this.currentPosition,
+    required this.workout,
+    required this.isChallenge,
     this.pauseTracking,
     this.hiddenMap,
   }) : super(key: key);
@@ -53,7 +51,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
     final scale = context.read<AppData>().scale;
     final measurementUnit = context.read<AppData>().measurementUnit;
 
-    if (widget.listTrackingPosition.isEmpty) {
+    if (widget.workout.listLocationData.isEmpty) {
       return const Scaffold(
         body: Center(
           child: AppProgressIndicator(),
@@ -61,14 +59,13 @@ class _TrackingMapViewState extends State<TrackingMapView> {
       );
     }
 
-    var lastPosition = widget.listTrackingPosition.last;
-    final trackingCo2Kg = widget.trackingUserActivity.co2.gramToKg();
-    final trackingCo2Pound = widget.trackingUserActivity.co2.gramToPound();
+    var lastPosition = widget.workout.listLocationData.last;
+    final trackingCo2Kg = widget.workout.co2InGram.gramToKg();
+    final trackingCo2Pound = widget.workout.co2InGram.gramToPound();
     final trackingCo2 = measurementUnit == AppMeasurementUnit.metric
         ? trackingCo2Kg
         : trackingCo2Pound;
-    final isChallenge =
-        widget.trackingUserActivity.isChallenge == 1 ? true : false;
+    final isChallenge = widget.isChallenge;
     final Locale appLocale = Localizations.localeOf(context);
     final numberFormat = NumberFormat(
       '##0.00',
@@ -91,12 +88,12 @@ class _TrackingMapViewState extends State<TrackingMapView> {
         );
 
         _mapKey.currentState?.setPath(
-          widget.listTrackingPosition,
+          widget.workout.listLocationData,
         );
 
         _mapKey.currentState?.setStartAndCurrentMarker(
-          widget.listTrackingPosition.first.latitude,
-          widget.listTrackingPosition.first.longitude,
+          widget.workout.listLocationData.first.latitude,
+          widget.workout.listLocationData.first.longitude,
           lastPosition.latitude,
           lastPosition.longitude,
         );
@@ -164,7 +161,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
                 margin: EdgeInsets.only(bottom: 120.0 * scale),
                 child: AppMap(
                   key: _mapKey,
-                  listTrackingPosition: widget.listTrackingPosition,
+                  listTrackingPosition: widget.workout.listLocationData,
                   isChallenge: isChallenge,
                   initialLatitude: lastPosition.latitude,
                   initialLongitude: lastPosition.longitude,

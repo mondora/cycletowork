@@ -61,20 +61,23 @@ class Repository {
     if (uid == null) {
       return null;
     }
-
-    var localUser = await _localDatabase.getUserInfo(uid);
-    if (localUser == null) {
-      var listUserActivity = await _remoteService.getListUserActivity(
-        pageSize: 200,
-      );
-      for (var userActivity in listUserActivity) {
-        await _localDatabase.saveUserActivity(userActivity, []);
+    try {
+      var localUser = await _localDatabase.getUserInfo(uid);
+      if (localUser == null) {
+        var listUserActivity = await _remoteService.getListUserActivity(
+          pageSize: 200,
+        );
+        for (var userActivity in listUserActivity) {
+          await _localDatabase.saveUserActivity(userActivity, []);
+        }
       }
+      var user = await _remoteService.getUserInfo();
+      await _localDatabase.saveUserInfo(user);
+      FirebaseCrashlytics.instance.setUserIdentifier(uid);
+      return user;
+    } catch (e) {
+      return null;
     }
-    var user = await _remoteService.getUserInfo();
-    await _localDatabase.saveUserInfo(user);
-    FirebaseCrashlytics.instance.setUserIdentifier(uid);
-    return user;
   }
 
   Future<void> loginGoogleSignIn() async {

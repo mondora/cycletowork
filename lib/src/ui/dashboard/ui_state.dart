@@ -3,6 +3,7 @@ import 'package:cycletowork/src/data/chart_data.dart';
 import 'package:cycletowork/src/data/classification.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
+import 'package:cycletowork/src/data/workout.dart';
 import 'package:cycletowork/src/utility/gps.dart';
 import 'package:cycletowork/src/widget/chart.dart';
 
@@ -40,7 +41,6 @@ class UiState {
   String errorMessage = '';
   int userActivityPage = 0;
   int userActivityPageSize = 50;
-  int counter = 5;
   bool userActivityFilteredJustChallenges = false;
   ChartScaleType userActivityFilteredChartScaleType = ChartScaleType.week;
   int userActivityFilteredPage = 0;
@@ -80,6 +80,8 @@ class UiState {
   int listDepartmentClassificationPageSize = 20;
   int listDepartmentClassificationPage = 0;
   DepartmentClassification? userDepartmentClassification;
+
+  Workout? workout;
 }
 
 class UserActivityChartData {

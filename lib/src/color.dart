@@ -1,7 +1,3 @@
-import 'dart:convert';
-
-import 'package:cycletowork/src/utility/logger.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 
 // 100% — FF
@@ -28,8 +24,8 @@ import 'package:flutter/material.dart';
 // 5% — 0D
 // 0% — 00
 class AppColor {
-  static const String _lightColorSchemeKey = 'lightColorScheme';
-  static const String _darkColorSchemeKey = 'darkColorScheme';
+  // static const String _lightColorSchemeKey = 'lightColorScheme';
+  // static const String _darkColorSchemeKey = 'darkColorScheme';
 
   static get lightPrimary => 0xFFFFDA03;
   static get lightOnPrimary => 0xFFFFFFFF;
@@ -139,62 +135,14 @@ class AppColor {
     'actionSelected': darkActionSelected,
   };
 
-  static Future initialize() async {
-    try {
-      final remoteConfig = FirebaseRemoteConfig.instance;
-      await remoteConfig.setDefaults(
-        <String, dynamic>{
-          _lightColorSchemeKey: jsonEncode(lightColorMap),
-          _darkColorSchemeKey: jsonEncode(darkColorMap)
-        },
-      );
-
-      await remoteConfig.setConfigSettings(
-        RemoteConfigSettings(
-          fetchTimeout: const Duration(seconds: 3),
-          minimumFetchInterval: const Duration(minutes: 1),
-        ),
-      );
-      await remoteConfig.fetchAndActivate();
-    } catch (e) {
-      Logger.error(e);
-    }
-  }
+  static Future initialize() async {}
 
   static LightColors getLightColors(bool justLocal) {
-    if (justLocal) {
-      return LightColors.fromJson(lightColorMap);
-    } else {
-      try {
-        final remoteConfig = FirebaseRemoteConfig.instance;
-        final lightColorString = remoteConfig.getString(
-          _lightColorSchemeKey,
-        );
-        final map = jsonDecode(lightColorString);
-        return LightColors.fromJson(map);
-      } catch (e) {
-        Logger.error(e);
-        return LightColors.fromJson(lightColorMap);
-      }
-    }
+    return LightColors.fromJson(lightColorMap);
   }
 
   static DarkColors getDarkColors(bool justLocal) {
-    if (justLocal) {
-      return DarkColors.fromJson(darkColorMap);
-    } else {
-      try {
-        final remoteConfig = FirebaseRemoteConfig.instance;
-        final darkColorString = remoteConfig.getString(
-          _darkColorSchemeKey,
-        );
-        final map = jsonDecode(darkColorString);
-        return DarkColors.fromJson(map);
-      } catch (e) {
-        Logger.error(e);
-        return DarkColors.fromJson(darkColorMap);
-      }
-    }
+    return DarkColors.fromJson(darkColorMap);
   }
 }
 

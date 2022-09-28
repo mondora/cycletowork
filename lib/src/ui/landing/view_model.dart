@@ -46,7 +46,9 @@ class ViewModel extends ChangeNotifier {
         }
       });
     } catch (e) {
-      await _repository.logout();
+      try {
+        await _repository.logout();
+      } catch (_) {}
       _uiState.loading = false;
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
@@ -70,7 +72,9 @@ class ViewModel extends ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      await _repository.logout();
+      try {
+        await _repository.logout();
+      } catch (_) {}
       _uiState.loading = false;
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
@@ -93,7 +97,9 @@ class ViewModel extends ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      await _repository.logout();
+      try {
+        await _repository.logout();
+      } catch (_) {}
       _uiState.loading = false;
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
@@ -133,7 +139,9 @@ class ViewModel extends ChangeNotifier {
         Logger.error(e);
         _uiState.error = true;
       }
-      await _repository.logout();
+      try {
+        await _repository.logout();
+      } catch (_) {}
       _uiState.loading = false;
       notifyListeners();
       return false;
@@ -172,7 +180,9 @@ class ViewModel extends ChangeNotifier {
         Logger.error(e);
         _uiState.error = true;
       }
-      await _repository.logout();
+      try {
+        await _repository.logout();
+      } catch (_) {}
       _uiState.loading = false;
       notifyListeners();
       return false;
@@ -232,13 +242,17 @@ class ViewModel extends ChangeNotifier {
   }
 
   Future<void> _tryGetUserInfo() async {
-    var userInfoLocal = await _repository.getUserInfoFromLocal();
-    if (userInfoLocal != null) {
-      await _getInitialInfo();
-      _uiState.pageOption = PageOption.home;
-      _uiState.loading = false;
-      notifyListeners();
-      return;
+    try {
+      var userInfoLocal = await _repository.getUserInfoFromLocal();
+      if (userInfoLocal != null) {
+        await _getInitialInfo();
+        _uiState.pageOption = PageOption.home;
+        _uiState.loading = false;
+        notifyListeners();
+        return;
+      }
+    } catch (e) {
+      Logger.error(e);
     }
 
     int _counterTryGetUserInfo = 10;
@@ -259,7 +273,9 @@ class ViewModel extends ChangeNotifier {
         notifyListeners();
       } catch (e) {
         if (_counterTryGetUserInfo == 0) {
-          await _repository.logout();
+          try {
+            await _repository.logout();
+          } catch (_) {}
           Logger.error(e);
           _uiState.pageOption = PageOption.logout;
           timer.cancel();

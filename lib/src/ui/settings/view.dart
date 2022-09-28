@@ -25,6 +25,10 @@ class SettingsView extends StatelessWidget {
       'Metriche (Km)',
       'Imperiali (mi)',
     ];
+    var colorScheme = Theme.of(context).colorScheme;
+    final color = colorScheme.brightness == Brightness.light
+        ? colorScheme.secondary
+        : colorScheme.primary;
 
     return Scaffold(
       body: ListView(
@@ -155,6 +159,7 @@ class SettingsView extends StatelessWidget {
                 style: textTheme.caption,
               ),
               trailing: Switch(
+                activeColor: color,
                 value: isWakelockModeEnable,
                 onChanged: (value) async {
                   await appData.setWakelockModeEnable(value);

@@ -4,25 +4,20 @@ import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
+import 'package:cycletowork/src/data/workout.dart';
 import 'package:cycletowork/src/ui/dashboard/repository.dart';
 import 'package:cycletowork/src/ui/dashboard/ui_state.dart';
-import 'package:cycletowork/src/utility/convert.dart';
+import 'package:cycletowork/src/utility/activity_recognition.dart';
 import 'package:cycletowork/src/utility/logger.dart';
 import 'package:cycletowork/src/utility/notification.dart';
 import 'package:cycletowork/src/widget/chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
-import 'package:wakelock/wakelock.dart';
 
 class ViewModel extends ChangeNotifier {
   final initialLatitude = 45.50315189900018;
   final initialLongitude = 9.198330425060847;
-  final _minDistanceInMeterToAdd = 3;
-  final _minDistanceFromLineInMeterToAdd = 2;
-  final _minAccuracyToAdd = 20;
-  final _delayForAverageSpeed = 10;
   final _ignoreAppBarActionPages = [
     AppMenuOption.profile,
   ];
@@ -31,18 +26,10 @@ class ViewModel extends ChangeNotifier {
   final _uiState = UiState();
   UiState get uiState => _uiState;
 
-  List<LocationData> _listTrackingPosition = [];
-  List<LocationData> get listTrackingPosition => _listTrackingPosition;
-
   UserActivity? _trackingUserActivity;
   UserActivity? get trackingUserActivity => _trackingUserActivity;
 
-  bool _trackingPaused = false;
-  bool _startedAfterPaused = false;
   ChallengeRegistry? _challengeActive;
-
-  Timer? _timer;
-  StreamSubscription<LocationData>? _locationSubscription;
 
   ViewModel() : this.instance();
 
@@ -79,65 +66,6 @@ class ViewModel extends ChangeNotifier {
       _uiState.refreshLocationLoading = false;
       notifyListeners();
     }
-  }
-
-  void startCounter(context, bool isWakelockModeEnable) async {
-    _uiState.loading = true;
-    notifyListeners();
-    _uiState.counter = 5;
-    _trackingPaused = false;
-    _startedAfterPaused = false;
-    if (isWakelockModeEnable) {
-      await Wakelock.enabled;
-    }
-    _challengeActive = await _repository.isChallengeActivity();
-    _trackingUserActivity = UserActivity(
-      userActivityId: const Uuid().v4(),
-      uid: AppData.user!.uid,
-      startTime: DateTime.now().toLocal().millisecondsSinceEpoch,
-      stopTime: 0,
-      duration: 0,
-      co2: 0,
-      distance: 0,
-      averageSpeed: 0,
-      maxSpeed: 0,
-      calorie: 0,
-      steps: 0,
-      isChallenge: _challengeActive != null ? 1 : 0,
-      challengeId: _challengeActive?.challengeId,
-      companyId: _challengeActive?.companyId,
-      city: '',
-    );
-    _listTrackingPosition = [];
-    await _getCurrentLocation();
-    _uiState.loading = false;
-    _uiState.dashboardPageOption = DashboardPageOption.startCounter;
-    notifyListeners();
-    startGetLocation(context);
-    _timer = Timer.periodic(
-      const Duration(seconds: 1),
-      (Timer timer) {
-        if (_uiState.counter != 0) {
-          _uiState.counter--;
-        } else {
-          if (!_trackingPaused) {
-            _trackingUserActivity!.duration++;
-          }
-          if (!_isTrackingStarted()) {
-            _trackingUserActivity!.startTime =
-                DateTime.now().toLocal().millisecondsSinceEpoch;
-            _uiState.dashboardPageOption = DashboardPageOption.startTracking;
-            notifyListeners();
-            return;
-          }
-        }
-
-        if (_uiState.dashboardPageOption == DashboardPageOption.startCounter ||
-            _uiState.dashboardPageOption == DashboardPageOption.startTracking) {
-          notifyListeners();
-        }
-      },
-    );
   }
 
   void getActiveChallengeList() async {
@@ -192,81 +120,6 @@ class ViewModel extends ChangeNotifier {
     } finally {
       _uiState.loading = false;
       notifyListeners();
-    }
-  }
-
-  void startGetLocation(context) async {
-    var permissionRequestMessage =
-        'Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione';
-    await _repository.setGpsConfig(
-      context,
-      0,
-      permissionRequestMessage,
-    );
-
-    _locationSubscription =
-        _repository.startListenOnBackground().handleError((dynamic e) async {
-      if (e is PlatformException) {
-        _uiState.errorMessage = e.toString();
-        _uiState.error = true;
-        Logger.error(e);
-      }
-      _timer?.cancel();
-      await _locationSubscription?.cancel();
-      _locationSubscription = null;
-      _uiState.dashboardPageOption = DashboardPageOption.home;
-    }).listen((LocationData locationData) {
-      _uiState.currentPosition = locationData;
-      if (_uiState.counter == 0 && !_trackingPaused) {
-        _addToListTrackingPosition(locationData);
-        if (_uiState.dashboardPageOption == DashboardPageOption.mapTracking) {
-          notifyListeners();
-        }
-      }
-    });
-  }
-
-  setUserActivityImageData(Uint8List? value) {
-    _trackingUserActivity!.imageData = value;
-  }
-
-  setUserActivityCity(String value) {
-    _trackingUserActivity!.city = value;
-  }
-
-  Future<bool> saveTracking(BuildContext context) async {
-    _uiState.loading = true;
-    notifyListeners();
-    try {
-      var userActivity = _trackingUserActivity!;
-      AppData.user!.calorie += userActivity.calorie;
-      AppData.user!.co2 += userActivity.co2;
-      AppData.user!.distance += userActivity.distance;
-      AppData.user!.steps += userActivity.steps;
-      AppData.user!.maxSpeed = AppData.user!.maxSpeed < userActivity.maxSpeed
-          ? userActivity.maxSpeed
-          : AppData.user!.maxSpeed;
-      AppData.user!.averageSpeed =
-          (AppData.user!.averageSpeed + userActivity.averageSpeed) / 2;
-
-      var result = await _repository.saveUserActivity(
-        userActivity,
-        _listTrackingPosition,
-      );
-      await getListUserActivity();
-      await getListUserActivityFilterd();
-      _uiState.dashboardPageOption = DashboardPageOption.home;
-      _uiState.loading = false;
-      notifyListeners();
-      return result;
-    } catch (e) {
-      _uiState.errorMessage = e.toString();
-      _uiState.error = true;
-      Logger.error(e);
-      _uiState.dashboardPageOption = DashboardPageOption.home;
-      _uiState.loading = false;
-      notifyListeners();
-      return false;
     }
   }
 
@@ -358,20 +211,177 @@ class ViewModel extends ChangeNotifier {
     }
   }
 
+  void startCounter(context, bool isWakelockModeEnable) async {
+    _uiState.loading = true;
+    notifyListeners();
+    try {
+      _challengeActive = await _repository.isChallengeActivity();
+      await _getCurrentLocation();
+      _trackingUserActivity = UserActivity(
+        userActivityId: const Uuid().v4(),
+        uid: AppData.user!.uid,
+        startTime: 0,
+        stopTime: 0,
+        duration: 0,
+        co2: 0,
+        distance: 0,
+        averageSpeed: 0,
+        maxSpeed: 0,
+        calorie: 0,
+        steps: 0,
+        isChallenge: _challengeActive != null ? 1 : 0,
+        challengeId: _challengeActive?.challengeId,
+        companyId: _challengeActive?.companyId,
+        city: '',
+      );
+      _uiState.workout = Workout(
+        ActivityType.onBicycle,
+        isWakeLockEnabled: isWakelockModeEnable,
+        onTickEverySecond: (int countdown) {
+          final isTrackingStarted = _uiState.dashboardPageOption ==
+                  DashboardPageOption.startTracking ||
+              _uiState.dashboardPageOption ==
+                  DashboardPageOption.pauseTracking ||
+              _uiState.dashboardPageOption == DashboardPageOption.mapTracking ||
+              _uiState.dashboardPageOption == DashboardPageOption.stopTracking;
+
+          if (countdown == 0 && !isTrackingStarted) {
+            _trackingUserActivity!.startTime =
+                DateTime.now().toLocal().millisecondsSinceEpoch;
+            _uiState.dashboardPageOption = DashboardPageOption.startTracking;
+            notifyListeners();
+            return;
+          }
+
+          if (_uiState.dashboardPageOption ==
+                  DashboardPageOption.startCounter ||
+              _uiState.dashboardPageOption ==
+                  DashboardPageOption.startTracking) {
+            notifyListeners();
+          }
+        },
+        onLocationData: (locationData) {
+          _uiState.currentPosition = locationData;
+          if (_uiState.dashboardPageOption == DashboardPageOption.mapTracking) {
+            notifyListeners();
+          }
+        },
+      );
+      var permissionRequestMessage =
+          'Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione';
+      await _repository.setGpsConfig(
+        context,
+        0,
+        permissionRequestMessage,
+      );
+      await _uiState.workout!.startWorkout();
+      _uiState.loading = false;
+      _uiState.dashboardPageOption = DashboardPageOption.startCounter;
+      notifyListeners();
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+      _uiState.dashboardPageOption = DashboardPageOption.home;
+      _uiState.loading = false;
+      notifyListeners();
+    }
+  }
+
+  setUserActivityImageData(Uint8List? value) {
+    _trackingUserActivity!.imageData = value;
+  }
+
+  setUserActivityCity(String value) {
+    _trackingUserActivity!.city = value;
+  }
+
+  Future<bool> saveTracking(BuildContext context) async {
+    _uiState.loading = true;
+    notifyListeners();
+    try {
+      var userActivity = _trackingUserActivity!;
+      var workout = _uiState.workout!;
+      userActivity.startTime = workout.startDateInMilliSeconds;
+      userActivity.stopTime = workout.stopDateInMilliSeconds;
+      userActivity.duration = workout.durationInSecond;
+      userActivity.co2 = workout.co2InGram;
+      userActivity.distance = workout.distanceInMeter;
+      userActivity.averageSpeed = workout.averageSpeedInMeterPerSecond;
+      userActivity.maxSpeed = workout.maxSpeedInMeterPerSecond;
+      userActivity.calorie = workout.calorie;
+      userActivity.steps = workout.steps;
+
+      for (var i = 0; i < _uiState.workout!.listLocationData.length; i++) {
+        _uiState.workout!.listLocationData[i].locationDataId =
+            const Uuid().v4();
+        _uiState.workout!.listLocationData[i].userActivityId =
+            userActivity.userActivityId;
+      }
+
+      AppData.user!.calorie += userActivity.calorie;
+      AppData.user!.co2 += userActivity.co2;
+      AppData.user!.distance += userActivity.distance;
+      AppData.user!.steps += userActivity.steps;
+      AppData.user!.maxSpeed = AppData.user!.maxSpeed < userActivity.maxSpeed
+          ? userActivity.maxSpeed
+          : AppData.user!.maxSpeed;
+      AppData.user!.averageSpeed =
+          (AppData.user!.averageSpeed + userActivity.averageSpeed) / 2;
+
+      var result = await _repository.saveUserActivity(
+        userActivity,
+        _uiState.workout!.listLocationData,
+      );
+      await getListUserActivity();
+      await getListUserActivityFilterd();
+      _uiState.dashboardPageOption = DashboardPageOption.home;
+      _uiState.loading = false;
+      notifyListeners();
+      return result;
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+      _uiState.dashboardPageOption = DashboardPageOption.home;
+      _uiState.loading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
   void setCounter(int value) {
-    _uiState.counter = value;
+    _uiState.workout!.setCountdown(value);
     if (value == 0) {
       _uiState.dashboardPageOption = DashboardPageOption.startTracking;
-      _trackingUserActivity!.startTime =
-          DateTime.now().toLocal().millisecondsSinceEpoch;
     }
     notifyListeners();
   }
 
-  void playTracking() {
-    _startedAfterPaused = true;
-    _trackingPaused = false;
+  void playTracking() async {
+    _uiState.loading = true;
+    notifyListeners();
+    await _uiState.workout!.playAgainWorkout();
     _uiState.dashboardPageOption = DashboardPageOption.startTracking;
+    _uiState.loading = false;
+    notifyListeners();
+  }
+
+  void pauseTracking() async {
+    _uiState.loading = true;
+    notifyListeners();
+    await _uiState.workout!.pauseWorkout();
+    _uiState.dashboardPageOption = DashboardPageOption.pauseTracking;
+    _uiState.loading = false;
+    notifyListeners();
+  }
+
+  void stopTracking() async {
+    _uiState.loading = true;
+    notifyListeners();
+    await _uiState.workout!.stopWorkout();
+    _uiState.dashboardPageOption = DashboardPageOption.stopTracking;
+    _uiState.loading = false;
     notifyListeners();
   }
 
@@ -387,29 +397,6 @@ class ViewModel extends ChangeNotifier {
 
   void removeTracking() {
     _uiState.dashboardPageOption = DashboardPageOption.home;
-    notifyListeners();
-  }
-
-  void pauseTracking() {
-    _trackingPaused = true;
-    _uiState.dashboardPageOption = DashboardPageOption.pauseTracking;
-    notifyListeners();
-  }
-
-  void stopTracking() async {
-    _uiState.loading = true;
-    notifyListeners();
-    _trackingPaused = true;
-    _timer?.cancel();
-    await _locationSubscription?.cancel();
-    _locationSubscription = null;
-    await Wakelock.disable();
-
-    _locationSubscription = null;
-    _trackingUserActivity!.stopTime =
-        DateTime.now().toLocal().millisecondsSinceEpoch;
-    _uiState.dashboardPageOption = DashboardPageOption.stopTracking;
-    _uiState.loading = false;
     notifyListeners();
   }
 
@@ -688,101 +675,6 @@ class ViewModel extends ChangeNotifier {
 
   bool _checkShowAppBarAction(AppMenuOption appMenuOption) {
     return !_ignoreAppBarActionPages.any((element) => element == appMenuOption);
-  }
-
-  bool _isTrackingStarted() {
-    return _uiState.dashboardPageOption == DashboardPageOption.startTracking ||
-        _uiState.dashboardPageOption == DashboardPageOption.pauseTracking ||
-        _uiState.dashboardPageOption == DashboardPageOption.mapTracking ||
-        _uiState.dashboardPageOption == DashboardPageOption.stopTracking;
-  }
-
-  void _addToListTrackingPosition(LocationData locationData) {
-    locationData.locationDataId = const Uuid().v4();
-    locationData.userActivityId = _trackingUserActivity!.userActivityId;
-    if (_listTrackingPosition.isEmpty || _startedAfterPaused) {
-      if (_startedAfterPaused) {
-        _startedAfterPaused = false;
-      }
-      locationData.speed = 0.0;
-      _listTrackingPosition.add(locationData);
-      _trackingUserActivity!.maxSpeed = locationData.speed;
-      _trackingUserActivity!.averageSpeed = locationData.speed;
-      return;
-    }
-
-    if (locationData.accuracy < 0) {
-      return;
-    }
-
-    if (locationData.accuracy > _minAccuracyToAdd) {
-      return;
-    }
-
-    var lastPosition = _listTrackingPosition.last;
-    var distance = _trackingUserActivity!.distance;
-    // var calorie = _trackingUserActivity!.calorie;
-    var co2 = _trackingUserActivity!.co2;
-    var maxSpeed = _trackingUserActivity!.maxSpeed;
-    var newDistance = _repository
-        .calculateDistanceInMeter(
-          lastPosition,
-          locationData,
-        )
-        .abs();
-
-    if (newDistance < locationData.accuracy) {
-      return;
-    }
-
-    // var newCalorie = newDistance.toCalorieFromDistanceInMeter();
-    var newCo2 = newDistance.distanceInMeterToCo2g();
-    // var newSpeed = locationData.speed > 1 ? locationData.speed : 0.0;
-    var durationLastLocation =
-        locationData.time.millisecondsSinceEpochToSeconde() -
-            lastPosition.time.millisecondsSinceEpochToSeconde();
-    var newSpeed =
-        durationLastLocation != 0 ? newDistance / durationLastLocation : 0.0;
-    newSpeed = newSpeed > 1 ? newSpeed : 0;
-    locationData.speed = newSpeed;
-    _trackingUserActivity!.maxSpeed = maxSpeed < newSpeed ? newSpeed : maxSpeed;
-    if (newDistance < _minDistanceInMeterToAdd) {
-      lastPosition.speed = newSpeed;
-      return;
-    }
-
-    _trackingUserActivity!.distance = distance + newDistance;
-
-    _trackingUserActivity!.co2 = co2 + newCo2;
-    _trackingUserActivity!.steps +=
-        newDistance.distanceInMeterToSteps().toInt();
-
-    _trackingUserActivity!.calorie =
-        _trackingUserActivity!.distance.toCalorieFromDistanceInMeter();
-    if (_listTrackingPosition.length < 2) {
-      _listTrackingPosition.add(locationData);
-
-      if (_trackingUserActivity!.duration > _delayForAverageSpeed) {
-        _trackingUserActivity!.averageSpeed =
-            _listTrackingPosition.map((e) => e.speed).reduce((a, b) => a + b) /
-                2;
-      }
-    } else {
-      var point = lastPosition;
-      var endPont = locationData;
-      var startPoint = _listTrackingPosition[_listTrackingPosition.length - 2];
-      var distance = LocationData.distanceToLine(point, startPoint, endPont);
-      if (distance >= _minDistanceFromLineInMeterToAdd) {
-        _listTrackingPosition.add(locationData);
-      } else {
-        _listTrackingPosition[_listTrackingPosition.length - 1] = locationData;
-      }
-      var totalDistance = _trackingUserActivity!.distance;
-      var totalDuration = _trackingUserActivity!.duration;
-      if (_trackingUserActivity!.duration > _delayForAverageSpeed) {
-        _trackingUserActivity!.averageSpeed = totalDistance / totalDuration;
-      }
-    }
   }
 
   Future<void> _getActiveChallengeList() async {

@@ -1,7 +1,7 @@
 import 'package:cycletowork/src/data/app_data.dart';
-import 'package:cycletowork/src/data/location_data.dart';
-import 'package:cycletowork/src/data/user_activity.dart';
+import 'package:cycletowork/src/data/workout.dart';
 import 'package:cycletowork/src/theme.dart';
+import 'package:cycletowork/src/utility/activity_recognition.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
@@ -9,17 +9,15 @@ import 'package:cycletowork/src/utility/convert.dart';
 import 'package:provider/provider.dart';
 
 class TrackingView extends StatelessWidget {
-  final LocationData? lastLocation;
-  final UserActivity trackingUserActivity;
+  final Workout workout;
   final GestureTapCancelCallback? pauseTracking;
   final GestureTapCancelCallback? showMap;
 
   const TrackingView({
     Key? key,
-    required this.trackingUserActivity,
     required this.pauseTracking,
     required this.showMap,
-    required this.lastLocation,
+    required this.workout,
   }) : super(key: key);
 
   @override
@@ -31,27 +29,31 @@ class TrackingView extends StatelessWidget {
       '##0.00',
       appLocale.languageCode,
     );
-    final trackingDurationInSeconds = trackingUserActivity.duration;
-    final trackingCo2Kg = trackingUserActivity.co2.gramToKg();
-    final trackingCo2Pound = trackingUserActivity.co2.gramToPound();
+    final trackingDurationInSeconds = workout.durationInSecond;
+    final trackingCo2Kg = workout.co2InGram.gramToKg();
+    final trackingCo2Pound = workout.co2InGram.gramToPound();
     final trackingCo2 = measurementUnit == AppMeasurementUnit.metric
         ? trackingCo2Kg
         : trackingCo2Pound;
     final trackingAvarageSpeedKmPerHour =
-        trackingUserActivity.averageSpeed.meterPerSecondToKmPerHour();
+        workout.averageSpeedInMeterPerSecond.meterPerSecondToKmPerHour();
     final trackingAvarageSpeedMilePerHour =
-        trackingUserActivity.averageSpeed.meterPerSecondToMilePerHour();
+        workout.averageSpeedInMeterPerSecond.meterPerSecondToMilePerHour();
     final trackingAvarageSpeed = measurementUnit == AppMeasurementUnit.metric
         ? trackingAvarageSpeedKmPerHour
         : trackingAvarageSpeedMilePerHour;
 
-    final trackingSpeed = lastLocation != null
+    final trackingSpeed = workout.listLocationData.isNotEmpty
         ? measurementUnit == AppMeasurementUnit.metric
-            ? lastLocation!.speed.meterPerSecondToKmPerHour().abs()
-            : lastLocation!.speed.meterPerSecondToMilePerHour().abs()
+            ? workout.listLocationData.last.speed
+                .meterPerSecondToKmPerHour()
+                .abs()
+            : workout.listLocationData.last.speed
+                .meterPerSecondToMilePerHour()
+                .abs()
         : 0.0;
-    final trackingDistanceInKm = trackingUserActivity.distance.meterToKm();
-    final trackingDistanceInMile = trackingUserActivity.distance.meterToMile();
+    final trackingDistanceInKm = workout.distanceInMeter.meterToKm();
+    final trackingDistanceInMile = workout.distanceInMeter.meterToMile();
     final trackingDistance = measurementUnit == AppMeasurementUnit.metric
         ? trackingDistanceInKm
         : trackingDistanceInMile;
@@ -67,10 +69,23 @@ class TrackingView extends StatelessWidget {
           physics: const ScrollPhysics(),
           shrinkWrap: true,
           children: [
-            _TimeTracking(
-              time: Duration(
-                seconds: trackingDurationInSeconds,
-              ).toHoursMinutesSeconds(),
+            Stack(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: _TimeTracking(
+                    time: Duration(
+                      seconds: trackingDurationInSeconds,
+                    ).toHoursMinutesSeconds(),
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  bottom: 0,
+                  right: 0,
+                  child: _getActivityIcon(context, workout),
+                ),
+              ],
             ),
             const _Divider(),
             _Co2Tracking(
@@ -136,6 +151,55 @@ class TrackingView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _getActivityIcon(BuildContext context, Workout workout) {
+    final colorScheme = Theme.of(context).colorScheme;
+    if (workout.activityTypeDetected == null ||
+        workout.activityConfidenceDetected == null) {
+      return Container();
+    }
+    final opacity = _getOpacity(workout.activityConfidenceDetected!);
+    switch (workout.activityTypeDetected!) {
+      case ActivityType.inVehicle:
+        return Icon(
+          Icons.directions_car_filled_outlined,
+          color: colorScheme.onBackground.withOpacity(opacity),
+        );
+      case ActivityType.onBicycle:
+        return Icon(
+          Icons.directions_bike_rounded,
+          color: colorScheme.onBackground.withOpacity(opacity),
+        );
+      case ActivityType.running:
+        return Icon(
+          Icons.directions_run_rounded,
+          color: colorScheme.onBackground.withOpacity(opacity),
+        );
+      case ActivityType.walking:
+        return Icon(
+          Icons.directions_walk_rounded,
+          color: colorScheme.onBackground.withOpacity(opacity),
+        );
+      case ActivityType.still:
+        return Icon(
+          Icons.boy_rounded,
+          color: colorScheme.onBackground.withOpacity(opacity),
+        );
+      case ActivityType.unknown:
+        return Container();
+    }
+  }
+
+  double _getOpacity(ActivityConfidence confidence) {
+    switch (confidence) {
+      case ActivityConfidence.high:
+        return 1.0;
+      case ActivityConfidence.medium:
+        return 0.70;
+      case ActivityConfidence.low:
+        return 0.50;
+    }
   }
 }
 
