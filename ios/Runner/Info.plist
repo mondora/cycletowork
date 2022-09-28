@@ -49,6 +49,8 @@
 	<string>Per poter cambiare l'immagine del tuo profilo devi consentire a Cycle2Work di accedere alla fotocamera del tuo dispositivo</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Per poter cambiare l'immagine del tuo profilo devi consentire a Cycle2Work di accedere alla libreria immagini del tuo dispositivo</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare le informazioni sulle tue attività.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
