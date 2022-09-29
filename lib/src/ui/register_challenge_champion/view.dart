@@ -357,7 +357,7 @@ class _RegisterChallengChampionViewState
                     value: companyCategory != '' ? companyCategory : null,
                     onChanged: (value) {
                       if (value != null) {
-                        viewModel.setDepartmentName(value);
+                        viewModel.setCompanyToAddCategory(value);
                       }
                     },
                     validator: (value) {

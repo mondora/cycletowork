@@ -379,7 +379,7 @@ class DashboardView extends StatelessWidget {
       context: context,
       title: 'Attenzione!',
       subtitle:
-          'Per poter usare Cycle2Work è necessario il permesso di rilevare le informazioni sulle tue attività. Puoi farlo nelle impostazioni di sistema.',
+          'Per poter funzionare, Cycle2Work richiede l’accesso alle informazioni relative alle tue attività. Puoi farlo nelle impostazioni di sistema.',
       body: '',
       confirmLabel: 'Ho capito',
     ).show();

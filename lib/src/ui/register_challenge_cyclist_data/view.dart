@@ -168,7 +168,9 @@ class _RegisterChallengCyclistDataViewState
                       if (value == null || value.isEmpty) {
                         return 'Inserire email';
                       }
-                      if (!value.contains('@') || !value.contains('.')) {
+                      if (!value.contains('@') ||
+                          !value.contains('.') ||
+                          value.contains(' ')) {
                         return 'Inserire un email valido';
                       }
                       return null;
