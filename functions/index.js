@@ -199,9 +199,9 @@ exports.removeDeviceToken = functions
                     'error:',
                     error
                 );
-                throw new functions.https.HttpsError(
-                    Constant.unknownErrorMessage
-                );
+                // throw new functions.https.HttpsError(
+                //     Constant.unknownErrorMessage
+                // );
             }
         } else {
             throw new functions.https.HttpsError(
