@@ -581,7 +581,7 @@ exports.sendEmailVerificationCode = functions
                 );
             }
             try {
-                const email = data.email.split(' ').join('');
+                const email = data.email.split(' ').join('').toLowerCase();
                 const displayName = data.displayName;
 
                 loggerLog(

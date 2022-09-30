@@ -265,7 +265,9 @@ const verifiyEmailCode = async (uid, email, code) => {
 
     dataCode.connectedEmail = userInfo.connectedEmail;
     const index = userInfo.connectedEmail.findIndex(
-        (x) => x.email.split(' ').join('') === email.split(' ').join('')
+        (x) =>
+            x.email.split(' ').join('').toLowerCase() ===
+            email.split(' ').join('').toLowerCase()
     );
 
     if (index === -1) {
@@ -284,7 +286,7 @@ const verifiyEmailCode = async (uid, email, code) => {
     }
 
     dataCode.connectedEmail[index] = {
-        email: email.split(' ').join(''),
+        email: email.split(' ').join('').toLowerCase(),
         verified: true,
     };
 
