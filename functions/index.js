@@ -575,13 +575,13 @@ exports.sendEmailVerificationCode = functions
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
         if (uid) {
-            if (!data) {
+            if (!data || !data.email) {
                 throw new functions.https.HttpsError(
                     Constant.badRequestDeniedMessage
                 );
             }
             try {
-                const email = data.email;
+                const email = data.email.split(' ').join('');
                 const displayName = data.displayName;
 
                 loggerLog(
@@ -1229,9 +1229,10 @@ exports.getUserDepartmentClassification = functions
                     'error:',
                     error
                 );
-                throw new functions.https.HttpsError(
-                    Constant.unknownErrorMessage
-                );
+                return;
+                // throw new functions.https.HttpsError(
+                //     Constant.unknownErrorMessage
+                // );
             }
         } else {
             throw new functions.https.HttpsError(

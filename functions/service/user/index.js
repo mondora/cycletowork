@@ -198,7 +198,7 @@ const sendEmailVerificationCode = async (uid, email, displayName) => {
     const code = randomInteger(100000, 999999);
     const now = new Date();
     const expireCode = new Date(now);
-    expireCode.setMinutes(now.getMinutes() + 5);
+    expireCode.setMinutes(now.getMinutes() + 120);
     const dataCode = {
         connectedEmail: [],
     };
@@ -238,7 +238,7 @@ const sendEmailVerificationCode = async (uid, email, displayName) => {
         .update(dataCode, { merge: true });
 
     const msg = {
-        from: 'info@sataspes.net',
+        from: 'info@mondora.com',
         to: email,
         subject: 'Cycle2Work - verifica email',
         html: sendVerifiyCode(code),
@@ -264,7 +264,9 @@ const verifiyEmailCode = async (uid, email, code) => {
     }
 
     dataCode.connectedEmail = userInfo.connectedEmail;
-    const index = userInfo.connectedEmail.findIndex((x) => x.email === email);
+    const index = userInfo.connectedEmail.findIndex(
+        (x) => x.email.split(' ').join('') === email.split(' ').join('')
+    );
 
     if (index === -1) {
         throw new Error(Constant.userNotFoundError);
@@ -282,7 +284,7 @@ const verifiyEmailCode = async (uid, email, code) => {
     }
 
     dataCode.connectedEmail[index] = {
-        email: email,
+        email: email.split(' ').join(''),
         verified: true,
     };
 

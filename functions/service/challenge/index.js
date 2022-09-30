@@ -40,7 +40,7 @@ const registerChallenge = async (uid, challengeRegistry) => {
     let userInfoData, challengeInfoData, companyInfoData;
     const now = Date.now();
     const challengeId = challengeRegistry.challengeId;
-    const businessEmail = challengeRegistry.businessEmail;
+    const businessEmail = challengeRegistry.businessEmail.split(' ').join('');
     const isCyclist = challengeRegistry.isCyclist;
     const isChampion = challengeRegistry.isChampion;
     const companyId = challengeRegistry.companyId;
