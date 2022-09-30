@@ -21,6 +21,8 @@ class AppAlartDialog {
   ButtonStyle? cancelButtonStyle;
   final bool iscCancelDestructiveAction;
   final bool actionsAlignmentCenter;
+  final bool justContent;
+  final Widget? contain;
 
   AppAlartDialog({
     required this.context,
@@ -41,6 +43,8 @@ class AppAlartDialog {
     this.cancelButtonStyle,
     this.iscCancelDestructiveAction = false,
     this.actionsAlignmentCenter = true,
+    this.justContent = false,
+    this.contain,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
@@ -89,6 +93,27 @@ class AppAlartDialog {
   }
 
   Future<bool?> show() async {
+    if (justContent) {
+      return showGeneralDialog(
+        context: context,
+        barrierColor: Theme.of(context).colorScheme.background,
+        barrierDismissible: barrierDismissible,
+        barrierLabel: 'Dialog',
+        transitionDuration: const Duration(milliseconds: 400),
+        pageBuilder: (_, __, ___) {
+          final scale = context.read<AppData>().scale;
+          return Padding(
+            padding: EdgeInsets.only(
+              top: 80.0,
+              right: 20.0 * scale,
+              left: 20.0 * scale,
+            ),
+            child: contain!,
+          );
+        },
+      );
+    }
+
     return showDialog<bool?>(
       context: context,
       barrierDismissible: barrierDismissible, // user must tap button!

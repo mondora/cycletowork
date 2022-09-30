@@ -40,17 +40,17 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione</string>
+	<string>Per funzionare correttamente, devi consentire a Cycle2Work di rilevare la tua posizione per registrare il percorso che hai effettuato in bicicletta e calcolare quindi la quantità di CO\u2082 che hai risparmiato.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione</string>
+	<string>Per funzionare correttamente, devi consentire a Cycle2Work di rilevare la tua posizione per registrare il percorso che hai effettuato in bicicletta e calcolare quindi la quantità di CO\u2082 che hai risparmiato.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione</string>
+	<string>Per funzionare correttamente, devi consentire a Cycle2Work di rilevare la tua posizione per registrare il percorso che hai effettuato in bicicletta e calcolare quindi la quantità di CO\u2082 che hai risparmiato.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Per poter cambiare l'immagine del tuo profilo devi consentire a Cycle2Work di accedere alla fotocamera del tuo dispositivo</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Per poter cambiare l'immagine del tuo profilo devi consentire a Cycle2Work di accedere alla libreria immagini del tuo dispositivo</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Per poter funzionare, Cycle2Work richiede l’accesso alle informazioni relative alle tue attività.</string>
+	<string>Per funzionare correttamente, devi consentire a Cycle2Work di accedere alle informazioni relative alle tue attività. In questo modo potrà verificare le attività che hai effettuato e confrontarle con quella che stai svolgendo per migliorare i parametri di misurazione.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

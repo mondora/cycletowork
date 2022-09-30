@@ -28,6 +28,8 @@ import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 
 class DashboardView extends StatelessWidget {
   const DashboardView({Key? key}) : super(key: key);
@@ -292,6 +294,12 @@ class DashboardView extends StatelessWidget {
   }
 
   Future<bool> _checkGpsAndPermission(BuildContext context) async {
+    final scale = context.read<AppData>().scale;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final color = colorScheme.brightness == Brightness.light
+        ? colorScheme.secondary
+        : colorScheme.primary;
     var gpsStatus = await Gps.getGpsStatus();
     if (gpsStatus == GpsStatus.granted) {
       return await __checkActivityPermission(context);
@@ -308,18 +316,83 @@ class DashboardView extends StatelessWidget {
       await AppSettings.openDeviceSettings();
       return false;
     }
-    var confirm = await AppAlartDialog(
-      context: context,
-      title: 'Permessi di localizzazione!',
-      subtitle:
-          "Per poter funzionare, Cycle2Work rileva la tua posizione (location) per registrare il percorso che hai effettuato in bicicletta e calcolare la quantità di CO\u2082 che hai risparmiato. Questo anche quando l'app sta funzionando in background.",
-      body: '',
-      confirmLabel: 'ACCETTO',
-      cancelLabel: 'RIFIUTO',
-      barrierDismissible: true,
-      actionsAlignmentCenter: false,
-    ).show();
-    if (confirm == true) {
+    final isIos = defaultTargetPlatform == TargetPlatform.iOS;
+    if (isIos) {
+      await AppAlartDialog(
+        context: context,
+        title: '',
+        subtitle: '',
+        body: '',
+        confirmLabel: '',
+        barrierDismissible: false,
+        justContent: true,
+        contain: Stack(
+          children: [
+            Column(
+              children: [
+                SizedBox(
+                  height: 40 * scale,
+                ),
+                Text(
+                  'A cosa ci serve sapere la tua posizione:',
+                  style: textTheme.headline5,
+                ),
+                SizedBox(
+                  height: 60 * scale,
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_pin,
+                      size: 40.0 * scale,
+                      color: color,
+                    ),
+                    SizedBox(
+                      width: 15 * scale,
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Per funzionare correttamente, devi consentire a Cycle2Work di rilevare la tua posizione per registrare il percorso che hai effettuato in bicicletta e calcolare quindi la quantità di CO\u2082 che hai risparmiato.',
+                        style: textTheme.bodyText1,
+                        maxLines: 6,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Positioned(
+              bottom: 60.0,
+              right: 0.0,
+              left: 0.0,
+              child: SizedBox(
+                width: 250.0 * scale,
+                height: 36.0,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      colorScheme.secondary,
+                    ),
+                  ),
+                  child: Text(
+                    'ACCETTO'.toUpperCase(),
+                    style: textTheme.button!.copyWith(
+                      color: colorScheme.onSecondary,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ).show();
+
       var permissionStatus = await Gps.getPermissionStatus();
       if (permissionStatus == PermissionStatus.denied) {
         await AppAlartDialog(
@@ -349,16 +422,58 @@ class DashboardView extends StatelessWidget {
 
       return await __checkActivityPermission(context);
     } else {
-      await AppAlartDialog(
+      var confirm = await AppAlartDialog(
         context: context,
         title: 'Permessi di localizzazione!',
         subtitle:
-            "Ricorda che Cycle2Work non può funzionare senza rilevare la tua posizione (location), se desideri usare Cycle2Work in futuro devi assegnare i permessi all'app nelle impostazioni di localizzazione del tuo smartphone.",
+            "Per poter funzionare, Cycle2Work rileva la tua posizione (location) per registrare il percorso che hai effettuato in bicicletta e calcolare la quantità di CO\u2082 che hai risparmiato. Questo anche quando l'app sta funzionando in background.",
         body: '',
-        confirmLabel: 'CHIUDI',
+        confirmLabel: 'ACCETTO',
+        cancelLabel: 'RIFIUTO',
+        barrierDismissible: true,
+        actionsAlignmentCenter: false,
       ).show();
+      if (confirm == true) {
+        var permissionStatus = await Gps.getPermissionStatus();
+        if (permissionStatus == PermissionStatus.denied) {
+          await AppAlartDialog(
+            context: context,
+            title: 'Attenzione!',
+            subtitle: 'Cycle2Work non è in grado di rilevare la tua posizione.',
+            body:
+                'Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione. Puoi farlo nelle impostazioni di sistema.',
+            confirmLabel: 'Ho capito',
+          ).show();
+          await AppSettings.openLocationSettings();
+          return false;
+        }
+        if (permissionStatus == PermissionStatus.restricted) {
+          await AppAlartDialog(
+            context: context,
+            title: 'Attenzione!',
+            subtitle:
+                'Cycle2Work non è in grado di rilevare la tua posizione in modo preciso.',
+            body:
+                'Per poter usare al meglio Cycle2Work è necessario abilitare il rilevamento preciso della posizione. Puoi farlo nelle impostazioni di sistema.',
+            confirmLabel: 'Ho capito',
+          ).show();
+          await AppSettings.openLocationSettings();
+          return false;
+        }
+
+        return await __checkActivityPermission(context);
+      } else {
+        await AppAlartDialog(
+          context: context,
+          title: 'Permessi di localizzazione!',
+          subtitle:
+              "Ricorda che Cycle2Work non può funzionare senza rilevare la tua posizione (location), se desideri usare Cycle2Work in futuro devi assegnare i permessi all'app nelle impostazioni di localizzazione del tuo smartphone.",
+          body: '',
+          confirmLabel: 'CHIUDI',
+        ).show();
+      }
+      return false;
     }
-    return false;
   }
 
   Future<bool> __checkActivityPermission(BuildContext context) async {
@@ -369,6 +484,87 @@ class DashboardView extends StatelessWidget {
     }
 
     if (activityRecognitionStatus == PermissionRequestResult.denied) {
+      final scale = context.read<AppData>().scale;
+      final colorScheme = Theme.of(context).colorScheme;
+      final textTheme = Theme.of(context).textTheme;
+      final color = colorScheme.brightness == Brightness.light
+          ? colorScheme.secondary
+          : colorScheme.primary;
+      await AppAlartDialog(
+        context: context,
+        title: '',
+        subtitle: '',
+        body: '',
+        confirmLabel: '',
+        barrierDismissible: false,
+        justContent: true,
+        contain: Stack(
+          children: [
+            Column(
+              children: [
+                SizedBox(
+                  height: 40 * scale,
+                ),
+                Text(
+                  'Perché vogliamo avere le informazioni relative alle tue attività:',
+                  style: textTheme.headline5,
+                ),
+                SizedBox(
+                  height: 60 * scale,
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.directions_walk,
+                      size: 40.0 * scale,
+                      color: color,
+                    ),
+                    SizedBox(
+                      width: 15 * scale,
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Per funzionare correttamente, devi consentire a Cycle2Work di accedere alle informazioni relative alle tue attività. In questo modo potrà verificare le attività che hai effettuato e confrontarle con quella che stai svolgendo per migliorare i parametri di misurazione.',
+                        style: textTheme.bodyText1,
+                        maxLines: 6,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Positioned(
+              bottom: 60.0,
+              right: 0.0,
+              left: 0.0,
+              child: SizedBox(
+                width: 250.0 * scale,
+                height: 36.0,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      colorScheme.secondary,
+                    ),
+                  ),
+                  child: Text(
+                    'ACCETTO'.toUpperCase(),
+                    style: textTheme.button!.copyWith(
+                      color: colorScheme.onSecondary,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ).show();
+
       activityRecognitionStatus = await ActivityRecognition.requestPermission();
       if (activityRecognitionStatus == PermissionRequestResult.granted) {
         return true;

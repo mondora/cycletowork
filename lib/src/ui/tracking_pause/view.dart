@@ -54,13 +54,17 @@ class TrackingPauseView extends StatelessWidget {
     final trackingDistance = measurementUnit == AppMeasurementUnit.metric
         ? trackingDistanceInKm
         : trackingDistanceInMile;
-
+    final currentPosition = context.read<ViewModel>().uiState.currentPosition;
     final initialLatitude = workout.listLocationData.isNotEmpty
         ? workout.listLocationData.first.latitude
-        : context.read<ViewModel>().uiState.currentPosition!.latitude;
+        : currentPosition != null
+            ? currentPosition.latitude
+            : context.read<ViewModel>().initialLatitude;
     final initialLongitude = workout.listLocationData.isNotEmpty
         ? workout.listLocationData.first.longitude
-        : context.read<ViewModel>().uiState.currentPosition!.longitude;
+        : currentPosition != null
+            ? currentPosition.longitude
+            : context.read<ViewModel>().initialLongitude;
 
     return Scaffold(
       body: Stack(
