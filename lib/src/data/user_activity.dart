@@ -17,6 +17,7 @@ class UserActivity {
   String? companyId;
   String? city;
   Uint8List? imageData;
+  int isUploaded;
 
   UserActivity({
     required this.uid,
@@ -31,6 +32,7 @@ class UserActivity {
     required this.calorie,
     required this.steps,
     required this.isChallenge,
+    required this.isUploaded,
     this.challengeId,
     this.companyId,
     this.city,
@@ -59,7 +61,8 @@ class UserActivity {
         isChallenge = map['isChallenge'],
         challengeId = map['challengeId'],
         companyId = map['companyId'],
-        city = map['city'];
+        city = map['city'],
+        isUploaded = map['isUploaded'] ?? 1;
 
   Map<String, dynamic> toJson() => {
         'uid': uid,
@@ -78,6 +81,7 @@ class UserActivity {
         'challengeId': challengeId,
         'companyId': companyId,
         'city': city,
+        'isUploaded': isUploaded,
       };
 
   static String get tableName => 'UserActivity';
@@ -99,7 +103,12 @@ class UserActivity {
       isChallenge INTEGER NOT NULL,
       challengeId TEXT,
       companyId TEXT,
-      city TEXT
+      city TEXT,
+      isUploaded INTEGER NOT NULL
     );
   ''';
+
+  static List<String> get alterTableV2ToV3 => [
+        'ALTER TABLE $tableName ADD isUploaded INTEGER NOT NULL DEFAULT 1;',
+      ];
 }

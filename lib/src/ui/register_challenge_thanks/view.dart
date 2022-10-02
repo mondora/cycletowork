@@ -87,7 +87,7 @@ class RegisterChallengThanksView extends StatelessWidget {
               child: Column(
                 children: [
                   SizedBox(
-                    width: 210.0 * scale,
+                    width: 250.0 * scale,
                     height: 36.0 * scale,
                     child: ElevatedButton(
                       onPressed: viewModel.gotoSurvey,
@@ -115,7 +115,7 @@ class RegisterChallengThanksView extends StatelessWidget {
                     height: 20 * scale,
                   ),
                   SizedBox(
-                    width: 210.0 * scale,
+                    width: 250.0 * scale,
                     height: 36.0 * scale,
                     child: ElevatedButton(
                       onPressed: () => Navigator.pop(context),

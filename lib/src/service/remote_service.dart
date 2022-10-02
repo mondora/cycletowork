@@ -17,9 +17,10 @@ class RemoteService
     UserActivity userActivity,
     List<LocationData> listLocationData,
   ) async {
-    userActivity.imageData = null;
+    final userActivityJson = userActivity.toJson();
+    userActivityJson['imageData'] = null;
     var arg = {
-      'userActivity': userActivity.toJson(),
+      'userActivity': userActivityJson,
     };
     await Remote.callFirebaseFunctions('saveUserActivity', arg);
   }

@@ -68,6 +68,7 @@ class Gps {
 
   static Future<location_data.LocationData?> getCurrentPosition({
     required String permissionRequestMessage,
+    double smallestDisplacement = 0,
   }) async {
     try {
       var accuracy = defaultTargetPlatform == TargetPlatform.iOS
@@ -81,6 +82,7 @@ class Gps {
           accuracy: accuracy,
           rationaleMessageForPermissionRequest: permissionRequestMessage,
           rationaleMessageForGPSRequest: permissionRequestMessage,
+          smallestDisplacement: smallestDisplacement,
         ),
       );
       return location_data.LocationData(
@@ -116,6 +118,7 @@ class Gps {
       rationaleMessageForGPSRequest: permissionRequestMessage,
       useGooglePlayServices: false,
       askForGooglePlayServices: false,
+      // waitForAccurateLocation: true,
       // fallbackToGPS: false,
     );
   }

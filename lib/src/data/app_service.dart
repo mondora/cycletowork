@@ -144,6 +144,10 @@ abstract class AppServiceOnlyLocal {
   Future<void> saveDepartmentClassification(
     DepartmentClassification departmentClassification,
   );
+
+  Future<void> setUploadedUserActivity(String userActivityId);
+
+  Future<UserActivity?> getUserActivity(String userActivityId);
 }
 
 abstract class AppServiceOnlyRemote {

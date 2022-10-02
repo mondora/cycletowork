@@ -9,7 +9,7 @@ import 'package:cycletowork/src/utility/wakelock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-abstract class BaseWorkout {
+abstract class BaseWorkoutV2 {
   late ActivityType activityTypeTarget;
   late int durationInSecond;
   late int startDateInMilliSeconds;
@@ -50,6 +50,15 @@ abstract class BaseWorkout {
   Future<void> stopWorkout();
   void setCountdown(int countdown);
   void addLocationData(LocationData locationData);
+  bool checkMaxAbsoluteAccuracy(LocationData locationData);
+  void addLocationDataWithZeroSpeed(LocationData locationData);
+  void skipLocationDataWithHighestAccuracy(LocationData locationData);
+  void addLocationDatValid(LocationData locationData);
+  double calculateSpeed(
+    LocationData lastLocationData,
+    LocationData newLocationData,
+  );
+
   void setActivityRecognition(
     ActivityRecognitionResult activityRecognitionResult,
   );
@@ -60,15 +69,15 @@ abstract class BaseWorkout {
       case ActivityType.inVehicle:
         return 20.0;
       case ActivityType.onBicycle:
-        return 8.0;
+        return 6.0;
       case ActivityType.running:
         return 5.0;
       case ActivityType.still:
-        return 0.0;
+        return 5.0;
       case ActivityType.walking:
         return 5.0;
       case ActivityType.unknown:
-        return 0.0;
+        return 5.0;
     }
   }
 
@@ -76,11 +85,11 @@ abstract class BaseWorkout {
       ActivityType activityTypeTarget) {
     switch (activityTypeTarget) {
       case ActivityType.inVehicle:
-        return 150.0;
+        return 200.0;
       case ActivityType.onBicycle:
         return 100.0;
       case ActivityType.running:
-        return 10.0;
+        return 20.0;
       case ActivityType.still:
         return 10.0;
       case ActivityType.walking:
@@ -91,8 +100,8 @@ abstract class BaseWorkout {
   }
 }
 
-class Workout extends BaseWorkout {
-  Workout(
+class WorkoutV2 extends BaseWorkoutV2 {
+  WorkoutV2(
     ActivityType activityTypeTarget, {
     required Function(int countdown) onTickEverySecond,
     required Function(LocationData locationData) onLocationData,
@@ -140,94 +149,69 @@ class Workout extends BaseWorkout {
 
     onLocationData(locationData);
 
-    if (locationData.accuracy < 0) {
+    debugPrint('locationData.accuracy: ${locationData.accuracy}');
+
+    final isMaxAbsoluteAccuracy = checkMaxAbsoluteAccuracy(locationData);
+    if (!isMaxAbsoluteAccuracy) {
       return;
     }
 
-    if (locationData.accuracy > minAccuracyInMeter) {
-      return;
-    }
-
-    if (listLocationData.isEmpty || _startedAfterPaused) {
-      if (_startedAfterPaused) {
-        _startedAfterPaused = false;
-      }
-      locationData.speed = 0.0;
-      listLocationData.add(locationData);
+    if (listLocationData.isEmpty) {
+      addLocationDataWithZeroSpeed(locationData);
       return;
     }
 
     final lastPosition = listLocationData.last;
+    debugPrint('lastPositionAccuracy: ${lastPosition.accuracy}');
     final newDistanceInMeter = LocationData.calculateDistanceInMeter(
       latitude1: lastPosition.latitude,
       longitude1: lastPosition.longitude,
       latitude2: locationData.latitude,
       longitude2: locationData.longitude,
     ).abs();
+    debugPrint('newDistanceInMeter: $newDistanceInMeter');
 
     if (newDistanceInMeter < locationData.accuracy) {
+      skipLocationDataWithHighestAccuracy(locationData);
       return;
     }
 
-    final durationLastLocationInSecond =
-        locationData.time.millisecondsSinceEpochToSeconde() -
-            lastPosition.time.millisecondsSinceEpochToSeconde();
-    var newSpeedInMeterPerSecond = durationLastLocationInSecond != 0
-        ? newDistanceInMeter / durationLastLocationInSecond
-        : 0.0;
-    newSpeedInMeterPerSecond =
-        newSpeedInMeterPerSecond > 2.7 ? newSpeedInMeterPerSecond : 0;
+    final checkMinDistanceAccuracy =
+        newDistanceInMeter > (distanceAccuracyFactor * locationData.accuracy);
+
+    if (!checkMinDistanceAccuracy) {
+      skipLocationDataWithHighestAccuracy(locationData);
+      return;
+    }
+
+    final minDistanceInMeterToCheck = minDistanceInMeter *
+        (activityTypeDetected == null ? distanceAccuracyFactor : 1.0);
+    final checkMinDistance = newDistanceInMeter > minDistanceInMeterToCheck;
+
+    final checkActivityTypeIsStill = activityTypeDetected != null &&
+        activityTypeDetected == ActivityType.still;
+
+    if (!checkMinDistance || checkActivityTypeIsStill) {
+      skipLocationDataWithHighestAccuracy(locationData);
+      return;
+    }
+
+    if (_startedAfterPaused) {
+      _startedAfterPaused = false;
+      addLocationDataWithZeroSpeed(locationData);
+      return;
+    }
+
+    final newSpeedInMeterPerSecond = calculateSpeed(
+      lastPosition,
+      locationData,
+    );
 
     if (maxSpeedInMeterPerSecond < newSpeedInMeterPerSecond) {
       maxSpeedInMeterPerSecond = newSpeedInMeterPerSecond;
     }
 
-    final checkMinDistanceAccuracy =
-        newDistanceInMeter > (distanceAccuracyFactor * locationData.accuracy);
-    // final checkOnBicycleHighConfidence = activityTypeDetected != null &&
-    //     activityTypeDetected == ActivityType.onBicycle &&
-    //     activityConfidenceDetected != null &&
-    //     activityConfidenceDetected == ActivityConfidence.high;
-
-    if (!checkMinDistanceAccuracy) {
-      lastPosition.speed = newSpeedInMeterPerSecond;
-      return;
-    }
-
-    final checkMinDistance = newDistanceInMeter >
-        (minDistanceInMeter *
-            (activityTypeDetected == null ? distanceAccuracyFactor : 1.0));
-    final checkActivityTypeIsStill = activityTypeDetected != null &&
-        activityTypeDetected == ActivityType.still;
-
-    if (!checkMinDistance || checkActivityTypeIsStill) {
-      lastPosition.speed = newSpeedInMeterPerSecond;
-      return;
-    }
-
-    distanceInMeter += newDistanceInMeter;
-    co2InGram += newDistanceInMeter.distanceInMeterToCo2g();
-
-    steps += newDistanceInMeter.distanceInMeterToSteps().toInt();
-
-    calorie = distanceInMeter.toCalorieFromDistanceInMeter();
-    if (listLocationData.length < 2) {
-      listLocationData.add(locationData);
-    } else {
-      var point = lastPosition;
-      var endPont = locationData;
-      var startPoint = listLocationData[listLocationData.length - 2];
-      var distance = LocationData.distanceToLine(point, startPoint, endPont);
-      if (distance >= minDistanceFromLineInMeter) {
-        listLocationData.add(locationData);
-      } else {
-        listLocationData[listLocationData.length - 1] = locationData;
-      }
-    }
-
-    if (durationInSecond > delayInSecondToCalculateAverageSpeed) {
-      averageSpeedInMeterPerSecond = distanceInMeter / durationInSecond;
-    }
+    addLocationDatValid(locationData);
   }
 
   @override
@@ -238,7 +222,6 @@ class Workout extends BaseWorkout {
     startDateInMilliSeconds = DateTime.now().toLocal().millisecondsSinceEpoch;
     _started = true;
     _timer?.cancel();
-
     await Gps.setSettings(
       smallestDisplacement: minDistanceInMeter,
       permissionRequestMessage: permissionRequestMessage,
@@ -325,5 +308,139 @@ class Workout extends BaseWorkout {
     if (this.countdown != 0) {
       this.countdown = countdown;
     }
+  }
+
+  @override
+  bool checkMaxAbsoluteAccuracy(LocationData locationData) {
+    if (locationData.accuracy < 0) {
+      return false;
+    }
+
+    if (locationData.accuracy > minAccuracyInMeter) {
+      return false;
+    }
+
+    return true;
+  }
+
+  @override
+  void addLocationDataWithZeroSpeed(
+    LocationData locationData,
+  ) {
+    locationData.speed = 0.0;
+    listLocationData.add(locationData);
+  }
+
+  @override
+  void addLocationDatValid(LocationData locationData) {
+    final lastPosition = listLocationData.last;
+    final newDistanceInMeter = LocationData.calculateDistanceInMeter(
+      latitude1: lastPosition.latitude,
+      longitude1: lastPosition.longitude,
+      latitude2: locationData.latitude,
+      longitude2: locationData.longitude,
+    ).abs();
+    distanceInMeter += newDistanceInMeter;
+    co2InGram = distanceInMeter.distanceInMeterToCo2g();
+
+    steps = newDistanceInMeter.distanceInMeterToSteps().toInt();
+
+    calorie = distanceInMeter.toCalorieFromDistanceInMeter();
+    if (listLocationData.length < 2) {
+      listLocationData.add(locationData);
+    } else {
+      final point = lastPosition;
+      final endPont = locationData;
+      final startPoint = listLocationData[listLocationData.length - 2];
+      final distance = LocationData.distanceToLine(point, startPoint, endPont);
+      if (distance >= minDistanceFromLineInMeter) {
+        listLocationData.add(locationData);
+      } else {
+        listLocationData[listLocationData.length - 1] = locationData;
+      }
+    }
+
+    if (durationInSecond > delayInSecondToCalculateAverageSpeed) {
+      averageSpeedInMeterPerSecond = distanceInMeter / durationInSecond;
+    }
+  }
+
+  @override
+  void skipLocationDataWithHighestAccuracy(LocationData locationData) {
+    final lastPosition = listLocationData.last;
+    final newDistanceInMeter = LocationData.calculateDistanceInMeter(
+      latitude1: lastPosition.latitude,
+      longitude1: lastPosition.longitude,
+      latitude2: locationData.latitude,
+      longitude2: locationData.longitude,
+    ).abs();
+
+    if (lastPosition.accuracy > locationData.accuracy &&
+        listLocationData.length > 1) {
+      final prelastPosition = listLocationData[listLocationData.length - 2];
+
+      final preDistanceInMeter = LocationData.calculateDistanceInMeter(
+        latitude1: prelastPosition.latitude,
+        longitude1: prelastPosition.longitude,
+        latitude2: lastPosition.latitude,
+        longitude2: lastPosition.longitude,
+      ).abs();
+
+      distanceInMeter =
+          distanceInMeter - preDistanceInMeter + newDistanceInMeter;
+      co2InGram = distanceInMeter.distanceInMeterToCo2g();
+
+      steps = distanceInMeter.distanceInMeterToSteps().toInt();
+
+      calorie = distanceInMeter.toCalorieFromDistanceInMeter();
+
+      if (durationInSecond > delayInSecondToCalculateAverageSpeed) {
+        averageSpeedInMeterPerSecond = distanceInMeter / durationInSecond;
+      }
+
+      final newSpeedInMeterPerSecond = calculateSpeed(
+        prelastPosition,
+        locationData,
+      );
+      locationData.speed = newSpeedInMeterPerSecond;
+
+      if (maxSpeedInMeterPerSecond < newSpeedInMeterPerSecond) {
+        maxSpeedInMeterPerSecond = newSpeedInMeterPerSecond;
+      }
+
+      listLocationData[listLocationData.length - 1] =
+          LocationData.fromLocationData(locationData);
+
+      return;
+    } else {
+      final newSpeedInMeterPerSecond = calculateSpeed(
+        lastPosition,
+        locationData,
+      );
+      lastPosition.speed = newSpeedInMeterPerSecond;
+      return;
+    }
+  }
+
+  @override
+  double calculateSpeed(
+    LocationData lastLocationData,
+    LocationData newLocationData,
+  ) {
+    final durationLastLocationInSecond =
+        newLocationData.time.millisecondsSinceEpochToSeconde() -
+            lastLocationData.time.millisecondsSinceEpochToSeconde();
+
+    final newDistanceInMeter = LocationData.calculateDistanceInMeter(
+      latitude1: lastLocationData.latitude,
+      longitude1: lastLocationData.longitude,
+      latitude2: newLocationData.latitude,
+      longitude2: newLocationData.longitude,
+    ).abs();
+
+    var newSpeedInMeterPerSecond = durationLastLocationInSecond != 0
+        ? newDistanceInMeter / durationLastLocationInSecond
+        : 0.0;
+    return newSpeedInMeterPerSecond > 2.0 ? newSpeedInMeterPerSecond : 0;
   }
 }

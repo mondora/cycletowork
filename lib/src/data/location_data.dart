@@ -43,6 +43,18 @@ class LocationData {
         time = map['time'],
         bearing = map['bearing'];
 
+  LocationData.fromLocationData(LocationData locationData)
+      : locationDataId = locationData.locationDataId,
+        userActivityId = locationData.userActivityId,
+        latitude = locationData.latitude,
+        longitude = locationData.longitude,
+        accuracy = locationData.accuracy,
+        altitude = locationData.altitude,
+        speed = locationData.speed,
+        speedAccuracy = locationData.speedAccuracy,
+        time = locationData.time,
+        bearing = locationData.bearing;
+
   Map<String, dynamic> toJson() => {
         'locationDataId': locationDataId,
         'userActivityId': userActivityId,

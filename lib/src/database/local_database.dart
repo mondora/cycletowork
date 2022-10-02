@@ -42,6 +42,13 @@ class LocalDatabase {
       }
       await batch.commit();
     }
+    if (oldVersion == 2) {
+      var batch = db.batch();
+      for (String q in TableDatabase.getAlterTablesV2ToV3()) {
+        batch.execute(q);
+      }
+      await batch.commit();
+    }
   }
 
   _onOpen(Database db) {
@@ -56,7 +63,7 @@ class LocalDatabase {
     var _path = join(databasesPath, dbName);
     return await openDatabase(
       _path,
-      version: 2,
+      version: 3,
       onConfigure: _onConfigure,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,

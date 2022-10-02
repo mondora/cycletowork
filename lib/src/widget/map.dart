@@ -290,7 +290,7 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
             var bounds = _boundsFromLatLngList(widget.listTrackingPosition);
             CameraUpdate cameraUpdate =
                 CameraUpdate.newLatLngBounds(bounds, widget.padding);
-            controller.moveCamera(cameraUpdate);
+            await controller.moveCamera(cameraUpdate);
             final uin8list = await controller.takeSnapshot();
             if (widget.onSnapshot != null) {
               widget.onSnapshot!(uin8list);

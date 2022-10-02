@@ -61,20 +61,22 @@ class _TrackingStopViewState extends State<TrackingStopView> {
   }
 
   _getCityName() async {
-    if (widget.workout.listLocationData.isEmpty) {
-      return;
-    }
-    var firstPosition = widget.workout.listLocationData.first;
-    final Locale appLocale = Localizations.localeOf(context);
-    var result = await Gps.getCityName(
-      firstPosition.latitude,
-      firstPosition.longitude,
-      localeIdentifier: appLocale.languageCode,
-    );
-    context.read<ViewModel>().setUserActivityCity(result);
-    setState(() {
-      city = result;
-    });
+    try {
+      if (widget.workout.listLocationData.isEmpty) {
+        return;
+      }
+      var firstPosition = widget.workout.listLocationData.first;
+      final Locale appLocale = Localizations.localeOf(context);
+      var result = await Gps.getCityName(
+        firstPosition.latitude,
+        firstPosition.longitude,
+        localeIdentifier: appLocale.languageCode,
+      );
+      context.read<ViewModel>().setUserActivityCity(result);
+      setState(() {
+        city = result;
+      });
+    } catch (_) {}
   }
 
   @override

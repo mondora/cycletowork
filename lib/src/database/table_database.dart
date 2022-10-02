@@ -29,4 +29,10 @@ class TableDatabase {
     list.addAll(LocationData.alterTableV1ToV2);
     return list;
   }
+
+  static List<String> getAlterTablesV2ToV3() {
+    List<String> list = [];
+    list.addAll(UserActivity.alterTableV2ToV3);
+    return list;
+  }
 }

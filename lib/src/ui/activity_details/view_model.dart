@@ -1,6 +1,6 @@
 import 'package:cycletowork/src/data/user_activity.dart';
-import 'package:cycletowork/src/ui/tracking_details/repository.dart';
-import 'package:cycletowork/src/ui/tracking_details/ui_state.dart';
+import 'package:cycletowork/src/ui/activity_details/repository.dart';
+import 'package:cycletowork/src/ui/activity_details/ui_state.dart';
 import 'package:cycletowork/src/utility/logger.dart';
 import 'package:flutter/material.dart';
 
@@ -34,6 +34,26 @@ class ViewModel extends ChangeNotifier {
     } finally {
       _uiState.loading = false;
       notifyListeners();
+    }
+  }
+
+  Future<bool> saveUserActivity() async {
+    _uiState.loading = true;
+    notifyListeners();
+    try {
+      final result = await _repository.saveUserActivity(
+        _uiState.userActivity!,
+      );
+      _uiState.loading = false;
+      notifyListeners();
+      return result;
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+      _uiState.loading = false;
+      notifyListeners();
+      return false;
     }
   }
 }

@@ -2,9 +2,10 @@ import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/chart_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/theme.dart';
-import 'package:cycletowork/src/ui/tracking_details/ui_state.dart';
-import 'package:cycletowork/src/ui/tracking_details/view_model.dart';
+import 'package:cycletowork/src/ui/activity_details/ui_state.dart';
+import 'package:cycletowork/src/ui/activity_details/view_model.dart';
 import 'package:cycletowork/src/utility/convert.dart';
+import 'package:cycletowork/src/widget/alart_dialog.dart';
 import 'package:cycletowork/src/widget/chart.dart';
 import 'package:cycletowork/src/widget/map.dart';
 import 'package:cycletowork/src/widget/progress_indicator.dart';
@@ -13,10 +14,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class TrackingDetailsView extends StatelessWidget {
+class ActivityDetailsView extends StatelessWidget {
   final UserActivity userActivity;
 
-  const TrackingDetailsView({
+  const ActivityDetailsView({
     Key? key,
     required this.userActivity,
   }) : super(key: key);
@@ -104,6 +105,75 @@ class TrackingDetailsView extends StatelessWidget {
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               ),
+              actions: [
+                if (userActivity.isUploaded != 1)
+                  IconButton(
+                    splashRadius: 25 * scale,
+                    onPressed: () async {
+                      final confirmed = await AppAlartDialog(
+                        context: context,
+                        title: 'Attenzione!',
+                        subtitle:
+                            'Non siamo riusciti a salvare questa attività.',
+                        body:
+                            'Assicurati di avere abilitato i dati cellulare e che la copertura di rete sia adeguata, poi clicca su "Riprova".',
+                        confirmLabel: 'Riprova',
+                        barrierDismissible: true,
+                      ).show();
+
+                      if (confirmed == true) {
+                        final result = await viewModel.saveUserActivity();
+                        final snackBar = SnackBar(
+                          backgroundColor: result
+                              ? colorSchemeExtension.success
+                              : colorScheme.error,
+                          content: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (!result)
+                                  Icon(
+                                    Icons.error,
+                                    color: colorScheme.onError,
+                                  ),
+                                if (!result)
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                Expanded(
+                                  child: Text(
+                                    result
+                                        ? 'LA TUA NUOVA ATTIVITÀ È STATA SALVATA!'
+                                        : 'PURTROPPO LA TUA NUOVA ATTIVITÀ NON È STATA SALVATA!'
+                                            .toUpperCase(),
+                                    style: textTheme.caption!.apply(
+                                      color: colorScheme.onError,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 15,
+                                    softWrap: true,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                    },
+                    icon: Icon(
+                      Icons.error,
+                      color: colorScheme.error,
+                      size: 25 * scale,
+                    ),
+                  ),
+                SizedBox(
+                  width: 10 * scale,
+                ),
+              ],
             ),
             body: SafeArea(
               child: ListView(

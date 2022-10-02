@@ -8,6 +8,7 @@ import 'package:cycletowork/src/data/workout.dart';
 import 'package:cycletowork/src/ui/dashboard/repository.dart';
 import 'package:cycletowork/src/ui/dashboard/ui_state.dart';
 import 'package:cycletowork/src/utility/activity_recognition.dart';
+import 'package:cycletowork/src/utility/gps.dart';
 import 'package:cycletowork/src/utility/logger.dart';
 import 'package:cycletowork/src/utility/notification.dart';
 import 'package:cycletowork/src/widget/chart.dart';
@@ -156,6 +157,33 @@ class ViewModel extends ChangeNotifier {
     }
   }
 
+  void refreshUserActivityFromLocal(String userActivityId) async {
+    final result = await _repository.refreshUserActivityFromLocal(
+      userActivityId,
+    );
+
+    if (result != null) {
+      var index = _uiState.listUserActivity.indexWhere(
+        (element) => element.userActivityId == userActivityId,
+      );
+      if (index > -1) {
+        _uiState.listUserActivity[index] = UserActivity.fromMap(
+          result.toJson(),
+        );
+      }
+
+      index = _uiState.listUserActivityFiltered.indexWhere(
+        (element) => element.userActivityId == userActivityId,
+      );
+      if (index > -1) {
+        _uiState.listUserActivityFiltered[index] = UserActivity.fromMap(
+          result.toJson(),
+        );
+      }
+      notifyListeners();
+    }
+  }
+
   Future<void> getListUserActivityFilterd({
     bool? justChallenges,
     ChartScaleType? chartScaleType,
@@ -216,7 +244,6 @@ class ViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       _challengeActive = await _repository.isChallengeActivity();
-      await _getCurrentLocation();
       _trackingUserActivity = UserActivity(
         userActivityId: const Uuid().v4(),
         uid: AppData.user!.uid,
@@ -233,6 +260,7 @@ class ViewModel extends ChangeNotifier {
         challengeId: _challengeActive?.challengeId,
         companyId: _challengeActive?.companyId,
         city: '',
+        isUploaded: 0,
       );
       _uiState.workout = Workout(
         ActivityType.onBicycle,
@@ -269,12 +297,7 @@ class ViewModel extends ChangeNotifier {
       );
       var permissionRequestMessage =
           'Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione';
-      await _repository.setGpsConfig(
-        context,
-        0,
-        permissionRequestMessage,
-      );
-      await _uiState.workout!.startWorkout();
+      await _uiState.workout!.startWorkout(context, permissionRequestMessage);
       _uiState.loading = false;
       _uiState.dashboardPageOption = DashboardPageOption.startCounter;
       notifyListeners();
@@ -665,7 +688,7 @@ class ViewModel extends ChangeNotifier {
 
   Future<LocationData?> _getCurrentLocation() async {
     _uiState.gpsStatus = await _repository.getGpsStatus();
-    if (_uiState.gpsStatus == _repository.gpsGranted) {
+    if (_uiState.gpsStatus == GpsStatus.granted) {
       var permissionRequestMessage =
           'Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione';
       return await _repository.getCurrentPosition(permissionRequestMessage);

@@ -483,4 +483,37 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
     );
     return true;
   }
+
+  @override
+  Future<void> setUploadedUserActivity(String userActivityId) async {
+    String whereCondition = 'userActivityId = ?';
+    List<dynamic> whereArgs = [userActivityId];
+
+    await _localDatabase.updateData(
+      tableName: UserActivity.tableName,
+      item: {'isUploaded': 1},
+      whereCondition: whereCondition,
+      whereArgs: whereArgs,
+    );
+  }
+
+  @override
+  Future<UserActivity?> getUserActivity(String userActivityId) async {
+    String whereCondition = 'userActivityId = ?';
+    List<dynamic> whereArgs = [userActivityId];
+
+    var map = await _localDatabase.getData(
+      tableName: UserActivity.tableName,
+      whereCondition: whereCondition,
+      whereArgs: whereArgs,
+    );
+    var result = map.map<UserActivity>(
+      (json) => UserActivity.fromMap(Map<String, dynamic>.from(json)),
+    );
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return null;
+    }
+  }
 }

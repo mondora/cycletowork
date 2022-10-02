@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:cycletowork/src/data/app_data.dart';
-import 'package:cycletowork/src/ui/tracking_details/view.dart';
+import 'package:cycletowork/src/ui/activity_details/view.dart';
 import 'package:cycletowork/src/ui/home/widget/confirm_challenge.dart';
 import 'package:cycletowork/src/ui/register_challenge/view.dart';
 import 'package:cycletowork/src/utility/convert.dart';
@@ -179,10 +179,13 @@ class _HomeViewState extends State<HomeView> {
                             onUserActivityClick: (userActivity) async {
                               await Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => TrackingDetailsView(
+                                  builder: (context) => ActivityDetailsView(
                                     userActivity: userActivity,
                                   ),
                                 ),
+                              );
+                              dashboardModel.refreshUserActivityFromLocal(
+                                userActivity.userActivityId,
                               );
                             },
                             onChallengeActiveClick: (challenge) async {

@@ -294,13 +294,17 @@ class ViewModel extends ChangeNotifier {
     if (isAdmin) {
       var admin = await _repository.isAdmin();
       if (!admin) {
-        await _repository.logout();
+        try {
+          await _repository.logout();
+        } catch (_) {}
         throw ('Non Sei un utente admin');
       }
     } else {
       var result = await _repository.getUserInfo();
       if (result == null) {
-        await _repository.logout();
+        try {
+          await _repository.logout();
+        } catch (_) {}
         throw ('È stata una anomalia, riprova.');
       }
       AppData.user = result;

@@ -14,7 +14,6 @@ import 'package:cycletowork/src/utility/gps.dart';
 import 'package:cycletowork/src/utility/logger.dart';
 import 'package:cycletowork/src/utility/user_auth.dart';
 import 'package:cycletowork/src/widget/chart.dart';
-import 'package:flutter/material.dart';
 
 class ServiceLocator implements RepositoryServiceLocator {
   @override
@@ -31,8 +30,6 @@ class ServiceLocator implements RepositoryServiceLocator {
 class Repository {
   late final RemoteService _remoteService;
   late final LocalDatabaseService _localDatabase;
-
-  final gpsGranted = GpsStatus.granted;
 
   Repository() {
     var serviceLocator = ServiceLocator();
@@ -409,6 +406,12 @@ class Repository {
     }
   }
 
+  Future<UserActivity?> refreshUserActivityFromLocal(
+    String userActivityId,
+  ) async {
+    return await _localDatabase.getUserActivity(userActivityId);
+  }
+
   Future<bool> saveUserActivity(
     UserActivity userActivity,
     List<LocationData> listLocationData,
@@ -418,9 +421,17 @@ class Repository {
         userActivity,
         listLocationData,
       );
+    } catch (e) {
+      Logger.error(e);
+      return false;
+    }
+    try {
       await _remoteService.saveUserActivity(
         userActivity,
         listLocationData,
+      );
+      await _localDatabase.setUploadedUserActivity(
+        userActivity.userActivityId,
       );
       return true;
     } catch (e) {
@@ -438,50 +449,7 @@ class Repository {
   ) async {
     return await Gps.getCurrentPosition(
       permissionRequestMessage: permissionRequestMessage,
-    );
-  }
-
-  Future setGpsConfig(
-    BuildContext context,
-    double smallestDisplacement,
-    String permissionRequestMessage,
-  ) async {
-    await Gps.setSettings(
-      smallestDisplacement: smallestDisplacement,
-      permissionRequestMessage: permissionRequestMessage,
-    );
-    var date = DateTime.now().toLocal();
-    await Gps.setNotificaion(
-      title: date.toDayInterval(context),
-      subtitle: date.toStartTime(context),
-    );
-  }
-
-  Stream<LocationData> startListenOnBackground() {
-    return Gps.startListenOnBackground();
-  }
-
-  double calculateDistanceInMeter(
-    LocationData startPosition,
-    LocationData stopPosition,
-  ) {
-    return LocationData.calculateDistanceInMeter(
-      latitude1: startPosition.latitude,
-      longitude1: startPosition.longitude,
-      latitude2: stopPosition.latitude,
-      longitude2: stopPosition.longitude,
-    );
-  }
-
-  double calculateDistanceInRadians(
-    LocationData startPosition,
-    LocationData stopPosition,
-  ) {
-    return LocationData.calculateDistanceInRadians(
-      latitude1: startPosition.latitude,
-      longitude1: startPosition.longitude,
-      latitude2: stopPosition.latitude,
-      longitude2: stopPosition.longitude,
+      smallestDisplacement: 8.0,
     );
   }
 

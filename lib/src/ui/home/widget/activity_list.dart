@@ -118,6 +118,7 @@ class ActivityList extends StatelessWidget {
                         date: dateString,
                         more: moreString,
                         isChallenge: isChallenge,
+                        isUploaded: activity.isUploaded == 1,
                         onTap: () => onUserActivityClick(activity),
                       );
                     },
@@ -313,6 +314,7 @@ class _ActivityCard extends StatelessWidget {
   final String date;
   final String more;
   final bool isChallenge;
+  final bool isUploaded;
   final Function()? onTap;
 
   const _ActivityCard({
@@ -322,12 +324,14 @@ class _ActivityCard extends StatelessWidget {
     required this.date,
     required this.more,
     required this.isChallenge,
+    required this.isUploaded,
     required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
+    final scale = context.read<AppData>().scale;
+    final colorScheme = Theme.of(context).colorScheme;
     final colorSchemeExtension =
         Theme.of(context).extension<ColorSchemeExtension>()!;
     final textSecondaryColor = colorSchemeExtension.textSecondary;
@@ -336,107 +340,123 @@ class _ActivityCard extends StatelessWidget {
     return Container(
       width: 300 * scale,
       margin: const EdgeInsets.only(right: 0.0),
-      child: Material(
-        color: Theme.of(context).colorScheme.background,
-        child: InkWell(
-          borderRadius: BorderRadius.all(
-            Radius.circular(15.0 * scale),
-          ),
-          child: Container(
-            padding: EdgeInsets.all(5 * scale),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Container(
-                  height: 57 * scale,
-                  width: 57 * scale,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10 * scale),
-                    ),
-                  ),
-                  child: map != null
-                      ? Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            ClipRRect(
-                              child: map!,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10 * scale),
-                              ),
-                            ),
-                            if (isChallenge)
-                              Align(
-                                alignment: Alignment.bottomRight,
-                                child: Container(
-                                  margin: EdgeInsets.only(
-                                    right: 6 * scale,
-                                    bottom: 4 * scale,
-                                  ),
-                                  child: SvgPicture.asset(
-                                    'assets/icons/challenge.svg',
-                                    height: 8.0 * scale,
-                                    width: 8.0 * scale,
-                                    color: infoColor,
+      child: Stack(
+        children: [
+          Material(
+            color: Theme.of(context).colorScheme.background,
+            child: InkWell(
+              borderRadius: BorderRadius.all(
+                Radius.circular(15.0 * scale),
+              ),
+              child: Container(
+                padding: EdgeInsets.all(5 * scale),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Container(
+                      height: 57 * scale,
+                      width: 57 * scale,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10 * scale),
+                        ),
+                      ),
+                      child: map != null
+                          ? Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                ClipRRect(
+                                  child: map!,
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10 * scale),
                                   ),
                                 ),
-                              ),
-                          ],
-                        )
-                      : Image.asset(
-                          'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking_small.png',
-                          fit: BoxFit.cover,
-                        ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(left: 20.0 * scale),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+                                if (isChallenge)
+                                  Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Container(
+                                      margin: EdgeInsets.only(
+                                        right: 6 * scale,
+                                        bottom: 4 * scale,
+                                      ),
+                                      child: SvgPicture.asset(
+                                        'assets/icons/challenge.svg',
+                                        height: 8.0 * scale,
+                                        width: 8.0 * scale,
+                                        color: infoColor,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            )
+                          : Image.asset(
+                              'assets/images/preview_${isChallenge ? 'challenge_' : ''}tracking_small.png',
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: 20.0 * scale),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SvgPicture.asset(
-                            'assets/icons/co2.svg',
-                            height: 24.0 * scale,
-                            width: 24.0 * scale,
-                            color: infoColor,
-                          ),
-                          SizedBox(
-                            width: 6 * scale,
-                          ),
-                          Text(
-                            co2,
-                            style:
-                                Theme.of(context).textTheme.bodyText1!.copyWith(
+                          Row(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/icons/co2.svg',
+                                height: 24.0 * scale,
+                                width: 24.0 * scale,
+                                color: infoColor,
+                              ),
+                              SizedBox(
+                                width: 6 * scale,
+                              ),
+                              Text(
+                                co2,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(
                                       color: infoColor,
                                       fontWeight: FontWeight.w700,
                                     ),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            date,
+                            style: Theme.of(context).textTheme.caption,
+                          ),
+                          SizedBox(
+                            width: 210 * scale,
+                            child: Text(
+                              more,
+                              overflow: TextOverflow.ellipsis,
+                              style:
+                                  Theme.of(context).textTheme.bodyText2!.apply(
+                                        color: textSecondaryColor,
+                                      ),
+                            ),
                           ),
                         ],
                       ),
-                      Text(
-                        date,
-                        style: Theme.of(context).textTheme.caption,
-                      ),
-                      SizedBox(
-                        width: 210 * scale,
-                        child: Text(
-                          more,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyText2!.apply(
-                                color: textSecondaryColor,
-                              ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
+                    )
+                  ],
+                ),
+              ),
+              onTap: onTap,
             ),
           ),
-          onTap: onTap,
-        ),
+          if (!isUploaded)
+            Positioned(
+              right: 20 * scale,
+              child: Icon(
+                Icons.error,
+                color: colorScheme.error,
+                size: 18 * scale,
+              ),
+            ),
+        ],
       ),
     );
   }
