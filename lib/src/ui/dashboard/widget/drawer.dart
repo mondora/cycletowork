@@ -1,5 +1,6 @@
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/ui/dashboard/ui_state.dart';
+import 'package:cycletowork/src/utility/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -114,11 +115,15 @@ class AppDrawer extends StatelessWidget {
                           Radius.circular(15.0 * scale),
                         ),
                         onTap: () async {
-                          final url = Uri.parse(fiabWorld);
-                          if (await canLaunchUrl(url)) {
-                            await launchUrl(
-                              url,
-                            );
+                          try {
+                            final url = Uri.parse(fiabWorld);
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(
+                                url,
+                              );
+                            }
+                          } catch (e) {
+                            Logger.error(e);
                           }
                         },
                         child: Container(

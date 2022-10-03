@@ -215,16 +215,20 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
   }
 
   Future _setMapStyle() async {
-    final controller = await _controller.future;
-    final brightnessTheme = Theme.of(context).brightness;
-    var darkMapStyle = context.read<AppData>().darkMapStyle;
-    if (brightnessTheme == Brightness.dark && darkMapStyle != null) {
-      controller.setMapStyle(darkMapStyle);
-    } else {
-      var lightMapStyle = context.read<AppData>().lightMapStyle;
-      if (lightMapStyle != null) {
-        controller.setMapStyle(lightMapStyle);
+    try {
+      final controller = await _controller.future;
+      final brightnessTheme = Theme.of(context).brightness;
+      var darkMapStyle = context.read<AppData>().darkMapStyle;
+      if (brightnessTheme == Brightness.dark && darkMapStyle != null) {
+        controller.setMapStyle(darkMapStyle);
+      } else {
+        var lightMapStyle = context.read<AppData>().lightMapStyle;
+        if (lightMapStyle != null) {
+          controller.setMapStyle(lightMapStyle);
+        }
       }
+    } catch (e) {
+      Logger.error(e);
     }
   }
 

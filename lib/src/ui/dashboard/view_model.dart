@@ -478,6 +478,15 @@ class ViewModel extends ChangeNotifier {
         challengeRegistry,
       );
 
+      if (_uiState.userDepartmentClassification == null) {
+        if (nextPage == true) {
+          _uiState.listDepartmentClassificationPage--;
+        }
+        _uiState.refreshClassificationLoading = false;
+        notifyListeners();
+        return;
+      }
+
       if (nextPage == true) {
         _uiState.listDepartmentClassificationPage++;
       } else {
