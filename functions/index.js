@@ -62,6 +62,9 @@ admin.initializeApp();
 
 exports.onCreateUser = functions
     .region(Constant.appRegion)
+    .runWith({
+        minInstances: 2,
+    })
     .auth.user()
     .onCreate(async (user) => {
         await createUser(user);
@@ -688,6 +691,9 @@ exports.registerChallenge = functions
 
 exports.saveUserActivity = functions
     .region(Constant.appRegion)
+    .runWith({
+        minInstances: 5,
+    })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
         const userActivity = data.userActivity;
