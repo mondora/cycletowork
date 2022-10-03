@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 class ViewModel extends ChangeNotifier {
   final bool isAdmin;
-  bool _isWatingForGetUserInfo = false;
+  final int _counterTryGetUserInfo = 10;
   final _repository = Repository();
 
   final _uiState = UiState();
@@ -241,7 +241,7 @@ class ViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _tryGetUserInfo() async {
+  Future<void> _tryGetUserInfo({int counter = 0}) async {
     try {
       var userInfoLocal = await _repository.getUserInfoFromLocal();
       if (userInfoLocal != null) {
@@ -255,39 +255,32 @@ class ViewModel extends ChangeNotifier {
       Logger.error(e);
     }
 
-    int _counterTryGetUserInfo = 10;
-    _isWatingForGetUserInfo = false;
-    Timer.periodic(const Duration(seconds: 1), (timer) async {
-      if (_isWatingForGetUserInfo) {
-        return;
-      }
-      _isWatingForGetUserInfo = true;
-      try {
-        debugPrint('_tryGetUserInfo');
-        debugPrint(_counterTryGetUserInfo.toString());
-        await _getInitialInfo();
-        _uiState.pageOption = PageOption.home;
-        _uiState.loading = false;
-        timer.cancel();
-        _isWatingForGetUserInfo = false;
+    try {
+      debugPrint('_getInitialInfo => counter: $counter');
+      await Future.delayed(const Duration(milliseconds: 1000));
+      await _getInitialInfo();
+      _uiState.pageOption = PageOption.home;
+      _uiState.loading = false;
+      notifyListeners();
+      return;
+    } catch (e) {
+      if (counter < _counterTryGetUserInfo) {
+        debugPrint('_getInitialInfo => e: ${e.toString()}');
+        counter++;
+        return await _tryGetUserInfo(counter: counter);
+      } else {
+        debugPrint(e.toString());
+        try {
+          await _repository.logout();
+        } catch (_) {}
+        Logger.error(e);
+        _uiState.errorMessage = e.toString();
+        _uiState.error = true;
+        _uiState.pageOption = PageOption.logout;
         notifyListeners();
-      } catch (e) {
-        if (_counterTryGetUserInfo == 0) {
-          try {
-            await _repository.logout();
-          } catch (_) {}
-          Logger.error(e);
-          _uiState.pageOption = PageOption.logout;
-          timer.cancel();
-          notifyListeners();
-          _isWatingForGetUserInfo = false;
-          _uiState.loading = false;
-        }
-      } finally {
-        _isWatingForGetUserInfo = false;
-        _counterTryGetUserInfo--;
+        _uiState.loading = false;
       }
-    });
+    }
   }
 
   Future<void> _getInitialInfo() async {
@@ -302,16 +295,21 @@ class ViewModel extends ChangeNotifier {
     } else {
       var result = await _repository.getUserInfo();
       if (result == null) {
-        try {
-          await _repository.logout();
-        } catch (_) {}
         throw ('È stata una anomalia, riprova.');
       }
       AppData.user = result;
-      await _repository.saveDeviceToken();
+      try {
+        await _repository.saveDeviceToken();
+      } catch (e) {
+        Logger.error(e);
+      }
       if (displayName != null && displayName != '') {
         AppData.user!.displayName = displayName;
-        await _repository.updateUserDisplayName(displayName!);
+        try {
+          await _repository.updateUserDisplayName(displayName!);
+        } catch (e) {
+          Logger.error(e);
+        }
         displayName = null;
       }
     }

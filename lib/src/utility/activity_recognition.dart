@@ -9,7 +9,7 @@ enum PermissionRequestResult {
   denied,
 
   /// Occurs when the user denies the permission once and chooses not to ask again.
-  permanentyDenied,
+  permanentlyDenied,
 }
 
 class ActivityRecognition {
@@ -25,28 +25,27 @@ class ActivityRecognition {
 
   static Future<PermissionRequestResult> requestPermission() async {
     final result = await activityRecognition.requestPermission();
+    final resultName = result.name.toLowerCase().replaceAll('_', '');
     return PermissionRequestResult.values.firstWhere(
-      (element) => element.name.toLowerCase() == result.name.toLowerCase(),
+      (element) => element.name.toLowerCase() == resultName,
     );
   }
 
   static Stream<ActivityRecognitionResult> activityStream() {
-    // activityRecognition.activityStream.listen((event) {
-    //   print(event.type);
-    // });
-    return activityRecognition.activityStream.map(
-      (activity) => ActivityRecognitionResult(
+    return activityRecognition.activityStream.map((activity) {
+      final activityTypeName =
+          activity.type.name.toLowerCase().replaceAll('_', '');
+      final activityConfidenceName =
+          activity.confidence.name.toLowerCase().replaceAll('_', '');
+      return ActivityRecognitionResult(
         activityType: ActivityType.values.firstWhere(
-          (element) =>
-              element.name.toLowerCase() == activity.type.name.toLowerCase(),
+          (element) => element.name.toLowerCase() == activityTypeName,
         ),
         activityConfidence: ActivityConfidence.values.firstWhere(
-          (element) =>
-              element.name.toLowerCase() ==
-              activity.confidence.name.toLowerCase(),
+          (element) => element.name.toLowerCase() == activityConfidenceName,
         ),
-      ),
-    );
+      );
+    });
   }
 }
 

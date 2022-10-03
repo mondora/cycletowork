@@ -240,7 +240,7 @@ class _ChallengeRegisterdData extends StatelessWidget {
                     Text(
                       challengeRegistry.challengeName,
                       style: textTheme.headline6,
-                      maxLines: 1,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],

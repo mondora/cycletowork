@@ -28,7 +28,7 @@ class AppColor {
   // static const String _darkColorSchemeKey = 'darkColorScheme';
 
   static get lightPrimary => 0xFFFFDA03;
-  static get lightOnPrimary => 0xFFFFFFFF;
+  static get lightOnPrimary => 0xFF000000;
   static get lightPrimaryContainer => 0xFFFFF34F;
   static get lightOnPrimaryContainer => 0xFFFFC803;
   static get lightSecondary => 0xFF006AA7;
@@ -54,7 +54,7 @@ class AppColor {
   static get lightActionSelected => 0x1A000000;
 
   static get darkPrimary => 0xFFFFDA03;
-  static get darkOnPrimary => 0xFFFFFFFF;
+  static get darkOnPrimary => 0xFF000000;
   static get darkPrimaryContainer => 0xFFFFF34F;
   static get darkOnPrimaryContainer => 0xFFFFC803;
   static get darkSecondary => 0xFF006AA7;

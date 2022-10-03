@@ -323,19 +323,19 @@ class _RegisterChallengCyclistViewState
                             context,
                             hideSelectedTextCount: true,
                             barrierDismissible: true,
-                            hideCloseIcon: true,
+                            hideCloseIcon: false,
                             backgroundColor: colorScheme.background,
                             themeData: FilterListThemeData(context).copyWith(
                               borderRadius: 15.0 * scale,
                               headerTheme: HeaderThemeData(
+                                closeIconColor: colorScheme.onBackground,
                                 searchFieldBorderRadius: 15.0 * scale,
                                 searchFieldInputBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(15.0 * scale),
                                   ),
                                 ),
-                                searchFieldHintText:
-                                    'Cerca la tua azienda qua ...',
+                                searchFieldHintText: 'Cerca la tua azienda ...',
                                 backgroundColor: colorScheme.background,
                                 searchFieldBackgroundColor:
                                     colorScheme.brightness == Brightness.dark
@@ -352,6 +352,13 @@ class _RegisterChallengCyclistViewState
                                 labelPadding: EdgeInsets.symmetric(
                                   horizontal: 15.0 * scale,
                                 ),
+                                textStyle: textTheme.bodyText2,
+                                selectedTextStyle: textTheme.bodyText2!.apply(
+                                  color:
+                                      colorScheme.brightness == Brightness.dark
+                                          ? colorScheme.onPrimary
+                                          : colorScheme.onSecondary,
+                                ),
                               ),
                               controlBarButtonTheme:
                                   ControlButtonBarThemeData(context).copyWith(
@@ -366,6 +373,10 @@ class _RegisterChallengCyclistViewState
                                 controlButtonTheme: ControlButtonThemeData(
                                   primaryButtonBackgroundColor: color,
                                   textStyle: textTheme.button,
+                                  primaryButtonTextStyle:
+                                      textTheme.button!.apply(
+                                    color: colorScheme.onPrimary,
+                                  ),
                                 ),
                               ),
                             ),

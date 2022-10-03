@@ -72,7 +72,7 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
         'assets/icons/build.svg',
         height: 18.0 * scale,
         width: 18.0 * scale,
-        color: colorScheme.onPrimary,
+        color: colorScheme.onSecondary,
       ),
     );
     final valueWidget = CircleAvatar(
@@ -81,7 +81,7 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
         'assets/icons/build.svg',
         height: 18.0 * scale,
         width: 18.0 * scale,
-        color: colorScheme.onPrimary,
+        color: colorScheme.onSecondary,
       ),
     );
     final isRankingCo2 =
@@ -454,7 +454,7 @@ class _Card extends StatelessWidget {
                       'assets/icons/build.svg',
                       height: 24.0 * scale,
                       width: 24.0 * scale,
-                      color: colorScheme.onPrimary,
+                      color: colorScheme.onSecondary,
                     ),
                   ),
                 ),

@@ -440,9 +440,9 @@ packages:
       name: google_maps_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.0"
+    version: "2.2.1"
   google_maps_flutter_android:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: google_maps_flutter_android
       url: "https://pub.dartlang.org"
@@ -456,7 +456,7 @@ packages:
     source: hosted
     version: "2.1.11"
   google_maps_flutter_platform_interface:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: google_maps_flutter_platform_interface
       url: "https://pub.dartlang.org"

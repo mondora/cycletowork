@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/location_data.dart';
+import 'package:cycletowork/src/utility/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -286,14 +287,20 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
             infoWindow: InfoWindow.noText,
           );
           _markers.add(stopMark);
-          Timer(const Duration(milliseconds: 500), () async {
-            var bounds = _boundsFromLatLngList(widget.listTrackingPosition);
-            CameraUpdate cameraUpdate =
-                CameraUpdate.newLatLngBounds(bounds, widget.padding);
-            await controller.moveCamera(cameraUpdate);
-            final uin8list = await controller.takeSnapshot();
-            if (widget.onSnapshot != null) {
-              widget.onSnapshot!(uin8list);
+          Timer(const Duration(milliseconds: 1000), () async {
+            try {
+              var bounds = _boundsFromLatLngList(widget.listTrackingPosition);
+              CameraUpdate cameraUpdate =
+                  CameraUpdate.newLatLngBounds(bounds, widget.padding);
+              await controller.moveCamera(cameraUpdate);
+              final uin8list = await controller.takeSnapshot();
+              if (widget.onSnapshot != null) {
+                Timer(const Duration(milliseconds: 500), () async {
+                  widget.onSnapshot!(uin8list);
+                });
+              }
+            } catch (e) {
+              Logger.error(e);
             }
           });
         }

@@ -101,7 +101,10 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
         ? listCyclistClassificationRankingCo2.isEmpty
             ? userValues.color
             : listCyclistClassificationRankingCo2
-                .firstWhere((e) => e.email == userValues.email)
+                .firstWhere(
+                  (e) => e.email == userValues.email,
+                  orElse: (() => userValues),
+                )
                 .color
         : null;
 

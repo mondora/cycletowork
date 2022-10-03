@@ -62,18 +62,18 @@ class Repository {
       return null;
     }
     try {
+      var user = await _remoteService.getUserInfo();
       var localUser = await _localDatabase.getUserInfo(uid);
       if (localUser == null) {
         var listUserActivity = await _remoteService.getListUserActivity(
-          pageSize: 200,
+          pageSize: 500,
         );
         for (var userActivity in listUserActivity) {
           await _localDatabase.saveUserActivity(userActivity, []);
         }
       }
-      var user = await _remoteService.getUserInfo();
       await _localDatabase.saveUserInfo(user);
-      FirebaseCrashlytics.instance.setUserIdentifier(uid);
+      await FirebaseCrashlytics.instance.setUserIdentifier(uid);
       return user;
     } catch (e) {
       return null;

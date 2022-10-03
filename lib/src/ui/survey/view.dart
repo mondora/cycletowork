@@ -242,7 +242,7 @@ class _SurveyViewState extends State<SurveyView> {
           Column(
             children: [
               SizedBox(
-                width: 155.0 * scale,
+                width: 170.0 * scale,
                 height: 36.0 * scale,
                 child: ElevatedButton(
                   onPressed: saveButtonIsEnabled
@@ -270,7 +270,7 @@ class _SurveyViewState extends State<SurveyView> {
                   ),
                   child: Text(
                     'SALVA',
-                    style: textTheme.button!.copyWith(
+                    style: textTheme.bodyText2!.copyWith(
                       color: colorScheme.onSecondary,
                     ),
                   ),

@@ -111,6 +111,7 @@ class RegisterChallengSelectTypeView extends StatelessWidget {
                       Icon(
                         Icons.arrow_forward_outlined,
                         size: 20 * scale,
+                        color: colorScheme.onSecondary,
                       ),
                     ],
                   ),
@@ -203,6 +204,7 @@ class RegisterChallengSelectTypeView extends StatelessWidget {
                       Icon(
                         Icons.arrow_forward_outlined,
                         size: 20 * scale,
+                        color: colorScheme.onSecondary,
                       ),
                     ],
                   ),

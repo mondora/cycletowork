@@ -69,7 +69,7 @@ class _DepartmentClassificationViewState
         'assets/icons/build.svg',
         height: 18.0 * scale,
         width: 18.0 * scale,
-        color: colorScheme.onPrimary,
+        color: colorScheme.onSecondary,
       ),
     );
     final valueWidget = CircleAvatar(
@@ -78,7 +78,7 @@ class _DepartmentClassificationViewState
         'assets/icons/build.svg',
         height: 18.0 * scale,
         width: 18.0 * scale,
-        color: colorScheme.onPrimary,
+        color: colorScheme.onSecondary,
       ),
     );
 
@@ -333,7 +333,7 @@ class _Card extends StatelessWidget {
                       'assets/icons/build.svg',
                       height: 24.0 * scale,
                       width: 24.0 * scale,
-                      color: colorScheme.onPrimary,
+                      color: colorScheme.onSecondary,
                     ),
                   ),
                 ),

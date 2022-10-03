@@ -52,7 +52,9 @@ class LoginView extends StatelessWidget {
                         margin: EdgeInsets.only(top: 20.0 * scale),
                         child: Text(
                           'Hai già un account?'.toUpperCase(),
-                          style: Theme.of(context).textTheme.caption,
+                          style: Theme.of(context).textTheme.caption!.apply(
+                                color: colorScheme.onPrimary,
+                              ),
                         ),
                       ),
                       Container(
@@ -73,7 +75,9 @@ class LoginView extends StatelessWidget {
                         margin: EdgeInsets.only(top: 24.0 * scale),
                         child: Text(
                           'Oppure:'.toUpperCase(),
-                          style: Theme.of(context).textTheme.caption,
+                          style: Theme.of(context).textTheme.caption!.apply(
+                                color: colorScheme.onPrimary,
+                              ),
                         ),
                       ),
                       // Container(

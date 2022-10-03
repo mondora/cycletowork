@@ -74,83 +74,76 @@ class CameraView extends StatelessWidget {
               body: SafeArea(
                 child: Container(
                   color: Colors.black,
-                  child: Column(
+                  child: Stack(
+                    fit: StackFit.expand,
                     children: [
-                      Container(
-                        color: Colors.transparent,
-                        alignment: Alignment.centerLeft,
-                        height: 50 * scale,
+                      Image.file(
+                        File(viewModel.uiState.imagePath!),
                       ),
-                      SizedBox(
-                        // height: 500,
-                        child: Stack(
-                          children: [
-                            Image.file(
-                              File(viewModel.uiState.imagePath!),
-                            ),
-                            Image.asset(
-                              'assets/images/camera_image_filter.png',
-                              fit: BoxFit.cover,
-                            ),
-                            Positioned(
-                              right: 0,
-                              left: 0,
-                              bottom: 0,
-                              child: Container(
-                                height: 80.0 * scale,
-                                padding: EdgeInsets.only(
-                                  top: 20 * scale,
+                      Positioned(
+                        top: 50.0 * scale,
+                        right: 0,
+                        left: 0,
+                        child: Image.asset(
+                          'assets/images/camera_image_filter.png',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                        right: 0,
+                        left: 0,
+                        bottom: 0,
+                        child: Container(
+                          height: 100.0 * scale,
+                          padding: EdgeInsets.only(
+                            top: 20 * scale,
+                          ),
+                          color: Colors.black,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.all(16.0 * scale),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(15.0 * scale),
+                                    ),
+                                  ),
+                                  foregroundColor: colorScheme.onSecondary,
                                 ),
-                                color: Colors.black,
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    TextButton(
-                                      style: TextButton.styleFrom(
-                                        padding: EdgeInsets.all(16.0 * scale),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(15.0 * scale),
-                                          ),
-                                        ),
-                                        foregroundColor: colorScheme.onPrimary,
-                                      ),
-                                      onPressed: viewModel.clearPhoto,
-                                      child: Text(
-                                        'Scatta di nuovo',
-                                        style: textTheme.bodyText1!.copyWith(
-                                          color: colorScheme.onPrimary,
-                                        ),
-                                      ),
-                                    ),
-                                    TextButton(
-                                      style: TextButton.styleFrom(
-                                        padding: EdgeInsets.all(16.0 * scale),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(15.0 * scale),
-                                          ),
-                                        ),
-                                        foregroundColor: colorScheme.onPrimary,
-                                      ),
-                                      onPressed: () => Navigator.pop(
-                                        context,
-                                        viewModel.uiState.imagePath,
-                                      ),
-                                      child: Text(
-                                        'Usa foto',
-                                        style: textTheme.bodyText1!.copyWith(
-                                          color: colorScheme.onPrimary,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                onPressed: viewModel.clearPhoto,
+                                child: Text(
+                                  'Scatta di nuovo',
+                                  style: textTheme.bodyText1!.copyWith(
+                                    color: colorScheme.onSecondary,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.all(16.0 * scale),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(15.0 * scale),
+                                    ),
+                                  ),
+                                  foregroundColor: colorScheme.onSecondary,
+                                ),
+                                onPressed: () => Navigator.pop(
+                                  context,
+                                  viewModel.uiState.imagePath,
+                                ),
+                                child: Text(
+                                  'Usa foto',
+                                  style: textTheme.bodyText1!.copyWith(
+                                    color: colorScheme.onSecondary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -164,121 +157,126 @@ class CameraView extends StatelessWidget {
             body: SafeArea(
               child: Container(
                 color: Colors.black,
-                child: Column(
+                child: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    Container(
-                      color: Colors.transparent,
-                      alignment: Alignment.centerLeft,
-                      height: 50 * scale,
-                      padding: EdgeInsets.only(left: 17.0 * scale),
+                    CameraPreview(viewModel.controller!),
+                    Positioned(
+                      top: 50 * scale,
+                      right: 0,
+                      left: 0,
+                      child: Image.asset(
+                        'assets/images/camera_filter.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      left: 0,
                       child: Container(
-                        height: 40.0 * scale,
-                        width: 50.0 * scale,
-                        padding: EdgeInsets.only(right: 4.0 * scale),
-                        color: Colors.transparent,
-                        child: Material(
+                        color: Colors.black,
+                        alignment: Alignment.centerLeft,
+                        height: 50 * scale,
+                        padding: EdgeInsets.only(left: 17.0 * scale),
+                        child: Container(
+                          height: 40.0 * scale,
+                          width: 50.0 * scale,
+                          padding: EdgeInsets.only(right: 4.0 * scale),
                           color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(10.0 * scale),
-                          child: InkWell(
+                          child: Material(
+                            color: Colors.transparent,
                             borderRadius: BorderRadius.circular(10.0 * scale),
-                            onTap: () => viewModel.toggleFlashCamera(),
-                            child: Icon(
-                              _getFlashIcon(viewModel.uiState.flashCamera),
-                              size: 25 * scale,
-                              color: colorScheme.primary,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(10.0 * scale),
+                              onTap: () => viewModel.toggleFlashCamera(),
+                              child: Icon(
+                                _getFlashIcon(viewModel.uiState.flashCamera),
+                                size: 25 * scale,
+                                color: colorScheme.primary,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      // height: 500,
-                      child: Stack(
-                        children: [
-                          CameraPreview(viewModel.controller!),
-                          Image.asset(
-                            'assets/images/camera_filter.png',
-                            fit: BoxFit.cover,
-                          ),
-                          Positioned(
-                            right: 0,
-                            left: 0,
-                            bottom: 0,
-                            child: Container(
-                              color: Colors.black,
-                              height: 100 * scale,
-                              width: 66 * scale,
-                              padding: EdgeInsets.only(top: 34 * scale),
-                              child: FittedBox(
-                                child: FloatingActionButton(
+                    Positioned(
+                      right: 0,
+                      left: 0,
+                      bottom: 0,
+                      child: Container(
+                        color: Colors.black,
+                        height: 120 * scale,
+                        width: 66 * scale,
+                        padding: EdgeInsets.only(
+                          top: 34 * scale,
+                          bottom: 20.0 * scale,
+                        ),
+                        child: FittedBox(
+                          child: FloatingActionButton(
+                            backgroundColor: colorScheme.primary,
+                            onPressed: () async {
+                              await viewModel.takePicture();
+                            },
+                            child: CircleAvatar(
+                              radius: 66 * scale / 2 - 10,
+                              backgroundColor: Colors.black,
+                              child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: CircleAvatar(
                                   backgroundColor: colorScheme.primary,
-                                  onPressed: () async {
-                                    await viewModel.takePicture();
-                                  },
-                                  child: CircleAvatar(
-                                    radius: 66 * scale / 2 - 10,
-                                    backgroundColor: Colors.black,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(2.0),
-                                      child: CircleAvatar(
-                                        backgroundColor: colorScheme.primary,
-                                      ),
-                                    ),
-                                  ),
                                 ),
                               ),
                             ),
                           ),
-                          Positioned(
-                            right: 0,
-                            left: 0,
-                            bottom: 0,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                    padding: EdgeInsets.all(16.0 * scale),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(15.0 * scale),
-                                      ),
-                                    ),
-                                    foregroundColor: colorScheme.onPrimary,
-                                  ),
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text(
-                                    'Annulla',
-                                    style: textTheme.bodyText1!.copyWith(
-                                      color: colorScheme.onPrimary,
-                                    ),
-                                  ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      right: 0,
+                      left: 0,
+                      bottom: 20 * scale,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.all(16.0 * scale),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(15.0 * scale),
                                 ),
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                    padding: EdgeInsets.all(16.0 * scale),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(15.0 * scale),
-                                      ),
-                                    ),
-                                    foregroundColor: colorScheme.onPrimary,
-                                  ),
-                                  onPressed:
-                                      viewModel.uiState.listCamera.length < 2
-                                          ? null
-                                          : viewModel.toggleCamera,
-                                  child: Icon(
-                                    Icons.flip_camera_ios_outlined,
-                                    size: 30.0 * scale,
-                                    color:
-                                        viewModel.uiState.listCamera.length < 2
-                                            ? Colors.grey
-                                            : colorScheme.primary,
-                                  ),
+                              ),
+                              foregroundColor: colorScheme.onSecondary,
+                            ),
+                            onPressed: () => Navigator.pop(context),
+                            child: Text(
+                              'Annulla',
+                              style: textTheme.bodyText1!.copyWith(
+                                color: colorScheme.onSecondary,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.all(16.0 * scale),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(15.0 * scale),
                                 ),
-                              ],
+                              ),
+                              foregroundColor: colorScheme.onSecondary,
+                            ),
+                            onPressed: viewModel.uiState.listCamera.length < 2
+                                ? null
+                                : viewModel.toggleCamera,
+                            child: Icon(
+                              Icons.flip_camera_ios_outlined,
+                              size: 30.0 * scale,
+                              color: viewModel.uiState.listCamera.length < 2
+                                  ? Colors.grey
+                                  : colorScheme.primary,
                             ),
                           ),
                         ],

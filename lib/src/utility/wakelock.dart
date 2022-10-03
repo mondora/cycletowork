@@ -1,12 +1,21 @@
+import 'package:cycletowork/src/utility/logger.dart';
 import 'package:wakelock/wakelock.dart';
 
 class WakeLock {
   static Future<void> enable() async {
-    await Wakelock.enable();
+    try {
+      await Wakelock.enable();
+    } catch (e) {
+      Logger.error(e);
+    }
   }
 
   static Future<void> disable() async {
-    await Wakelock.disable();
+    try {
+      await Wakelock.disable();
+    } catch (e) {
+      Logger.error(e);
+    }
   }
 
   static Future<bool> get enabled async {

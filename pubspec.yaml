@@ -1,7 +1,7 @@
 name: cycletowork
 description: A new open source app for track bicycle.
 publish_to: 'https://github.com/mondora/cycletowork'
-version: 1.0.12+54
+version: 1.0.13+56
 
 environment:
     sdk: '>=2.18.0 <3.0.0'
@@ -27,7 +27,9 @@ dependencies:
     flutter_svg: ^1.1.4
     sliding_up_panel: ^2.0.0+1
     charts_flutter: ^0.12.0
-    google_maps_flutter: ^2.2.0
+    google_maps_flutter: ^2.2.1
+    google_maps_flutter_android: ^2.1.10
+    google_maps_flutter_platform_interface: ^2.2.1
     maps_toolkit: ^2.0.1
     shimmer: ^2.0.0
     flutter_inset_box_shadow: ^1.0.8

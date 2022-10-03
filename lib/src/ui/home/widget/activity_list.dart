@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
 
 class ActivityList extends StatelessWidget {
   final List<UserActivity> userActivity;
@@ -124,46 +123,38 @@ class ActivityList extends StatelessWidget {
                     },
                   ),
                 )
-              : Container(
-                  margin: EdgeInsets.only(left: 24.0 * scale, top: 8.0 * scale),
-                  height: 65 * scale,
-                  child: ListView(
-                    physics: const ScrollPhysics(),
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      SizedBox(
-                        height: 65 * scale,
-                        child: ListView.builder(
-                          physics: const ScrollPhysics(),
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: listChallengeActive.length,
-                          itemBuilder: (context, index) {
-                            var challenge = listChallengeActive[index];
-                            return _NewChallengeCard(
-                              title: challenge.name,
-                              isFiabChallenge: challenge.fiabEdition,
-                              onTap: () => onChallengeActiveClick(challenge),
-                            );
-                          },
-                        ),
+              : listChallengeActive.isNotEmpty
+                  ? Container(
+                      margin:
+                          EdgeInsets.only(left: 24.0 * scale, top: 8.0 * scale),
+                      height: 65 * scale,
+                      child: ListView(
+                        physics: const ScrollPhysics(),
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          SizedBox(
+                            height: 65 * scale,
+                            child: ListView.builder(
+                              physics: const ScrollPhysics(),
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: listChallengeActive.length,
+                              itemBuilder: (context, index) {
+                                var challenge = listChallengeActive[index];
+                                return _NewChallengeCard(
+                                  title: challenge.name,
+                                  isFiabChallenge: challenge.fiabEdition,
+                                  onTap: () =>
+                                      onChallengeActiveClick(challenge),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                      Shimmer.fromColors(
-                        baseColor: Colors.grey.withOpacity(0.60),
-                        highlightColor: Colors.white,
-                        direction: ShimmerDirection.ltr,
-                        child: const _EmptyActivityCard(),
-                      ),
-                      Shimmer.fromColors(
-                        baseColor: Colors.grey.withOpacity(0.70),
-                        highlightColor: Colors.white,
-                        direction: ShimmerDirection.ltr,
-                        child: const _EmptyActivityCard(),
-                      ),
-                    ],
-                  ),
-                ),
+                    )
+                  : Container(),
         ],
       ),
     );
@@ -224,84 +215,6 @@ class _NewChallengeCard extends StatelessWidget {
             ],
           ),
           onTap: onTap,
-        ),
-      ),
-    );
-  }
-}
-
-class _EmptyActivityCard extends StatelessWidget {
-  const _EmptyActivityCard({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    var scale = context.read<AppData>().scale;
-    return Container(
-      width: 300 * scale,
-      margin: const EdgeInsets.only(right: 0.0),
-      child: Container(
-        padding: EdgeInsets.all(5 * scale),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              height: 57 * scale,
-              width: 57 * scale,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10 * scale),
-                ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 10.0 * scale),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 100.0 * scale,
-                    height: 7.0 * scale,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10 * scale),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5 * scale,
-                  ),
-                  Container(
-                    width: 200.0 * scale,
-                    height: 7.0 * scale,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10 * scale),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5 * scale,
-                  ),
-                  Container(
-                    width: 200.0 * scale,
-                    height: 7.0 * scale,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10 * scale),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
         ),
       ),
     );

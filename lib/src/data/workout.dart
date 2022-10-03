@@ -21,7 +21,7 @@ abstract class BaseWorkout {
   late double maxSpeedInMeterPerSecond;
   late double co2InGram;
   late double minDistanceInMeter;
-  late double minAccuracyInMeter;
+  // late double minAccuracyInMeter;
   late double distanceAccuracyFactor;
   late double minDistanceFromLineInMeter;
   late double delayInSecondToCalculateAverageSpeed;
@@ -72,23 +72,23 @@ abstract class BaseWorkout {
     }
   }
 
-  double _getMinAccuracyInMeterForactivityType(
-      ActivityType activityTypeTarget) {
-    switch (activityTypeTarget) {
-      case ActivityType.inVehicle:
-        return 150.0;
-      case ActivityType.onBicycle:
-        return 100.0;
-      case ActivityType.running:
-        return 10.0;
-      case ActivityType.still:
-        return 10.0;
-      case ActivityType.walking:
-        return 10.0;
-      case ActivityType.unknown:
-        return 10.0;
-    }
-  }
+  // double _getMinAccuracyInMeterForactivityType(
+  //     ActivityType activityTypeTarget) {
+  //   switch (activityTypeTarget) {
+  //     case ActivityType.inVehicle:
+  //       return 150.0;
+  //     case ActivityType.onBicycle:
+  //       return 100.0;
+  //     case ActivityType.running:
+  //       return 10.0;
+  //     case ActivityType.still:
+  //       return 10.0;
+  //     case ActivityType.walking:
+  //       return 10.0;
+  //     case ActivityType.unknown:
+  //       return 10.0;
+  //   }
+  // }
 }
 
 class Workout extends BaseWorkout {
@@ -124,8 +124,8 @@ class Workout extends BaseWorkout {
     steps = 0;
     minDistanceInMeter =
         _getMinDistanceInMeterForactivityType(activityTypeTarget);
-    minAccuracyInMeter =
-        _getMinAccuracyInMeterForactivityType(activityTypeTarget);
+    // minAccuracyInMeter =
+    //     _getMinAccuracyInMeterForactivityType(activityTypeTarget);
   }
 
   @override
@@ -140,13 +140,13 @@ class Workout extends BaseWorkout {
 
     onLocationData(locationData);
 
-    if (locationData.accuracy < 0) {
-      return;
-    }
+    // if (locationData.accuracy < 0) {
+    //   return;
+    // }
 
-    if (locationData.accuracy > minAccuracyInMeter) {
-      return;
-    }
+    // if (locationData.accuracy > minAccuracyInMeter) {
+    //   return;
+    // }
 
     if (listLocationData.isEmpty || _startedAfterPaused) {
       if (_startedAfterPaused) {
@@ -237,7 +237,7 @@ class Workout extends BaseWorkout {
   ) async {
     startDateInMilliSeconds = DateTime.now().toLocal().millisecondsSinceEpoch;
     _started = true;
-    _timer?.cancel();
+    // _timer?.cancel();
 
     await Gps.setSettings(
       smallestDisplacement: minDistanceInMeter,
@@ -263,23 +263,26 @@ class Workout extends BaseWorkout {
       },
     );
 
-    _activityStreamSubscription =
-        ActivityRecognition.activityStream().handleError((dynamic e) {
-      Logger.error(e);
-      _activityStreamSubscription?.cancel();
-    }).listen((activityRecognitionResult) {
-      setActivityRecognition(activityRecognitionResult);
-    });
-
     _locationSubscription =
         Gps.startListenOnBackground().handleError((dynamic e) async {
       if (e is PlatformException) {
+        Logger.error(e);
         await stopWorkout();
-        throw (e);
+        // throw (e);
       }
     }).listen((LocationData locationData) {
       addLocationData(locationData);
     });
+
+    try {
+      _activityStreamSubscription =
+          ActivityRecognition.activityStream().handleError((dynamic e) {
+        Logger.error(e);
+        _activityStreamSubscription?.cancel();
+      }).listen((activityRecognitionResult) {
+        setActivityRecognition(activityRecognitionResult);
+      });
+    } catch (_) {}
 
     if (isWakeLockEnabled) {
       await WakeLock.enable();
