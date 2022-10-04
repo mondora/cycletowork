@@ -18,8 +18,9 @@ class ActivityRecognition {
 
   static Future<PermissionRequestResult> checkPermission() async {
     final result = await activityRecognition.checkPermission();
+    final resultName = result.name.toLowerCase().replaceAll('_', '');
     return PermissionRequestResult.values.firstWhere(
-      (element) => element.name.toLowerCase() == result.name.toLowerCase(),
+      (element) => element.name.toLowerCase() == resultName,
     );
   }
 
