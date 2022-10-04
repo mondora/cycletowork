@@ -22,6 +22,7 @@ abstract class BaseWorkout {
   late double co2InGram;
   late double minDistanceInMeter;
   // late double minAccuracyInMeter;
+  late double minAccuracyInNegativeAccuracy;
   late double distanceAccuracyFactor;
   late double minDistanceFromLineInMeter;
   late double delayInSecondToCalculateAverageSpeed;
@@ -36,6 +37,7 @@ abstract class BaseWorkout {
   bool _started = false;
   bool get started => _started;
   bool _startedAfterPaused = false;
+  bool _isLastPositionWasNegativeAccuracy = false;
 
   Timer? _timer;
   StreamSubscription<LocationData>? _locationSubscription;
@@ -101,6 +103,7 @@ class Workout extends BaseWorkout {
     double delayInSecondToCalculateAverageSpeed = 10.0,
     bool isWakeLockEnabled = true,
     int countdown = 5,
+    double minAccuracyInNegativeAccuracy = 30.0,
   }) {
     this.activityTypeTarget = activityTypeTarget;
     this.distanceAccuracyFactor = distanceAccuracyFactor;
@@ -111,6 +114,7 @@ class Workout extends BaseWorkout {
     this.countdown = countdown;
     this.onTickEverySecond = onTickEverySecond;
     this.onLocationData = onLocationData;
+    this.minAccuracyInNegativeAccuracy = minAccuracyInNegativeAccuracy;
     durationInSecond = 0;
     startDateInMilliSeconds = 0;
     stopDateInMilliSeconds = 0;
@@ -157,6 +161,17 @@ class Workout extends BaseWorkout {
       return;
     }
 
+    if (locationData.accuracy <= 0.0) {
+      if (_isLastPositionWasNegativeAccuracy) {
+        locationData.accuracy = minAccuracyInNegativeAccuracy;
+      } else {
+        _isLastPositionWasNegativeAccuracy = true;
+        return;
+      }
+    } else {
+      _isLastPositionWasNegativeAccuracy = false;
+    }
+
     final lastPosition = listLocationData.last;
     final newDistanceInMeter = LocationData.calculateDistanceInMeter(
       latitude1: lastPosition.latitude,
@@ -198,7 +213,8 @@ class Workout extends BaseWorkout {
         (minDistanceInMeter *
             (activityTypeDetected == null ? distanceAccuracyFactor : 1.0));
     final checkActivityTypeIsStill = activityTypeDetected != null &&
-        activityTypeDetected == ActivityType.still;
+        activityTypeDetected == ActivityType.still &&
+        newDistanceInMeter < (2 * locationData.accuracy);
 
     if (!checkMinDistance || checkActivityTypeIsStill) {
       lastPosition.speed = newSpeedInMeterPerSecond;
