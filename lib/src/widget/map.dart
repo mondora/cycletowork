@@ -247,6 +247,78 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.isStatic) {
+      var colorScheme = Theme.of(context).colorScheme;
+      _polyline = [];
+      var polylineCenter = Polyline(
+        polylineId: const PolylineId('polylineCenter'),
+        visible: true,
+        points: widget.listTrackingPosition
+            .map(
+              (location) => LatLng(location.latitude, location.longitude),
+            )
+            .toList(),
+        width: 5,
+        color: widget.isChallenge ? colorScheme.secondary : colorScheme.primary,
+      );
+      var polylineBorder = Polyline(
+        polylineId: const PolylineId('polylineBorder'),
+        visible: true,
+        points: widget.listTrackingPosition
+            .map(
+              (location) => LatLng(location.latitude, location.longitude),
+            )
+            .toList(),
+        width: 10,
+        color: Colors.black,
+      );
+
+      _polyline.add(polylineBorder);
+      _polyline.add(polylineCenter);
+
+      var firstPosition = widget.listTrackingPosition.first;
+      var lastPosition = widget.listTrackingPosition.last;
+      var markerStartPositionIcon =
+          context.read<AppData>().markerStartPositionIcon;
+      var markerStartIcon =
+          BitmapDescriptor.fromBytes(markerStartPositionIcon!);
+      var markerStopPositionIcon =
+          context.read<AppData>().markerStopPositionIcon;
+      var markerStopIcon = BitmapDescriptor.fromBytes(markerStopPositionIcon!);
+      _markers = [];
+      var startMark = Marker(
+        markerId: const MarkerId('startPosition'),
+        position: LatLng(firstPosition.latitude, firstPosition.longitude),
+        icon: markerStartIcon,
+        infoWindow: InfoWindow.noText,
+      );
+      _markers.add(startMark);
+      var stopMark = Marker(
+        markerId: const MarkerId('stopPosition'),
+        position: LatLng(lastPosition.latitude, lastPosition.longitude),
+        icon: markerStopIcon,
+        infoWindow: InfoWindow.noText,
+      );
+      _markers.add(stopMark);
+      Timer(const Duration(milliseconds: 1000), () async {
+        try {
+          final controller = await _controller.future;
+          var bounds = _boundsFromLatLngList(widget.listTrackingPosition);
+          CameraUpdate cameraUpdate =
+              CameraUpdate.newLatLngBounds(bounds, widget.padding);
+          await controller.moveCamera(cameraUpdate);
+          final uin8list = await controller.takeSnapshot();
+          if (widget.onSnapshot != null) {
+            Timer(const Duration(milliseconds: 200), () async {
+              widget.onSnapshot!(uin8list);
+            });
+          }
+        } catch (e) {
+          Logger.error(e);
+        }
+      });
+    }
+
     return GoogleMap(
       mapType: MapType.normal,
       zoomControlsEnabled: false,
@@ -264,51 +336,53 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
         zoom: widget.zoom,
       ),
       onMapCreated: (GoogleMapController controller) async {
-        if (widget.isStatic) {
-          setPath(widget.listTrackingPosition);
-          var firstPosition = widget.listTrackingPosition.first;
-          var lastPosition = widget.listTrackingPosition.last;
-          var markerStartPositionIcon =
-              context.read<AppData>().markerStartPositionIcon;
-          var markerStartIcon =
-              BitmapDescriptor.fromBytes(markerStartPositionIcon!);
-          var markerStopPositionIcon =
-              context.read<AppData>().markerStopPositionIcon;
-          var markerStopIcon =
-              BitmapDescriptor.fromBytes(markerStopPositionIcon!);
-          _markers = [];
-          var startMark = Marker(
-            markerId: const MarkerId('startPosition'),
-            position: LatLng(firstPosition.latitude, firstPosition.longitude),
-            icon: markerStartIcon,
-            infoWindow: InfoWindow.noText,
-          );
-          _markers.add(startMark);
-          var stopMark = Marker(
-            markerId: const MarkerId('stopPosition'),
-            position: LatLng(lastPosition.latitude, lastPosition.longitude),
-            icon: markerStopIcon,
-            infoWindow: InfoWindow.noText,
-          );
-          _markers.add(stopMark);
-          Timer(const Duration(milliseconds: 1000), () async {
-            try {
-              var bounds = _boundsFromLatLngList(widget.listTrackingPosition);
-              CameraUpdate cameraUpdate =
-                  CameraUpdate.newLatLngBounds(bounds, widget.padding);
-              await controller.moveCamera(cameraUpdate);
-              final uin8list = await controller.takeSnapshot();
-              if (widget.onSnapshot != null) {
-                Timer(const Duration(milliseconds: 500), () async {
-                  widget.onSnapshot!(uin8list);
-                });
-              }
-            } catch (e) {
-              Logger.error(e);
-            }
-          });
+        // if (widget.isStatic) {
+        //   setPath(widget.listTrackingPosition);
+        //   var firstPosition = widget.listTrackingPosition.first;
+        //   var lastPosition = widget.listTrackingPosition.last;
+        //   var markerStartPositionIcon =
+        //       context.read<AppData>().markerStartPositionIcon;
+        //   var markerStartIcon =
+        //       BitmapDescriptor.fromBytes(markerStartPositionIcon!);
+        //   var markerStopPositionIcon =
+        //       context.read<AppData>().markerStopPositionIcon;
+        //   var markerStopIcon =
+        //       BitmapDescriptor.fromBytes(markerStopPositionIcon!);
+        //   _markers = [];
+        //   var startMark = Marker(
+        //     markerId: const MarkerId('startPosition'),
+        //     position: LatLng(firstPosition.latitude, firstPosition.longitude),
+        //     icon: markerStartIcon,
+        //     infoWindow: InfoWindow.noText,
+        //   );
+        //   _markers.add(startMark);
+        //   var stopMark = Marker(
+        //     markerId: const MarkerId('stopPosition'),
+        //     position: LatLng(lastPosition.latitude, lastPosition.longitude),
+        //     icon: markerStopIcon,
+        //     infoWindow: InfoWindow.noText,
+        //   );
+        //   _markers.add(stopMark);
+        //   Timer(const Duration(milliseconds: 1000), () async {
+        //     try {
+        //       var bounds = _boundsFromLatLngList(widget.listTrackingPosition);
+        //       CameraUpdate cameraUpdate =
+        //           CameraUpdate.newLatLngBounds(bounds, widget.padding);
+        //       await controller.moveCamera(cameraUpdate);
+        //       final uin8list = await controller.takeSnapshot();
+        //       if (widget.onSnapshot != null) {
+        //         Timer(const Duration(milliseconds: 500), () async {
+        //           widget.onSnapshot!(uin8list);
+        //         });
+        //       }
+        //     } catch (e) {
+        //       Logger.error(e);
+        //     }
+        //   });
+        // }
+        if (!_controller.isCompleted) {
+          _controller.complete(controller);
         }
-        _controller.complete(controller);
       },
       markers: Set<Marker>.of(_markers),
       polylines: Set<Polyline>.of(_polyline),
