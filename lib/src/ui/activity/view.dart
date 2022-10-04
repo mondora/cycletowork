@@ -38,7 +38,7 @@ class _ActivityViewState extends State<ActivityView> {
         context,
         listen: false,
       );
-      dashboardModel.getListUserActivityFilterd(
+      dashboardModel.getListUserActivity(
         nextPage: true,
       );
     }
@@ -242,9 +242,9 @@ class _ActivityViewState extends State<ActivityView> {
             const SizedBox(
               height: 20.0,
             ),
-            if (listUserActivity.isNotEmpty)
+            if (listUserActivityAll.isNotEmpty)
               ActivityList(
-                userActivity: listUserActivity,
+                userActivity: listUserActivityAll,
                 onUserActivityClick: (userActivity) async {
                   await Navigator.of(context).push(
                     MaterialPageRoute(
@@ -258,7 +258,7 @@ class _ActivityViewState extends State<ActivityView> {
                   );
                 },
               ),
-            if (listUserActivity.isEmpty)
+            if (listUserActivityAll.isEmpty)
               Container(
                 height: 115.0 * scale,
                 padding:

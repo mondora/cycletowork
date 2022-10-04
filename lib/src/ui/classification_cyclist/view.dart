@@ -363,7 +363,12 @@ class _Card extends StatelessWidget {
                         Radius.circular(40 * scale),
                       ),
                       child: photoURL != null
-                          ? Image.network(photoURL!)
+                          ? Image.network(
+                              photoURL!,
+                              fit: BoxFit.cover,
+                              width: 40.0 * scale,
+                              height: 40.0 * scale,
+                            )
                           : Icon(
                               Icons.star,
                               size: 24.0 * scale,

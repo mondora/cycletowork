@@ -87,7 +87,11 @@ class Repository {
     var listRegisterdChallenge =
         await _localDatabase.getListRegisterdChallenge();
 
-    if (listRegisterdChallenge.isNotEmpty) {
+    final isContainOpenChallenge = listRegisterdChallenge.any(
+      (challenge) =>
+          challenge.stopTimeChallenge > DateTime.now().millisecondsSinceEpoch,
+    );
+    if (listRegisterdChallenge.isNotEmpty && !isContainOpenChallenge) {
       return listRegisterdChallenge;
     }
 

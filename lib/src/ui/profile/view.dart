@@ -236,12 +236,14 @@ class _ChallengeRegisterdData extends StatelessWidget {
                     Text(
                       'I tuoi dati di iscrizione alla challenge',
                       style: textTheme.bodyText2,
+                      textAlign: TextAlign.center,
                     ),
                     Text(
                       challengeRegistry.challengeName,
                       style: textTheme.headline6,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
