@@ -3,6 +3,7 @@ import 'package:cycletowork/src/theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui' as ui;
 
@@ -38,6 +39,9 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
 
   AppMeasurementUnit _measurementUnit = AppMeasurementUnit.metric;
   AppMeasurementUnit get measurementUnit => _measurementUnit;
+
+  String _version = '';
+  String get version => _version;
 
   AppData() : this.instance();
 
@@ -86,6 +90,10 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
     _measurementUnit = AppMeasurementUnit.values.firstWhere(
       (element) => element.name == resultUnit,
     );
+
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    _version = '${packageInfo.version} (${packageInfo.buildNumber})';
+
     notifyListeners();
   }
 

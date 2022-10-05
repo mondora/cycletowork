@@ -10,16 +10,22 @@ class InformationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var textTheme = Theme.of(context).textTheme;
+    final textTheme = Theme.of(context).textTheme;
+    final version = context.read<AppData>().version;
 
     return Scaffold(
       body: ListView(
+        physics: const ScrollPhysics(),
         children: [
           Center(
             child: Text(
               'Info',
               style: textTheme.headline5,
             ),
+          ),
+          _InformationItem(
+            title: 'Versione:   $version',
+            onPressed: null,
           ),
           _InformationItem(
             title: 'Privacy Policy',
@@ -86,16 +92,18 @@ class _InformationItem extends StatelessWidget {
                 ),
               ],
             ),
-            trailing: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.arrow_forward_ios,
-                  color: colorScheme.onBackground,
-                  size: 25 * scale,
-                ),
-              ],
-            ),
+            trailing: onPressed != null
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        color: colorScheme.onBackground,
+                        size: 25 * scale,
+                      ),
+                    ],
+                  )
+                : null,
             onTap: onPressed,
           ),
         ),
