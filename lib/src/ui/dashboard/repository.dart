@@ -393,6 +393,7 @@ class Repository {
     int pageSize,
     bool justChallenges,
     ChartScaleType chartScaleType,
+    bool timeFilter,
   ) async {
     try {
       return await _localDatabase.getListUserActivity(
@@ -402,7 +403,7 @@ class Repository {
         thisWeek: chartScaleType == ChartScaleType.week,
         thisMonth: chartScaleType == ChartScaleType.month,
         thisYear: chartScaleType == ChartScaleType.year,
-        timeFilter: true,
+        timeFilter: timeFilter,
       );
     } catch (e) {
       Logger.error(e);

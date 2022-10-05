@@ -48,6 +48,7 @@ class ViewModel extends ChangeNotifier {
       AppData.isUserUsedEmailProvider = _repository.isUserUsedEmailProvider();
       await getListUserActivity();
       await getListUserActivityFilterd();
+      await getListUserActivityChartData();
       await _getActiveChallengeList();
       await getListChallengeRegistred();
       _uiState.listCompanyClassificationOrderByRankingCo2 = false;
@@ -184,18 +185,52 @@ class ViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> getListUserActivityFilterd({
+  Future<void> getListUserActivityChartData({
     bool? justChallenges,
     ChartScaleType? chartScaleType,
-    bool? nextPage,
   }) async {
     if (justChallenges != null) {
       _uiState.userActivityFilteredJustChallenges = justChallenges;
-      _uiState.userActivityFilteredPage = 0;
     }
 
     if (chartScaleType != null) {
       _uiState.userActivityFilteredChartScaleType = chartScaleType;
+    }
+
+    _uiState.refreshLocationLoading = true;
+    notifyListeners();
+    try {
+      var result = await _repository.getListUserActivityFiltered(
+        0,
+        10000,
+        _uiState.userActivityFilteredJustChallenges,
+        _uiState.userActivityFilteredChartScaleType,
+        true,
+      );
+      var args = {
+        'listUserActivity': result,
+        'chartScaleType': _uiState.userActivityFilteredChartScaleType,
+      };
+      _uiState.userActivityChartData = await compute(
+        _repository.getUserActivityChartData,
+        args,
+      );
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+    } finally {
+      _uiState.refreshLocationLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getListUserActivityFilterd({
+    bool? justChallenges,
+    bool? nextPage,
+  }) async {
+    if (justChallenges != null) {
+      _uiState.userActivityFilteredJustChallenges = justChallenges;
       _uiState.userActivityFilteredPage = 0;
     }
 
@@ -211,6 +246,7 @@ class ViewModel extends ChangeNotifier {
         _uiState.userActivityFilteredPageSize,
         _uiState.userActivityFilteredJustChallenges,
         _uiState.userActivityFilteredChartScaleType,
+        false,
       );
       if (nextPage == true) {
         if (result.isNotEmpty) {
@@ -221,14 +257,6 @@ class ViewModel extends ChangeNotifier {
       } else {
         _uiState.listUserActivityFiltered = result;
       }
-      var args = {
-        'listUserActivity': _uiState.listUserActivityFiltered,
-        'chartScaleType': _uiState.userActivityFilteredChartScaleType,
-      };
-      _uiState.userActivityChartData = await compute(
-        _repository.getUserActivityChartData,
-        args,
-      );
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;
@@ -358,6 +386,7 @@ class ViewModel extends ChangeNotifier {
       );
       await getListUserActivity();
       await getListUserActivityFilterd();
+      await getListUserActivityChartData();
       _uiState.dashboardPageOption = DashboardPageOption.home;
       _uiState.loading = false;
       notifyListeners();

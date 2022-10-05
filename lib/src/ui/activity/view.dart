@@ -38,7 +38,7 @@ class _ActivityViewState extends State<ActivityView> {
         context,
         listen: false,
       );
-      dashboardModel.getListUserActivity(
+      dashboardModel.getListUserActivityFilterd(
         nextPage: true,
       );
     }
@@ -108,6 +108,9 @@ class _ActivityViewState extends State<ActivityView> {
                     await dashboardModel.getListUserActivityFilterd(
                       justChallenges: value,
                     );
+                    await dashboardModel.getListUserActivityChartData(
+                      justChallenges: value,
+                    );
                   },
                   selected: justChallenges,
                   side: ChipTheme.of(context).shape!.side.copyWith(
@@ -144,7 +147,7 @@ class _ActivityViewState extends State<ActivityView> {
                   InputChip(
                     onSelected: (bool value) async {
                       if (value) {
-                        await dashboardModel.getListUserActivityFilterd(
+                        await dashboardModel.getListUserActivityChartData(
                           chartScaleType: ChartScaleType.week,
                         );
                       }
@@ -165,7 +168,7 @@ class _ActivityViewState extends State<ActivityView> {
                   InputChip(
                     onSelected: (bool value) async {
                       if (value) {
-                        await dashboardModel.getListUserActivityFilterd(
+                        await dashboardModel.getListUserActivityChartData(
                           chartScaleType: ChartScaleType.month,
                         );
                       }
@@ -186,7 +189,7 @@ class _ActivityViewState extends State<ActivityView> {
                   InputChip(
                     onSelected: (bool value) async {
                       if (value) {
-                        await dashboardModel.getListUserActivityFilterd(
+                        await dashboardModel.getListUserActivityChartData(
                           chartScaleType: ChartScaleType.year,
                         );
                       }
@@ -242,9 +245,9 @@ class _ActivityViewState extends State<ActivityView> {
             const SizedBox(
               height: 20.0,
             ),
-            if (listUserActivityAll.isNotEmpty)
+            if (listUserActivity.isNotEmpty)
               ActivityList(
-                userActivity: listUserActivityAll,
+                userActivity: listUserActivity,
                 onUserActivityClick: (userActivity) async {
                   await Navigator.of(context).push(
                     MaterialPageRoute(
@@ -258,7 +261,7 @@ class _ActivityViewState extends State<ActivityView> {
                   );
                 },
               ),
-            if (listUserActivityAll.isEmpty)
+            if (listUserActivity.isEmpty)
               Container(
                 height: 115.0 * scale,
                 padding:
