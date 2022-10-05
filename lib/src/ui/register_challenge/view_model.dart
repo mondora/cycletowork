@@ -422,7 +422,7 @@ class ViewModel extends ChangeNotifier {
 
   void setCompanyToAddEmployeesNumber(String value) {
     var isInt = int.tryParse(value);
-    if (isInt != null) {
+    if (isInt != null && int.parse(value) > 0) {
       _uiState.challengeRegistry.companyToAdd!.employeesNumber =
           int.parse(value);
       notifyListeners();
