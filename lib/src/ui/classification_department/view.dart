@@ -4,6 +4,7 @@ import 'package:cycletowork/src/ui/dashboard/view_model.dart';
 import 'package:cycletowork/src/widget/ranking_position_slider.dart';
 import 'package:cycletowork/src/widget/ranking_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,7 @@ class DepartmentClassificationView extends StatefulWidget {
 class _DepartmentClassificationViewState
     extends State<DepartmentClassificationView> {
   final ScrollController _controller = ScrollController();
+  var isVisible = true;
 
   @override
   void initState() {
@@ -42,6 +44,22 @@ class _DepartmentClassificationViewState
       dashboardModel.refreshDepartmentClassification(
         nextPage: true,
       );
+    }
+
+    if (_controller.position.userScrollDirection == ScrollDirection.forward) {
+      if (!isVisible) {
+        setState(() {
+          isVisible = true;
+        });
+      }
+    }
+
+    if (_controller.position.userScrollDirection == ScrollDirection.reverse) {
+      if (isVisible) {
+        setState(() {
+          isVisible = false;
+        });
+      }
     }
   }
 
@@ -101,11 +119,9 @@ class _DepartmentClassificationViewState
                 1
             : 0;
 
-    final expandedHeight = 235.0 * scale;
-    var isVisible = true;
+    final expandedHeight = isVisible ? 235.0 * scale : 160.0 * scale;
 
     return NestedScrollView(
-      controller: _controller,
       floatHeaderSlivers: true,
       clipBehavior: Clip.none,
       headerSliverBuilder: (context, innerBoxIsScrolled) => <Widget>[
@@ -119,11 +135,6 @@ class _DepartmentClassificationViewState
           forceElevated: true,
           flexibleSpace: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-              if (constraints.biggest.height == expandedHeight) {
-                isVisible = true;
-              } else {
-                isVisible = false;
-              }
               return FlexibleSpaceBar(
                 centerTitle: true,
                 expandedTitleScale: 1,
@@ -225,34 +236,36 @@ class _DepartmentClassificationViewState
         ),
       ],
       body: RefreshIndicator(
-          onRefresh: viewModel.refreshDepartmentClassification,
-          color: colorScheme.secondary,
-          displacement: 0,
-          child: ListView.builder(
-            padding: EdgeInsets.only(bottom: 80.0 * scale),
-            itemCount: listDepartmentClassificationRankingCo2.length,
-            itemBuilder: (context, index) {
-              final item = listDepartmentClassificationRankingCo2[index];
-              final subtitle = measurementUnit == AppMeasurementUnit.metric
-                  ? '${distanceNumberFormat.format(item.distance.meterToKm())} km'
-                  : '${distanceNumberFormat.format(item.distance.meterToMile())} mi';
-              final value = measurementUnit == AppMeasurementUnit.metric
-                  ? '${co2NumberFormat.format(item.co2.gramToKg())} Kg CO\u2082'
-                  : '${co2NumberFormat.format(item.co2.gramToPound())} lb CO\u2082';
+        onRefresh: viewModel.refreshDepartmentClassification,
+        color: colorScheme.secondary,
+        displacement: 0,
+        child: ListView.builder(
+          controller: _controller,
+          padding: EdgeInsets.only(bottom: 80.0 * scale),
+          itemCount: listDepartmentClassificationRankingCo2.length,
+          itemBuilder: (context, index) {
+            final item = listDepartmentClassificationRankingCo2[index];
+            final subtitle = measurementUnit == AppMeasurementUnit.metric
+                ? '${distanceNumberFormat.format(item.distance.meterToKm())} km'
+                : '${distanceNumberFormat.format(item.distance.meterToMile())} mi';
+            final value = measurementUnit == AppMeasurementUnit.metric
+                ? '${co2NumberFormat.format(item.co2.gramToKg())} Kg CO\u2082'
+                : '${co2NumberFormat.format(item.co2.gramToPound())} lb CO\u2082';
 
-              return _Card(
-                ranking: index + 1,
-                title: item.name,
-                subtitle: subtitle,
-                value: value,
-                isRankingCo2: true,
-                selected: item.rankingCo2 != 0
-                    ? item.rankingCo2 == userRankingCo2
-                    : item.name == userValues.name,
-                color: item.color,
-              );
-            },
-          )),
+            return _Card(
+              ranking: index + 1,
+              title: item.name,
+              subtitle: subtitle,
+              value: value,
+              isRankingCo2: true,
+              selected: item.rankingCo2 != 0
+                  ? item.rankingCo2 == userRankingCo2
+                  : item.name == userValues.name,
+              color: item.color,
+            );
+          },
+        ),
+      ),
     );
   }
 }

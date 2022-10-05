@@ -4,6 +4,7 @@ import 'package:cycletowork/src/ui/dashboard/view_model.dart';
 import 'package:cycletowork/src/widget/ranking_position_slider.dart';
 import 'package:cycletowork/src/widget/ranking_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,7 @@ class CyclistCompanyView extends StatefulWidget {
 
 class _CyclistCompanyViewState extends State<CyclistCompanyView> {
   final ScrollController _controller = ScrollController();
+  var isVisible = true;
 
   @override
   void initState() {
@@ -40,6 +42,22 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
       dashboardModel.refreshCyclistClassification(
         nextPage: true,
       );
+    }
+
+    if (_controller.position.userScrollDirection == ScrollDirection.forward) {
+      if (!isVisible) {
+        setState(() {
+          isVisible = true;
+        });
+      }
+    }
+
+    if (_controller.position.userScrollDirection == ScrollDirection.reverse) {
+      if (isVisible) {
+        setState(() {
+          isVisible = false;
+        });
+      }
     }
   }
 
@@ -83,7 +101,12 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
           Radius.circular(22 * scale),
         ),
         child: firstRankingCo2 != null && firstRankingCo2.photoURL != null
-            ? Image.network(firstRankingCo2.photoURL!)
+            ? Image.network(
+                firstRankingCo2.photoURL!,
+                fit: BoxFit.cover,
+                width: 25.0 * scale,
+                height: 25.0 * scale,
+              )
             : Icon(
                 Icons.star,
                 size: 18.0 * scale,
@@ -116,7 +139,12 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
           Radius.circular(22 * scale),
         ),
         child: userValues.photoURL != null
-            ? Image.network(userValues.photoURL!)
+            ? Image.network(
+                userValues.photoURL!,
+                fit: BoxFit.cover,
+                width: 26.0 * scale,
+                height: 26.0 * scale,
+              )
             : Icon(
                 Icons.star,
                 size: 18.0 * scale,
@@ -134,11 +162,9 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
                 1
             : 0;
 
-    final expandedHeight = 235.0 * scale;
-    var isVisible = true;
+    final expandedHeight = isVisible ? 235.0 * scale : 160.0 * scale;
 
     return NestedScrollView(
-      controller: _controller,
       floatHeaderSlivers: true,
       clipBehavior: Clip.none,
       headerSliverBuilder: (context, innerBoxIsScrolled) => <Widget>[
@@ -152,11 +178,6 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
           forceElevated: true,
           flexibleSpace: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-              if (constraints.biggest.height == expandedHeight) {
-                isVisible = true;
-              } else {
-                isVisible = false;
-              }
               return FlexibleSpaceBar(
                 centerTitle: true,
                 expandedTitleScale: 1,
@@ -259,8 +280,9 @@ class _CyclistCompanyViewState extends State<CyclistCompanyView> {
       body: RefreshIndicator(
         onRefresh: viewModel.refreshCyclistClassification,
         color: colorScheme.secondary,
-        displacement: 0,
+        displacement: 0.0,
         child: ListView.builder(
+          controller: _controller,
           padding: EdgeInsets.only(bottom: 80.0 * scale),
           itemCount: listCyclistClassificationRankingCo2.length,
           itemBuilder: (context, index) {

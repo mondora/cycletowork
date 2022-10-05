@@ -4,6 +4,7 @@ import 'package:cycletowork/src/ui/dashboard/view_model.dart';
 import 'package:cycletowork/src/widget/ranking_position_slider.dart';
 import 'package:cycletowork/src/widget/ranking_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +20,7 @@ class ClassificationCompanyView extends StatefulWidget {
 
 class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
   final ScrollController _controller = ScrollController();
+  var isVisible = true;
 
   @override
   void initState() {
@@ -41,6 +43,22 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
       dashboardModel.refreshCompanyClassification(
         nextPage: true,
       );
+    }
+
+    if (_controller.position.userScrollDirection == ScrollDirection.forward) {
+      if (!isVisible) {
+        setState(() {
+          isVisible = true;
+        });
+      }
+    }
+
+    if (_controller.position.userScrollDirection == ScrollDirection.reverse) {
+      if (isVisible) {
+        setState(() {
+          isVisible = false;
+        });
+      }
     }
   }
 
@@ -120,11 +138,11 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                 ) +
                 1
             : 0;
-    final expandedHeight = (isRankingCo2 ? 275.0 : 225.0) * scale;
-    var isVisible = true;
+
+    final expandedHeight =
+        isVisible ? (isRankingCo2 ? 275.0 : 225.0) * scale : 160.0 * scale;
 
     return NestedScrollView(
-      controller: _controller,
       floatHeaderSlivers: true,
       clipBehavior: Clip.none,
       headerSliverBuilder: (context, innerBoxIsScrolled) => <Widget>[
@@ -138,11 +156,6 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
           forceElevated: true,
           flexibleSpace: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-              if (constraints.biggest.height == expandedHeight) {
-                isVisible = true;
-              } else {
-                isVisible = false;
-              }
               return FlexibleSpaceBar(
                 centerTitle: true,
                 expandedTitleScale: 1,
@@ -330,6 +343,7 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
         displacement: 0,
         child: isRankingCo2
             ? ListView.builder(
+                controller: _controller,
                 padding: EdgeInsets.only(bottom: 80.0 * scale),
                 itemCount: listCompanyClassificationRankingCo2.length,
                 itemBuilder: (context, index) {
@@ -354,6 +368,7 @@ class _ClassificationCompanyViewState extends State<ClassificationCompanyView> {
                 },
               )
             : ListView.builder(
+                controller: _controller,
                 padding: EdgeInsets.only(bottom: 80.0 * scale),
                 itemCount: listCompanyClassificationRankingRegistered.length,
                 itemBuilder: (context, index) {
