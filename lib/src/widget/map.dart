@@ -300,23 +300,6 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
         infoWindow: InfoWindow.noText,
       );
       _markers.add(stopMark);
-      Timer(const Duration(milliseconds: 1000), () async {
-        try {
-          final controller = await _controller.future;
-          var bounds = _boundsFromLatLngList(widget.listTrackingPosition);
-          CameraUpdate cameraUpdate =
-              CameraUpdate.newLatLngBounds(bounds, widget.padding);
-          await controller.moveCamera(cameraUpdate);
-          final uin8list = await controller.takeSnapshot();
-          if (widget.onSnapshot != null) {
-            Timer(const Duration(milliseconds: 200), () async {
-              widget.onSnapshot!(uin8list);
-            });
-          }
-        } catch (e) {
-          Logger.error(e);
-        }
-      });
     }
 
     return GoogleMap(
@@ -336,52 +319,28 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
         zoom: widget.zoom,
       ),
       onMapCreated: (GoogleMapController controller) async {
-        // if (widget.isStatic) {
-        //   setPath(widget.listTrackingPosition);
-        //   var firstPosition = widget.listTrackingPosition.first;
-        //   var lastPosition = widget.listTrackingPosition.last;
-        //   var markerStartPositionIcon =
-        //       context.read<AppData>().markerStartPositionIcon;
-        //   var markerStartIcon =
-        //       BitmapDescriptor.fromBytes(markerStartPositionIcon!);
-        //   var markerStopPositionIcon =
-        //       context.read<AppData>().markerStopPositionIcon;
-        //   var markerStopIcon =
-        //       BitmapDescriptor.fromBytes(markerStopPositionIcon!);
-        //   _markers = [];
-        //   var startMark = Marker(
-        //     markerId: const MarkerId('startPosition'),
-        //     position: LatLng(firstPosition.latitude, firstPosition.longitude),
-        //     icon: markerStartIcon,
-        //     infoWindow: InfoWindow.noText,
-        //   );
-        //   _markers.add(startMark);
-        //   var stopMark = Marker(
-        //     markerId: const MarkerId('stopPosition'),
-        //     position: LatLng(lastPosition.latitude, lastPosition.longitude),
-        //     icon: markerStopIcon,
-        //     infoWindow: InfoWindow.noText,
-        //   );
-        //   _markers.add(stopMark);
-        //   Timer(const Duration(milliseconds: 1000), () async {
-        //     try {
-        //       var bounds = _boundsFromLatLngList(widget.listTrackingPosition);
-        //       CameraUpdate cameraUpdate =
-        //           CameraUpdate.newLatLngBounds(bounds, widget.padding);
-        //       await controller.moveCamera(cameraUpdate);
-        //       final uin8list = await controller.takeSnapshot();
-        //       if (widget.onSnapshot != null) {
-        //         Timer(const Duration(milliseconds: 500), () async {
-        //           widget.onSnapshot!(uin8list);
-        //         });
-        //       }
-        //     } catch (e) {
-        //       Logger.error(e);
-        //     }
-        //   });
-        // }
         if (!_controller.isCompleted) {
           _controller.complete(controller);
+        }
+        if (widget.isStatic) {
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            try {
+              final bounds = _boundsFromLatLngList(widget.listTrackingPosition);
+              final cameraUpdate = CameraUpdate.newLatLngBounds(
+                bounds,
+                widget.padding,
+              );
+              await controller.moveCamera(cameraUpdate);
+              if (widget.onSnapshot != null) {
+                Timer(const Duration(milliseconds: 200), () async {
+                  final uin8list = await controller.takeSnapshot();
+                  widget.onSnapshot!(uin8list);
+                });
+              }
+            } catch (e) {
+              Logger.error(e);
+            }
+          });
         }
       },
       markers: Set<Marker>.of(_markers),
