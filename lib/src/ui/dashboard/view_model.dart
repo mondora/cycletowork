@@ -11,6 +11,7 @@ import 'package:cycletowork/src/utility/activity_recognition.dart';
 import 'package:cycletowork/src/utility/gps.dart';
 import 'package:cycletowork/src/utility/logger.dart';
 import 'package:cycletowork/src/utility/notification.dart';
+import 'package:cycletowork/src/utility/vibration.dart';
 import 'package:cycletowork/src/widget/chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -290,6 +291,7 @@ class ViewModel extends ChangeNotifier {
         city: '',
         isUploaded: 0,
       );
+      _uiState.workoutError = false;
       _uiState.workout = Workout(
         ActivityType.onBicycle,
         isWakeLockEnabled: isWakelockModeEnable,
@@ -300,6 +302,36 @@ class ViewModel extends ChangeNotifier {
                   DashboardPageOption.pauseTracking ||
               _uiState.dashboardPageOption == DashboardPageOption.mapTracking ||
               _uiState.dashboardPageOption == DashboardPageOption.stopTracking;
+
+          if (countdown == 0 &&
+              _uiState.workout!.durationInSecond > 5 &&
+              !_uiState.workout!.isRecivedLocation) {
+            if (!_uiState.workoutError) {
+              debugPrint('Not location position');
+              _uiState.workoutErrorMessage =
+                  'Attenzione! Cycle2Work non sta ricevendo i dati dal tuo GPS, oppure la precisione del GPS è bassa e ciò rende imprecisa la localizzazione. Ti suggeriamo di controllare le impostazioni del tuo GPS prima di avviare la pedalata!';
+              _uiState.workoutError = true;
+              Vibration.vibration(3000);
+              notifyListeners();
+            }
+          } else if (countdown == 0 &&
+              _uiState.workout!.durationInSecond > 1 &&
+              (_uiState.workout!.isAccuracyIncludeAbnormalMinValue ||
+                  _uiState.workout!.isAccuracyIncludeAbnormalMaxValue)) {
+            if (!_uiState.workoutError) {
+              debugPrint('Not isAccuracyIncludeAbnormalValue position');
+              _uiState.workoutErrorMessage =
+                  'Attenzione! Cycle2Work non sta ricevendo i dati dal tuo GPS, oppure la precisione del GPS è bassa e ciò rende imprecisa la localizzazione. Ti suggeriamo di controllare le impostazioni del tuo GPS prima di avviare la pedalata!';
+              _uiState.workoutError = true;
+              Vibration.vibration(3000);
+              notifyListeners();
+            }
+          } else {
+            if (_uiState.workoutError) {
+              _uiState.workoutError = false;
+              notifyListeners();
+            }
+          }
 
           if (countdown == 0 && !isTrackingStarted) {
             _trackingUserActivity!.startTime =
@@ -452,7 +484,7 @@ class ViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void refreshLocation() async {
+  Future<void> refreshLocation() async {
     _uiState.refreshLocationLoading = true;
     notifyListeners();
     try {

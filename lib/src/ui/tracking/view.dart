@@ -12,18 +12,24 @@ class TrackingView extends StatelessWidget {
   final Workout workout;
   final GestureTapCancelCallback? pauseTracking;
   final GestureTapCancelCallback? showMap;
+  final bool error;
+  final String errorMessage;
 
   const TrackingView({
     Key? key,
     required this.pauseTracking,
     required this.showMap,
     required this.workout,
+    required this.error,
+    required this.errorMessage,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final scale = context.read<AppData>().scale;
     final measurementUnit = context.read<AppData>().measurementUnit;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     final Locale appLocale = Localizations.localeOf(context);
     final numberFormat = NumberFormat(
       '##0.00',
@@ -61,14 +67,30 @@ class TrackingView extends StatelessWidget {
     return Scaffold(
       body: Container(
         margin: EdgeInsets.only(
-          right: 24.0 * scale,
-          left: 24.0 * scale,
-          top: 30.0 * scale,
+          right: error ? 0 : 24.0 * scale,
+          left: error ? 0 : 24.0 * scale,
+          top: error ? 0 : 30.0 * scale,
         ),
         child: ListView(
           physics: const ScrollPhysics(),
           shrinkWrap: true,
           children: [
+            if (error)
+              Container(
+                padding: EdgeInsets.all(20 * scale),
+                margin: EdgeInsets.only(bottom: 20.0 * scale),
+                decoration: BoxDecoration(
+                  color: colorScheme.error,
+                ),
+                child: Center(
+                  child: Text(
+                    errorMessage,
+                    style: textTheme.bodyText1!.apply(
+                      color: colorScheme.onError,
+                    ),
+                  ),
+                ),
+              ),
             Stack(
               children: [
                 Align(
@@ -146,6 +168,9 @@ class TrackingView extends StatelessWidget {
                   width: 28.0 * scale,
                 ),
               ],
+            ),
+            SizedBox(
+              height: 20.0 * scale,
             ),
           ],
         ),

@@ -10,4 +10,9 @@ class Logger {
     logger.e(e.toString());
     FirebaseCrashlytics.instance.recordError(e, null, fatal: true);
   }
+
+  static void warningAbnormalValue(String key, dynamic value) {
+    logger.w({key: value});
+    FirebaseCrashlytics.instance.setCustomKey(key, value);
+  }
 }

@@ -51,35 +51,49 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
     double? zoom,
     double? bearing,
   }) async {
-    final GoogleMapController controller = await _controller.future;
-
-    var camera = CameraUpdate.newCameraPosition(
-      CameraPosition(
-        bearing: bearing ?? 0,
-        target: LatLng(latitude, longitude),
-        zoom: zoom ?? widget.zoom,
-      ),
-    );
-    await controller.animateCamera(camera);
+    try {
+      final controller = await _controller.future;
+      final camera = CameraUpdate.newCameraPosition(
+        CameraPosition(
+          bearing: bearing ?? 0,
+          target: LatLng(latitude, longitude),
+          zoom: zoom ?? widget.zoom,
+        ),
+      );
+      await controller.animateCamera(camera);
+    } catch (e) {
+      Logger.error(e);
+      final controller = await _controller.future;
+      final camera = CameraUpdate.newCameraPosition(
+        CameraPosition(
+          bearing: bearing ?? 0,
+          target: LatLng(latitude, longitude),
+          zoom: zoom ?? widget.zoom,
+        ),
+      );
+      await controller.animateCamera(camera);
+    }
   }
 
-  Future changeCameraWithMarker(
-    double latitude,
-    double longitude, {
-    double? zoom,
-    double? bearing,
-  }) async {
-    final GoogleMapController controller = await _controller.future;
+  Future chengeCameraForStaticMap() async {
+    try {
+      final controller = await _controller.future;
+      final bounds = _boundsFromLatLngList(widget.listTrackingPosition);
+      final cameraUpdate = CameraUpdate.newLatLngBounds(
+        bounds,
+        widget.padding,
+      );
 
-    var camera = CameraUpdate.newCameraPosition(
-      CameraPosition(
-        bearing: bearing ?? 0,
-        target: LatLng(latitude, longitude),
-        zoom: zoom ?? widget.zoom,
-      ),
-    );
-    await controller.animateCamera(camera);
-    setMarker(latitude, longitude);
+      await controller.moveCamera(cameraUpdate);
+      if (widget.onSnapshot != null) {
+        Timer(const Duration(milliseconds: 200), () async {
+          final uin8list = await controller.takeSnapshot();
+          if (widget.onSnapshot != null) widget.onSnapshot!(uin8list);
+        });
+      }
+    } catch (e) {
+      Logger.error(e);
+    }
   }
 
   void setMarker(double latitude, double longitude) {
@@ -319,29 +333,7 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
         zoom: widget.zoom,
       ),
       onMapCreated: (GoogleMapController controller) async {
-        if (!_controller.isCompleted) {
-          _controller.complete(controller);
-        }
-        if (widget.isStatic) {
-          WidgetsBinding.instance.addPostFrameCallback((_) async {
-            try {
-              final bounds = _boundsFromLatLngList(widget.listTrackingPosition);
-              final cameraUpdate = CameraUpdate.newLatLngBounds(
-                bounds,
-                widget.padding,
-              );
-              await controller.moveCamera(cameraUpdate);
-              if (widget.onSnapshot != null) {
-                Timer(const Duration(milliseconds: 200), () async {
-                  final uin8list = await controller.takeSnapshot();
-                  widget.onSnapshot!(uin8list);
-                });
-              }
-            } catch (e) {
-              Logger.error(e);
-            }
-          });
-        }
+        _controller.complete(controller);
       },
       markers: Set<Marker>.of(_markers),
       polylines: Set<Polyline>.of(_polyline),

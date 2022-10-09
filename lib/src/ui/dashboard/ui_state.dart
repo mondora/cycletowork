@@ -82,6 +82,8 @@ class UiState {
   DepartmentClassification? userDepartmentClassification;
 
   Workout? workout;
+  bool workoutError = false;
+  String workoutErrorMessage = '';
 }
 
 class UserActivityChartData {

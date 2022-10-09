@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:cycletowork/src/data/app_data.dart';
@@ -75,6 +76,12 @@ class _TrackingStopViewState extends State<TrackingStopView> {
       context.read<ViewModel>().setUserActivityCity(result);
       setState(() {
         city = result;
+      });
+      Timer(const Duration(milliseconds: 200), () async {
+        if (widget.workout.listLocationData.isEmpty) {
+          return;
+        }
+        await _mapKey.currentState?.chengeCameraForStaticMap();
       });
     } catch (_) {}
   }

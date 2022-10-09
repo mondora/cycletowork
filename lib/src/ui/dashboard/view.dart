@@ -88,6 +88,8 @@ class DashboardView extends StatelessWidget {
                   showMap: viewModel.showMapTracking,
                   pauseTracking: viewModel.pauseTracking,
                   workout: viewModel.uiState.workout!,
+                  error: viewModel.uiState.workoutError,
+                  errorMessage: viewModel.uiState.workoutErrorMessage,
                 );
               }
 

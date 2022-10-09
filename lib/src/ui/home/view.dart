@@ -36,7 +36,6 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _initCamera());
     _controller.addListener(_loadMoreUserActivity);
   }
 
@@ -48,36 +47,6 @@ class _HomeViewState extends State<HomeView> {
       );
       dashboardModel.getListUserActivity(
         nextPage: true,
-      );
-    }
-  }
-
-  _initCamera() async {
-    final dashboardModel = Provider.of<ViewModel>(context, listen: false);
-    var currentPosition = dashboardModel.uiState.currentPosition;
-    if (currentPosition == null) {
-      return;
-    }
-
-    Timer(const Duration(seconds: 1), () {
-      _updateCamera(
-        currentPosition.latitude,
-        currentPosition.longitude,
-        currentPosition.bearing,
-      );
-    });
-  }
-
-  _updateCamera(
-    double latitude,
-    double longitude,
-    double bearing,
-  ) async {
-    if (_mapKey.currentState != null) {
-      await _mapKey.currentState!.changeCameraWithMarker(
-        latitude,
-        longitude,
-        bearing: bearing,
       );
     }
   }
@@ -126,11 +95,16 @@ class _HomeViewState extends State<HomeView> {
             : 115.0 * scale;
 
     if (dashboardModel.uiState.currentPosition != null) {
-      Timer(const Duration(seconds: 1), () {
-        _updateCamera(
-          dashboardModel.uiState.currentPosition!.latitude,
-          dashboardModel.uiState.currentPosition!.longitude,
-          dashboardModel.uiState.currentPosition!.bearing,
+      final currentPosition = dashboardModel.uiState.currentPosition!;
+      _mapKey.currentState?.setMarker(
+        currentPosition.latitude,
+        currentPosition.longitude,
+      );
+      Timer(const Duration(milliseconds: 500), () async {
+        await _mapKey.currentState?.changeCamera(
+          currentPosition.latitude,
+          currentPosition.longitude,
+          bearing: currentPosition.bearing,
         );
       });
     }

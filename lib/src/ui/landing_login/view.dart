@@ -18,6 +18,7 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scale = context.read<AppData>().scale;
+    final isHuaweiDevice = context.read<AppData>().isHuaweiDevice;
     final landingModel = Provider.of<ViewModel>(context);
     final isIos = defaultTargetPlatform == TargetPlatform.iOS;
     final colorScheme = Theme.of(context).colorScheme;
@@ -94,19 +95,21 @@ class LoginView extends StatelessWidget {
                       //     radius: 8.0*scale,
                       //   ),
                       // ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: 14.0 * scale,
+                      if (!isHuaweiDevice)
+                        Container(
+                          margin: EdgeInsets.only(
+                            top: 14.0 * scale,
+                          ),
+                          child: AppButton(
+                            loading: loading,
+                            onPressed: landingModel.loginGoogleSignIn,
+                            title:
+                                AppLocalizations.of(context)!.signupWithGoogle,
+                            textUpperCase: true,
+                            type: ButtonType.googleLogin,
+                            radius: 8.0 * scale,
+                          ),
                         ),
-                        child: AppButton(
-                          loading: loading,
-                          onPressed: landingModel.loginGoogleSignIn,
-                          title: AppLocalizations.of(context)!.signupWithGoogle,
-                          textUpperCase: true,
-                          type: ButtonType.googleLogin,
-                          radius: 8.0 * scale,
-                        ),
-                      ),
                       isIos
                           ? Container(
                               margin: EdgeInsets.only(

@@ -1,5 +1,6 @@
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/theme.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,6 +43,9 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
 
   String _version = '';
   String get version => _version;
+
+  bool _isHuaweiDevice = false;
+  bool get isHuaweiDevice => _isHuaweiDevice;
 
   AppData() : this.instance();
 
@@ -94,6 +98,13 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     _version = '${packageInfo.version} (${packageInfo.buildNumber})';
 
+    final isAndroid = defaultTargetPlatform == TargetPlatform.android;
+    if (isAndroid) {
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      _isHuaweiDevice =
+          androidInfo.manufacturer?.toLowerCase().contains('huawei') ?? false;
+    }
     notifyListeners();
   }
 

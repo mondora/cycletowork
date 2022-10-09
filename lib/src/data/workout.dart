@@ -38,6 +38,18 @@ abstract class BaseWorkout {
   bool get started => _started;
   bool _startedAfterPaused = false;
   bool _isLastPositionWasNegativeAccuracy = false;
+  bool _isAccuracyIncludeAbnormalMinValue = false;
+  bool get isAccuracyIncludeAbnormalMinValue =>
+      _isAccuracyIncludeAbnormalMinValue;
+  double? _accuracyAbnormalMinValue;
+  double? get accuracyAbnormalMinValue => _accuracyAbnormalMinValue;
+  bool _isAccuracyIncludeAbnormalMaxValue = false;
+  bool get isAccuracyIncludeAbnormalMaxValue =>
+      _isAccuracyIncludeAbnormalMaxValue;
+  double? _accuracyAbnormalMaxValue;
+  double? get accuracyAbnormalMaxValue => _accuracyAbnormalMaxValue;
+  bool _isRecivedLocation = false;
+  bool get isRecivedLocation => _isRecivedLocation;
 
   Timer? _timer;
   StreamSubscription<LocationData>? _locationSubscription;
@@ -134,6 +146,8 @@ class Workout extends BaseWorkout {
 
   @override
   void addLocationData(LocationData locationData) {
+    debugPrint(locationData.toJson().toString());
+    _isRecivedLocation = true;
     if (!started) {
       return;
     }
@@ -142,7 +156,35 @@ class Workout extends BaseWorkout {
       return;
     }
 
-    onLocationData(locationData);
+    if (locationData.accuracy <= 0) {
+      _isAccuracyIncludeAbnormalMinValue = true;
+      if (_accuracyAbnormalMinValue != null) {
+        _accuracyAbnormalMinValue =
+            _accuracyAbnormalMinValue! > locationData.accuracy
+                ? locationData.accuracy
+                : _accuracyAbnormalMinValue;
+      } else {
+        _accuracyAbnormalMinValue = locationData.accuracy;
+      }
+    }
+
+    if (locationData.accuracy > 100) {
+      _isAccuracyIncludeAbnormalMaxValue = true;
+      if (_accuracyAbnormalMaxValue != null) {
+        _accuracyAbnormalMaxValue =
+            _accuracyAbnormalMaxValue! < locationData.accuracy
+                ? locationData.accuracy
+                : _accuracyAbnormalMaxValue;
+      } else {
+        _accuracyAbnormalMaxValue = locationData.accuracy;
+      }
+    }
+
+    try {
+      onLocationData(locationData);
+    } catch (e) {
+      Logger.error(e);
+    }
 
     // if (locationData.accuracy < 0) {
     //   return;
@@ -283,7 +325,7 @@ class Workout extends BaseWorkout {
         Gps.startListenOnBackground().handleError((dynamic e) async {
       if (e is PlatformException) {
         Logger.error(e);
-        await stopWorkout();
+        // await stopWorkout();
         // throw (e);
       }
     }).listen((LocationData locationData) {
@@ -325,6 +367,18 @@ class Workout extends BaseWorkout {
     await _locationSubscription?.cancel();
     if (isWakeLockEnabled) {
       await WakeLock.disable();
+    }
+    if (_isAccuracyIncludeAbnormalMinValue) {
+      Logger.warningAbnormalValue(
+        'accuracyAbnormalMinValue',
+        accuracyAbnormalMinValue!,
+      );
+    }
+    if (_isAccuracyIncludeAbnormalMaxValue) {
+      Logger.warningAbnormalValue(
+        'accuracyAbnormalMaxValue',
+        accuracyAbnormalMaxValue!,
+      );
     }
   }
 

@@ -13,6 +13,8 @@ PODS:
     - Firebase/Functions (= 9.4.0)
     - firebase_core
     - Flutter
+  - device_info_plus (0.0.1):
+    - Flutter
   - Firebase/Auth (9.4.0):
     - Firebase/CoreOnly
     - FirebaseAuth (~> 9.4.0)
@@ -191,6 +193,8 @@ PODS:
   - SwiftLocation/Core (5.1.0)
   - url_launcher_ios (0.0.1):
     - Flutter
+  - vibration (1.7.5):
+    - Flutter
   - wakelock (0.0.1):
     - Flutter
   - webview_flutter_wkwebview (0.0.1):
@@ -200,6 +204,7 @@ DEPENDENCIES:
   - app_settings (from `.symlinks/plugins/app_settings/ios`)
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
   - cloud_functions (from `.symlinks/plugins/cloud_functions/ios`)
+  - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
@@ -222,6 +227,7 @@ DEPENDENCIES:
   - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
+  - vibration (from `.symlinks/plugins/vibration/ios`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
   - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
 
@@ -262,6 +268,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/camera_avfoundation/ios"
   cloud_functions:
     :path: ".symlinks/plugins/cloud_functions/ios"
+  device_info_plus:
+    :path: ".symlinks/plugins/device_info_plus/ios"
   firebase_auth:
     :path: ".symlinks/plugins/firebase_auth/ios"
   firebase_core:
@@ -306,6 +314,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
+  vibration:
+    :path: ".symlinks/plugins/vibration/ios"
   wakelock:
     :path: ".symlinks/plugins/wakelock/ios"
   webview_flutter_wkwebview:
@@ -316,6 +326,7 @@ SPEC CHECKSUMS:
   AppAuth: 80317d99ac7ff2801a2f18ff86b48cd315ed465d
   camera_avfoundation: 07c77549ea54ad95d8581be86617c094a46280d9
   cloud_functions: aba8a15e27a8bf6ff6c5f543961274a9fd3adcf1
+  device_info_plus: e5c5da33f982a436e103237c0c85f9031142abed
   Firebase: 7703fc4022824b6d6db1bf7bea58d13b8e17ec46
   firebase_auth: 74cfbf7be1e3e7fdaac9e7f117cefd89155251a9
   firebase_core: 8e500850dd138c269d197c8dfca3ae886fa3b6f2
@@ -364,6 +375,7 @@ SPEC CHECKSUMS:
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
   SwiftLocation: 83e0ea75a1969cee3a1197e2b7095603fc23fde5
   url_launcher_ios: 839c58cdb4279282219f5e248c3321761ff3c4de
+  vibration: 7d883d141656a1c1a6d8d238616b2042a51a1241
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
   webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
 

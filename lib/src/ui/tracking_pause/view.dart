@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/workout.dart';
 import 'package:cycletowork/src/theme.dart';
@@ -10,7 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:cycletowork/src/utility/convert.dart';
 
-class TrackingPauseView extends StatelessWidget {
+class TrackingPauseView extends StatefulWidget {
   final Workout workout;
   final bool isChallenge;
   final GestureTapCancelCallback? playTracking;
@@ -25,6 +27,32 @@ class TrackingPauseView extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<TrackingPauseView> createState() => _TrackingPauseViewState();
+}
+
+class _TrackingPauseViewState extends State<TrackingPauseView> {
+  final GlobalKey<AppMapState> _mapKey = GlobalKey();
+
+  @override
+  void dispose() {
+    _mapKey.currentState?.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      Timer(const Duration(milliseconds: 200), () async {
+        if (widget.workout.listLocationData.isEmpty) {
+          return;
+        }
+        await _mapKey.currentState?.chengeCameraForStaticMap();
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final scale = context.read<AppData>().scale;
     final measurementUnit = context.read<AppData>().measurementUnit;
@@ -34,34 +62,35 @@ class TrackingPauseView extends StatelessWidget {
       appLocale.languageCode,
     );
 
-    final trackingDurationInSeconds = workout.durationInSecond;
-    final trackingCo2Kg = workout.co2InGram.gramToKg();
-    final trackingCo2Pound = workout.co2InGram.gramToPound();
+    final trackingDurationInSeconds = widget.workout.durationInSecond;
+    final trackingCo2Kg = widget.workout.co2InGram.gramToKg();
+    final trackingCo2Pound = widget.workout.co2InGram.gramToPound();
     final trackingCo2 = measurementUnit == AppMeasurementUnit.metric
         ? trackingCo2Kg
         : trackingCo2Pound;
 
     final trackingAvarageSpeedKmPerHour =
-        workout.averageSpeedInMeterPerSecond.meterPerSecondToKmPerHour();
-    final trackingAvarageSpeedMilePerHour =
-        workout.averageSpeedInMeterPerSecond.meterPerSecondToMilePerHour();
+        widget.workout.averageSpeedInMeterPerSecond.meterPerSecondToKmPerHour();
+    final trackingAvarageSpeedMilePerHour = widget
+        .workout.averageSpeedInMeterPerSecond
+        .meterPerSecondToMilePerHour();
     final trackingAvarageSpeed = measurementUnit == AppMeasurementUnit.metric
         ? trackingAvarageSpeedKmPerHour
         : trackingAvarageSpeedMilePerHour;
 
-    final trackingDistanceInKm = workout.distanceInMeter.meterToKm();
-    final trackingDistanceInMile = workout.distanceInMeter.meterToMile();
+    final trackingDistanceInKm = widget.workout.distanceInMeter.meterToKm();
+    final trackingDistanceInMile = widget.workout.distanceInMeter.meterToMile();
     final trackingDistance = measurementUnit == AppMeasurementUnit.metric
         ? trackingDistanceInKm
         : trackingDistanceInMile;
     final currentPosition = context.read<ViewModel>().uiState.currentPosition;
-    final initialLatitude = workout.listLocationData.isNotEmpty
-        ? workout.listLocationData.first.latitude
+    final initialLatitude = widget.workout.listLocationData.isNotEmpty
+        ? widget.workout.listLocationData.first.latitude
         : currentPosition != null
             ? currentPosition.latitude
             : context.read<ViewModel>().initialLatitude;
-    final initialLongitude = workout.listLocationData.isNotEmpty
-        ? workout.listLocationData.first.longitude
+    final initialLongitude = widget.workout.listLocationData.isNotEmpty
+        ? widget.workout.listLocationData.first.longitude
         : currentPosition != null
             ? currentPosition.longitude
             : context.read<ViewModel>().initialLongitude;
@@ -112,11 +141,13 @@ class TrackingPauseView extends StatelessWidget {
               body: Container(
                 margin: EdgeInsets.only(bottom: 210.0 * scale),
                 child: AppMap(
-                  listTrackingPosition: workout.listLocationData,
-                  isChallenge: isChallenge,
+                  key: _mapKey,
+                  listTrackingPosition: widget.workout.listLocationData,
+                  isChallenge: widget.isChallenge,
                   initialLatitude: initialLatitude,
                   initialLongitude: initialLongitude,
-                  isStatic: workout.listLocationData.isNotEmpty ? true : false,
+                  isStatic:
+                      widget.workout.listLocationData.isNotEmpty ? true : false,
                   padding: 150.0,
                 ),
               ),
@@ -138,7 +169,7 @@ class TrackingPauseView extends StatelessWidget {
                     width: 80.0 * scale,
                     child: FittedBox(
                       child: FloatingActionButton(
-                        onPressed: stopTracking,
+                        onPressed: widget.stopTracking,
                         child: Icon(
                           Icons.stop,
                           color: Colors.black,
@@ -155,7 +186,7 @@ class TrackingPauseView extends StatelessWidget {
                     width: 80.0 * scale,
                     child: FittedBox(
                       child: FloatingActionButton(
-                        onPressed: playTracking,
+                        onPressed: widget.playTracking,
                         child: Icon(
                           Icons.play_arrow_rounded,
                           color: Colors.black,
