@@ -41,6 +41,10 @@ post_install do |installer|
     # Start of the permission_handler configuration
     target.build_configurations.each do |config|
 
+      if config.build_settings['WRAPPER_EXTENSION'] == 'bundle'
+        config.build_settings['DEVELOPMENT_TEAM'] = 'Y2DHRKAN45'
+      end
+
       # You can enable the permissions needed here. For example to enable camera
       # permission, just remove the `#` character in front so it looks like this:
       #
