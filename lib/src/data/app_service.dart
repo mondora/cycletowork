@@ -152,12 +152,20 @@ abstract class AppServiceOnlyLocal {
 
   Future<void> setUploadedUserActivity(String userActivityId);
 
+  Future<void> setReviewedUserActivity(String userActivityId);
+
   Future<UserActivity?> getUserActivity(String userActivityId);
 }
 
 abstract class AppServiceOnlyRemote {
   Future saveUserActivity(
     UserActivity userActivity,
+  );
+
+  Future<bool?> saveUserActivityLocationData(
+    UserActivity userActivity,
+    List<LocationData> listLocationData,
+    List<LocationData> listLocationDataUnFiltred,
   );
 
   Future<User> getUserInfo();

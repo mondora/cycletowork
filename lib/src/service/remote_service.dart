@@ -3,6 +3,7 @@ import 'package:cycletowork/src/data/app_service.dart';
 import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/classification.dart';
 import 'package:cycletowork/src/data/company.dart';
+import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/survey.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
@@ -17,6 +18,7 @@ class RemoteService
   ) async {
     final userActivityJson = userActivity.toJson();
     userActivityJson['imageData'] = null;
+    userActivityJson['isUploaded'] = 1;
     var arg = {
       'userActivity': userActivityJson,
     };
@@ -522,5 +524,27 @@ class RemoteService
       'address': newAddress,
     };
     return await Remote.callFirebaseFunctions('updateUserInfoInChallenge', arg);
+  }
+
+  @override
+  Future<bool?> saveUserActivityLocationData(
+    UserActivity userActivity,
+    List<LocationData> listLocationData,
+    List<LocationData> listLocationDataUnFiltred,
+  ) async {
+    final userActivityJson = userActivity.toJson();
+    userActivityJson['imageData'] = null;
+    userActivityJson['isSendedToReview'] = 1;
+    var arg = {
+      'userActivity': userActivityJson,
+      'listLocationData': listLocationData.map((e) => e.toJson()).toList(),
+      'listLocationDataUnFiltred':
+          listLocationDataUnFiltred.map((e) => e.toJson()).toList(),
+    };
+    final result = await Remote.callFirebaseFunctions(
+      'saveUserActivityLocationData',
+      arg,
+    );
+    return result == true;
   }
 }

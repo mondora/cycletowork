@@ -538,4 +538,21 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
       return null;
     }
   }
+
+  @override
+  Future<void> setReviewedUserActivity(
+    String userActivityId,
+  ) async {
+    String whereCondition = 'userActivityId = ?';
+    List<dynamic> whereArgs = [userActivityId];
+    final item = {
+      'isSendedToReview': 1,
+    };
+    await _localDatabase.updateData(
+      tableName: UserActivity.tableName,
+      item: item,
+      whereCondition: whereCondition,
+      whereArgs: whereArgs,
+    );
+  }
 }

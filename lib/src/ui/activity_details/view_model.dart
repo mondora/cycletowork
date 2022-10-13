@@ -60,4 +60,27 @@ class ViewModel extends ChangeNotifier {
       return false;
     }
   }
+
+  Future<bool> saveUserActivityLocationData() async {
+    _uiState.loading = true;
+    notifyListeners();
+    try {
+      debugPrint('userActivityId: ${_uiState.userActivity!.userActivityId}');
+      final result = await _repository.saveUserActivityLocationData(
+        _uiState.userActivity!,
+        _uiState.listLocationData,
+        _uiState.listLocationDataUnFiltred,
+      );
+      _uiState.loading = false;
+      notifyListeners();
+      return result;
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+      _uiState.loading = false;
+      notifyListeners();
+      return false;
+    }
+  }
 }

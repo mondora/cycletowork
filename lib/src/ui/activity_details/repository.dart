@@ -60,4 +60,29 @@ class Repository {
       return false;
     }
   }
+
+  Future<bool> saveUserActivityLocationData(
+    UserActivity userActivity,
+    List<LocationData> listLocationData,
+    List<LocationData> listLocationDataUnFiltred,
+  ) async {
+    try {
+      final result = await _remoteService.saveUserActivityLocationData(
+        userActivity,
+        listLocationData,
+        listLocationDataUnFiltred,
+      );
+      if (result != true) {
+        return false;
+      }
+      await _localDatabase.setReviewedUserActivity(
+        userActivity.userActivityId,
+      );
+      userActivity.isSendedToReview = 1;
+      return true;
+    } catch (e) {
+      Logger.error(e);
+      return false;
+    }
+  }
 }

@@ -116,6 +116,76 @@ class ActivityDetailsView extends StatelessWidget {
                 onPressed: () => Navigator.of(context).pop(),
               ),
               actions: [
+                if (viewModel.uiState.userActivity!.isUploaded == 1 &&
+                    viewModel.uiState.listLocationData.isNotEmpty &&
+                    viewModel.uiState.userActivity!.isSendedToReview != 1)
+                  IconButton(
+                    splashRadius: 25 * scale,
+                    onPressed: () async {
+                      final confirmed = await AppAlartDialog(
+                        context: context,
+                        title: 'Attenzione!',
+                        subtitle:
+                            'Vuoi salvare le posizioni della questa attività?',
+                        body:
+                            'Assicurati di avere abilitato i dati cellulare e che la copertura di rete sia adeguata, poi clicca su "Salva".',
+                        confirmLabel: 'Salva',
+                        barrierDismissible: true,
+                      ).show();
+
+                      if (confirmed == true) {
+                        final result =
+                            await viewModel.saveUserActivityLocationData();
+                        final snackBar = SnackBar(
+                          backgroundColor: result
+                              ? colorSchemeExtension.success
+                              : colorScheme.error,
+                          content: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (!result)
+                                  Icon(
+                                    Icons.error,
+                                    color: colorScheme.onError,
+                                  ),
+                                if (!result)
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                Expanded(
+                                  child: Text(
+                                    result
+                                        ? 'LA TUA ATTIVITÀ È STATA SALVATA!'
+                                        : 'PURTROPPO LA TUA ATTIVITÀ NON È STATA SALVATA!'
+                                            .toUpperCase(),
+                                    style: textTheme.caption!.apply(
+                                      color: colorScheme.onError,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 15,
+                                    softWrap: true,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                    },
+                    icon: Icon(
+                      Icons.cloud_upload,
+                      color: colorScheme.secondary,
+                      size: 25 * scale,
+                    ),
+                  ),
+                SizedBox(
+                  width: 15 * scale,
+                ),
                 if (userActivity.isUploaded != 1)
                   IconButton(
                     splashRadius: 25 * scale,
