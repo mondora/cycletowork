@@ -171,6 +171,59 @@ const saveUserActivity = async (uid, userActivity) => {
     });
 };
 
+const saveUserActivityLocationData = async (
+    uid,
+    userActivity,
+    listLocationData,
+    listLocationDataUnFiltred
+) => {
+    const userActivityId = userActivity.userActivityId;
+
+    const userRef = admin
+        .firestore()
+        .collection(Constant.usersCollectionName)
+        .doc(uid);
+
+    const listLocationDataRef = admin
+        .firestore()
+        .collection(Constant.usersCollectionName)
+        .doc(uid)
+        .collection(Constant.userActivityCollectionName)
+        .doc(userActivityId)
+        .collection('listLocationData')
+        .doc(userActivityId);
+
+    const listLocationDataUnFiltredRef = admin
+        .firestore()
+        .collection(Constant.usersCollectionName)
+        .doc(uid)
+        .collection(Constant.userActivityCollectionName)
+        .doc(userActivityId)
+        .collection('listLocationDataUnFiltred')
+        .doc(userActivityId);
+
+    await admin.firestore().runTransaction(async (t) => {
+        const userInfo = await t.get(userRef);
+
+        if (!userInfo.exists) {
+            throw new Error(Constant.userNotFoundError);
+        }
+
+        t.set(
+            listLocationDataRef,
+            { listLocationData: listLocationData },
+            { merge: false }
+        );
+        t.set(
+            listLocationDataUnFiltredRef,
+            { listLocationData: listLocationDataUnFiltred },
+            {
+                merge: false,
+            }
+        );
+    });
+};
+
 const getListUserActivity = async (uid, startDate, pageSize = 100) => {
     let snapshot;
     if (startDate) {
@@ -203,5 +256,6 @@ const getListUserActivity = async (uid, startDate, pageSize = 100) => {
 
 module.exports = {
     saveUserActivity,
+    saveUserActivityLocationData,
     getListUserActivity,
 };

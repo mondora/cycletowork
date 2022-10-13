@@ -15,7 +15,11 @@ const {
     setAdminUser,
     verifyUserAdmin,
 } = require('./service/admin/user');
-const { saveUserActivity, getListUserActivity } = require('./service/activity');
+const {
+    saveUserActivity,
+    saveUserActivityLocationData,
+    getListUserActivity,
+} = require('./service/activity');
 const {
     sendNotification,
     saveDeviceToken,
@@ -718,6 +722,55 @@ exports.saveUserActivity = functions
                 throw new functions.https.HttpsError(
                     Constant.unknownErrorMessage
                 );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.saveUserActivityLocationData = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            if (
+                !data.userActivity ||
+                !data.listLocationData ||
+                !data.listLocationDataUnFiltred
+            ) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+            try {
+                const userActivity = data.userActivity;
+                const listLocationData = data.listLocationData;
+                const listLocationDataUnFiltred =
+                    data.listLocationDataUnFiltred;
+
+                await saveUserActivityLocationData(
+                    uid,
+                    userActivity,
+                    listLocationData,
+                    listLocationDataUnFiltred
+                );
+                return true;
+            } catch (error) {
+                loggerError(
+                    'saveUserActivityLocationData Error, UID:',
+                    uid,
+                    'userActivity:',
+                    data.userActivity,
+                    'error:',
+                    error
+                );
+                return {
+                    success: false,
+                    message: Constant.unknownErrorMessage,
+                };
             }
         } else {
             throw new functions.https.HttpsError(
