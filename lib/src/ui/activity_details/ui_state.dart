@@ -16,4 +16,5 @@ class UiState {
   String errorMessage = '';
   UserActivity? userActivity;
   List<LocationData> listLocationData = [];
+  List<LocationData> listLocationDataUnFiltred = [];
 }

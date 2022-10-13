@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/utility/logger.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -325,6 +325,8 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
       scrollGesturesEnabled: widget.canScroll,
       zoomGesturesEnabled: widget.canScroll,
       rotateGesturesEnabled: widget.canScroll,
+      // gestureRecognizers: Set()
+      //   ..add(Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer())),
       initialCameraPosition: CameraPosition(
         target: LatLng(
           widget.initialLatitude!,

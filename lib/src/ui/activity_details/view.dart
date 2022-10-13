@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/chart_data.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
@@ -93,6 +95,14 @@ class ActivityDetailsView extends StatelessWidget {
               ),
             );
           }
+
+          Timer(const Duration(milliseconds: 500), () async {
+            if (viewModel.uiState.listLocationData.isEmpty ||
+                imageData != null) {
+              return;
+            }
+            await _mapKey.currentState?.chengeCameraForStaticMap();
+          });
 
           return Scaffold(
             appBar: AppBar(

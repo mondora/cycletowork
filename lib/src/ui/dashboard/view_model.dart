@@ -290,10 +290,14 @@ class ViewModel extends ChangeNotifier {
         companyId: _challengeActive?.companyId,
         city: '',
         isUploaded: 0,
+        maxAccuracy: 0,
+        minAccuracy: 0,
+        isSendedToReview: 0,
       );
       _uiState.workoutError = false;
       _uiState.workout = Workout(
         ActivityType.onBicycle,
+        _trackingUserActivity!.userActivityId,
         isWakeLockEnabled: isWakelockModeEnable,
         onTickEverySecond: (int countdown) {
           final isTrackingStarted = _uiState.dashboardPageOption ==
@@ -327,9 +331,36 @@ class ViewModel extends ChangeNotifier {
               notifyListeners();
             }
           } else {
-            if (_uiState.workoutError) {
-              _uiState.workoutError = false;
-              notifyListeners();
+            if (_uiState.workout!.listLocationData.isNotEmpty) {
+              final lastPositionTime =
+                  _uiState.workout!.listLocationData.last.time;
+              final lastPositionDateTime =
+                  DateTime.fromMillisecondsSinceEpoch(lastPositionTime);
+              final isAfter3Seconds = DateTime.now().isAfter(
+                lastPositionDateTime.add(
+                  const Duration(minutes: 5),
+                ),
+              );
+              if (isAfter3Seconds) {
+                if (!_uiState.workoutError) {
+                  debugPrint('Not location after 5 minutes');
+                  _uiState.workoutErrorMessage =
+                      'Attenzione! Cycle2Work non sta ricevendo i dati dal tuo GPS da 5 mins!';
+                  _uiState.workoutError = true;
+                  Vibration.vibration(3000);
+                  notifyListeners();
+                }
+              } else {
+                if (_uiState.workoutError) {
+                  _uiState.workoutError = false;
+                  notifyListeners();
+                }
+              }
+            } else {
+              if (_uiState.workoutError) {
+                _uiState.workoutError = false;
+                notifyListeners();
+              }
             }
           }
 
@@ -394,13 +425,8 @@ class ViewModel extends ChangeNotifier {
       userActivity.maxSpeed = workout.maxSpeedInMeterPerSecond;
       userActivity.calorie = workout.calorie;
       userActivity.steps = workout.steps;
-
-      for (var i = 0; i < _uiState.workout!.listLocationData.length; i++) {
-        _uiState.workout!.listLocationData[i].locationDataId =
-            const Uuid().v4();
-        _uiState.workout!.listLocationData[i].userActivityId =
-            userActivity.userActivityId;
-      }
+      userActivity.maxAccuracy = workout.accuracyAbnormalMaxValue ?? 0.0;
+      userActivity.minAccuracy = workout.accuracyAbnormalMinValue ?? 0.0;
 
       AppData.user!.calorie += userActivity.calorie;
       AppData.user!.co2 += userActivity.co2;
@@ -415,6 +441,7 @@ class ViewModel extends ChangeNotifier {
       var result = await _repository.saveUserActivity(
         userActivity,
         _uiState.workout!.listLocationData,
+        _uiState.workout!.listLocationDataUnFiltered,
       );
       await getListUserActivity();
       await getListUserActivityFilterd();

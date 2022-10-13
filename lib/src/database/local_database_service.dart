@@ -16,6 +16,7 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
   Future saveUserActivity(
     UserActivity userActivity,
     List<LocationData> listLocationData,
+    List<LocationData> listLocationDataUnFiltered,
   ) async {
     await _localDatabase.insertData(
       tableName: UserActivity.tableName,
@@ -24,6 +25,12 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
     for (var element in listLocationData) {
       await _localDatabase.insertData(
         tableName: LocationData.tableName,
+        item: element.toJson(),
+      );
+    }
+    for (var element in listLocationDataUnFiltered) {
+      await _localDatabase.insertData(
+        tableName: LocationData.tableNameUnFiltered,
         item: element.toJson(),
       );
     }
@@ -89,6 +96,18 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
   ) async {
     var result = await _localDatabase.getData(
       tableName: LocationData.tableName,
+      whereCondition: 'userActivityId = ?',
+      whereArgs: [userActivityId],
+    );
+    return result.map((json) => LocationData.fromMap(json)).toList();
+  }
+
+  @override
+  Future<List<LocationData>> getListLocationDataUnfiltredForActivity(
+    String userActivityId,
+  ) async {
+    var result = await _localDatabase.getData(
+      tableName: LocationData.tableNameUnFiltered,
       whereCondition: 'userActivityId = ?',
       whereArgs: [userActivityId],
     );
@@ -488,10 +507,13 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
   Future<void> setUploadedUserActivity(String userActivityId) async {
     String whereCondition = 'userActivityId = ?';
     List<dynamic> whereArgs = [userActivityId];
-
+    final item = {
+      'isUploaded': 1,
+      'isSendedToReview': 0,
+    };
     await _localDatabase.updateData(
       tableName: UserActivity.tableName,
-      item: {'isUploaded': 1},
+      item: item,
       whereCondition: whereCondition,
       whereArgs: whereArgs,
     );

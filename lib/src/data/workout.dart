@@ -8,13 +8,16 @@ import 'package:cycletowork/src/utility/logger.dart';
 import 'package:cycletowork/src/utility/wakelock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:uuid/uuid.dart';
 
 abstract class BaseWorkout {
   late ActivityType activityTypeTarget;
+  late String userActivityId;
   late int durationInSecond;
   late int startDateInMilliSeconds;
   late int stopDateInMilliSeconds;
   late List<LocationData> listLocationData;
+  late List<LocationData> listLocationDataUnFiltered;
   late double distanceInMeter;
   late double speedInMeterPerSecond;
   late double averageSpeedInMeterPerSecond;
@@ -107,7 +110,8 @@ abstract class BaseWorkout {
 
 class Workout extends BaseWorkout {
   Workout(
-    ActivityType activityTypeTarget, {
+    ActivityType activityTypeTarget,
+    String userActivityId, {
     required Function(int countdown) onTickEverySecond,
     required Function(LocationData locationData) onLocationData,
     double distanceAccuracyFactor = 1.5,
@@ -118,6 +122,7 @@ class Workout extends BaseWorkout {
     double minAccuracyInNegativeAccuracy = 30.0,
   }) {
     this.activityTypeTarget = activityTypeTarget;
+    this.userActivityId = userActivityId;
     this.distanceAccuracyFactor = distanceAccuracyFactor;
     this.minDistanceFromLineInMeter = minDistanceFromLineInMeter;
     this.delayInSecondToCalculateAverageSpeed =
@@ -131,6 +136,7 @@ class Workout extends BaseWorkout {
     startDateInMilliSeconds = 0;
     stopDateInMilliSeconds = 0;
     listLocationData = [];
+    listLocationDataUnFiltered = [];
     distanceInMeter = 0;
     speedInMeterPerSecond = 0;
     averageSpeedInMeterPerSecond = 0;
@@ -156,28 +162,32 @@ class Workout extends BaseWorkout {
       return;
     }
 
-    if (locationData.accuracy <= 0) {
-      _isAccuracyIncludeAbnormalMinValue = true;
-      if (_accuracyAbnormalMinValue != null) {
-        _accuracyAbnormalMinValue =
-            _accuracyAbnormalMinValue! > locationData.accuracy
-                ? locationData.accuracy
-                : _accuracyAbnormalMinValue;
-      } else {
-        _accuracyAbnormalMinValue = locationData.accuracy;
-      }
+    listLocationDataUnFiltered.add(locationData);
+
+    var accuracy = locationData.accuracy;
+
+    if (_accuracyAbnormalMinValue != null) {
+      _accuracyAbnormalMinValue = _accuracyAbnormalMinValue! > accuracy
+          ? accuracy
+          : _accuracyAbnormalMinValue;
+    } else {
+      _accuracyAbnormalMinValue = accuracy;
     }
 
-    if (locationData.accuracy > 100) {
+    if (_accuracyAbnormalMaxValue != null) {
+      _accuracyAbnormalMaxValue = _accuracyAbnormalMaxValue! < accuracy
+          ? accuracy
+          : _accuracyAbnormalMaxValue;
+    } else {
+      _accuracyAbnormalMaxValue = accuracy;
+    }
+
+    if (accuracy <= 0) {
+      _isAccuracyIncludeAbnormalMinValue = true;
+    }
+
+    if (accuracy > 100) {
       _isAccuracyIncludeAbnormalMaxValue = true;
-      if (_accuracyAbnormalMaxValue != null) {
-        _accuracyAbnormalMaxValue =
-            _accuracyAbnormalMaxValue! < locationData.accuracy
-                ? locationData.accuracy
-                : _accuracyAbnormalMaxValue;
-      } else {
-        _accuracyAbnormalMaxValue = locationData.accuracy;
-      }
     }
 
     try {
@@ -185,14 +195,6 @@ class Workout extends BaseWorkout {
     } catch (e) {
       Logger.error(e);
     }
-
-    // if (locationData.accuracy < 0) {
-    //   return;
-    // }
-
-    // if (locationData.accuracy > minAccuracyInMeter) {
-    //   return;
-    // }
 
     if (listLocationData.isEmpty || _startedAfterPaused) {
       if (_startedAfterPaused) {
@@ -203,9 +205,9 @@ class Workout extends BaseWorkout {
       return;
     }
 
-    if (locationData.accuracy <= 0.0) {
+    if (accuracy <= 0.0) {
       if (_isLastPositionWasNegativeAccuracy) {
-        locationData.accuracy = minAccuracyInNegativeAccuracy;
+        accuracy = minAccuracyInNegativeAccuracy;
       } else {
         _isLastPositionWasNegativeAccuracy = true;
         return;
@@ -222,7 +224,7 @@ class Workout extends BaseWorkout {
       longitude2: locationData.longitude,
     ).abs();
 
-    if (newDistanceInMeter < locationData.accuracy) {
+    if (newDistanceInMeter < accuracy) {
       return;
     }
 
@@ -240,11 +242,7 @@ class Workout extends BaseWorkout {
     }
 
     final checkMinDistanceAccuracy =
-        newDistanceInMeter > (distanceAccuracyFactor * locationData.accuracy);
-    // final checkOnBicycleHighConfidence = activityTypeDetected != null &&
-    //     activityTypeDetected == ActivityType.onBicycle &&
-    //     activityConfidenceDetected != null &&
-    //     activityConfidenceDetected == ActivityConfidence.high;
+        newDistanceInMeter > (distanceAccuracyFactor * accuracy);
 
     if (!checkMinDistanceAccuracy) {
       lastPosition.speed = newSpeedInMeterPerSecond;
@@ -256,7 +254,7 @@ class Workout extends BaseWorkout {
             (activityTypeDetected == null ? distanceAccuracyFactor : 1.0));
     final checkActivityTypeIsStill = activityTypeDetected != null &&
         activityTypeDetected == ActivityType.still &&
-        newDistanceInMeter < (2 * locationData.accuracy);
+        newDistanceInMeter < (2 * accuracy);
 
     if (!checkMinDistance || checkActivityTypeIsStill) {
       lastPosition.speed = newSpeedInMeterPerSecond;
@@ -295,7 +293,6 @@ class Workout extends BaseWorkout {
   ) async {
     startDateInMilliSeconds = DateTime.now().toLocal().millisecondsSinceEpoch;
     _started = true;
-    // _timer?.cancel();
 
     await Gps.setSettings(
       smallestDisplacement: minDistanceInMeter,
@@ -325,10 +322,10 @@ class Workout extends BaseWorkout {
         Gps.startListenOnBackground().handleError((dynamic e) async {
       if (e is PlatformException) {
         Logger.error(e);
-        // await stopWorkout();
-        // throw (e);
       }
     }).listen((LocationData locationData) {
+      locationData.userActivityId = userActivityId;
+      locationData.locationDataId = const Uuid().v4();
       addLocationData(locationData);
     });
 
@@ -367,18 +364,6 @@ class Workout extends BaseWorkout {
     await _locationSubscription?.cancel();
     if (isWakeLockEnabled) {
       await WakeLock.disable();
-    }
-    if (_isAccuracyIncludeAbnormalMinValue) {
-      Logger.warningAbnormalValue(
-        'accuracyAbnormalMinValue',
-        accuracyAbnormalMinValue!,
-      );
-    }
-    if (_isAccuracyIncludeAbnormalMaxValue) {
-      Logger.warningAbnormalValue(
-        'accuracyAbnormalMaxValue',
-        accuracyAbnormalMaxValue!,
-      );
     }
   }
 

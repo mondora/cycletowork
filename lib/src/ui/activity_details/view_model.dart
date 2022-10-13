@@ -27,6 +27,10 @@ class ViewModel extends ChangeNotifier {
       _uiState.listLocationData = await _repository.getListLocationData(
         userActivityId,
       );
+      _uiState.listLocationDataUnFiltred =
+          await _repository.getListLocationDataUnfiltred(
+        userActivityId,
+      );
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;

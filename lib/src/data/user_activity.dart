@@ -18,6 +18,9 @@ class UserActivity {
   String? city;
   Uint8List? imageData;
   int isUploaded;
+  double maxAccuracy;
+  double minAccuracy;
+  int isSendedToReview;
 
   UserActivity({
     required this.uid,
@@ -33,6 +36,9 @@ class UserActivity {
     required this.steps,
     required this.isChallenge,
     required this.isUploaded,
+    required this.maxAccuracy,
+    required this.minAccuracy,
+    required this.isSendedToReview,
     this.challengeId,
     this.companyId,
     this.city,
@@ -62,7 +68,14 @@ class UserActivity {
         challengeId = map['challengeId'],
         companyId = map['companyId'],
         city = map['city'],
-        isUploaded = map['isUploaded'] ?? 1;
+        isUploaded = map['isUploaded'] ?? 1,
+        maxAccuracy = map['maxAccuracy'] != null
+            ? double.parse(map['maxAccuracy'].toString())
+            : 0.0,
+        minAccuracy = map['minAccuracy'] != null
+            ? double.parse(map['minAccuracy'].toString())
+            : 0.0,
+        isSendedToReview = map['isSendedToReview'] ?? 0;
 
   Map<String, dynamic> toJson() => {
         'uid': uid,
@@ -82,6 +95,9 @@ class UserActivity {
         'companyId': companyId,
         'city': city,
         'isUploaded': isUploaded,
+        'maxAccuracy': maxAccuracy,
+        'minAccuracy': minAccuracy,
+        'isSendedToReview': isSendedToReview,
       };
 
   static String get tableName => 'UserActivity';
@@ -104,11 +120,20 @@ class UserActivity {
       challengeId TEXT,
       companyId TEXT,
       city TEXT,
-      isUploaded INTEGER NOT NULL
+      isUploaded INTEGER NOT NULL,
+      maxAccuracy REAL NOT NULL,
+      minAccuracy REAL NOT NULL,
+      isSendedToReview INTEGER NOT NULL
     );
   ''';
 
   static List<String> get alterTableV2ToV3 => [
         'ALTER TABLE $tableName ADD isUploaded INTEGER NOT NULL DEFAULT 1;',
+      ];
+
+  static List<String> get alterTableV3ToV4 => [
+        'ALTER TABLE $tableName ADD maxAccuracy REAL NOT NULL DEFAULT 0;',
+        'ALTER TABLE $tableName ADD minAccuracy REAL NOT NULL DEFAULT 0;',
+        'ALTER TABLE $tableName ADD isSendedToReview INTEGER NOT NULL DEFAULT 0;',
       ];
 }

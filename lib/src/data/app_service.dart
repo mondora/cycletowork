@@ -7,11 +7,6 @@ import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
 
 abstract class AppService {
-  Future saveUserActivity(
-    UserActivity userActivity,
-    List<LocationData> listLocationData,
-  );
-
   Future<void> saveDeviceToken(String deviceToken);
 
   Future<void> removeDeviceToken(String deviceToken);
@@ -88,6 +83,12 @@ abstract class AppAdminService {
 }
 
 abstract class AppServiceOnlyLocal {
+  Future saveUserActivity(
+    UserActivity userActivity,
+    List<LocationData> listLocationData,
+    List<LocationData> listLocationDataUnFiltered,
+  );
+
   Future<User?> getUserInfo(String uid);
 
   Future<void> saveUserInfo(User user);
@@ -98,6 +99,10 @@ abstract class AppServiceOnlyLocal {
   });
 
   Future<List<LocationData>> getListLocationDataForActivity(
+    String userActivityId,
+  );
+
+  Future<List<LocationData>> getListLocationDataUnfiltredForActivity(
     String userActivityId,
   );
 
@@ -151,6 +156,10 @@ abstract class AppServiceOnlyLocal {
 }
 
 abstract class AppServiceOnlyRemote {
+  Future saveUserActivity(
+    UserActivity userActivity,
+  );
+
   Future<User> getUserInfo();
 
   Future<void> updateUserDisplayName(String displayName);

@@ -88,6 +88,7 @@ class _LoginEmailViewState extends State<LoginEmailView> {
               Container(
                 margin: EdgeInsets.only(top: 30.0 * scale),
                 child: TextFormField(
+                  key: const Key('email'),
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(
@@ -108,6 +109,7 @@ class _LoginEmailViewState extends State<LoginEmailView> {
               Container(
                 margin: EdgeInsets.only(top: 30.0 * scale),
                 child: TextFormField(
+                  key: const Key('password'),
                   controller: passwordController,
                   keyboardType: TextInputType.visiblePassword,
                   textInputAction: TextInputAction.next,

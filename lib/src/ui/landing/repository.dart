@@ -69,7 +69,12 @@ class Repository {
           pageSize: 500,
         );
         for (var userActivity in listUserActivity) {
-          await _localDatabase.saveUserActivity(userActivity, []);
+          userActivity.isUploaded = 1;
+          await _localDatabase.saveUserActivity(
+            userActivity,
+            [],
+            [],
+          );
         }
       }
       await _localDatabase.saveUserInfo(user);

@@ -7,6 +7,7 @@ import 'package:cycletowork/src/ui/landing_login_email/view.dart';
 import 'package:cycletowork/src/ui/landing_signup_email/view.dart';
 import 'package:cycletowork/src/utility/notification.dart';
 import 'package:cycletowork/src/widget/progress_indicator.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +22,9 @@ class _LandingViewState extends State<LandingView> {
   @override
   void initState() {
     super.initState();
-    AppNotification.requestPermission();
+    if (!kDebugMode) {
+      AppNotification.requestPermission();
+    }
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => _configScreen(context),
     );

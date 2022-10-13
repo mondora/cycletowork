@@ -16,6 +16,7 @@ class TableDatabase {
       User.tableString,
       UserActivity.tableString,
       LocationData.tableString,
+      LocationData.tableStringUnFiltered,
       Challenge.tableString,
       ChallengeRegistry.tableString,
       CompanyClassification.tableString,
@@ -33,6 +34,13 @@ class TableDatabase {
   static List<String> getAlterTablesV2ToV3() {
     List<String> list = [];
     list.addAll(UserActivity.alterTableV2ToV3);
+    return list;
+  }
+
+  static List<String> getAlterTablesV3ToV4() {
+    List<String> list = [];
+    list.addAll(LocationData.alterTableV3ToV4);
+    list.addAll(UserActivity.alterTableV3ToV4);
     return list;
   }
 }

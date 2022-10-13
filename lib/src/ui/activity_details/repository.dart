@@ -35,13 +35,20 @@ class Repository {
     );
   }
 
+  Future<List<LocationData>> getListLocationDataUnfiltred(
+    String userActivityId,
+  ) async {
+    return await _localDatabase.getListLocationDataUnfiltredForActivity(
+      userActivityId,
+    );
+  }
+
   Future<bool> saveUserActivity(
     UserActivity userActivity,
   ) async {
     try {
       await _remoteService.saveUserActivity(
         userActivity,
-        [],
       );
       await _localDatabase.setUploadedUserActivity(
         userActivity.userActivityId,

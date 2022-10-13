@@ -63,6 +63,7 @@ class LoginView extends StatelessWidget {
                           top: 10.0 * scale,
                         ),
                         child: AppButton(
+                          key: const Key('login'),
                           loading: loading,
                           onPressed: () => landingModel.gotoLoginEmail(),
                           title: AppLocalizations.of(context)!.login,

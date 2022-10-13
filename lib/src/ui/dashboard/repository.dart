@@ -420,11 +420,13 @@ class Repository {
   Future<bool> saveUserActivity(
     UserActivity userActivity,
     List<LocationData> listLocationData,
+    List<LocationData> listLocationDataUnFiltered,
   ) async {
     try {
       await _localDatabase.saveUserActivity(
         userActivity,
         listLocationData,
+        listLocationDataUnFiltered,
       );
     } catch (e) {
       Logger.error(e);
@@ -433,7 +435,6 @@ class Repository {
     try {
       await _remoteService.saveUserActivity(
         userActivity,
-        listLocationData,
       );
       await _localDatabase.setUploadedUserActivity(
         userActivity.userActivityId,

@@ -9,7 +9,7 @@ class LocationData {
   String? userActivityId;
   final double latitude; // Latitude, in degrees
   final double longitude; // Longitude, in degrees
-  double accuracy; // Estimated horizontal accuracy, radial, in meters
+  final double accuracy; // Estimated horizontal accuracy, radial, in meters
   final double altitude; // In meters above the WGS 84 reference ellipsoid
   double speed; // In meters/second
   final double speedAccuracy; // In meters/second, always 0 on iOS
@@ -89,12 +89,39 @@ class LocationData {
     );
   ''';
 
+  static String get tableNameUnFiltered => 'LocationDataUnFiltered';
+
+  static String get tableStringUnFiltered => '''
+    CREATE TABLE IF NOT EXISTS $tableNameUnFiltered( 
+      locationDataId TEXT PRIMARY KEY  NOT NULL,
+      userActivityId TEXT NOT NULL,
+      latitude REAL NOT NULL,
+      longitude REAL NOT NULL,
+      accuracy REAL NOT NULL,
+      altitude REAL NOT NULL,
+      speed REAL NOT NULL,
+      speedAccuracy REAL NOT NULL,
+      time INTEGER NOT NULL,
+      bearing REAL NOT NULL, 
+      CONSTRAINT fk_LocationData_UserActivity
+        FOREIGN KEY (userActivityId)
+        REFERENCES ${UserActivity.tableName}(userActivityId)
+        ON DELETE CASCADE ON UPDATE NO ACTION
+    );
+  ''';
+
   static List<String> get alterTableV1ToV2 => [
         'PRAGMA foreign_keys=off;',
         'ALTER TABLE $tableName RENAME TO ${tableName}_old;',
         tableString,
         'INSERT INTO $tableName SELECT * FROM ${tableName}_old;',
         'DROP TABLE ${tableName}_old;',
+        'PRAGMA foreign_keys=on;',
+      ];
+
+  static List<String> get alterTableV3ToV4 => [
+        'PRAGMA foreign_keys=off;',
+        tableStringUnFiltered,
         'PRAGMA foreign_keys=on;',
       ];
 

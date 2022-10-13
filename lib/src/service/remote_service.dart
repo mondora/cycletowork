@@ -3,7 +3,6 @@ import 'package:cycletowork/src/data/app_service.dart';
 import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/classification.dart';
 import 'package:cycletowork/src/data/company.dart';
-import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/survey.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
@@ -15,7 +14,6 @@ class RemoteService
   @override
   Future saveUserActivity(
     UserActivity userActivity,
-    List<LocationData> listLocationData,
   ) async {
     final userActivityJson = userActivity.toJson();
     userActivityJson['imageData'] = null;
