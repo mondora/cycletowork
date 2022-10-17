@@ -168,6 +168,20 @@ const saveUserActivity = async (uid, userActivity) => {
                 { merge: true }
             );
         }
+
+        const data = {
+            calorie: admin.firestore.FieldValue.increment(userActivity.calorie),
+            co2: admin.firestore.FieldValue.increment(userActivity.co2),
+            distance: admin.firestore.FieldValue.increment(
+                userActivity.distance
+            ),
+            steps: admin.firestore.FieldValue.increment(userActivity.steps),
+            averageSpeed: userActivity.averageSpeed,
+            maxSpeed: userActivity.maxSpeed,
+        };
+
+        t.update(userRef, data, { merge: true });
+        t.set(userActivityRef, userActivity, { merge: false });
     });
 };
 
@@ -183,6 +197,13 @@ const saveUserActivityLocationData = async (
         .firestore()
         .collection(Constant.usersCollectionName)
         .doc(uid);
+
+    const userActivityRef = admin
+        .firestore()
+        .collection(Constant.usersCollectionName)
+        .doc(uid)
+        .collection(Constant.userActivityCollectionName)
+        .doc(userActivityId);
 
     const listLocationDataRef = admin
         .firestore()
@@ -208,6 +229,8 @@ const saveUserActivityLocationData = async (
         if (!userInfo.exists) {
             throw new Error(Constant.userNotFoundError);
         }
+
+        t.update(userActivityRef, { isSendedToReview: 1 }, { merge: true });
 
         t.set(
             listLocationDataRef,
