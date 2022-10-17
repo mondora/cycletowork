@@ -25,6 +25,7 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   final GlobalKey<AppMapState> _mapKey = GlobalKey();
   final ScrollController _controller = ScrollController();
+  bool isCreatedMap = false;
 
   @override
   void dispose() {
@@ -48,6 +49,28 @@ class _HomeViewState extends State<HomeView> {
       dashboardModel.getListUserActivity(
         nextPage: true,
       );
+    }
+  }
+
+  onCreatedMap() {
+    isCreatedMap = true;
+    final dashboardModel = Provider.of<ViewModel>(
+      context,
+      listen: false,
+    );
+    if (dashboardModel.uiState.currentPosition != null) {
+      final currentPosition = dashboardModel.uiState.currentPosition!;
+      _mapKey.currentState?.setMarker(
+        currentPosition.latitude,
+        currentPosition.longitude,
+      );
+      Timer(const Duration(milliseconds: 500), () async {
+        await _mapKey.currentState?.changeCamera(
+          currentPosition.latitude,
+          currentPosition.longitude,
+          bearing: currentPosition.bearing,
+        );
+      });
     }
   }
 
@@ -94,7 +117,7 @@ class _HomeViewState extends State<HomeView> {
             ? 0.0
             : 115.0 * scale;
 
-    if (dashboardModel.uiState.currentPosition != null) {
+    if (dashboardModel.uiState.currentPosition != null && isCreatedMap) {
       final currentPosition = dashboardModel.uiState.currentPosition!;
       _mapKey.currentState?.setMarker(
         currentPosition.latitude,
@@ -119,6 +142,7 @@ class _HomeViewState extends State<HomeView> {
             initialLatitude: initialLatitude,
             initialLongitude: initialLongitude,
             listTrackingPosition: const [],
+            onCreatedMap: onCreatedMap,
           ),
         ),
         Column(

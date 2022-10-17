@@ -34,6 +34,7 @@ class TrackingMapView extends StatefulWidget {
 class _TrackingMapViewState extends State<TrackingMapView> {
   final GlobalKey<AppMapState> _mapKey = GlobalKey();
   LocationData? lastPositionPassed;
+  bool isCreatedMap = false;
 
   @override
   void dispose() {
@@ -44,6 +45,10 @@ class _TrackingMapViewState extends State<TrackingMapView> {
   @override
   void initState() {
     super.initState();
+  }
+
+  onCreatedMap() {
+    isCreatedMap = true;
   }
 
   @override
@@ -72,40 +77,42 @@ class _TrackingMapViewState extends State<TrackingMapView> {
       appLocale.languageCode,
     );
 
-    Timer(const Duration(milliseconds: 200), () async {
-      if (lastPositionPassed == null ||
-          lastPositionPassed!.latitude != lastPosition.latitude ||
-          lastPositionPassed!.longitude != lastPosition.longitude) {
-        lastPositionPassed = LocationData(
-          latitude: lastPosition.latitude,
-          longitude: lastPosition.longitude,
-          accuracy: 0,
-          altitude: 0,
-          speed: 0,
-          speedAccuracy: 0,
-          time: 0,
-          bearing: 0,
-        );
+    if (isCreatedMap) {
+      Timer(const Duration(milliseconds: 200), () async {
+        if (lastPositionPassed == null ||
+            lastPositionPassed!.latitude != lastPosition.latitude ||
+            lastPositionPassed!.longitude != lastPosition.longitude) {
+          lastPositionPassed = LocationData(
+            latitude: lastPosition.latitude,
+            longitude: lastPosition.longitude,
+            accuracy: 0,
+            altitude: 0,
+            speed: 0,
+            speedAccuracy: 0,
+            time: 0,
+            bearing: 0,
+          );
 
-        _mapKey.currentState?.setPath(
-          widget.workout.listLocationData,
-        );
+          _mapKey.currentState?.setPath(
+            widget.workout.listLocationData,
+          );
 
-        _mapKey.currentState?.setStartAndCurrentMarker(
-          widget.workout.listLocationData.first.latitude,
-          widget.workout.listLocationData.first.longitude,
-          lastPosition.latitude,
-          lastPosition.longitude,
-        );
+          _mapKey.currentState?.setStartAndCurrentMarker(
+            widget.workout.listLocationData.first.latitude,
+            widget.workout.listLocationData.first.longitude,
+            lastPosition.latitude,
+            lastPosition.longitude,
+          );
 
-        await _mapKey.currentState?.changeCamera(
-          lastPosition.latitude,
-          lastPosition.longitude,
-          bearing: lastPosition.bearing,
-          zoom: 17.0,
-        );
-      }
-    });
+          await _mapKey.currentState?.changeCamera(
+            lastPosition.latitude,
+            lastPosition.longitude,
+            bearing: lastPosition.bearing,
+            zoom: 17.0,
+          );
+        }
+      });
+    }
 
     return Scaffold(
       body: Stack(
@@ -165,6 +172,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
                   isChallenge: isChallenge,
                   initialLatitude: lastPosition.latitude,
                   initialLongitude: lastPosition.longitude,
+                  onCreatedMap: onCreatedMap,
                 ),
               ),
             ),

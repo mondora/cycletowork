@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/ui/activity_details/repository.dart';
 import 'package:cycletowork/src/ui/activity_details/ui_state.dart';
@@ -81,6 +83,15 @@ class ViewModel extends ChangeNotifier {
       _uiState.loading = false;
       notifyListeners();
       return false;
+    }
+  }
+
+  setUserActivityImageData(Uint8List? value) {
+    if (value != null) {
+      _repository.setUserActivityImageData(
+        _uiState.userActivity!,
+        value,
+      );
     }
   }
 }

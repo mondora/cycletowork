@@ -126,6 +126,8 @@ PODS:
   - FMDB/standard (2.7.5)
   - geocoding (1.0.5):
     - Flutter
+  - geolocator_apple (1.2.0):
+    - Flutter
   - google_maps_flutter_ios (0.0.1):
     - Flutter
     - GoogleMaps
@@ -170,9 +172,6 @@ PODS:
     - Flutter
   - integration_test (0.0.1):
     - Flutter
-  - location_ios (0.0.1):
-    - Flutter
-    - SwiftLocation/Core (= 5.1.0)
   - nanopb (2.30909.0):
     - nanopb/decode (= 2.30909.0)
     - nanopb/encode (= 2.30909.0)
@@ -192,7 +191,6 @@ PODS:
   - sqflite (0.0.2):
     - Flutter
     - FMDB (>= 2.7.5)
-  - SwiftLocation/Core (5.1.0)
   - url_launcher_ios (0.0.1):
     - Flutter
   - vibration (1.7.5):
@@ -218,11 +216,11 @@ DEPENDENCIES:
   - flutter_native_image (from `.symlinks/plugins/flutter_native_image/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - geocoding (from `.symlinks/plugins/geocoding/ios`)
+  - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
-  - location_ios (from `.symlinks/plugins/location_ios/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -262,7 +260,6 @@ SPEC REPOS:
     - GTMSessionFetcher
     - nanopb
     - PromisesObjC
-    - SwiftLocation
 
 EXTERNAL SOURCES:
   app_settings:
@@ -295,6 +292,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
   geocoding:
     :path: ".symlinks/plugins/geocoding/ios"
+  geolocator_apple:
+    :path: ".symlinks/plugins/geolocator_apple/ios"
   google_maps_flutter_ios:
     :path: ".symlinks/plugins/google_maps_flutter_ios/ios"
   google_sign_in_ios:
@@ -303,8 +302,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   integration_test:
     :path: ".symlinks/plugins/integration_test/ios"
-  location_ios:
-    :path: ".symlinks/plugins/location_ios/ios"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_ios:
@@ -360,6 +357,7 @@ SPEC CHECKSUMS:
   flutter_native_splash: 52501b97d1c0a5f898d687f1646226c1f93c56ef
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   geocoding: 32cfcdb16d38d907caaba65e2e42ad10d38bee58
+  geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
   google_maps_flutter_ios: 66201f392bf62d500f07670a30488a247b9bb5b9
   google_sign_in_ios: 4f85eb9f937450765c8573bb85fd8cd6a5af675c
   GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
@@ -370,7 +368,6 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
   image_picker_ios: b786a5dcf033a8336a657191401bfdf12017dabb
   integration_test: a1e7d09bd98eca2fc37aefd79d4f41ad37bdbbe5
-  location_ios: e212f211a9ad6ac5a1343a67c87179e4dc0333fe
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
@@ -379,12 +376,11 @@ SPEC CHECKSUMS:
   share_plus: 056a1e8ac890df3e33cb503afffaf1e9b4fbae68
   shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
-  SwiftLocation: 83e0ea75a1969cee3a1197e2b7095603fc23fde5
   url_launcher_ios: 839c58cdb4279282219f5e248c3321761ff3c4de
   vibration: 7d883d141656a1c1a6d8d238616b2042a51a1241
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
   webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
 
-PODFILE CHECKSUM: 6748e76fb74c74e9892d728e8e3459f6409d4456
+PODFILE CHECKSUM: 407786657a5d93ed7a1752e28064daae6e56ba1d
 
 COCOAPODS: 1.11.2

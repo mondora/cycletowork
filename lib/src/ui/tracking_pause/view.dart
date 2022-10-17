@@ -42,13 +42,14 @@ class _TrackingPauseViewState extends State<TrackingPauseView> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      Timer(const Duration(milliseconds: 200), () async {
-        if (widget.workout.listLocationData.isEmpty) {
-          return;
-        }
-        await _mapKey.currentState?.chengeCameraForStaticMap();
-      });
+  }
+
+  onCreatedMap() {
+    Timer(const Duration(milliseconds: 200), () async {
+      if (widget.workout.listLocationData.isEmpty) {
+        return;
+      }
+      await _mapKey.currentState?.chengeCameraForStaticMap();
     });
   }
 
@@ -149,6 +150,7 @@ class _TrackingPauseViewState extends State<TrackingPauseView> {
                   isStatic:
                       widget.workout.listLocationData.isNotEmpty ? true : false,
                   padding: 150.0,
+                  onCreatedMap: onCreatedMap,
                 ),
               ),
             ),

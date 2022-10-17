@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/data/app_service.dart';
 import 'package:cycletowork/src/data/challenge.dart';
@@ -547,6 +549,24 @@ class LocalDatabaseService implements AppService, AppServiceOnlyLocal {
     List<dynamic> whereArgs = [userActivityId];
     final item = {
       'isSendedToReview': 1,
+    };
+    await _localDatabase.updateData(
+      tableName: UserActivity.tableName,
+      item: item,
+      whereCondition: whereCondition,
+      whereArgs: whereArgs,
+    );
+  }
+
+  @override
+  Future setUserActivityImageData(
+    String userActivityId,
+    Uint8List value,
+  ) async {
+    String whereCondition = 'userActivityId = ?';
+    List<dynamic> whereArgs = [userActivityId];
+    final item = {
+      'imageData': value,
     };
     await _localDatabase.updateData(
       tableName: UserActivity.tableName,

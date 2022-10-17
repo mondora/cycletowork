@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cycletowork/src/data/challenge.dart';
 import 'package:cycletowork/src/data/classification.dart';
 import 'package:cycletowork/src/data/company.dart';
@@ -155,6 +157,11 @@ abstract class AppServiceOnlyLocal {
   Future<void> setReviewedUserActivity(String userActivityId);
 
   Future<UserActivity?> getUserActivity(String userActivityId);
+
+  Future setUserActivityImageData(
+    String userActivityId,
+    Uint8List value,
+  );
 }
 
 abstract class AppServiceOnlyRemote {

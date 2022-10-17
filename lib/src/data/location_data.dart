@@ -11,7 +11,7 @@ class LocationData {
   final double longitude; // Longitude, in degrees
   final double accuracy; // Estimated horizontal accuracy, radial, in meters
   final double altitude; // In meters above the WGS 84 reference ellipsoid
-  double speed; // In meters/second
+  final double speed; // In meters/second
   final double speedAccuracy; // In meters/second, always 0 on iOS
   final int time; // timestamp of the LocationData
   final double bearing;

@@ -20,12 +20,14 @@ class AppMap extends StatefulWidget {
   final bool isStatic;
   final double padding;
   final Function(Uint8List?)? onSnapshot;
+  final Function() onCreatedMap;
 
   const AppMap({
     Key? key,
     required this.initialLatitude,
     required this.initialLongitude,
     required this.listTrackingPosition,
+    required this.onCreatedMap,
     this.markerLatitude,
     this.markerLongitude,
     this.zoom = 16.0,
@@ -63,15 +65,6 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
       await controller.animateCamera(camera);
     } catch (e) {
       Logger.error(e);
-      final controller = await _controller.future;
-      final camera = CameraUpdate.newCameraPosition(
-        CameraPosition(
-          bearing: bearing ?? 0,
-          target: LatLng(latitude, longitude),
-          zoom: zoom ?? widget.zoom,
-        ),
-      );
-      await controller.animateCamera(camera);
     }
   }
 
@@ -85,31 +78,30 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
       );
 
       await controller.moveCamera(cameraUpdate);
-      if (widget.onSnapshot != null) {
-        Timer(const Duration(milliseconds: 200), () async {
-          final uin8list = await controller.takeSnapshot();
-          if (widget.onSnapshot != null) widget.onSnapshot!(uin8list);
-        });
-      }
     } catch (e) {
       Logger.error(e);
     }
   }
 
   void setMarker(double latitude, double longitude) {
-    _markers = [];
+    try {
+      _markers = [];
 
-    var markerPositionIcon = context.read<AppData>().markerCurrentPositionIcon;
-    var markerIcon = BitmapDescriptor.fromBytes(markerPositionIcon!);
-    var mark = Marker(
-      markerId: const MarkerId('currentPosition'),
-      position: LatLng(latitude, longitude),
-      icon: markerIcon,
-      infoWindow: InfoWindow.noText,
-    );
-    setState(() {
-      _markers.add(mark);
-    });
+      var markerPositionIcon =
+          context.read<AppData>().markerCurrentPositionIcon;
+      var markerIcon = BitmapDescriptor.fromBytes(markerPositionIcon!);
+      var mark = Marker(
+        markerId: const MarkerId('currentPosition'),
+        position: LatLng(latitude, longitude),
+        icon: markerIcon,
+        infoWindow: InfoWindow.noText,
+      );
+      setState(() {
+        _markers.add(mark);
+      });
+    } catch (e) {
+      Logger.error(e);
+    }
   }
 
   void setStartAndCurrentMarker(
@@ -118,114 +110,80 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
     double currentLatitude,
     double currnetLongitude,
   ) {
-    _markers = [];
-    var markerStartPositionIcon =
-        context.read<AppData>().markerStartPositionIcon;
-    var markerStartIcon = BitmapDescriptor.fromBytes(markerStartPositionIcon!);
-    var markStart = Marker(
-      markerId: const MarkerId('startPosition'),
-      position: LatLng(startLatitude, startLongitude),
-      icon: markerStartIcon,
-      infoWindow: InfoWindow.noText,
-    );
-    var markerPositionIcon = context.read<AppData>().markerCurrentPositionIcon;
-    var markerIcon = BitmapDescriptor.fromBytes(markerPositionIcon!);
-    var mark = Marker(
-      markerId: const MarkerId('currentPosition'),
-      position: LatLng(currentLatitude, currnetLongitude),
-      icon: markerIcon,
-      infoWindow: InfoWindow.noText,
-    );
-    setState(() {
-      _markers.addAll([
-        markStart,
-        mark,
-      ]);
-    });
+    try {
+      _markers = [];
+      var markerStartPositionIcon =
+          context.read<AppData>().markerStartPositionIcon;
+      var markerStartIcon =
+          BitmapDescriptor.fromBytes(markerStartPositionIcon!);
+      var markStart = Marker(
+        markerId: const MarkerId('startPosition'),
+        position: LatLng(startLatitude, startLongitude),
+        icon: markerStartIcon,
+        infoWindow: InfoWindow.noText,
+      );
+      var markerPositionIcon =
+          context.read<AppData>().markerCurrentPositionIcon;
+      var markerIcon = BitmapDescriptor.fromBytes(markerPositionIcon!);
+      var mark = Marker(
+        markerId: const MarkerId('currentPosition'),
+        position: LatLng(currentLatitude, currnetLongitude),
+        icon: markerIcon,
+        infoWindow: InfoWindow.noText,
+      );
+      setState(() {
+        _markers.addAll([
+          markStart,
+          mark,
+        ]);
+      });
+    } catch (e) {
+      Logger.error(e);
+    }
   }
 
   setPath(
     List<LocationData> listLocationData,
   ) {
-    var colorScheme = Theme.of(context).colorScheme;
-    _polyline = [];
-    var polylineCenter = Polyline(
-      polylineId: const PolylineId('polylineCenter'),
-      visible: true,
-      points: listLocationData
-          .map(
-            (location) => LatLng(location.latitude, location.longitude),
-          )
-          .toList(),
-      width: 5,
-      color: widget.isChallenge ? colorScheme.secondary : colorScheme.primary,
-    );
-    var polylineBorder = Polyline(
-      polylineId: const PolylineId('polylineBorder'),
-      visible: true,
-      points: listLocationData
-          .map(
-            (location) => LatLng(location.latitude, location.longitude),
-          )
-          .toList(),
-      width: 10,
-      color: Colors.black,
-    );
-    setState(() {
-      _polyline.add(polylineBorder);
-      _polyline.add(polylineCenter);
-    });
-  }
-
-  addPath(
-    LocationData lastLocationData,
-    LocationData currentLocationData,
-  ) {
-    var colorScheme = Theme.of(context).colorScheme;
-    var now = DateTime.now();
-    var polylineCenter = Polyline(
-      polylineId: PolylineId('polylineCenter_${now.millisecondsSinceEpoch}'),
-      visible: true,
-      points: [
-        LatLng(
-          lastLocationData.latitude,
-          lastLocationData.longitude,
-        ),
-        LatLng(
-          currentLocationData.latitude,
-          currentLocationData.longitude,
-        ),
-      ],
-      width: 5,
-      color: widget.isChallenge ? colorScheme.secondary : colorScheme.primary,
-    );
-    var polylineBorder = Polyline(
-      polylineId: PolylineId('polylineBorder_${now.millisecondsSinceEpoch}'),
-      visible: true,
-      points: [
-        LatLng(
-          lastLocationData.latitude,
-          lastLocationData.longitude,
-        ),
-        LatLng(
-          currentLocationData.latitude,
-          currentLocationData.longitude,
-        ),
-      ],
-      width: 10,
-      color: Colors.black,
-    );
-    setState(() {
-      _polyline.add(polylineBorder);
-      _polyline.add(polylineCenter);
-    });
+    try {
+      var colorScheme = Theme.of(context).colorScheme;
+      _polyline = [];
+      var polylineCenter = Polyline(
+        polylineId: const PolylineId('polylineCenter'),
+        visible: true,
+        points: listLocationData
+            .map(
+              (location) => LatLng(location.latitude, location.longitude),
+            )
+            .toList(),
+        width: 5,
+        color: widget.isChallenge ? colorScheme.secondary : colorScheme.primary,
+      );
+      var polylineBorder = Polyline(
+        polylineId: const PolylineId('polylineBorder'),
+        visible: true,
+        points: listLocationData
+            .map(
+              (location) => LatLng(location.latitude, location.longitude),
+            )
+            .toList(),
+        width: 10,
+        color: Colors.black,
+      );
+      setState(() {
+        _polyline.add(polylineBorder);
+        _polyline.add(polylineCenter);
+      });
+    } catch (e) {
+      Logger.error(e);
+    }
   }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _setMapStyle();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _setMapStyle());
   }
 
   Future _setMapStyle() async {
@@ -336,6 +294,22 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
       ),
       onMapCreated: (GoogleMapController controller) async {
         _controller.complete(controller);
+        widget.onCreatedMap();
+      },
+      onCameraIdle: () {
+        if (widget.onSnapshot != null) {
+          Timer(const Duration(milliseconds: 200), () async {
+            try {
+              final controller = await _controller.future;
+              final uin8list = await controller.takeSnapshot();
+              if (widget.onSnapshot != null) {
+                widget.onSnapshot!(uin8list);
+              }
+            } catch (e) {
+              Logger.error(e);
+            }
+          });
+        }
       },
       markers: Set<Marker>.of(_markers),
       polylines: Set<Polyline>.of(_polyline),

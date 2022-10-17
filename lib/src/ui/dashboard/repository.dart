@@ -453,10 +453,7 @@ class Repository {
   Future<LocationData?> getCurrentPosition(
     String permissionRequestMessage,
   ) async {
-    return await Gps.getCurrentPosition(
-      permissionRequestMessage: permissionRequestMessage,
-      smallestDisplacement: 8.0,
-    );
+    return await Gps.getCurrentPosition();
   }
 
   Future<List<Challenge>> getActiveChallengeList() async {

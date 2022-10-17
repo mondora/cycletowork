@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cycletowork/src/data/location_data.dart';
 import 'package:cycletowork/src/data/repository_service_locator.dart';
 import 'package:cycletowork/src/data/user_activity.dart';
@@ -84,5 +86,15 @@ class Repository {
       Logger.error(e);
       return false;
     }
+  }
+
+  Future setUserActivityImageData(
+    UserActivity userActivity,
+    Uint8List value,
+  ) async {
+    await _localDatabase.setUserActivityImageData(
+      userActivity.userActivityId,
+      value,
+    );
   }
 }

@@ -49,15 +49,14 @@ class TrackingView extends StatelessWidget {
         ? trackingAvarageSpeedKmPerHour
         : trackingAvarageSpeedMilePerHour;
 
-    final trackingSpeed = workout.listLocationData.isNotEmpty
-        ? measurementUnit == AppMeasurementUnit.metric
-            ? workout.listLocationData.last.speed
-                .meterPerSecondToKmPerHour()
-                .abs()
-            : workout.listLocationData.last.speed
-                .meterPerSecondToMilePerHour()
-                .abs()
-        : 0.0;
+    final trackingSpeedKmPerHour =
+        workout.speedInMeterPerSecond.meterPerSecondToKmPerHour();
+    final trackingSpeedMilePerHour =
+        workout.speedInMeterPerSecond.meterPerSecondToMilePerHour();
+    final trackingSpeed = measurementUnit == AppMeasurementUnit.metric
+        ? trackingSpeedKmPerHour
+        : trackingSpeedMilePerHour;
+
     final trackingDistanceInKm = workout.distanceInMeter.meterToKm();
     final trackingDistanceInMile = workout.distanceInMeter.meterToMile();
     final trackingDistance = measurementUnit == AppMeasurementUnit.metric

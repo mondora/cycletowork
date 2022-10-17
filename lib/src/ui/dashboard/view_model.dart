@@ -331,21 +331,21 @@ class ViewModel extends ChangeNotifier {
               notifyListeners();
             }
           } else {
-            if (_uiState.workout!.listLocationData.isNotEmpty) {
+            if (_uiState.workout!.listLocationDataUnFiltered.isNotEmpty) {
               final lastPositionTime =
-                  _uiState.workout!.listLocationData.last.time;
+                  _uiState.workout!.listLocationDataUnFiltered.last.time;
               final lastPositionDateTime =
                   DateTime.fromMillisecondsSinceEpoch(lastPositionTime);
-              final isAfter3Seconds = DateTime.now().isAfter(
+              final isAfter2Minutes = DateTime.now().isAfter(
                 lastPositionDateTime.add(
-                  const Duration(minutes: 5),
+                  const Duration(minutes: 2),
                 ),
               );
-              if (isAfter3Seconds) {
+              if (isAfter2Minutes) {
                 if (!_uiState.workoutError) {
-                  debugPrint('Not location after 5 minutes');
+                  debugPrint('Not location after 2 minutes');
                   _uiState.workoutErrorMessage =
-                      'Attenzione! Cycle2Work non sta ricevendo i dati dal tuo GPS da 5 mins!';
+                      'ATTENZIONE! Sembra che ci sia un problema con il tuo GPS, Cycle2Work non non riceve nessuna posizione da più di 2 minuti.';
                   _uiState.workoutError = true;
                   Vibration.vibration(3000);
                   notifyListeners();
@@ -386,9 +386,7 @@ class ViewModel extends ChangeNotifier {
           }
         },
       );
-      var permissionRequestMessage =
-          'Per poter usare Cycle2Work è necessario che tu ci dia il permesso di rilevare la tua posizione';
-      await _uiState.workout!.startWorkout(context, permissionRequestMessage);
+      await _uiState.workout!.startWorkout(context);
       _uiState.loading = false;
       _uiState.dashboardPageOption = DashboardPageOption.startCounter;
       notifyListeners();

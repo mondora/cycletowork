@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:cycletowork/src/data/location_data.dart' as location_data;
 import 'package:geocoding/geocoding.dart';
-import 'package:location/location.dart' as location;
+import 'package:geolocator/geolocator.dart' as location;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 
@@ -36,17 +36,20 @@ enum PermissionStatus {
 }
 
 class Gps {
+  static location.LocationSettings? locationSettings;
+  static location.ForegroundNotificationConfig? foregroundNotificationConfig;
+
   static Future<GpsStatus> getGpsStatus() async {
     try {
-      var isGPSEnabled = await location.isGPSEnabled();
+      var isGPSEnabled = await location.Geolocator.isLocationServiceEnabled();
       if (!isGPSEnabled) {
         return GpsStatus.turnOff;
       }
 
-      location.PermissionStatus permissionStatus =
-          await location.getPermissionStatus();
-      if (permissionStatus == location.PermissionStatus.authorizedAlways ||
-          permissionStatus == location.PermissionStatus.authorizedWhenInUse) {
+      location.LocationPermission permissionStatus =
+          await location.Geolocator.checkPermission();
+      if (permissionStatus == location.LocationPermission.whileInUse ||
+          permissionStatus == location.LocationPermission.always) {
         return GpsStatus.granted;
       } else {
         return GpsStatus.turnOn;
@@ -57,43 +60,45 @@ class Gps {
   }
 
   static Future<PermissionStatus> getPermissionStatus() async {
-    location.PermissionStatus permissionStatus =
-        await location.getPermissionStatus();
-    if (permissionStatus == location.PermissionStatus.notDetermined) {
-      permissionStatus = await location.requestPermission();
+    location.LocationPermission permissionStatus =
+        await location.Geolocator.checkPermission();
+    if (permissionStatus == location.LocationPermission.unableToDetermine ||
+        permissionStatus == location.LocationPermission.denied) {
+      permissionStatus = await location.Geolocator.requestPermission();
     }
-    return PermissionStatus.values
-        .firstWhere((element) => element.name == permissionStatus.name);
+
+    switch (permissionStatus) {
+      case location.LocationPermission.denied:
+        return PermissionStatus.denied;
+      case location.LocationPermission.deniedForever:
+        return PermissionStatus.denied;
+      case location.LocationPermission.whileInUse:
+        return PermissionStatus.authorizedWhenInUse;
+      case location.LocationPermission.always:
+        return PermissionStatus.authorizedAlways;
+      case location.LocationPermission.unableToDetermine:
+        return PermissionStatus.notDetermined;
+    }
   }
 
-  static Future<location_data.LocationData?> getCurrentPosition({
-    required String permissionRequestMessage,
-    double smallestDisplacement = 0,
-  }) async {
+  static Future<location_data.LocationData?> getCurrentPosition() async {
     try {
-      var accuracy = defaultTargetPlatform == TargetPlatform.iOS
-          ? location.LocationAccuracy.navigation
-          : location.LocationAccuracy.high;
-      var result = await location.getLocation(
-        settings: location.LocationSettings(
-          ignoreLastKnownPosition: true,
-          useGooglePlayServices: false,
-          askForGooglePlayServices: false,
-          accuracy: accuracy,
-          rationaleMessageForPermissionRequest: permissionRequestMessage,
-          rationaleMessageForGPSRequest: permissionRequestMessage,
-          smallestDisplacement: smallestDisplacement,
-        ),
+      final result = await location.Geolocator.getCurrentPosition(
+        desiredAccuracy: location.LocationAccuracy.best,
+        forceAndroidLocationManager: false,
+        timeLimit: const Duration(milliseconds: 5000),
       );
       return location_data.LocationData(
-        latitude: result.latitude ?? 0,
-        longitude: result.longitude ?? 0,
-        accuracy: result.accuracy ?? 0,
-        altitude: result.altitude ?? 0,
-        speed: result.speed ?? 0,
-        speedAccuracy: result.speedAccuracy ?? 0,
-        bearing: result.bearing ?? 0,
-        time: DateTime.now().toLocal().millisecondsSinceEpoch,
+        latitude: result.latitude,
+        longitude: result.longitude,
+        accuracy: result.accuracy,
+        altitude: result.altitude,
+        speed: result.speed,
+        speedAccuracy: result.speedAccuracy,
+        bearing: result.heading,
+        time: result.timestamp != null
+            ? result.timestamp!.toLocal().millisecondsSinceEpoch
+            : DateTime.now().toLocal().millisecondsSinceEpoch,
       );
     } catch (e) {
       return null;
@@ -103,48 +108,70 @@ class Gps {
   static Future initialize() async {}
 
   static Future setSettings({
-    double smallestDisplacement = 0,
-    required String permissionRequestMessage,
+    int smallestDisplacement = 0,
   }) async {
-    var accuracy = defaultTargetPlatform == TargetPlatform.iOS
-        ? location.LocationAccuracy.navigation
-        : location.LocationAccuracy.high;
-    await location.setLocationSettings(
-      interval: 1000,
-      fastestInterval: 9500,
-      accuracy: accuracy,
-      smallestDisplacement: smallestDisplacement,
-      rationaleMessageForPermissionRequest: permissionRequestMessage,
-      rationaleMessageForGPSRequest: permissionRequestMessage,
-      useGooglePlayServices: false,
-      askForGooglePlayServices: false,
-      // waitForAccurateLocation: true,
-      // fallbackToGPS: false,
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      locationSettings = location.AndroidSettings(
+        accuracy: location.LocationAccuracy.best,
+        distanceFilter: smallestDisplacement,
+        forceLocationManager: false,
+        intervalDuration: const Duration(milliseconds: 1000),
+        foregroundNotificationConfig: foregroundNotificationConfig,
+      );
+    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+      locationSettings = location.AppleSettings(
+        accuracy: location.LocationAccuracy.bestForNavigation,
+        activityType: location.ActivityType.fitness,
+        distanceFilter: smallestDisplacement,
+        pauseLocationUpdatesAutomatically: true,
+        showBackgroundLocationIndicator: false,
+      );
+    } else {
+      locationSettings = location.LocationSettings(
+        accuracy: location.LocationAccuracy.best,
+        distanceFilter: smallestDisplacement,
+      );
+    }
+  }
+
+  static Future clearSettings() async {
+    locationSettings = null;
+  }
+
+  static Future setNotificaion({
+    required String title,
+    required String subtitle,
+  }) async {
+    foregroundNotificationConfig = location.ForegroundNotificationConfig(
+      notificationText: subtitle,
+      notificationTitle: title,
+      enableWakeLock: true,
+      notificationIcon: const location.AndroidResource(
+        name: 'ic_notification',
+      ),
     );
   }
 
-  static Future setNotificaion({String? title, String? subtitle}) async {
-    await location.updateBackgroundNotification(
-      title: title,
-      subtitle: subtitle,
-      channelName: 'Cycle2Work',
-      onTapBringToFront: true,
-      iconName: 'ic_notification',
-    );
+  static Future clearNotificaion() async {
+    foregroundNotificationConfig = null;
   }
 
   static Stream<location_data.LocationData> startListenOnBackground() {
-    return location.onLocationChanged(inBackground: true).map(
+    return location.Geolocator.getPositionStream(
+      locationSettings: locationSettings,
+    ).map(
       (result) {
         return location_data.LocationData(
-          latitude: result.latitude ?? 0,
-          longitude: result.longitude ?? 0,
-          accuracy: result.accuracy ?? 0,
-          altitude: result.altitude ?? 0,
-          speed: result.speed ?? 0,
-          speedAccuracy: result.speedAccuracy ?? 0,
-          bearing: result.bearing ?? 0,
-          time: DateTime.now().toLocal().millisecondsSinceEpoch,
+          latitude: result.latitude,
+          longitude: result.longitude,
+          accuracy: result.accuracy,
+          altitude: result.altitude,
+          speed: result.speed,
+          speedAccuracy: result.speedAccuracy,
+          bearing: result.heading,
+          time: result.timestamp != null
+              ? result.timestamp!.toLocal().millisecondsSinceEpoch
+              : DateTime.now().toLocal().millisecondsSinceEpoch,
         );
       },
     );

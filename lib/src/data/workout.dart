@@ -23,8 +23,7 @@ abstract class BaseWorkout {
   late double averageSpeedInMeterPerSecond;
   late double maxSpeedInMeterPerSecond;
   late double co2InGram;
-  late double minDistanceInMeter;
-  // late double minAccuracyInMeter;
+  late int minDistanceInMeter;
   late double minAccuracyInNegativeAccuracy;
   late double distanceAccuracyFactor;
   late double minDistanceFromLineInMeter;
@@ -58,10 +57,7 @@ abstract class BaseWorkout {
   StreamSubscription<LocationData>? _locationSubscription;
   StreamSubscription<ActivityRecognitionResult>? _activityStreamSubscription;
 
-  Future<void> startWorkout(
-    BuildContext context,
-    String permissionRequestMessage,
-  );
+  Future<void> startWorkout(BuildContext context);
   Future<void> pauseWorkout();
   Future<void> playAgainWorkout();
   Future<void> stopWorkout();
@@ -71,41 +67,22 @@ abstract class BaseWorkout {
     ActivityRecognitionResult activityRecognitionResult,
   );
 
-  double _getMinDistanceInMeterForactivityType(
-      ActivityType activityTypeTarget) {
+  int _getMinDistanceInMeterForactivityType(ActivityType activityTypeTarget) {
     switch (activityTypeTarget) {
       case ActivityType.inVehicle:
-        return 20.0;
+        return 20;
       case ActivityType.onBicycle:
-        return 8.0;
+        return 8;
       case ActivityType.running:
-        return 5.0;
+        return 5;
       case ActivityType.still:
-        return 0.0;
+        return 5;
       case ActivityType.walking:
-        return 5.0;
+        return 5;
       case ActivityType.unknown:
-        return 0.0;
+        return 10;
     }
   }
-
-  // double _getMinAccuracyInMeterForactivityType(
-  //     ActivityType activityTypeTarget) {
-  //   switch (activityTypeTarget) {
-  //     case ActivityType.inVehicle:
-  //       return 150.0;
-  //     case ActivityType.onBicycle:
-  //       return 100.0;
-  //     case ActivityType.running:
-  //       return 10.0;
-  //     case ActivityType.still:
-  //       return 10.0;
-  //     case ActivityType.walking:
-  //       return 10.0;
-  //     case ActivityType.unknown:
-  //       return 10.0;
-  //   }
-  // }
 }
 
 class Workout extends BaseWorkout {
@@ -146,8 +123,6 @@ class Workout extends BaseWorkout {
     steps = 0;
     minDistanceInMeter =
         _getMinDistanceInMeterForactivityType(activityTypeTarget);
-    // minAccuracyInMeter =
-    //     _getMinAccuracyInMeterForactivityType(activityTypeTarget);
   }
 
   @override
@@ -200,7 +175,6 @@ class Workout extends BaseWorkout {
       if (_startedAfterPaused) {
         _startedAfterPaused = false;
       }
-      locationData.speed = 0.0;
       listLocationData.add(locationData);
       return;
     }
@@ -224,28 +198,29 @@ class Workout extends BaseWorkout {
       longitude2: locationData.longitude,
     ).abs();
 
+    if (locationData.speed <= 0) {
+      final durationLastLocationInSecond =
+          (locationData.time - lastPosition.time) / 1000;
+      final newSpeed = durationLastLocationInSecond != 0
+          ? newDistanceInMeter / durationLastLocationInSecond
+          : 0.0;
+      speedInMeterPerSecond = newSpeed > 2 ? newSpeed : 0.0;
+    } else {
+      speedInMeterPerSecond = locationData.speed > 2 ? locationData.speed : 0.0;
+    }
+
     if (newDistanceInMeter < accuracy) {
       return;
     }
 
-    final durationLastLocationInSecond =
-        locationData.time.millisecondsSinceEpochToSeconde() -
-            lastPosition.time.millisecondsSinceEpochToSeconde();
-    var newSpeedInMeterPerSecond = durationLastLocationInSecond != 0
-        ? newDistanceInMeter / durationLastLocationInSecond
-        : 0.0;
-    newSpeedInMeterPerSecond =
-        newSpeedInMeterPerSecond > 2.7 ? newSpeedInMeterPerSecond : 0;
-
-    if (maxSpeedInMeterPerSecond < newSpeedInMeterPerSecond) {
-      maxSpeedInMeterPerSecond = newSpeedInMeterPerSecond;
+    if (maxSpeedInMeterPerSecond < speedInMeterPerSecond) {
+      maxSpeedInMeterPerSecond = speedInMeterPerSecond;
     }
 
     final checkMinDistanceAccuracy =
         newDistanceInMeter > (distanceAccuracyFactor * accuracy);
 
     if (!checkMinDistanceAccuracy) {
-      lastPosition.speed = newSpeedInMeterPerSecond;
       return;
     }
 
@@ -257,7 +232,6 @@ class Workout extends BaseWorkout {
         newDistanceInMeter < (2 * accuracy);
 
     if (!checkMinDistance || checkActivityTypeIsStill) {
-      lastPosition.speed = newSpeedInMeterPerSecond;
       return;
     }
 
@@ -287,21 +261,16 @@ class Workout extends BaseWorkout {
   }
 
   @override
-  Future<void> startWorkout(
-    BuildContext context,
-    String permissionRequestMessage,
-  ) async {
+  Future<void> startWorkout(BuildContext context) async {
     startDateInMilliSeconds = DateTime.now().toLocal().millisecondsSinceEpoch;
     _started = true;
-
-    await Gps.setSettings(
-      smallestDisplacement: minDistanceInMeter,
-      permissionRequestMessage: permissionRequestMessage,
-    );
-    var date = DateTime.now().toLocal();
+    final date = DateTime.now().toLocal();
     await Gps.setNotificaion(
       title: date.toDayInterval(context),
       subtitle: date.toStartTime(context),
+    );
+    await Gps.setSettings(
+      smallestDisplacement: minDistanceInMeter,
     );
 
     _timer = Timer.periodic(
@@ -313,6 +282,20 @@ class Workout extends BaseWorkout {
         } else {
           if (started) {
             durationInSecond++;
+          }
+
+          if (listLocationDataUnFiltered.isNotEmpty) {
+            final lastPositionTime = listLocationDataUnFiltered.last.time;
+            final lastPositionDateTime =
+                DateTime.fromMillisecondsSinceEpoch(lastPositionTime);
+            final isAfter4Seconds = DateTime.now().isAfter(
+              lastPositionDateTime.add(
+                const Duration(milliseconds: 5000),
+              ),
+            );
+            if (isAfter4Seconds) {
+              speedInMeterPerSecond = 0.0;
+            }
           }
         }
       },
@@ -347,6 +330,7 @@ class Workout extends BaseWorkout {
   @override
   Future<void> pauseWorkout() async {
     _started = false;
+    speedInMeterPerSecond = 0.0;
   }
 
   @override
@@ -358,6 +342,7 @@ class Workout extends BaseWorkout {
   @override
   Future<void> stopWorkout() async {
     _started = false;
+    speedInMeterPerSecond = 0.0;
     stopDateInMilliSeconds = DateTime.now().toLocal().millisecondsSinceEpoch;
     _timer?.cancel();
     await _activityStreamSubscription?.cancel();

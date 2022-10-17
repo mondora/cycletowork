@@ -77,13 +77,16 @@ class _TrackingStopViewState extends State<TrackingStopView> {
       setState(() {
         city = result;
       });
-      Timer(const Duration(milliseconds: 200), () async {
-        if (widget.workout.listLocationData.isEmpty) {
-          return;
-        }
-        await _mapKey.currentState?.chengeCameraForStaticMap();
-      });
     } catch (_) {}
+  }
+
+  onCreatedMap() {
+    Timer(const Duration(milliseconds: 200), () async {
+      if (widget.workout.listLocationData.isEmpty) {
+        return;
+      }
+      await _mapKey.currentState?.chengeCameraForStaticMap();
+    });
   }
 
   @override
@@ -220,6 +223,7 @@ class _TrackingStopViewState extends State<TrackingStopView> {
                       isStatic: true,
                       canScroll: false,
                       onSnapshot: (value) => widget.onSnapshot(value),
+                      onCreatedMap: onCreatedMap,
                     )
                   : Image.asset(
                       'assets/images/preview_${widget.isChallenge ? 'challenge_' : ''}tracking_details.png',
