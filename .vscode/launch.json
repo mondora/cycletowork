@@ -8,24 +8,27 @@
             "name": "admin (web app)",
             "request": "launch",
             "type": "dart",
-            "program": "lib/admin_main.dart",
+            "program": "client_app/lib/admin_main.dart",
             "args": ["-d", "chrome", "--web-port", "5000"]
         },
         {
             "name": "client (mobile app)",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "program": "client_app/lib/main.dart"
         },
         {
             "name": "cycletowork (profile mode)",
             "request": "launch",
             "type": "dart",
+            "program": "client_app/lib/main.dart",
             "flutterMode": "profile"
         },
         {
             "name": "cycletowork (release mode)",
             "request": "launch",
             "type": "dart",
+            "program": "client_app/lib/main.dart",
             "flutterMode": "release"
         }
     ]

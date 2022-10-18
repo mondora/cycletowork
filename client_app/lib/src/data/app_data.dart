@@ -82,6 +82,11 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
         break;
     }
 
+    if (kIsWeb) {
+      notifyListeners();
+      return;
+    }
+
     await _getMarkers();
     _darkMapStyle = await rootBundle.loadString('assets/maps/dark_theme.json');
     _lightMapStyle =
