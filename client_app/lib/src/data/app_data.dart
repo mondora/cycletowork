@@ -1,5 +1,6 @@
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/theme.dart';
+import 'package:cycletowork/src/utility/logger.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -54,32 +55,43 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
   }
 
   getter() async {
-    final sharedPreferences = await SharedPreferences.getInstance();
-    _isWakelockModeEnable = sharedPreferences.getBool(
-          'isWakelockModeEnable',
-        ) ??
-        false;
+    try {
+      final sharedPreferences = await SharedPreferences.getInstance();
+      _isWakelockModeEnable = sharedPreferences.getBool(
+            'isWakelockModeEnable',
+          ) ??
+          false;
 
-    var result = sharedPreferences.getString(
-      'appThemeMode',
-    );
-    switch (result) {
-      case null:
-        _themeMode = ThemeMode.system;
-        break;
-      case 'dark':
-        _themeMode = ThemeMode.dark;
-        break;
-      case 'light':
-        _themeMode = ThemeMode.light;
-        break;
-      case 'system':
-      case 'automatico':
-        _themeMode = ThemeMode.system;
-        break;
-      default:
-        _themeMode = ThemeMode.system;
-        break;
+      var result = sharedPreferences.getString(
+        'appThemeMode',
+      );
+      switch (result) {
+        case null:
+          _themeMode = ThemeMode.system;
+          break;
+        case 'dark':
+          _themeMode = ThemeMode.dark;
+          break;
+        case 'light':
+          _themeMode = ThemeMode.light;
+          break;
+        case 'system':
+        case 'automatico':
+          _themeMode = ThemeMode.system;
+          break;
+        default:
+          _themeMode = ThemeMode.system;
+          break;
+      }
+      final resultUnit = sharedPreferences.getString(
+            'appMeasurementUnit',
+          ) ??
+          AppMeasurementUnit.metric.name;
+      _measurementUnit = AppMeasurementUnit.values.firstWhere(
+        (element) => element.name == resultUnit,
+      );
+    } catch (e) {
+      Logger.error(e);
     }
 
     if (kIsWeb) {
@@ -88,27 +100,27 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
     }
 
     await _getMarkers();
-    _darkMapStyle = await rootBundle.loadString('assets/maps/dark_theme.json');
-    _lightMapStyle =
-        await rootBundle.loadString('assets/maps/light_theme.json');
+    try {
+      _darkMapStyle =
+          await rootBundle.loadString('assets/maps/dark_theme.json');
+      _lightMapStyle =
+          await rootBundle.loadString('assets/maps/light_theme.json');
+    } catch (e) {
+      Logger.error(e);
+    }
+    try {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      _version = '${packageInfo.version} (${packageInfo.buildNumber})';
 
-    final resultUnit = sharedPreferences.getString(
-          'appMeasurementUnit',
-        ) ??
-        AppMeasurementUnit.metric.name;
-    _measurementUnit = AppMeasurementUnit.values.firstWhere(
-      (element) => element.name == resultUnit,
-    );
-
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    _version = '${packageInfo.version} (${packageInfo.buildNumber})';
-
-    final isAndroid = defaultTargetPlatform == TargetPlatform.android;
-    if (isAndroid) {
-      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      _isHuaweiDevice =
-          androidInfo.manufacturer?.toLowerCase().contains('huawei') ?? false;
+      final isAndroid = defaultTargetPlatform == TargetPlatform.android;
+      if (isAndroid) {
+        DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        _isHuaweiDevice =
+            androidInfo.manufacturer?.toLowerCase().contains('huawei') ?? false;
+      }
+    } catch (e) {
+      Logger.error(e);
     }
     notifyListeners();
   }
@@ -177,18 +189,30 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
   }
 
   Future<void> _getMarkers() async {
-    _markerCurrentPositionIcon = await _getBytesFromAsset(
-      'assets/images/marker_current_position.png',
-      (80 * scale).toInt(),
-    );
-    _markerStartPositionIcon = await _getBytesFromAsset(
-      'assets/images/marker_start_position.png',
-      (80 * scale).toInt(),
-    );
-    _markerStopPositionIcon = await _getBytesFromAsset(
-      'assets/images/marker_stop_position.png',
-      (80 * scale).toInt(),
-    );
+    try {
+      _markerCurrentPositionIcon = await _getBytesFromAsset(
+        'assets/images/marker_current_position.png',
+        (80 * scale).toInt(),
+      );
+    } catch (e) {
+      Logger.error(e);
+    }
+    try {
+      _markerStartPositionIcon = await _getBytesFromAsset(
+        'assets/images/marker_start_position.png',
+        (80 * scale).toInt(),
+      );
+    } catch (e) {
+      Logger.error(e);
+    }
+    try {
+      _markerStopPositionIcon = await _getBytesFromAsset(
+        'assets/images/marker_stop_position.png',
+        (80 * scale).toInt(),
+      );
+    } catch (e) {
+      Logger.error(e);
+    }
   }
 
   Future<Uint8List> _getBytesFromAsset(String path, int width) async {

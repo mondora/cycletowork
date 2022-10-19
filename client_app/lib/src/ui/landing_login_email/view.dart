@@ -138,6 +138,7 @@ class _LoginEmailViewState extends State<LoginEmailView> {
               Container(
                 margin: EdgeInsets.only(top: 20.0 * scale),
                 child: AppButton(
+                  key: const Key('loginEmail'),
                   title: AppLocalizations.of(context)!.login,
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
