@@ -48,6 +48,9 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
   bool _isHuaweiDevice = false;
   bool get isHuaweiDevice => _isHuaweiDevice;
 
+  bool _isAppReviewed = true;
+  bool get isAppReviewed => _isAppReviewed;
+
   AppData() : this.instance();
 
   AppData.instance() {
@@ -90,6 +93,10 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
       _measurementUnit = AppMeasurementUnit.values.firstWhere(
         (element) => element.name == resultUnit,
       );
+      _isAppReviewed = sharedPreferences.getBool(
+            'isAppReviewed',
+          ) ??
+          false;
     } catch (e) {
       Logger.error(e);
     }
@@ -117,7 +124,7 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
         DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
         AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
         _isHuaweiDevice =
-            androidInfo.manufacturer?.toLowerCase().contains('huawei') ?? false;
+            androidInfo.manufacturer.toLowerCase().contains('huawei');
       }
     } catch (e) {
       Logger.error(e);
@@ -148,6 +155,20 @@ class AppData with ChangeNotifier, DiagnosticableTreeMixin {
     await sharedPreferences.setBool(
       'isWakelockModeEnable',
       value,
+    );
+    notifyListeners();
+  }
+
+  appReviewed() async {
+    _isAppReviewed = true;
+    final sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.setBool(
+      'isAppReviewed',
+      true,
+    );
+    await sharedPreferences.setInt(
+      'isAppReviewDate',
+      DateTime.now().millisecondsSinceEpoch,
     );
     notifyListeners();
   }

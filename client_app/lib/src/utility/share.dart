@@ -9,9 +9,9 @@ class Share {
   }
 
   static Future shareImage(String imagePath, {String? text}) async {
-    await share_plus.Share.shareFiles(
-      [imagePath],
-      text: text,
-    );
+    // await share_plus.Share.shareFiles(
+    //   [imagePath],
+    //   text: text,
+    // );
   }
 }

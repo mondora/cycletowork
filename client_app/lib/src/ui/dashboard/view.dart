@@ -140,7 +140,7 @@ class DashboardView extends StatelessWidget {
                               child: Text(
                                 result
                                     ? 'LA TUA NUOVA ATTIVITÀ È STATA SALVATA!'
-                                    : 'PURTROPPO LA TUA NUOVA ATTIVITÀ NON È STATA SALVATA!'
+                                    : 'NON È STATO POSSIBILE SALVARE LA TUA NUOVA ATTIVITÀ.\nLA TUA NUOVA ATTIVITÀ È STATA SALVATA SOLO SUL DISPOSITIVO. PER REGISTRARLA CORRETTAMENTE DEVI INVIARLA NUOVAMENTE DALLA SEZIONE "ATTIVITÀ".'
                                         .toUpperCase(),
                                 style: textTheme.caption!.apply(
                                   color: colorScheme.onError,

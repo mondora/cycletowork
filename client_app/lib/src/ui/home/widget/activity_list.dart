@@ -66,7 +66,7 @@ class ActivityList extends StatelessWidget {
           userActivity.isNotEmpty
               ? Container(
                   margin: EdgeInsets.only(left: 24.0 * scale, top: 8.0 * scale),
-                  height: 65 * scale,
+                  height: 70.0 * scale,
                   child: ListView.builder(
                     physics: const ScrollPhysics(),
                     shrinkWrap: true,
@@ -127,14 +127,14 @@ class ActivityList extends StatelessWidget {
                   ? Container(
                       margin:
                           EdgeInsets.only(left: 24.0 * scale, top: 8.0 * scale),
-                      height: 65 * scale,
+                      height: 70.0 * scale,
                       child: ListView(
                         physics: const ScrollPhysics(),
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
                         children: [
                           SizedBox(
-                            height: 65 * scale,
+                            height: 70.0 * scale,
                             child: ListView.builder(
                               physics: const ScrollPhysics(),
                               shrinkWrap: true,

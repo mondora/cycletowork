@@ -547,4 +547,25 @@ class RemoteService
     );
     return result == true;
   }
+
+  @override
+  Future<bool> checkUserActivityAdmin() async {
+    final result = await Remote.callFirebaseFunctions(
+      'checkUserActivityAdmin',
+      null,
+    );
+    return result == true;
+  }
+
+  @override
+  Future saveUserActivityAdmin(UserActivity userActivity) async {
+    final userActivityJson = userActivity.toJson();
+    userActivityJson['imageData'] = null;
+    userActivityJson['isUploaded'] = 1;
+    userActivityJson['isInsertFromAdmin'] = 1;
+    var arg = {
+      'userActivity': userActivityJson,
+    };
+    await Remote.callFirebaseFunctions('saveUserActivityAdmin', arg);
+  }
 }

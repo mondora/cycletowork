@@ -82,6 +82,10 @@ abstract class AppAdminService {
   Future<bool> publishChallengeAdmin(Challenge challenge);
 
   Future<bool> verifyCompanyAdmin(Company company);
+
+  Future<bool> checkUserActivityAdmin();
+
+  Future saveUserActivityAdmin(UserActivity userActivity);
 }
 
 abstract class AppServiceOnlyLocal {

@@ -5,15 +5,18 @@ import 'package:cycletowork/src/ui/activity_details/view.dart';
 import 'package:cycletowork/src/ui/home/widget/confirm_challenge.dart';
 import 'package:cycletowork/src/ui/register_challenge/view.dart';
 import 'package:cycletowork/src/utility/convert.dart';
+import 'package:cycletowork/src/utility/logger.dart';
 import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:cycletowork/src/ui/dashboard/view_model.dart';
 import 'package:cycletowork/src/ui/home/widget/activity_list.dart';
 import 'package:cycletowork/src/ui/home/widget/summary_card.dart';
 import 'package:cycletowork/src/widget/map.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 
 class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -38,6 +41,44 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     _controller.addListener(_loadMoreUserActivity);
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => Timer(const Duration(milliseconds: 2000), () => _setInAppReview()),
+    );
+  }
+
+  _setInAppReview() async {
+    try {
+      if (kDebugMode) {
+        return;
+      }
+
+      final dashboardModel = Provider.of<ViewModel>(
+        context,
+        listen: false,
+      );
+      final userHasActivity =
+          dashboardModel.uiState.listUserActivity.length > 3;
+      if (!userHasActivity) {
+        return;
+      }
+
+      final inAppReview = InAppReview.instance;
+      final isAvailableInAppReview = await inAppReview.isAvailable();
+      if (!isAvailableInAppReview) {
+        return;
+      }
+
+      final appData = context.read<AppData>();
+      final isAppReviewed = appData.isAppReviewed;
+      if (isAppReviewed) {
+        return;
+      }
+
+      await inAppReview.requestReview();
+      await appData.appReviewed();
+    } catch (e) {
+      Logger.error(e);
+    }
   }
 
   _loadMoreUserActivity() {

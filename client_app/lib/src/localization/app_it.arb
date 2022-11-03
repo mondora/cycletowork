@@ -5,5 +5,17 @@
     "signupWithFacebook": "Iscriviti con Facebook",
     "signupWithGoogle": "Iscriviti con Google",
     "signupWithApple": "Iscriviti con Apple",
-    "signupWithEmail": "Iscriviti con l’indirizzo email"
+    "signupWithEmail": "Iscriviti con l’indirizzo email",
+    "activity": "Attività",
+    "filter_for_challenge": "Filtra attività valide per la challenge",
+    "progress": "Progressi",
+    "this_week": "Questa settimana",
+    "this_month": "Questo mese",
+    "this_year": "Quest’anno",
+    "co2_saving": "Risparmio di CO₂",
+    "kilometres": "Chilometri",
+    "miles": "Miglia",
+    "routes": "Percorsi",
+    "racing": "Corse",
+    "empty_activity_message": "Non hai ancora registrato nessuna pedalata"
 }

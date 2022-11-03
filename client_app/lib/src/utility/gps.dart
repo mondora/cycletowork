@@ -123,8 +123,8 @@ class Gps {
         accuracy: location.LocationAccuracy.bestForNavigation,
         activityType: location.ActivityType.fitness,
         distanceFilter: smallestDisplacement,
-        pauseLocationUpdatesAutomatically: true,
-        showBackgroundLocationIndicator: false,
+        pauseLocationUpdatesAutomatically: false,
+        showBackgroundLocationIndicator: true,
       );
     } else {
       locationSettings = location.LocationSettings(

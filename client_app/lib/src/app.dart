@@ -1,5 +1,6 @@
 import 'package:cycletowork/src/data/app_data.dart';
 import 'package:cycletowork/src/ui/landing/view.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -15,6 +16,10 @@ class CycleToWorkApp extends StatefulWidget {
 }
 
 class _CycleToWorkAppState extends State<CycleToWorkApp> {
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseAnalyticsObserver observer =
+      FirebaseAnalyticsObserver(analytics: analytics);
+
   @override
   void initState() {
     FlutterNativeSplash.remove();
@@ -39,6 +44,7 @@ class _CycleToWorkAppState extends State<CycleToWorkApp> {
       theme: context.watch<AppData>().lightThemeData,
       darkTheme: context.watch<AppData>().darkThemeData,
       themeMode: context.watch<AppData>().themeMode,
+      navigatorObservers: <NavigatorObserver>[observer],
       home: const LandingView(),
     );
   }

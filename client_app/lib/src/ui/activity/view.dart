@@ -9,6 +9,7 @@ import 'package:cycletowork/src/widget/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cycletowork/src/utility/convert.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ActivityView extends StatefulWidget {
   const ActivityView({Key? key}) : super(key: key);
@@ -91,7 +92,7 @@ class _ActivityViewState extends State<ActivityView> {
               height: 10 * scale,
             ),
             Text(
-              'Attività',
+              AppLocalizations.of(context)!.activity,
               style: textTheme.headline5,
             ),
             SizedBox(

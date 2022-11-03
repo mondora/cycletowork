@@ -5,6 +5,7 @@ import 'package:cycletowork/src/ui/landing/repository.dart';
 import 'package:cycletowork/src/ui/landing/ui_state.dart';
 import 'package:cycletowork/src/utility/logger.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ViewModel extends ChangeNotifier {
   final bool isAdmin;
@@ -243,13 +244,15 @@ class ViewModel extends ChangeNotifier {
 
   Future<void> _tryGetUserInfo({int counter = 0}) async {
     try {
-      var userInfoLocal = await _repository.getUserInfoFromLocal();
-      if (userInfoLocal != null) {
-        await _getInitialInfo();
-        _uiState.pageOption = PageOption.home;
-        _uiState.loading = false;
-        notifyListeners();
-        return;
+      if (!kIsWeb) {
+        var userInfoLocal = await _repository.getUserInfoFromLocal();
+        if (userInfoLocal != null) {
+          await _getInitialInfo();
+          _uiState.pageOption = PageOption.home;
+          _uiState.loading = false;
+          notifyListeners();
+          return;
+        }
       }
     } catch (e) {
       Logger.error(e);

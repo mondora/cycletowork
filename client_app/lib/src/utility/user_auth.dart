@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cycletowork/src/utility/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -62,6 +63,7 @@ class UserAuth {
       );
       await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
+      Logger.error(e);
       return;
     }
   }
@@ -70,8 +72,9 @@ class UserAuth {
     try {
       final appleProvider = AppleAuthProvider();
       appleProvider.addScope('email');
-      await FirebaseAuth.instance.signInWithAuthProvider(appleProvider);
+      await FirebaseAuth.instance.signInWithProvider(appleProvider);
     } catch (e) {
+      Logger.error(e);
       return;
     }
   }
@@ -138,6 +141,7 @@ class UserAuth {
         await _googleSignInForIos.signOut();
       }
     } catch (e) {
+      Logger.error(e);
       return;
     }
   }

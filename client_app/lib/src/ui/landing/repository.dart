@@ -34,7 +34,9 @@ class Repository {
   Future<void> logout() async {
     var token = await _localDatabase.getDeviceToken();
     if (token != null) {
-      await _remoteService.removeDeviceToken(token);
+      if (UserAuth.getUserUid() != null) {
+        await _remoteService.removeDeviceToken(token);
+      }
       await _localDatabase.removeDeviceToken(token);
     }
     await UserAuth.logout();

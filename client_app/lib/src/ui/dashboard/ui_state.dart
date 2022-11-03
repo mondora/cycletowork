@@ -71,7 +71,7 @@ class UiState {
 
   List<CyclistClassification> listCyclistClassification = [];
   double? lastCyclistClassificationCo2;
-  int listCyclistClassificationPageSize = 20;
+  int listCyclistClassificationPageSize = 100;
   int listCyclistClassificationPage = 0;
   CyclistClassification? userCyclistClassification;
 
