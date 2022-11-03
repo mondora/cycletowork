@@ -82,6 +82,18 @@ class _AdminListChallengeViewState extends State<AdminListChallengeView>
         ),
         actions: [
           TextButton.icon(
+            label: const Text('Controlla attività'),
+            onPressed: () {
+              dashboardModel.checkUserActivityAdmin();
+            },
+            icon: const Icon(
+              Icons.check,
+            ),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          TextButton.icon(
             label: const Text('Aggiungi'),
             onPressed: () async {
               var newChallenge =

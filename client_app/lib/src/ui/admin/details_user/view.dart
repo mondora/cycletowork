@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:cycletowork/src/data/user.dart';
 import 'package:cycletowork/src/theme.dart';
+import 'package:cycletowork/src/ui/admin/details_user/add_user_activity.dart';
 import 'package:cycletowork/src/ui/admin/details_user/view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -81,6 +82,24 @@ class AdminDetailsUser extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               actions: [
+                TextButton.icon(
+                  label: const Text('Aggiungi attività'),
+                  onPressed: () async {
+                    var newUserActivity = await AddUserActivityDialog(
+                      context: context,
+                      uid: viewModel.uiState.userInfo!.uid,
+                    ).show();
+                    if (newUserActivity != null) {
+                      viewModel.saveUserActivityAdmin(newUserActivity);
+                    }
+                  },
+                  icon: const Icon(
+                    Icons.add,
+                  ),
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
                 TextButton.icon(
                   label: const Text('Diventa Admin'),
                   onPressed: !isAdmin ? () => viewModel.setAdminUser() : null,

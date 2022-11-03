@@ -17,12 +17,12 @@ class UiState {
   PageOption pageOption = PageOption.user;
   ListUser? listUser;
   User? userInfo;
-  int listUserPageSize = 15;
+  int listUserPageSize = 100;
   String? listUserNextPageToken;
   String? listUserEmailFilte;
   List<Company> listCompany = [];
   String? lastCompanyName;
-  int listCompanyPageSize = 15;
+  int listCompanyPageSize = 100;
 
   List<Survey> listSurvey = [];
   String? lastSurveyName;

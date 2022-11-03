@@ -1,5 +1,6 @@
 import 'package:cycletowork/src/data/repository_service_locator.dart';
 import 'package:cycletowork/src/data/user.dart';
+import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/database/local_database_service.dart';
 import 'package:cycletowork/src/service/remote_service.dart';
 
@@ -33,5 +34,9 @@ class Repository {
 
   Future<bool> setAdminUser(String uid) async {
     return await _remoteService.setAdminUser(uid);
+  }
+
+  Future saveUserActivityAdmin(UserActivity userActivity) async {
+    await _remoteService.saveUserActivityAdmin(userActivity);
   }
 }

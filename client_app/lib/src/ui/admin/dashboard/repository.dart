@@ -101,4 +101,8 @@ class Repository {
   Future<bool> verifyCompany(Company company) async {
     return await _remoteService.verifyCompanyAdmin(company);
   }
+
+  Future<bool> checkUserActivityAdmin() async {
+    return await _remoteService.checkUserActivityAdmin();
+  }
 }

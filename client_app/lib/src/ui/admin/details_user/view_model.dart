@@ -1,4 +1,5 @@
 import 'package:cycletowork/src/data/user.dart';
+import 'package:cycletowork/src/data/user_activity.dart';
 import 'package:cycletowork/src/ui/admin/details_user/repository.dart';
 import 'package:cycletowork/src/ui/admin/details_user/ui_state.dart';
 import 'package:cycletowork/src/utility/logger.dart';
@@ -53,6 +54,21 @@ class ViewModel extends ChangeNotifier {
     try {
       await _repository.setAdminUser(_user.uid);
       _uiState.userInfo!.admin = true;
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+    } finally {
+      _uiState.loading = false;
+      notifyListeners();
+    }
+  }
+
+  void saveUserActivityAdmin(UserActivity userActivity) async {
+    _uiState.loading = true;
+    notifyListeners();
+    try {
+      await _repository.saveUserActivityAdmin(userActivity);
     } catch (e) {
       _uiState.errorMessage = e.toString();
       _uiState.error = true;

@@ -362,6 +362,21 @@ class ViewModel extends ChangeNotifier {
     }
   }
 
+  void checkUserActivityAdmin() async {
+    _uiState.loading = true;
+    notifyListeners();
+    try {
+      await _repository.checkUserActivityAdmin();
+    } catch (e) {
+      _uiState.errorMessage = e.toString();
+      _uiState.error = true;
+      Logger.error(e);
+    } finally {
+      _uiState.loading = false;
+      notifyListeners();
+    }
+  }
+
   void clearSearchUserEmailListUser() {
     _uiState.listUserEmailFilte = null;
     _listUserPage = 0;
