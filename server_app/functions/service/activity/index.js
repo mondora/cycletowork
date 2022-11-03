@@ -247,6 +247,66 @@ const saveUserActivityLocationData = async (
     });
 };
 
+const checkUserActivity = async () => {
+    const challengeId = '8fffc6ee-529f-4fe9-a848-e5ed40f7131a';
+    const snapshotUsers = await admin
+        .firestore()
+        .collection(Constant.challengeCollectionName)
+        .doc(challengeId)
+        .collection(Constant.usersCollectionName)
+        .get();
+
+    for (let index = 0; index < snapshotUsers.docs.length; index++) {
+        const user = snapshotUsers.docs[index].data();
+
+        if (!user.alreadyStarted) {
+            continue;
+        }
+
+        await admin
+            .firestore()
+            .collection(Constant.usersCollectionName)
+            .doc(user.uid)
+            .update(
+                {
+                    averageSpeed: user.averageSpeed,
+                    calorie: user.calorie,
+                    co2: user.co2,
+                    distance: user.distance,
+                    maxSpeed: user.maxSpeed,
+                    steps: user.steps,
+                },
+                { merge: true }
+            );
+
+        const snapshotUsersActivity = await admin
+            .firestore()
+            .collection(Constant.challengeCollectionName)
+            .doc(challengeId)
+            .collection(Constant.usersCollectionName)
+            .doc(user.uid)
+            .collection(Constant.userActivityCollectionName)
+            .get();
+
+        for (
+            let indexActivity = 0;
+            indexActivity < snapshotUsersActivity.docs.length;
+            indexActivity++
+        ) {
+            const userActivity =
+                snapshotUsersActivity.docs[indexActivity].data();
+
+            await admin
+                .firestore()
+                .collection(Constant.usersCollectionName)
+                .doc(user.uid)
+                .collection(Constant.userActivityCollectionName)
+                .doc(userActivity.userActivityId)
+                .set(userActivity, { merge: true });
+        }
+    }
+};
+
 const getListUserActivity = async (uid, startDate, pageSize = 100) => {
     let snapshot;
     if (startDate) {
@@ -280,5 +340,6 @@ const getListUserActivity = async (uid, startDate, pageSize = 100) => {
 module.exports = {
     saveUserActivity,
     saveUserActivityLocationData,
+    checkUserActivity,
     getListUserActivity,
 };

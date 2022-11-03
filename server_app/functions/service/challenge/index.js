@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
 const { Constant } = require('../../utility/constant');
+const { loggerError } = require('../../utility/logger');
 const { saveChallengeUser, getUserInfo } = require('../user');
 const { saveCompany } = require('../company');
 

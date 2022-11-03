@@ -18,6 +18,7 @@ const {
 const {
     saveUserActivity,
     saveUserActivityLocationData,
+    checkUserActivity,
     getListUserActivity,
 } = require('./service/activity');
 const {
@@ -1905,6 +1906,84 @@ exports.publishChallengeAdmin = functions
         } catch (error) {
             loggerError(
                 'publishChallengeAdmin Error, UID:',
+                adminUid,
+                'error:',
+                error
+            );
+            throw new functions.https.HttpsError(Constant.unknownErrorMessage);
+        }
+    });
+
+exports.saveUserActivityAdmin = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const adminUid = context.auth.uid;
+
+        if (!adminUid) {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+        loggerLog('saveUserActivityAdmin UID:', adminUid, 'data:', data);
+        const isAdmin = await checkAdminUser(adminUid);
+        if (!isAdmin) {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+
+        if (!data || !data.userActivity) {
+            throw new functions.https.HttpsError(
+                Constant.badRequestDeniedMessage
+            );
+        }
+
+        try {
+            const uid = data.userActivity.uid;
+            const userActivity = data.userActivity;
+
+            await saveUserActivity(uid, userActivity);
+            return true;
+        } catch (error) {
+            loggerError(
+                'saveUserActivityAdmin Error, UID:',
+                adminUid,
+                'data:',
+                data,
+                'error:',
+                error
+            );
+            throw new functions.https.HttpsError(Constant.unknownErrorMessage);
+        }
+    });
+
+exports.checkUserActivityAdmin = functions
+    .region(Constant.appRegion)
+    .runWith({
+        timeoutSeconds: 250,
+    })
+    .https.onCall(async (data, context) => {
+        const adminUid = context.auth.uid;
+
+        if (!adminUid) {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+        loggerLog('checkUserActivityAdmin UID:', adminUid);
+        const isAdmin = await checkAdminUser(adminUid);
+        if (!isAdmin) {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+
+        try {
+            await checkUserActivity();
+            return true;
+        } catch (error) {
+            loggerError(
+                'checkUserActivityAdmin Error, UID:',
                 adminUid,
                 'error:',
                 error
