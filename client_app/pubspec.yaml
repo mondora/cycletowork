@@ -1,7 +1,7 @@
 name: cycletowork
 description: A new open source app for track bicycle.
 publish_to: 'https://github.com/mondora/cycletowork'
-version: 1.2.0+75
+version: 1.2.2+79
 
 environment:
     sdk: '>=2.18.0 <3.0.0'
@@ -17,7 +17,7 @@ dependencies:
     provider: ^6.0.4
     firebase_core: ^2.1.1
     cloud_functions: ^4.0.3
-    firebase_auth: ^4.1.0
+    firebase_auth: ^4.1.1
     google_sign_in: ^5.4.2
     flutter_dotenv: ^5.0.2
     flutter_native_splash: ^2.2.9
@@ -38,12 +38,12 @@ dependencies:
     uuid: ^3.0.6
     shared_preferences: ^2.0.15
     logger: ^1.1.0
-    firebase_messaging: ^14.0.3
+    firebase_messaging: ^14.0.4
     flutter_local_notifications: ^12.0.2
     badges: ^2.0.3
     flutter_otp_text_field: ^1.1.1
     auto_size_text: ^3.0.0
-    firebase_crashlytics: ^3.0.3
+    firebase_crashlytics: ^3.0.4
     app_settings: ^4.1.8
     filter_list: ^1.0.2
     webview_flutter: ^3.0.4
@@ -59,8 +59,7 @@ dependencies:
     package_info_plus: ^3.0.1
     vibration: ^1.7.6
     device_info_plus: ^8.0.0
-    firebase_analytics: ^10.0.3
-    in_app_review: ^2.0.4
+    firebase_analytics: ^10.0.4
 
 dev_dependencies:
     integration_test:
