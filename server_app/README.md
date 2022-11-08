@@ -1,1 +1,1 @@
-# Cycle2Work Service
+# Cycle2Work - Server app
