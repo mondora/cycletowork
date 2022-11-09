@@ -60,12 +60,12 @@ class UiState {
   bool listCompanyClassificationOrderByRankingCo2 = true;
   List<CompanyClassification> listCompanyClassificationRankingCo2 = [];
   double? lastCompanyClassificationCo2;
-  int listCompanyClassificationRankingCo2PageSize = 20;
+  int listCompanyClassificationRankingCo2PageSize = 50;
   int listCompanyClassificationRankingCo2Page = 0;
 
   List<CompanyClassification> listCompanyClassificationRankingRegistered = [];
   double? lastCompanyClassificationPercentRegistered;
-  int listCompanyClassificationRankingRegisteredPageSize = 20;
+  int listCompanyClassificationRankingRegisteredPageSize = 50;
   int listCompanyClassificationRankingRegisteredPage = 0;
   CompanyClassification? userCompanyClassification;
 
@@ -77,7 +77,7 @@ class UiState {
 
   List<DepartmentClassification> listDepartmentClassification = [];
   double? lastDepartmentClassificationCo2;
-  int listDepartmentClassificationPageSize = 20;
+  int listDepartmentClassificationPageSize = 50;
   int listDepartmentClassificationPage = 0;
   DepartmentClassification? userDepartmentClassification;
 
