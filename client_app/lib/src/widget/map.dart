@@ -293,12 +293,22 @@ class AppMapState extends State<AppMap> with WidgetsBindingObserver {
         zoom: widget.zoom,
       ),
       onMapCreated: (GoogleMapController controller) async {
-        _controller.complete(controller);
-        widget.onCreatedMap();
+        try {
+          _controller.complete(controller);
+        } catch (e) {
+          Logger.error(e);
+        }
+        Timer(const Duration(milliseconds: 200), () async {
+          try {
+            widget.onCreatedMap();
+          } catch (e) {
+            Logger.error(e);
+          }
+        });
       },
       onCameraIdle: () {
         if (widget.onSnapshot != null) {
-          Timer(const Duration(milliseconds: 200), () async {
+          Timer(const Duration(milliseconds: 300), () async {
             try {
               final controller = await _controller.future;
               final uin8list = await controller.takeSnapshot();
