@@ -555,14 +555,22 @@ class ViewModel extends ChangeNotifier {
       return;
     }
 
+    if (nextPage == true &&
+        (_uiState.lastDepartmentClassificationCo2 == null ||
+            _uiState.lastDepartmentClassificationCo2 == 0)) {
+      return;
+    }
+
+    if (nextPage == true &&
+        _uiState.listDepartmentClassification.length <
+            _uiState.listDepartmentClassificationPageSize) {
+      return;
+    }
+
     _uiState.refreshClassificationLoading = true;
     notifyListeners();
     try {
       var challengeRegistry = _uiState.challengeRegistrySelected!;
-      _uiState.userDepartmentClassification =
-          await _repository.getUserDepartmentClassification(
-        challengeRegistry,
-      );
 
       if (_uiState.userDepartmentClassification == null) {
         if (nextPage == true) {
@@ -579,6 +587,10 @@ class ViewModel extends ChangeNotifier {
         _uiState.lastDepartmentClassificationCo2 = null;
         _uiState.listDepartmentClassificationPage = 0;
         _uiState.listDepartmentClassification = [];
+        _uiState.userDepartmentClassification =
+            await _repository.getUserDepartmentClassification(
+          challengeRegistry,
+        );
       }
 
       var pageSize = _uiState.listDepartmentClassificationPageSize;
@@ -623,14 +635,22 @@ class ViewModel extends ChangeNotifier {
       return;
     }
 
+    if (nextPage == true &&
+        (_uiState.lastCyclistClassificationCo2 == null ||
+            _uiState.lastCyclistClassificationCo2 == 0)) {
+      return;
+    }
+
+    if (nextPage == true &&
+        _uiState.listCyclistClassification.length <
+            _uiState.listCyclistClassificationPageSize) {
+      return;
+    }
+
     _uiState.refreshClassificationLoading = true;
     notifyListeners();
     try {
       var challengeRegistry = _uiState.challengeRegistrySelected!;
-      _uiState.userCyclistClassification =
-          await _repository.getUserCyclistClassification(
-        challengeRegistry,
-      );
 
       if (nextPage == true) {
         _uiState.listCyclistClassificationPage++;
@@ -638,6 +658,10 @@ class ViewModel extends ChangeNotifier {
         _uiState.lastCyclistClassificationCo2 = null;
         _uiState.listCyclistClassificationPage = 0;
         _uiState.listCyclistClassification = [];
+        _uiState.userCyclistClassification =
+            await _repository.getUserCyclistClassification(
+          challengeRegistry,
+        );
       }
 
       var pageSize = _uiState.listCyclistClassificationPageSize;
@@ -681,14 +705,44 @@ class ViewModel extends ChangeNotifier {
       return;
     }
 
+    if (nextPage == true &&
+        _uiState.listCompanyClassificationOrderByRankingCo2 &&
+        (_uiState.lastCompanyClassificationCo2 == null ||
+            _uiState.lastCompanyClassificationCo2 == 0)) {
+      return;
+    }
+
+    if (nextPage == true &&
+        !_uiState.listCompanyClassificationOrderByRankingCo2 &&
+        (_uiState.lastCompanyClassificationPercentRegistered == null ||
+            _uiState.lastCompanyClassificationPercentRegistered == 0)) {
+      return;
+    }
+
+    if (nextPage == true &&
+        _uiState.listCompanyClassificationOrderByRankingCo2 &&
+        _uiState.listCompanyClassificationRankingCo2.length <
+            _uiState.listCompanyClassificationRankingCo2PageSize) {
+      return;
+    }
+
+    if (nextPage == true &&
+        !_uiState.listCompanyClassificationOrderByRankingCo2 &&
+        _uiState.listCompanyClassificationRankingRegistered.length <
+            _uiState.listCompanyClassificationRankingCo2PageSize) {
+      return;
+    }
+
     _uiState.refreshClassificationLoading = true;
     notifyListeners();
     try {
       var challengeRegistry = _uiState.challengeRegistrySelected!;
-      _uiState.userCompanyClassification =
-          await _repository.getUserCompanyClassification(
-        challengeRegistry,
-      );
+      if (nextPage != true) {
+        _uiState.userCompanyClassification =
+            await _repository.getUserCompanyClassification(
+          challengeRegistry,
+        );
+      }
       if (_uiState.listCompanyClassificationOrderByRankingCo2) {
         if (nextPage == true) {
           _uiState.listCompanyClassificationRankingCo2Page++;

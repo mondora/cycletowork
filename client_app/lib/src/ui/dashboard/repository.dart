@@ -30,6 +30,7 @@ class ServiceLocator implements RepositoryServiceLocator {
 class Repository {
   late final RemoteService _remoteService;
   late final LocalDatabaseService _localDatabase;
+  final stopDateChallengOffset = const Duration(days: 14);
 
   Repository() {
     var serviceLocator = ServiceLocator();
@@ -122,7 +123,9 @@ class Repository {
       orderByRankingCo2: true,
     );
 
-    var stopDateChalleng = challengeRegistry.stopTimeChallenge;
+    final stopDateChalleng = DateTime.fromMillisecondsSinceEpoch(
+      challengeRegistry.stopTimeChallenge,
+    ).add(stopDateChallengOffset).millisecondsSinceEpoch;
     var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localListCompanyClassification.isNotEmpty &&
         localListCompanyClassification.length > 1 &&
@@ -164,7 +167,9 @@ class Repository {
       orderByRankingCo2: false,
     );
 
-    var stopDateChalleng = challengeRegistry.stopTimeChallenge;
+    final stopDateChalleng = DateTime.fromMillisecondsSinceEpoch(
+      challengeRegistry.stopTimeChallenge,
+    ).add(stopDateChallengOffset).millisecondsSinceEpoch;
     var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localListCompanyClassification.isNotEmpty &&
         localListCompanyClassification.length > 1 &&
@@ -204,7 +209,9 @@ class Repository {
       pageSize: pageSize,
     );
 
-    var stopDateChalleng = challengeRegistry.stopTimeChallenge;
+    final stopDateChalleng = DateTime.fromMillisecondsSinceEpoch(
+      challengeRegistry.stopTimeChallenge,
+    ).add(stopDateChallengOffset).millisecondsSinceEpoch;
     var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localListCyclistClassification.isNotEmpty &&
         localListCyclistClassification.length > 1 &&
@@ -239,7 +246,9 @@ class Repository {
       challengeRegistry.companyId,
       challengeRegistry.companySizeCategory,
     );
-    var stopDateChalleng = challengeRegistry.stopTimeChallenge;
+    final stopDateChalleng = DateTime.fromMillisecondsSinceEpoch(
+      challengeRegistry.stopTimeChallenge,
+    ).add(stopDateChallengOffset).millisecondsSinceEpoch;
     var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localUserCompanyClassification != null &&
         stopDateChalleng < dateNow &&
@@ -271,7 +280,9 @@ class Repository {
         await _localDatabase.getUserCyclistClassification(
       challengeRegistry.challengeId,
     );
-    var stopDateChalleng = challengeRegistry.stopTimeChallenge;
+    final stopDateChalleng = DateTime.fromMillisecondsSinceEpoch(
+      challengeRegistry.stopTimeChallenge,
+    ).add(stopDateChallengOffset).millisecondsSinceEpoch;
     var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localUserCyclistClassification != null &&
         stopDateChalleng < dateNow &&
@@ -304,7 +315,9 @@ class Repository {
       challengeRegistry.companySizeCategory,
       challengeRegistry.departmentName,
     );
-    var stopDateChalleng = challengeRegistry.stopTimeChallenge;
+    final stopDateChalleng = DateTime.fromMillisecondsSinceEpoch(
+      challengeRegistry.stopTimeChallenge,
+    ).add(stopDateChallengOffset).millisecondsSinceEpoch;
     var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localUserDepartmentClassification != null &&
         stopDateChalleng < dateNow &&
@@ -345,7 +358,9 @@ class Repository {
       pageSize: pageSize,
     );
 
-    var stopDateChalleng = challengeRegistry.stopTimeChallenge;
+    final stopDateChalleng = DateTime.fromMillisecondsSinceEpoch(
+      challengeRegistry.stopTimeChallenge,
+    ).add(stopDateChallengOffset).millisecondsSinceEpoch;
     var dateNow = DateTime.now().millisecondsSinceEpoch;
     if (localListDepartmentClassification.isNotEmpty &&
         localListDepartmentClassification.length > 1 &&
