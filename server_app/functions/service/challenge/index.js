@@ -630,8 +630,15 @@ const getUserCyclistClassification = async (challengeId, uid) => {
     if (challengeInfo.exists) {
         const data = challengeInfo.data();
         data.challengeId = challengeId;
-        //TODO get ranking from tree algorithm
-        data.rankingCo2 = 0;
+        const snapshot = await admin
+            .firestore()
+            .collection(Constant.challengeCollectionName)
+            .doc(challengeId)
+            .collection(Constant.usersCollectionName)
+            .where('distance', '>=', data.distance)
+            .count()
+            .get();
+        data.rankingCo2 = snapshot.data().count;
         return data;
     } else {
         throw new Error(Constant.cyclistClassificationNotFoundError);
