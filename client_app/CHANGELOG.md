@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [1.2.3] - 2022-11-11
+
+-   Add delay to google map created
+-   Update classification refresh
+
 ## [1.2.2] - 2022-11-06
 
 -   Remove in app rating
