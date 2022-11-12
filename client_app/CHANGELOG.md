@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.2.4] - 2022-11-11
+
+-   Update duration calculate in activity
+
 ## [1.2.3] - 2022-11-11
 
 -   Add delay to google map created
