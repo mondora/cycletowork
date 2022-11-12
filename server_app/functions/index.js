@@ -1943,6 +1943,27 @@ exports.saveUserActivityAdmin = functions
             const userActivity = data.userActivity;
 
             await saveUserActivity(uid, userActivity);
+
+            const user = await getUserInfo(uid);
+            const listDeviceToken = await getListDeviceToken(uid);
+            if (user && listDeviceToken && listDeviceToken.length) {
+                const language = user.language;
+                const title = `${
+                    user.displayName ? user.displayName : 'Novità'
+                }`;
+                const hasBeenAdded = getString(language, 'it_has_been_added');
+                const hasBeenRemoved = getString(
+                    language,
+                    'it_has_been_removed'
+                );
+                const meters = getString(language, 'meters');
+                const description =
+                    userActivity.distance > 0
+                        ? `${hasBeenAdded} ${userActivity.distance} ${meters}`
+                        : `${hasBeenRemoved} ${userActivity.distance} ${meters}`;
+
+                await sendNotification(listDeviceToken, title, description);
+            }
             return true;
         } catch (error) {
             loggerError(

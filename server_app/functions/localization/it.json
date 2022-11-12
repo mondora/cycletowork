@@ -5,5 +5,8 @@
     "new_challenge_opened": "È aperto nuovo challenge",
     "sign_up_now": "Iscriviti subito",
     "the_company": "La azienda",
-    "has_been_verified_for_company": "È stata verificata"
+    "has_been_verified_for_company": "È stata verificata",
+    "it_has_been_added": "È stato aggiunto",
+    "it_has_been_removed": "È stato rimosso",
+    "meters": "metri"
 }
