@@ -17,6 +17,8 @@ abstract class BaseWorkout {
   late int startDateInMilliSeconds;
   late int stopDateInMilliSeconds;
   late List<LocationData> listLocationData;
+  late List<int> listPauseWorkoutDateInMilliSeconds;
+  late List<int> listPlayAgainWorkoutDateInMilliSeconds;
   late List<LocationData> listLocationDataUnFiltered;
   late double distanceInMeter;
   late double speedInMeterPerSecond;
@@ -114,6 +116,8 @@ class Workout extends BaseWorkout {
     stopDateInMilliSeconds = 0;
     listLocationData = [];
     listLocationDataUnFiltered = [];
+    listPauseWorkoutDateInMilliSeconds = [];
+    listPlayAgainWorkoutDateInMilliSeconds = [];
     distanceInMeter = 0;
     speedInMeterPerSecond = 0;
     averageSpeedInMeterPerSecond = 0;
@@ -282,6 +286,10 @@ class Workout extends BaseWorkout {
         } else {
           if (started) {
             durationInSecond++;
+            if (listPlayAgainWorkoutDateInMilliSeconds.isEmpty) {
+              final now = DateTime.now().toLocal().millisecondsSinceEpoch;
+              listPlayAgainWorkoutDateInMilliSeconds.add(now);
+            }
           }
 
           if (listLocationDataUnFiltered.isNotEmpty) {
@@ -331,12 +339,16 @@ class Workout extends BaseWorkout {
   Future<void> pauseWorkout() async {
     _started = false;
     speedInMeterPerSecond = 0.0;
+    final now = DateTime.now().toLocal().millisecondsSinceEpoch;
+    listPauseWorkoutDateInMilliSeconds.add(now);
   }
 
   @override
   Future<void> playAgainWorkout() async {
     _started = true;
     _startedAfterPaused = true;
+    final now = DateTime.now().toLocal().millisecondsSinceEpoch;
+    listPlayAgainWorkoutDateInMilliSeconds.add(now);
   }
 
   @override
@@ -344,6 +356,14 @@ class Workout extends BaseWorkout {
     _started = false;
     speedInMeterPerSecond = 0.0;
     stopDateInMilliSeconds = DateTime.now().toLocal().millisecondsSinceEpoch;
+
+    var duration = 0;
+    for (var i = 0; i < listPauseWorkoutDateInMilliSeconds.length; i++) {
+      duration += listPauseWorkoutDateInMilliSeconds[i] -
+          listPlayAgainWorkoutDateInMilliSeconds[i];
+    }
+    durationInSecond = duration ~/ 1000;
+
     _timer?.cancel();
     await _activityStreamSubscription?.cancel();
     await _locationSubscription?.cancel();
