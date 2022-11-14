@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.2.5] - 2022-11-14
+
+-   Fix bug for refresh department and classification
+
 ## [1.2.4] - 2022-11-11
 
 -   Update duration calculate in activity
