@@ -572,15 +572,6 @@ class ViewModel extends ChangeNotifier {
     try {
       var challengeRegistry = _uiState.challengeRegistrySelected!;
 
-      if (_uiState.userDepartmentClassification == null) {
-        if (nextPage == true) {
-          _uiState.listDepartmentClassificationPage--;
-        }
-        _uiState.refreshClassificationLoading = false;
-        notifyListeners();
-        return;
-      }
-
       if (nextPage == true) {
         _uiState.listDepartmentClassificationPage++;
       } else {
@@ -591,6 +582,15 @@ class ViewModel extends ChangeNotifier {
             await _repository.getUserDepartmentClassification(
           challengeRegistry,
         );
+      }
+
+      if (_uiState.userDepartmentClassification == null) {
+        if (nextPage == true) {
+          _uiState.listDepartmentClassificationPage--;
+        }
+        _uiState.refreshClassificationLoading = false;
+        notifyListeners();
+        return;
       }
 
       var pageSize = _uiState.listDepartmentClassificationPageSize;
