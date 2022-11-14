@@ -363,6 +363,9 @@ class Workout extends BaseWorkout {
           listPlayAgainWorkoutDateInMilliSeconds[i];
     }
     durationInSecond = duration ~/ 1000;
+    if (durationInSecond > delayInSecondToCalculateAverageSpeed) {
+      averageSpeedInMeterPerSecond = distanceInMeter / durationInSecond;
+    }
 
     _timer?.cancel();
     await _activityStreamSubscription?.cancel();
