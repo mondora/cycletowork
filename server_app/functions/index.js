@@ -2012,3 +2012,83 @@ exports.checkUserActivityAdmin = functions
             throw new functions.https.HttpsError(Constant.unknownErrorMessage);
         }
     });
+
+exports.getListRegisterdChallengeForUser = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            loggerLog(
+                'getListRegisterdChallengeForUser UID:',
+                uid,
+                'data: ',
+                data
+            );
+            try {
+                return await getListRegisterdChallenge(data.uid);
+            } catch (error) {
+                loggerError(
+                    'getListRegisterdChallengeForUser Error, UID:',
+                    uid,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
+
+exports.getUserCyclistClassificationForUser = functions
+    .region(Constant.appRegion)
+    .https.onCall(async (data, context) => {
+        const uid = context.auth.uid;
+
+        if (uid) {
+            if (!data || !data.challengeId) {
+                throw new functions.https.HttpsError(
+                    Constant.badRequestDeniedMessage
+                );
+            }
+
+            const challengeId = data.challengeId;
+            loggerLog(
+                'getUserCyclistClassificationForUser UID:',
+                uid,
+                'challengeId:',
+                challengeId,
+                'data:',
+                data
+            );
+            try {
+                return await getUserCyclistClassification(
+                    challengeId,
+                    data.uid
+                );
+            } catch (error) {
+                loggerError(
+                    'getUserCyclistClassificationForUser Error, UID:',
+                    uid,
+                    'challengeId:',
+                    challengeId,
+                    'data:',
+                    data,
+                    'error:',
+                    error
+                );
+                throw new functions.https.HttpsError(
+                    Constant.unknownErrorMessage
+                );
+            }
+        } else {
+            throw new functions.https.HttpsError(
+                Constant.permissionDeniedMessage
+            );
+        }
+    });
