@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.2.6] - 2022-11-14
+
+-   Fix average speed activity calculate from real duration
+
 ## [1.2.5] - 2022-11-14
 
 -   Fix bug for refresh department and classification
