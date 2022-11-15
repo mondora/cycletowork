@@ -730,6 +730,7 @@ exports.saveUserActivity = functions
                 );
             }
             try {
+                loggerLog('saveUserActivity UID:', uid, 'data:', data);
                 await saveUserActivity(uid, userActivity);
                 return true;
             } catch (error) {
