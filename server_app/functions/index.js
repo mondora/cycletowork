@@ -68,7 +68,7 @@ admin.initializeApp();
 exports.onCreateUser = functions
     .region(Constant.appRegion)
     .runWith({
-        minInstances: 2,
+        minInstances: 1,
     })
     .auth.user()
     .onCreate(async (user) => {
@@ -152,9 +152,6 @@ exports.deleteAccount = functions
 
 exports.saveDeviceToken = functions
     .region(Constant.appRegion)
-    .runWith({
-        minInstances: 1,
-    })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
         const deviceToken = data.deviceToken;
@@ -189,9 +186,6 @@ exports.saveDeviceToken = functions
 
 exports.removeDeviceToken = functions
     .region(Constant.appRegion)
-    .runWith({
-        minInstances: 1,
-    })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
         const deviceToken = data.deviceToken;
@@ -227,7 +221,7 @@ exports.removeDeviceToken = functions
 exports.getUserInfo = functions
     .region(Constant.appRegion)
     .runWith({
-        minInstances: 2,
+        minInstances: 1,
     })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
@@ -411,9 +405,6 @@ exports.getCompanyFromNameInChallenge = functions
 
 exports.getCompanyListForChallenge = functions
     .region(Constant.appRegion)
-    .runWith({
-        minInstances: 1,
-    })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
 
@@ -452,9 +443,6 @@ exports.getCompanyListForChallenge = functions
 
 exports.getCompanyList = functions
     .region(Constant.appRegion)
-    .runWith({
-        minInstances: 1,
-    })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
 
@@ -531,9 +519,6 @@ exports.getSurveyList = functions
 
 exports.getActiveChallengeList = functions
     .region(Constant.appRegion)
-    .runWith({
-        minInstances: 1,
-    })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
 
@@ -677,9 +662,6 @@ exports.verifiyEmailCode = functions
 
 exports.registerChallenge = functions
     .region(Constant.appRegion)
-    .runWith({
-        minInstances: 1,
-    })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
         loggerLog('registerChallenge, UID:', uid, 'data:', data);
@@ -718,7 +700,7 @@ exports.registerChallenge = functions
 exports.saveUserActivity = functions
     .region(Constant.appRegion)
     .runWith({
-        minInstances: 5,
+        minInstances: 1,
     })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
@@ -842,9 +824,6 @@ exports.getListUserActivity = functions
 
 exports.getListActiveRegisterdChallenge = functions
     .region(Constant.appRegion)
-    .runWith({
-        minInstances: 1,
-    })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
 
@@ -877,9 +856,6 @@ exports.getListActiveRegisterdChallenge = functions
 
 exports.getListCyclistClassificationByRankingCo2 = functions
     .region(Constant.appRegion)
-    .runWith({
-        minInstances: 1,
-    })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
 
@@ -932,9 +908,6 @@ exports.getListCyclistClassificationByRankingCo2 = functions
 
 exports.getListCompanyClassificationByRankingCo2 = functions
     .region(Constant.appRegion)
-    .runWith({
-        minInstances: 1,
-    })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
 
@@ -994,9 +967,6 @@ exports.getListCompanyClassificationByRankingCo2 = functions
 
 exports.getListCompanyClassificationByRankingPercentRegistered = functions
     .region(Constant.appRegion)
-    .runWith({
-        minInstances: 1,
-    })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
 
@@ -1060,9 +1030,6 @@ exports.getListCompanyClassificationByRankingPercentRegistered = functions
 
 exports.getListDepartmentClassificationByRankingCo2 = functions
     .region(Constant.appRegion)
-    .runWith({
-        minInstances: 1,
-    })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
 
@@ -1178,9 +1145,6 @@ exports.getChallengeRegistryFromBusinessEmail = functions
 
 exports.getUserCyclistClassification = functions
     .region(Constant.appRegion)
-    .runWith({
-        minInstances: 1,
-    })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
 
@@ -1226,9 +1190,6 @@ exports.getUserCyclistClassification = functions
 
 exports.getUserCompanyClassification = functions
     .region(Constant.appRegion)
-    .runWith({
-        minInstances: 1,
-    })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
 
@@ -1285,9 +1246,6 @@ exports.getUserCompanyClassification = functions
 
 exports.getUserDepartmentClassification = functions
     .region(Constant.appRegion)
-    .runWith({
-        minInstances: 1,
-    })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
 
@@ -1349,9 +1307,6 @@ exports.getUserDepartmentClassification = functions
 
 exports.getListRegisterdChallenge = functions
     .region(Constant.appRegion)
-    .runWith({
-        minInstances: 1,
-    })
     .https.onCall(async (data, context) => {
         const uid = context.auth.uid;
 
