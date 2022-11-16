@@ -50,6 +50,13 @@ const saveUserActivity = async (uid, userActivity) => {
             return;
         }
 
+        loggerDebug(
+            'saveUserActivityChallenge  UID:',
+            uid,
+            'userActivity:',
+            userActivity
+        );
+
         const challengeRef = admin
             .firestore()
             .collection(Constant.challengeCollectionName)
