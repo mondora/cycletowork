@@ -8,6 +8,7 @@ import 'package:cycletowork/src/service/remote_service.dart';
 import 'package:cycletowork/src/utility/notification.dart';
 import 'package:cycletowork/src/utility/user_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/material.dart';
 
 class ServiceLocator implements RepositoryServiceLocator {
   @override
@@ -93,6 +94,7 @@ class Repository {
 
   Future<void> saveDeviceToken() async {
     var deviceToken = await AppNotification.getToken();
+    debugPrint('deviceToken: $deviceToken');
     var localDeviceToken = await _localDatabase.getDeviceToken();
     var expireDate = await _localDatabase.getDeviceTokenExpireDate();
     var uid = await _localDatabase.getUserUID();
