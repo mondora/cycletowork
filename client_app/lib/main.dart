@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cycletowork/src/data/app_data.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 
@@ -27,18 +28,22 @@ void main() async {
     if (mapsImplementation is GoogleMapsFlutterAndroid) {
       mapsImplementation.useAndroidViewSurface = true;
     }
+    await dotenv.load(fileName: '.env');
 
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    await FirebaseAppCheck.instance.activate(
+      androidProvider:
+          kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
+    );
+
     if (kDebugMode) {
       await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
     } else {
       FlutterError.onError =
           FirebaseCrashlytics.instance.recordFlutterFatalError;
     }
-
-    await dotenv.load(fileName: '.env');
 
     FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
     await AppColor.initialize();
