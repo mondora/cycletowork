@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.2.7] - 2022-11-19
+
+-   Add firebase app check
+
 ## [1.2.6] - 2022-11-14
 
 -   Fix average speed activity calculate from real duration
